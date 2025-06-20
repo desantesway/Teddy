@@ -1,0 +1,3 @@
+[submodule "Teddy/vendor/spdlog"]
+	path = Teddy/vendor/spdlog
+	url = https://github.com/gabime/spdlog
