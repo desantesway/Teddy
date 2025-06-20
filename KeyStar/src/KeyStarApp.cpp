@@ -1,4 +1,4 @@
-#include <Teddy/Teddy.h>
+#include <Teddy.h>
 
 class KeyStar : public Teddy::Application {
 public:

@@ -24,12 +24,18 @@
     <ClInclude Include="src\Teddy\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Teddy\Teddy.h">
+    <ClInclude Include="src\Teddy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Teddy\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Teddy\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Teddy\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
