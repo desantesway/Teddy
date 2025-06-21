@@ -1,26 +1,26 @@
 # shared library Teddy
-add_library(Teddy SHARED)
-
-target_sources(Teddy PRIVATE    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.h 
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.cpp   
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.cpp
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/EntryPoint.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.cpp
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
+add_library(Teddy SHARED
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.cpp   
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/EntryPoint.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE
                             src/teddy_pch.h)
 
 target_include_directories(Teddy PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
@@ -37,5 +37,3 @@ set_target_properties(Teddy PROPERTIES
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
     PCH_INCLUDE "teddy_pch.h"
 )
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${dir})

@@ -5,25 +5,24 @@
 #include "Teddy/Events/MouseEvent.h"
 #include "Teddy/Log.h"
 
+#include <SDL3/SDL.h>
+#include <glad/glad.h>
+
 namespace Teddy {
 
 	Application::Application(){
-	
+		SDL_Window = std::unique_ptr<Window>(new Window());
 	}
 	Application::~Application(){
 	
 	}
 
 	void Application::Run() {
-		WindowResizeEvent e(1280, 720);
-		if (e.IsInCategory(EventCategoryApplication))
+		while (SDL_Running)
 		{
-			TED_TRACE(e);
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			SDL_Window->OnUpdate();
 		}
-		if (e.IsInCategory(EventCategoryInput))
-		{
-			TED_TRACE(e);
-		}
-		while (true);
 	}
 }
