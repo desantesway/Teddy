@@ -33,5 +33,9 @@ target_compile_definitions(Teddy PRIVATE
 
 set_target_properties(Teddy PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
+    RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
+    PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
     PCH_INCLUDE "teddy_pch.h"
 )
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${dir})

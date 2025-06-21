@@ -16,6 +16,8 @@ target_compile_definitions(KeyStar PRIVATE
 
 set_target_properties(KeyStar PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}/KeyStar"
+    RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/KeyStar"
+    PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
@@ -23,6 +25,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
 add_custom_command(TARGET KeyStar POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:Teddy>
-        "${OUTPUT_DIR}/KeyStar"
+        "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
     COMMENT "Copying Teddy DLL to KeyStar directory"
 )
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bar)
