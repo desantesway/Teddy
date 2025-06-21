@@ -35,5 +35,3 @@ set_target_properties(Teddy PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
     PCH_INCLUDE "teddy_pch.h"
 )
-
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
