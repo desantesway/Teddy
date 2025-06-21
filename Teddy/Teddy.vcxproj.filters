@@ -4,6 +4,9 @@
     <Filter Include="Teddy">
       <UniqueIdentifier>{7F23280E-EB37-50BF-B4B9-F31E208D4CF0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Teddy\Events">
+      <UniqueIdentifier>{830A6191-6F6D-F035-18F3-28EC0435BCB8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Teddy.h" />
@@ -16,9 +19,22 @@
     <ClInclude Include="src\Teddy\EntryPoint.h">
       <Filter>Teddy</Filter>
     </ClInclude>
+    <ClInclude Include="src\Teddy\Events\ApplicationEvent.h">
+      <Filter>Teddy\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Teddy\Events\Event.h">
+      <Filter>Teddy\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Teddy\Events\KeyEvent.h">
+      <Filter>Teddy\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Teddy\Events\MouseEvent.h">
+      <Filter>Teddy\Events</Filter>
+    </ClInclude>
     <ClInclude Include="src\Teddy\Log.h">
       <Filter>Teddy</Filter>
     </ClInclude>
+    <ClInclude Include="src\teddy_pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Teddy\Application.cpp">
@@ -27,5 +43,6 @@
     <ClCompile Include="src\Teddy\Log.cpp">
       <Filter>Teddy</Filter>
     </ClCompile>
+    <ClCompile Include="src\teddy_pch.cpp" />
   </ItemGroup>
 </Project>

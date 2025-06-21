@@ -1,3 +1,4 @@
+#include "teddy_pch.h"
 #include "Log.h"
 
 namespace Teddy

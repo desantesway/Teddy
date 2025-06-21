@@ -13,6 +13,9 @@ project "Teddy"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "teddy_pch.h"
+    pchsource "Teddy/src/teddy_pch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",
@@ -21,7 +24,8 @@ project "Teddy"
 
 	includedirs
 	{
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include", 
+        "%{prj.name}/src"
 	}
 
     filter "system:windows"
