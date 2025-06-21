@@ -4,3 +4,6 @@
 [submodule "Teddy/vendor/SDL"]
 	path = Teddy/vendor/SDL
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "Teddy/vendor/glad"]
+	path = Teddy/vendor/glad
+	url = https://github.com/Dav1dde/glad
