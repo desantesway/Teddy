@@ -3,6 +3,7 @@
 #include "teddy_pch.h"
 
 #include "Teddy/Core.h"
+#include "Teddy/Events/Event.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
@@ -25,47 +26,24 @@ namespace Teddy {
 	// Interface representing a desktop system based Window
 	class TED_API Window
 	{
-		
 	public:
+		using EventCallbackFn = std::function<void(Event&)>;
+		
+		virtual ~Window() {}
 
-		Window(const WindowProps& props = WindowProps());
-		~Window();
+		virtual void OnUpdate() = 0;
+		void Events();
 
-		void OnUpdate();
+		virtual unsigned int GetWidth() const = 0;
+		virtual unsigned int GetHeight() const = 0;
 
-		void SetVSync(bool enabled);
-		bool IsVSync() const;
+		// Window attributes
+		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void SetVSync(bool enabled) = 0;
+		virtual bool IsVSync() const = 0;
 
-		inline unsigned int GetWidth() const { return SDL_Data.Width; }
-		inline unsigned int GetHeight() const { return SDL_Data.Height; }
-		void SetWidth(unsigned int w) { SDL_Data.Width = w; }
-		void SetHeight(unsigned int h) { SDL_Data.Height = h; }
+		static Window* Create(const WindowProps& props = WindowProps());
 
-		void PollEvents();
-		bool IsRunning() { return isRunning; }
-
-		void KeyEvent(bool pressed, SDL_Event event);
-		void MouseEvent(bool pressed, SDL_Event event);
-		void MouseMovement(SDL_Event event);
-		void MouseWheel(SDL_Event event);
-
-	private:
-		void Init(const WindowProps& props);
-		void Shutdown();
-
-		// vars
-
-		SDL_Window* SDL_Window;
-		bool isRunning;
-
-		struct WindowData
-		{
-			std::string Title;
-			unsigned int Width, Height;
-			bool VSync;
-
-		};
-
-		WindowData SDL_Data;
+		EventCallbackFn EventCallback;
 	};
 }

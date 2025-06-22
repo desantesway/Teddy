@@ -8,27 +8,37 @@
 
 namespace Teddy {
 
-	#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+	#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application::Application(){
-		SDL_Window = std::unique_ptr<Window>(new Window());
+		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
 	Application::~Application(){
 	
 	}
 
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose)); // if the event is Window close do OnWindowClose()
+
+		TED_CORE_TRACE("{0}", e);
+	}
+
 	void Application::Run() {
-		while (isRunning)
-		{	
-			SDL_Window->PollEvents();
-			
+		while (m_Running)
+		{
+			m_Window->Events();
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			
-			SDL_Window->OnUpdate();
-			isRunning = SDL_Window->IsRunning();
+			m_Window->OnUpdate();
 		}
+	}
 
-		SDL_Window.reset();
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 }
