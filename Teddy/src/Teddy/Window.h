@@ -3,7 +3,6 @@
 #include "teddy_pch.h"
 
 #include "Teddy/Core.h"
-#include "Teddy/Events/Event.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
@@ -26,21 +25,25 @@ namespace Teddy {
 	// Interface representing a desktop system based Window
 	class TED_API Window
 	{
+		
 	public:
-		using EventCallbackFn = std::function<void(Event&)>;
 
 		Window(const WindowProps& props = WindowProps());
 		~Window();
 
 		void OnUpdate();
 
-		// Window attributes
-		inline void SetEventCallback(const EventCallbackFn& callback) { SDL_Data.EventCallback = callback; }
 		void SetVSync(bool enabled);
 		bool IsVSync() const;
 
 		inline unsigned int GetWidth() const { return SDL_Data.Width; }
 		inline unsigned int GetHeight() const { return SDL_Data.Height; }
+		void SetWidth(unsigned int w) { SDL_Data.Width = w; }
+		void SetHeight(unsigned int h) { SDL_Data.Height = h; }
+
+		void PollEvents();
+		bool IsRunning() { return isRunning; }
+
 
 	private:
 		void Init(const WindowProps& props);
@@ -49,6 +52,7 @@ namespace Teddy {
 		// vars
 
 		SDL_Window* SDL_Window;
+		bool isRunning;
 
 		struct WindowData
 		{
@@ -56,7 +60,6 @@ namespace Teddy {
 			unsigned int Width, Height;
 			bool VSync;
 
-			EventCallbackFn EventCallback;
 		};
 
 		WindowData SDL_Data;

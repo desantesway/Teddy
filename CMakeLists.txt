@@ -28,9 +28,21 @@ set(GLAD_INC Teddy/vendor/glad/include)
 add_library(glad STATIC ${GLAD_SRC})
 target_include_directories(glad PUBLIC ${GLAD_INC})
 
+#sdl
 set(SDL_TEST OFF)
 
-add_subdirectory(Teddy/vendor/SDL)
+#add_subdirectory(Teddy/vendor/SDL)
+include_directories(Teddy/vendor/SDL/include)
+
+# Add the precompiled library
+add_library(SDL3::SDL3 STATIC IMPORTED)
+set_target_properties(SDL3::SDL3 PROPERTIES
+    IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Debug/SDL3.lib"
+    IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Release/SDL3.lib"
+    IMPORTED_LOCATION_DIST "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Dist/SDL3.lib"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/include"
+)
+
 add_subdirectory(Teddy)
 add_subdirectory(KeyStar)
 

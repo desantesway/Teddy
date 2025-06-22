@@ -9,10 +9,7 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Events.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.cpp
 )

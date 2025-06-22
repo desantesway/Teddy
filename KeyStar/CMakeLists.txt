@@ -19,13 +19,13 @@ set_target_properties(KeyStar PROPERTIES
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-add_custom_command(TARGET KeyStar POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL3-shared>
-        "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
-    COMMENT "Copying SDL3.dll to output directory"
-)
+#add_custom_command(TARGET KeyStar POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        $<TARGET_FILE:SDL3-shared>
+#        "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
+#    COMMENT "Copying SDL3.dll to output directory"
+#)
 
 add_custom_command(TARGET KeyStar POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}/KeyStar/$<CONFIG>"

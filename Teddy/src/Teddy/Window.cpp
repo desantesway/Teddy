@@ -41,15 +41,18 @@ namespace Teddy {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-		SDL_Window = SDL_CreateWindow(SDL_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL);
+		SDL_Window = SDL_CreateWindow(SDL_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		SDL_GL_CreateContext(SDL_Window);
 
 		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-			TED_CORE_ERROR("Could not intialize GLAD!");;
+			TED_CORE_ERROR("Could not intialize GLAD!");
 		}
 
-		//glfwSetWindowUserPointer(SDL_Window, &SDL_Data);
+		//SDL_SetPointerProperty(SDL_GetWindowProperties(SDL_Window), "WindowData", &SDL_Data);
+
 		SetVSync(true);
+
+		isRunning = true;
 	}
 
 	void Window::Shutdown()
@@ -70,10 +73,7 @@ namespace Teddy {
 
 	void Window::SetVSync(bool enabled)
 	{
-		//if (enabled)
-			//glfwSwapInterval(1);
-		//else
-			//glfwSwapInterval(0);
+		SDL_GL_SetSwapInterval(enabled ? 1 : 0);
 
 		SDL_Data.VSync = enabled;
 	}
@@ -82,4 +82,6 @@ namespace Teddy {
 	{
 		return SDL_Data.VSync;
 	}
+
+	
 }
