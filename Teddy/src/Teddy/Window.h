@@ -44,6 +44,10 @@ namespace Teddy {
 		void PollEvents();
 		bool IsRunning() { return isRunning; }
 
+		void KeyEvent(bool pressed, SDL_Event event);
+		void MouseEvent(bool pressed, SDL_Event event);
+		void MouseMovement(SDL_Event event);
+		void MouseWheel(SDL_Event event);
 
 	private:
 		void Init(const WindowProps& props);

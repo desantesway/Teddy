@@ -28,5 +28,7 @@ namespace Teddy {
 			SDL_Window->OnUpdate();
 			isRunning = SDL_Window->IsRunning();
 		}
+
+		SDL_Window.reset();
 	}
 }
