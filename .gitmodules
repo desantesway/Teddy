@@ -7,3 +7,6 @@
 [submodule "Teddy/vendor/glad"]
 	path = Teddy/vendor/glad
 	url = https://github.com/Dav1dde/glad
+[submodule "Teddy/vendor/ImGui"]
+	path = Teddy/vendor/ImGui
+	url = https://github.com/ocornut/imgui.git
