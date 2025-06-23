@@ -28,7 +28,9 @@ namespace Teddy {
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 	private:
+
 		SDL_Window* m_Window;
+		SDL_GLContext m_Context;
 
 		struct WindowData
 		{

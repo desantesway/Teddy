@@ -4,17 +4,35 @@
 
 extern Teddy::Application* Teddy::CreateApplication();
 
-int main(int argc, char** argv) {
+	/*#ifdef defined(TED_PLATFORM_WINDOWS) && (defined(TED_RELEASE) || defined(TED_DIST))
+		int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+			LPSTR lpCmdLine, int nCmdShow) {
+			(void)hInstance; (void)hPrevInstance;
+			(void)lpCmdLine; (void)nCmdShow;
 
-	Teddy::Log::Init();
-	TED_CORE_WARN("Teddy Engine Initialized!");
-	TED_INFO("Teddy Engine Initialized!");
+			//SDL_SetMainReady();
 
-	auto app = Teddy::CreateApplication();
-	app->Run();
-	delete app;
+			Teddy::Log::Init();
+			TED_CORE_WARN("Teddy Engine Initialized!");
 
-	return 0;
-}
+			auto app = Teddy::CreateApplication();
+			app->Run();
+			delete app;
+
+			return 0;
+		}
+	#else*/
+		int main(int argc, char** argv) {
+
+			Teddy::Log::Init();
+			TED_CORE_WARN("Teddy Engine Initialized!");
+
+			auto app = Teddy::CreateApplication();
+			app->Run();
+			delete app;
+
+			return 0;
+		}
+	//#endif
 
 #endif

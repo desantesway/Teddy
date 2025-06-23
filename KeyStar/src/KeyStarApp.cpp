@@ -1,9 +1,29 @@
 #include <Teddy.h>
 
+class ExampleLayer : public Teddy::Layer
+{
+public:
+	ExampleLayer()
+		: Layer("Example")
+	{
+	}
+
+	void OnUpdate() override
+	{
+		TED_INFO("ExampleLayer::Update");
+	}
+
+	void OnEvent(Teddy::Event& event) override
+	{
+		TED_TRACE("{0}", event);
+	}
+
+};
+
 class KeyStar : public Teddy::Application {
 public:
 	KeyStar() {
-		// Initialization code can go here
+		PushLayer(new ExampleLayer());
 	}
 	~KeyStar() {
 		// Cleanup code can go here

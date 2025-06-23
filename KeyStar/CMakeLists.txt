@@ -1,6 +1,14 @@
-add_executable(KeyStar)
+if(WIN32)
+    add_executable(KeyStar WIN32)
+    target_link_options(KeyStar PRIVATE
+        $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
+    )
+else()
+    add_executable(KeyStar)
+endif()
 
-target_sources(KeyStar PRIVATE    ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStarApp.cpp
+target_sources(KeyStar PRIVATE    
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStarApp.cpp
 )
 
 target_include_directories(KeyStar PUBLIC
@@ -36,3 +44,4 @@ add_custom_command(TARGET KeyStar POST_BUILD
 )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bar)
+

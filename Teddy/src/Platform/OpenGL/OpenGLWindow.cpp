@@ -47,7 +47,7 @@ namespace Teddy {
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-		SDL_GL_CreateContext(m_Window);
+		m_Context = SDL_GL_CreateContext(m_Window);
 
 		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
 			TED_CORE_ERROR("Could not intialize GLAD!");;
@@ -58,7 +58,8 @@ namespace Teddy {
 	}
 
 	void OpenGLWindow::Shutdown()
-	{
+	{	
+		SDL_GL_DestroyContext(m_Context);
 		if (m_Window) {
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;
