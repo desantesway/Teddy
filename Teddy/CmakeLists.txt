@@ -1,19 +1,26 @@
 # shared library Teddy
 add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.cpp   
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/EntryPoint.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Application.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDL_Events.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.h 
@@ -22,6 +29,9 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Layer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/LayerStack.h  
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/LayerStack.cpp 
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
     
 )
 

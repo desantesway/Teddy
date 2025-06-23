@@ -22,13 +22,6 @@ endif()
 set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 set(OUTPUT_INT_DIR "${CMAKE_BINARY_DIR}/bin-int/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
-find_package(OpenGL REQUIRED)
-
-set(GLAD_SRC Teddy/vendor/glad/src/glad.c)
-set(GLAD_INC Teddy/vendor/glad/include)
-add_library(glad STATIC ${GLAD_SRC})
-target_include_directories(glad PUBLIC ${GLAD_INC})
-
 #sdl
 set(SDL_TEST OFF)
 
@@ -44,18 +37,53 @@ set_target_properties(SDL3::SDL3 PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/include"
 )
 
+# Engine & Application
 add_subdirectory(Teddy)
 add_subdirectory(KeyStar)
 
-add_subdirectory(Teddy/vendor/spdlog)
+target_link_libraries(KeyStar PRIVATE Teddy)
 
-target_link_libraries(Teddy PRIVATE glad)
-target_link_libraries(KeyStar PRIVATE glad)
+# SDL3
+target_link_libraries(Teddy PRIVATE SDL3::SDL3)
+target_link_libraries(KeyStar PRIVATE SDL3::SDL3)
+
+# SpdLog
+add_subdirectory(Teddy/vendor/spdlog)
 
 target_link_libraries(Teddy PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 target_link_libraries(KeyStar PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
-target_link_libraries(Teddy PRIVATE SDL3::SDL3)
-target_link_libraries(KeyStar PRIVATE SDL3::SDL3)
+# Glad
+find_package(OpenGL REQUIRED)
 
-target_link_libraries(KeyStar PRIVATE Teddy)
+set(GLAD_SRC Teddy/vendor/glad/src/glad.c)
+set(GLAD_INC Teddy/vendor/glad/include)
+add_library(glad STATIC ${GLAD_SRC})
+target_include_directories(glad PUBLIC ${GLAD_INC})
+
+target_link_libraries(Teddy PRIVATE glad)
+target_link_libraries(KeyStar PRIVATE glad)
+
+# ImGui
+include_directories(Teddy/vendor/ImGui)
+
+set(IMGUI_SRC
+    Teddy/vendor/ImGui/backends/imgui_impl_sdl3.cpp
+    Teddy/vendor/ImGui/backends/imgui_impl_opengl3.cpp
+    Teddy/vendor/ImGui/imconfig.h
+	Teddy/vendor/ImGui/imgui.h
+	Teddy/vendor/ImGui/imgui.cpp
+    Teddy/vendor/ImGui/imgui_draw.cpp
+	Teddy/vendor/ImGui/imgui_internal.h
+	Teddy/vendor/ImGui/imgui_tables.cpp
+	Teddy/vendor/ImGui/imgui_widgets.cpp
+	Teddy/vendor/ImGui/imstb_rectpack.h
+	Teddy/vendor/ImGui/imstb_textedit.h
+	Teddy/vendor/ImGui/imstb_truetype.h
+	Teddy/vendor/ImGui/imgui_demo.cpp
+)
+add_library(imgui STATIC ${IMGUI_SRC})
+target_include_directories(imgui PUBLIC Teddy/vendor/ImGui Teddy/vendor/ImGui/backends)
+
+target_link_libraries(Teddy PRIVATE imgui)
+target_link_libraries(KeyStar PRIVATE imgui)

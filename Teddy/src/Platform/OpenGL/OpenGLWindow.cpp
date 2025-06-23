@@ -41,7 +41,7 @@ namespace Teddy {
 		}
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -49,9 +49,8 @@ namespace Teddy {
 		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		m_Context = SDL_GL_CreateContext(m_Window);
 
-		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-			TED_CORE_ERROR("Could not intialize GLAD!");;
-		}
+		int status =  gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)
+		TED_CORE_ASSERT(success, "Could not intialize GLAD!");;
 
 		//glfwSetWindowUserPointer(SDL_Window, &SDL_Data);
 		SetVSync(true);
@@ -71,6 +70,7 @@ namespace Teddy {
 
 	void OpenGLWindow::OnUpdate()
 	{
+		Events();
 		SDL_GL_SwapWindow(m_Window);
 	}
 

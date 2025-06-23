@@ -6,6 +6,8 @@
 #include "Teddy/Layer.h"
 #include "Teddy/Log.h"
 
+#include "Teddy/ImGui/ImGuiLayer.h"
+
 // --- Entry Point ---------------------------
 #include "Teddy/EntryPoint.h"
 // ------------------------------------------
