@@ -17,6 +17,11 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Window.h 
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Layer.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Layer.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/LayerStack.h  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/LayerStack.cpp 
     
 )
 

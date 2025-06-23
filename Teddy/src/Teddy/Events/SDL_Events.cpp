@@ -22,21 +22,20 @@ namespace Teddy {
 				EventCallback(e);
 				break;
 			}case SDL_EVENT_KEY_DOWN: {
-				//KeyEvent e(event.key.scancode);
-				//EventCallback(e);
-				TED_CORE_INFO("Key pressed");
+				KeyPressedEvent e(event.key.key, event.key.repeat);
+				EventCallback(e);
 				break;
 			} case  SDL_EVENT_KEY_UP: {
-				TED_CORE_INFO("Key released");
+				KeyReleasedEvent e(event.key.key);
+				EventCallback(e);
 				break;
-
 			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-				//MouseButtonPressedEvent e(true, event);
-				TED_CORE_INFO("Mouse pressed");
+				MouseButtonPressedEvent e(event.button.button);
+				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_BUTTON_UP: {
-				//MouseButtonReleasedEvent(false, event);
-				TED_CORE_INFO("Mouse released");
+				MouseButtonReleasedEvent e(event.button.button);
+				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_MOTION: {
 				MouseMovedEvent e(event.motion.x, event.motion.y);

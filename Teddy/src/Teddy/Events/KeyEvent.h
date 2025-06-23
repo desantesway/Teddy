@@ -21,8 +21,8 @@ namespace Teddy {
 	class TED_API KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatCount)
-			: KeyEvent(keycode), m_RepeatCount(repeatCount) {
+		KeyPressedEvent(int keycode, bool repeat)
+			: KeyEvent(keycode), m_RepeatCount(repeat) {
 		}
 
 		inline int GetRepeatCount() const { return m_RepeatCount; }
@@ -36,7 +36,7 @@ namespace Teddy {
 
 		EVENT_CLASS_TYPE(KeyPressed)
 	private:
-		int m_RepeatCount;
+		bool m_RepeatCount;
 	};
 
 	class TED_API KeyReleasedEvent : public KeyEvent
