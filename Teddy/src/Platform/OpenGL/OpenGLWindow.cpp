@@ -54,6 +54,7 @@ namespace Teddy {
 
 		//glfwSetWindowUserPointer(SDL_Window, &SDL_Data);
 		SetVSync(true);
+		
 	}
 
 	void OpenGLWindow::Shutdown()

@@ -30,11 +30,25 @@ namespace Teddy {
 				EventCallback(e);
 				break;
 			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-				MouseButtonPressedEvent e(event.button.button);
+				int button = -1;
+				if (event.button.button == SDL_BUTTON_LEFT) { button = 0; }
+				if (event.button.button == SDL_BUTTON_RIGHT) { button = 1; }
+				if (event.button.button == SDL_BUTTON_MIDDLE) { button = 2; }
+				if (event.button.button == SDL_BUTTON_X1) { button = 3; }
+				if (event.button.button == SDL_BUTTON_X2) { button = 4; }
+				TED_ASSERT(button != -1, "Unknown mouse button pressed");
+				MouseButtonPressedEvent e(button);
 				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_BUTTON_UP: {
-				MouseButtonReleasedEvent e(event.button.button);
+				int button = -1;
+				if (event.button.button == SDL_BUTTON_LEFT) { button = 0; }
+				if (event.button.button == SDL_BUTTON_RIGHT) { button = 1; }
+				if (event.button.button == SDL_BUTTON_MIDDLE) { button = 2; }
+				if (event.button.button == SDL_BUTTON_X1) { button = 3; }
+				if (event.button.button == SDL_BUTTON_X2) { button = 4; }
+				TED_ASSERT(button != -1, "Unknown mouse button pressed");
+				MouseButtonReleasedEvent e(button);
 				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_MOTION: {
@@ -43,6 +57,10 @@ namespace Teddy {
 				break;
 			} case SDL_EVENT_MOUSE_WHEEL: {
 				MouseScrolledEvent e(event.wheel.x, event.wheel.y);
+				EventCallback(e);
+				break;
+			}case SDL_EVENT_TEXT_INPUT: {
+				KeyTypedEvent e(event.text.text);
 				EventCallback(e);
 				break;
 			}default:

@@ -12,8 +12,7 @@ namespace Teddy {
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
 		KeyEvent(int keycode)
-			: m_KeyCode(keycode) {
-		}
+			: m_KeyCode(keycode) {}
 
 		int m_KeyCode;
 	};
@@ -54,5 +53,26 @@ namespace Teddy {
 		}
 
 		EVENT_CLASS_TYPE(KeyReleased)
+	};
+
+	class TED_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(const char * keycode)
+			: KeyEvent(int(keycode)), key(keycode){
+		}
+
+		const char* GetKey() const { return key; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << key;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped)
+
+		const char * key;
 	};
 }

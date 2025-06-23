@@ -3,6 +3,8 @@
 #include "teddy_pch.h"
 #include "Teddy/Core.h"
 
+#include <SDL3/SDL.h>
+
 namespace Teddy {
 	enum class EventType {
 		None = 0,

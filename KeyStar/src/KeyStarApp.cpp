@@ -10,7 +10,7 @@ public:
 
 	void OnUpdate() override
 	{
-		TED_INFO("ExampleLayer::Update");
+		//TED_INFO("ExampleLayer::Update");
 	}
 
 	void OnEvent(Teddy::Event& event) override

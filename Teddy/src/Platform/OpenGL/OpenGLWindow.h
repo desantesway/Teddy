@@ -20,6 +20,9 @@ namespace Teddy {
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
 
+		virtual SDL_Window* GetWindow() const override  { return m_Window; }
+		virtual SDL_GLContext GetGLContext() const override { return m_Context; }
+
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFn& callback) override {EventCallback = callback; }
 		void SetVSync(bool enabled) override;
