@@ -1,8 +1,8 @@
 
 // Mouse codes for Teddy
 
-#define TED_MOUSE_LEFT     0x000000b2u
-#define TED_MOUSE_MIDDLE   0x000000b3u
-#define TED_MOUSE_RIGHT    0x000000b4u
-#define TED_MOUSE_X1       0x000000b5u
-#define TED_MOUSE_X2       0x000000b6u
+#define TED_MOUSE_LEFT     0x00000000u
+#define TED_MOUSE_MIDDLE   0x00000001u
+#define TED_MOUSE_RIGHT    0x00000002u
+#define TED_MOUSE_X1       0x00000003u
+#define TED_MOUSE_X2       0x00000004u

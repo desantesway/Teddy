@@ -11,7 +11,6 @@
 #include "Teddy/KeyCodes.h"
 #include "Teddy/MouseCodes.h"
 
-
 namespace Teddy {
 
 	Application* Application::s_Instance = nullptr;
@@ -65,7 +64,8 @@ namespace Teddy {
 
 			bool x = Input::IsKeyPressed(TED_KEY_LSHIFT);
 			bool y = Input::IsMouseButtonPressed(TED_MOUSE_RIGHT);
-			TED_CORE_TRACE("{0} {1}", x, y);
+			if (x) TED_CORE_TRACE("{0}", x);
+			if (y) TED_CORE_TRACE("{0}", y);
 
 			m_Window->OnUpdate();
 		}
