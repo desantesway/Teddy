@@ -8,6 +8,8 @@
 
 #include "Teddy/Input.h"
 #include "Teddy/MidiCodes.h"
+#include "Teddy/KeyCodes.h"
+#include "Teddy/MouseCodes.h"
 
 
 namespace Teddy {
@@ -61,9 +63,9 @@ namespace Teddy {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			bool x = Input::IsKeyPressed(SDLK_A);
-			bool y = Input::IsKeyPressed(SDLK_A);
-			TED_CORE_TRACE("{0} {1}", (int)TED_MIDI_C9, y);
+			bool x = Input::IsKeyPressed(TED_KEY_F);
+			bool y = Input::IsMouseButtonPressed(TED_MOUSE_RIGHT);
+			TED_CORE_TRACE("{0} {1}", x, y);
 
 			m_Window->OnUpdate();
 		}

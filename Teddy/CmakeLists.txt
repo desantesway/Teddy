@@ -40,7 +40,9 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/KeyCodes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/MouseCodes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/MidiCodes.h
-    
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/CodeConverter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/CodeConverter.cpp
+
 )
 
 target_precompile_headers(Teddy PRIVATE

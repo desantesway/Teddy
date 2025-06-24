@@ -10,6 +10,8 @@
 #include <glad/glad.h>
 
 #include "Teddy/Application.h"
+#include "Teddy/CodeConverter.h"
+#include "Teddy/KeyCodes.h"
 
 namespace Teddy
 {
@@ -75,8 +77,7 @@ namespace Teddy
 
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e) {
 		ImGuiIO& io = ImGui::GetIO();
-		//io.AddMouseSourceEvent(event->button.which == SDL_TOUCH_MOUSEID ? ImGuiMouseSource_TouchScreen : ImGuiMouseSource_Mouse);
-		io.AddMouseButtonEvent(e.GetMouseButton(), true);
+		io.AddMouseButtonEvent(TeddyToImGuiMouse(e.GetMouseButton()), true);
 		
 		return false;
 	}
@@ -84,8 +85,7 @@ namespace Teddy
 	bool ImGuiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e){
 
 		ImGuiIO& io = ImGui::GetIO();
-		//io.AddMouseSourceEvent(event->button.which == SDL_TOUCH_MOUSEID ? ImGuiMouseSource_TouchScreen : ImGuiMouseSource_Mouse);
-		io.AddMouseButtonEvent(e.GetMouseButton(), false);
+		io.AddMouseButtonEvent(TeddyToImGuiMouse(e.GetMouseButton()), false);
 
 		return false;
 	}
@@ -103,20 +103,20 @@ namespace Teddy
 		return false; 
 	}
 
-	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ 
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ //IMPLEMENT THIS WITH INPUT POLING
 		ImGuiIO& io = ImGui::GetIO();
-		io.AddKeyEvent(ImGui_ImplSDL3_KeyEventToImGuiKey(e.GetKeyCode(), (SDL_Scancode)e.GetKeyCode()), true); // bug in numpad and etc
+		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), true); // bug in numpad and etc
 
-		if (e.GetKeyCode() == SDLK_LCTRL || e.GetKeyCode() == SDLK_RCTRL) {
+		if (e.GetKeyCode() == TED_KEY_LCTRL || e.GetKeyCode() == TED_KEY_RCTRL) {
 			io.AddKeyEvent(ImGuiMod_Ctrl, true); m_crtl++;
 		}
-		if (e.GetKeyCode() == SDLK_LSHIFT || e.GetKeyCode() == SDLK_RSHIFT) {
+		if (e.GetKeyCode() == TED_KEY_LSHIFT || e.GetKeyCode() == TED_KEY_RSHIFT) {
 			io.AddKeyEvent(ImGuiMod_Shift, true); m_shift++;
 		}
-		if (e.GetKeyCode() == SDLK_LALT || e.GetKeyCode() == SDLK_RALT) {
+		if (e.GetKeyCode() == TED_KEY_LALT || e.GetKeyCode() == TED_KEY_RALT) {
 			io.AddKeyEvent(ImGuiMod_Alt, true); m_alt++;
 		}
-		if (e.GetKeyCode() == SDLK_LGUI || e.GetKeyCode() == SDLK_RGUI) {
+		if (e.GetKeyCode() == TED_KEY_LGUI || e.GetKeyCode() == TED_KEY_RGUI) {
 			io.AddKeyEvent(ImGuiMod_Super, true); m_super++;
 		}
 
@@ -125,12 +125,12 @@ namespace Teddy
 
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e){ 
 		ImGuiIO& io = ImGui::GetIO();
-		io.AddKeyEvent(ImGui_ImplSDL3_KeyEventToImGuiKey(e.GetKeyCode(), (SDL_Scancode)e.GetKeyCode()), false);
+		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), false);
 		
-		if ((e.GetKeyCode() == SDLK_LCTRL || e.GetKeyCode() == SDLK_RCTRL) && m_crtl <= 1) io.AddKeyEvent(ImGuiMod_Ctrl, false); m_crtl--;
-		if ((e.GetKeyCode() == SDLK_LSHIFT || e.GetKeyCode() == SDLK_RSHIFT) && m_shift <= 1) io.AddKeyEvent(ImGuiMod_Shift, false); m_shift--;
-		if ((e.GetKeyCode() == SDLK_LALT || e.GetKeyCode() == SDLK_RALT) && m_alt <= 1) io.AddKeyEvent(ImGuiMod_Alt, false); m_alt--;
-		if ((e.GetKeyCode() == SDLK_LGUI || e.GetKeyCode() == SDLK_RGUI) && m_super <= 1) io.AddKeyEvent(ImGuiMod_Super, false); m_super--;
+		if ((e.GetKeyCode() == TED_KEY_LCTRL || e.GetKeyCode() == TED_KEY_RCTRL) && m_crtl <= 1) io.AddKeyEvent(ImGuiMod_Ctrl, false); m_crtl--;
+		if ((e.GetKeyCode() == TED_KEY_LSHIFT || e.GetKeyCode() == TED_KEY_RSHIFT) && m_shift <= 1) io.AddKeyEvent(ImGuiMod_Shift, false); m_shift--;
+		if ((e.GetKeyCode() == TED_KEY_LALT || e.GetKeyCode() == TED_KEY_RALT) && m_alt <= 1) io.AddKeyEvent(ImGuiMod_Alt, false); m_alt--;
+		if ((e.GetKeyCode() == TED_KEY_LGUI || e.GetKeyCode() == TED_KEY_RGUI) && m_super <= 1) io.AddKeyEvent(ImGuiMod_Super, false); m_super--;
 
 		return false; 
 	}

@@ -59,7 +59,7 @@ namespace Teddy {
 	{
 	public:
 		KeyTypedEvent(const char * keycode)
-			: KeyEvent(int(keycode)), key(keycode){
+			: KeyEvent((int)keycode), key(keycode){
 		}
 
 		const char* GetKey() const { return key; }
