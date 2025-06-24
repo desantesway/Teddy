@@ -63,7 +63,7 @@ namespace Teddy {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			bool x = Input::IsKeyPressed(TED_KEY_F);
+			bool x = Input::IsKeyPressed(TED_KEY_LSHIFT);
 			bool y = Input::IsMouseButtonPressed(TED_MOUSE_RIGHT);
 			TED_CORE_TRACE("{0} {1}", x, y);
 

@@ -10,8 +10,10 @@
 #include <glad/glad.h>
 
 #include "Teddy/Application.h"
+
 #include "Teddy/CodeConverter.h"
 #include "Teddy/KeyCodes.h"
+#include "Teddy/Input.h"
 
 namespace Teddy
 {
@@ -103,22 +105,14 @@ namespace Teddy
 		return false; 
 	}
 
-	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ //IMPLEMENT THIS WITH INPUT POLING
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ 
 		ImGuiIO& io = ImGui::GetIO();
-		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), true); // bug in numpad and etc
+		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), true);
 
-		if (e.GetKeyCode() == TED_KEY_LCTRL || e.GetKeyCode() == TED_KEY_RCTRL) {
-			io.AddKeyEvent(ImGuiMod_Ctrl, true); m_crtl++;
-		}
-		if (e.GetKeyCode() == TED_KEY_LSHIFT || e.GetKeyCode() == TED_KEY_RSHIFT) {
-			io.AddKeyEvent(ImGuiMod_Shift, true); m_shift++;
-		}
-		if (e.GetKeyCode() == TED_KEY_LALT || e.GetKeyCode() == TED_KEY_RALT) {
-			io.AddKeyEvent(ImGuiMod_Alt, true); m_alt++;
-		}
-		if (e.GetKeyCode() == TED_KEY_LGUI || e.GetKeyCode() == TED_KEY_RGUI) {
-			io.AddKeyEvent(ImGuiMod_Super, true); m_super++;
-		}
+		if (e.GetKeyCode() == TED_KEY_LCTRL || e.GetKeyCode() == TED_KEY_RCTRL) io.AddKeyEvent(ImGuiMod_Ctrl, true);
+		if (e.GetKeyCode() == TED_KEY_LSHIFT || e.GetKeyCode() == TED_KEY_RSHIFT) io.AddKeyEvent(ImGuiMod_Shift, true);
+		if (e.GetKeyCode() == TED_KEY_LALT || e.GetKeyCode() == TED_KEY_RALT) io.AddKeyEvent(ImGuiMod_Alt, true);
+		if (e.GetKeyCode() == TED_KEY_LGUI || e.GetKeyCode() == TED_KEY_RGUI) io.AddKeyEvent(ImGuiMod_Super, true);
 
 		return false; 
 	}
@@ -127,10 +121,10 @@ namespace Teddy
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), false);
 		
-		if ((e.GetKeyCode() == TED_KEY_LCTRL || e.GetKeyCode() == TED_KEY_RCTRL) && m_crtl <= 1) io.AddKeyEvent(ImGuiMod_Ctrl, false); m_crtl--;
-		if ((e.GetKeyCode() == TED_KEY_LSHIFT || e.GetKeyCode() == TED_KEY_RSHIFT) && m_shift <= 1) io.AddKeyEvent(ImGuiMod_Shift, false); m_shift--;
-		if ((e.GetKeyCode() == TED_KEY_LALT || e.GetKeyCode() == TED_KEY_RALT) && m_alt <= 1) io.AddKeyEvent(ImGuiMod_Alt, false); m_alt--;
-		if ((e.GetKeyCode() == TED_KEY_LGUI || e.GetKeyCode() == TED_KEY_RGUI) && m_super <= 1) io.AddKeyEvent(ImGuiMod_Super, false); m_super--;
+		if (!Input::IsKeyPressed(TED_KEY_LCTRL) && !Input::IsKeyPressed(TED_KEY_RCTRL)) io.AddKeyEvent(ImGuiMod_Ctrl, false);
+		if (!Input::IsKeyPressed(TED_KEY_LSHIFT) && !Input::IsKeyPressed(TED_KEY_RSHIFT)) io.AddKeyEvent(ImGuiMod_Shift, false);
+		if (!Input::IsKeyPressed(TED_KEY_LALT) && !Input::IsKeyPressed(TED_KEY_RALT)) io.AddKeyEvent(ImGuiMod_Alt, false);
+		if (!Input::IsKeyPressed(TED_KEY_LGUI) && !Input::IsKeyPressed(TED_KEY_RGUI)) io.AddKeyEvent(ImGuiMod_Super, false);
 
 		return false; 
 	}

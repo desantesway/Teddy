@@ -28,9 +28,5 @@ namespace Teddy
 		bool OnWindowResizeEvent(WindowResizeEvent& e);
 
 		float m_Time = 0.0f;
-		int m_crtl = 0;
-		int m_shift = 0;
-		int m_alt = 0;
-		int m_super = 0;
 	};
 } // namespace Teddy
