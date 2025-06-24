@@ -10,3 +10,6 @@
 [submodule "Teddy/vendor/ImGui"]
 	path = Teddy/vendor/ImGui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Teddy/vendor/GLM"]
+	path = Teddy/vendor/GLM
+	url = https://github.com/g-truc/glm
