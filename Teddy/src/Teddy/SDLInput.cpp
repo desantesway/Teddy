@@ -8,7 +8,7 @@ namespace Teddy
 {
 	Input* Input::s_Instance = new SDLInput();
 
-	bool SDLInput::IsKeyPressedImpl(int keycode) {
+	bool SDLInput::IsKeyPressedImpl(int keycode) { // SHIFT!!!
 		auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
 		const bool* state = SDL_GetKeyboardState(nullptr);
 		return state[SDL_GetScancodeFromKey(keycode, nullptr)];

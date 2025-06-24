@@ -7,6 +7,8 @@
 #include <glad/glad.h>
 
 #include "Teddy/Input.h"
+#include "Teddy/MidiCodes.h"
+
 
 namespace Teddy {
 
@@ -61,7 +63,7 @@ namespace Teddy {
 
 			bool x = Input::IsKeyPressed(SDLK_A);
 			bool y = Input::IsKeyPressed(SDLK_A);
-			TED_CORE_TRACE("{0} {1}", x, y);
+			TED_CORE_TRACE("{0} {1}", (int)TED_MIDI_C9, y);
 
 			m_Window->OnUpdate();
 		}

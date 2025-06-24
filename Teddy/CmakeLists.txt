@@ -36,6 +36,10 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/KeyCodes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/MouseCodes.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/MidiCodes.h
     
 )
 
