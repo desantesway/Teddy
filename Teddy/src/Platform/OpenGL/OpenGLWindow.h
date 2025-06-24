@@ -1,5 +1,5 @@
 #pragma once
-#include "teddy_pch.h"
+#include "teddyPch.h"
 
 #include "Teddy/Window.h"
 
@@ -20,8 +20,8 @@ namespace Teddy {
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
 
-		virtual SDL_Window* GetWindow() const override  { return m_Window; }
-		virtual SDL_GLContext GetGLContext() const override { return m_Context; }
+		inline virtual void* GetNativeWindow() const override  { return m_Window; }
+		inline virtual void* GetNativeContext() const override { return m_Context; }
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFn& callback) override {EventCallback = callback; }

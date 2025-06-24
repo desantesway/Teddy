@@ -38,6 +38,14 @@ set_target_properties(KeyStar PROPERTIES
 add_custom_command(TARGET KeyStar POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/../Teddy/vendor/SDL/$<CONFIG>/SDL3.dll"
+        "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
+    COMMENT "Copying SDL3.dll to output directory"
+)
+
+add_custom_command(TARGET KeyStar POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:Teddy>
         "${OUTPUT_DIR}/KeyStar/$<CONFIG>"
     COMMENT "Copying Teddy DLL to KeyStar directory for $<CONFIG> build"

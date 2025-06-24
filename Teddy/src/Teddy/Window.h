@@ -1,6 +1,6 @@
 #pragma once
 
-#include "teddy_pch.h"
+#include "teddyPch.h"
 
 #include "Teddy/Core.h"
 #include "Teddy/Events/Event.h"
@@ -32,18 +32,18 @@ namespace Teddy {
 		virtual ~Window() {}
 
 		virtual void OnUpdate() = 0;
-		void Events();
+		virtual void Events();
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
-
-		virtual SDL_Window* GetWindow() const = 0;
-		virtual SDL_GLContext GetGLContext() const = 0;
 
 		// Window attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
+
+		virtual void* GetNativeWindow() const = 0;
+		virtual void* GetNativeContext() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
 

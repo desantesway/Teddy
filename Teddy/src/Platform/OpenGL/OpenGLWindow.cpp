@@ -49,8 +49,8 @@ namespace Teddy {
 		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		m_Context = SDL_GL_CreateContext(m_Window);
 
-		int status =  gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)
-		TED_CORE_ASSERT(success, "Could not intialize GLAD!");;
+		int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
+		TED_CORE_ASSERT(status, "Could not intialize GLAD!");
 
 		//glfwSetWindowUserPointer(SDL_Window, &SDL_Data);
 		SetVSync(true);

@@ -2,8 +2,8 @@
 add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddy_pch.cpp   
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.cpp   
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Log.cpp
@@ -19,7 +19,7 @@ add_library(Teddy SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDL_Events.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDLEvent.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
@@ -32,11 +32,15 @@ add_library(Teddy SHARED
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Input.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.cpp
     
 )
 
 target_precompile_headers(Teddy PRIVATE
-                            src/teddy_pch.h)
+                            src/teddyPch.h)
 
 target_include_directories(Teddy PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -53,5 +57,5 @@ set_target_properties(Teddy PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
     RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
-    PCH_INCLUDE "teddy_pch.h"
+    PCH_INCLUDE "teddyPch.h"
 )

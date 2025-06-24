@@ -1,4 +1,4 @@
-#include "teddy_pch.h"
+#include "teddyPch.h"
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
@@ -25,8 +25,8 @@ namespace Teddy
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 		Application& app = Application::Get();
-		SDL_Window* window = app.GetWindow().GetWindow();
-		SDL_GLContext glcontext = app.GetWindow().GetGLContext();
+		SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
+		SDL_GLContext glcontext = static_cast<SDL_GLContext>(app.GetWindow().GetNativeContext());
 
 		ImGui_ImplSDL3_InitForOpenGL(window, glcontext);
 		ImGui_ImplOpenGL3_Init("#version 410");
@@ -105,7 +105,7 @@ namespace Teddy
 
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ 
 		ImGuiIO& io = ImGui::GetIO();
-		io.AddKeyEvent(ImGui_ImplSDL3_KeyEventToImGuiKey(e.GetKeyCode(), (SDL_Scancode)e.GetKeyCode()), true);
+		io.AddKeyEvent(ImGui_ImplSDL3_KeyEventToImGuiKey(e.GetKeyCode(), (SDL_Scancode)e.GetKeyCode()), true); // bug in numpad and etc
 
 		if (e.GetKeyCode() == SDLK_LCTRL || e.GetKeyCode() == SDLK_RCTRL) {
 			io.AddKeyEvent(ImGuiMod_Ctrl, true); m_crtl++;

@@ -1,10 +1,12 @@
-#include "teddy_pch.h"
+#include "teddyPch.h"
 #include "Application.h"
 
 #include "Teddy/Log.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
+
+#include "Teddy/Input.h"
 
 namespace Teddy {
 
@@ -56,6 +58,10 @@ namespace Teddy {
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			bool x = Input::IsKeyPressed(SDLK_A);
+			bool y = Input::IsKeyPressed(SDLK_A);
+			TED_CORE_TRACE("{0} {1}", x, y);
 
 			m_Window->OnUpdate();
 		}
