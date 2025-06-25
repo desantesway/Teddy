@@ -17,6 +17,11 @@ namespace Teddy {
 		m_Context = SDL_GL_CreateContext(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 		TED_CORE_ASSERT(status, "Could not intialize GLAD!");
+
+		TED_CORE_INFO("OpenGL Info:");
+		TED_CORE_INFO("  Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+		TED_CORE_INFO("  Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+		TED_CORE_INFO("  Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 	}
 
 	void OpenGLContext::SwapBuffers()
