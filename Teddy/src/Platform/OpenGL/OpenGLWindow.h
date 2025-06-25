@@ -6,6 +6,8 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
 
+#include "Teddy/Renderer/GraphicsContext.h"
+
 namespace Teddy {
 
 	class OpenGLWindow : public Window
@@ -21,7 +23,7 @@ namespace Teddy {
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
 
 		inline virtual void* GetNativeWindow() const override  { return m_Window; }
-		inline virtual void* GetNativeContext() const override { return m_Context; }
+		inline virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFn& callback) override {EventCallback = callback; }
@@ -33,7 +35,7 @@ namespace Teddy {
 	private:
 
 		SDL_Window* m_Window;
-		SDL_GLContext m_Context;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

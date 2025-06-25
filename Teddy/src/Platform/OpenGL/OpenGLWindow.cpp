@@ -4,6 +4,8 @@
 #include "Teddy/Events/MouseEvent.h"
 #include "Teddy/Events/KeyEvent.h"
 
+#include "Platform/OpenGL/OpenGLContext.h"
+
 namespace Teddy {
 	
 	static bool SDL_Initialized = false;
@@ -47,19 +49,18 @@ namespace Teddy {
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-		m_Context = SDL_GL_CreateContext(m_Window);
 
-		int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
-		TED_CORE_ASSERT(status, "Could not intialize GLAD!");
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
 
-		//glfwSetWindowUserPointer(SDL_Window, &SDL_Data);
 		SetVSync(true);
 		
 	}
 
 	void OpenGLWindow::Shutdown()
 	{	
-		SDL_GL_DestroyContext(m_Context);
+		m_Context->Shutdown();
+
 		if (m_Window) {
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;
@@ -72,7 +73,7 @@ namespace Teddy {
 	void OpenGLWindow::OnUpdate()
 	{
 		Events();
-		SDL_GL_SwapWindow(m_Window);
+		m_Context->SwapBuffers();
 	}
 
     void OpenGLWindow::SetVSync(bool enabled)

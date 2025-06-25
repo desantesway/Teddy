@@ -32,7 +32,7 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/ImGuiBuild.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLImGuiBuild.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.h
@@ -44,6 +44,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/CodeConverter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/CodeConverter.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsContext.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.h
 )
 
 target_precompile_headers(Teddy PRIVATE
