@@ -1,5 +1,5 @@
 # shared library Teddy
-add_library(Teddy SHARED
+add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.h 
@@ -32,6 +32,7 @@ add_library(Teddy SHARED
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/ImGuiBuild.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/SDLInput.h
@@ -57,6 +58,7 @@ target_compile_definitions(Teddy PRIVATE
     $<$<CONFIG:Release>:TED_RELEASE>
     $<$<CONFIG:Dist>:TED_DIST>
     TED_BUILD_DLL
+    _CRT_SECURE_NO_WARNINGS
 )
 
 set_target_properties(Teddy PROPERTIES

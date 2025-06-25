@@ -17,7 +17,14 @@ public:
 
 	void OnEvent(Teddy::Event& event) override
 	{
-		TED_TRACE("{0}", event);
+		//TED_TRACE("{0}", event);
+	}
+
+	void OnImGuiRender() override
+	{
+		ImGui::Begin("Example Layer");
+		ImGui::Text("Hello, this is an example layer!");
+		ImGui::End();
 	}
 
 };

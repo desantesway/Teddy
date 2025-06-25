@@ -3,10 +3,14 @@
 #pragma once
 
 #ifdef TED_PLATFORM_WINDOWS
-	#ifdef TED_BUILD_DLL
-		#define TED_API __declspec(dllexport)
+	#if TED_DYNAMIC_LINK
+		#ifdef TED_BUILD_DLL
+			#define TED_API __declspec(dllexport)
+		#else
+			#define TED_API __declspec(dllimport)
+	#endif
 	#else
-		#define TED_API __declspec(dllimport)
+		#define TED_API
 	#endif
 #else
 	#error "Teddy only supports Windows platform."
