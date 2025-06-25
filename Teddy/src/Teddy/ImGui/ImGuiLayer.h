@@ -12,10 +12,15 @@ namespace Teddy
 	public:
 		ImGuiLayer();
 		~ImGuiLayer();
-		void OnAttach();
-		void OnDetach();
-		void OnUpdate();
-		void OnEvent(Event& event);
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
+
+		// SDL consumes events when listened, so we cant use the default ImGui event handling.
+		virtual void OnEvent(Event& event);
+
+		void Begin();
+		void End();
 	private:
 		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
@@ -26,7 +31,5 @@ namespace Teddy
 		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
 		bool OnKeyTypedEvent(KeyTypedEvent& e);
 		bool OnWindowResizeEvent(WindowResizeEvent& e);
-
-		float m_Time = 0.0f;
 	};
 } // namespace Teddy

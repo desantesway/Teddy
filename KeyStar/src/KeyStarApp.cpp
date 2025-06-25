@@ -1,5 +1,7 @@
 #include <Teddy.h>
 
+#include "imgui.h"
+
 class ExampleLayer : public Teddy::Layer
 {
 public:
@@ -24,7 +26,6 @@ class KeyStar : public Teddy::Application {
 public:
 	KeyStar() {
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Teddy::ImGuiLayer());
 	}
 	~KeyStar() {
 		// Cleanup code can go here

@@ -8,6 +8,8 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 
+#include "Teddy/ImGui/ImGuiLayer.h"
+
 namespace Teddy{
 
 	class TED_API Application
@@ -29,6 +31,7 @@ namespace Teddy{
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
