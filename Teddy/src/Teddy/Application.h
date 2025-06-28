@@ -10,6 +10,8 @@
 
 #include "Teddy/ImGui/ImGuiLayer.h"
 
+#include "Teddy/Renderer/Shader.h"
+
 namespace Teddy{
 
 	class TED_API Application
@@ -29,6 +31,7 @@ namespace Teddy{
 			inline Window& GetWindow() { return *m_Window; }
 
 			unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+			std::unique_ptr<Shader> m_Shader;
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
