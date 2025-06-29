@@ -11,6 +11,7 @@
 #include "Teddy/ImGui/ImGuiLayer.h"
 
 #include "Teddy/Renderer/Shader.h"
+#include "Teddy/Renderer/Buffer.h"
 
 namespace Teddy{
 
@@ -30,8 +31,10 @@ namespace Teddy{
 			inline static Application& Get() { return *s_Instance; }
 			inline Window& GetWindow() { return *m_Window; }
 
-			unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+			unsigned int m_VertexArray;
 			std::unique_ptr<Shader> m_Shader;
+			std::unique_ptr <VertexBuffer> m_VertexBuffer; // buffer of the vertices
+			std::unique_ptr <IndexBuffer> m_IndexBuffer; // buffer that draws the pixels with the vertices
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 

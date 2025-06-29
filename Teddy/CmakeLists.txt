@@ -50,6 +50,15 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Shader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Shader.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Buffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Buffer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.cpp
+    
 )
 
 target_precompile_headers(Teddy PRIVATE
