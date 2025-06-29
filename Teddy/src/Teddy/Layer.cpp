@@ -8,9 +8,4 @@ namespace Teddy {
 	{
 	}
 
-	Layer::~Layer()
-	{
-
-	}
-
 }

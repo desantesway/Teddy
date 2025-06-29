@@ -20,8 +20,6 @@ namespace Teddy
 	ImGuiLayer::ImGuiLayer()
 		:Layer("ImGuiLayer"){}
 
-	ImGuiLayer::~ImGuiLayer() {}
-
 	void ImGuiLayer::OnAttach() {
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();

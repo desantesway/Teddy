@@ -29,7 +29,7 @@ namespace Teddy {
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
 		
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
 		virtual void Events();
