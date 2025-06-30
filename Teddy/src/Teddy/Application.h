@@ -12,6 +12,7 @@
 
 #include "Teddy/Renderer/Shader.h"
 #include "Teddy/Renderer/Buffer.h"
+#include "Teddy/Renderer/VertexArray.h"
 
 namespace Teddy{
 
@@ -31,10 +32,6 @@ namespace Teddy{
 			inline static Application& Get() { return *s_Instance; }
 			inline Window& GetWindow() { return *m_Window; }
 
-			unsigned int m_VertexArray;
-			std::unique_ptr<Shader> m_Shader;
-			std::unique_ptr <VertexBuffer> m_VertexBuffer; // buffer of the vertices
-			std::unique_ptr <IndexBuffer> m_IndexBuffer; // buffer that draws the pixels with the vertices
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
@@ -43,7 +40,14 @@ namespace Teddy{
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
+		std::shared_ptr<Shader> m_Shader;
+		std::shared_ptr<VertexArray> m_VertexArray;
+
+		std::shared_ptr<Shader> m_BlueShader;
+		std::shared_ptr<VertexArray> m_SquareVA;
+
 		static Application* s_Instance;
+
 	};
 
 	// to be defined in CLIENT
