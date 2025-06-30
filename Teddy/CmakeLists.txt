@@ -70,6 +70,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
     
 )
 

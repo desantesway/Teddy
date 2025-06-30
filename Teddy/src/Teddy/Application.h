@@ -14,6 +14,8 @@
 #include "Teddy/Renderer/Buffer.h"
 #include "Teddy/Renderer/VertexArray.h"
 
+#include "Teddy/Renderer/OrthographicCamera.h"
+
 namespace Teddy{
 
 	class TED_API Application
@@ -45,6 +47,8 @@ namespace Teddy{
 
 		std::shared_ptr<Shader> m_BlueShader;
 		std::shared_ptr<VertexArray> m_SquareVA;
+
+		OrthographicCamera m_Camera;
 
 		static Application* s_Instance;
 
