@@ -1,21 +1,16 @@
 #pragma once
 
-namespace Teddy {
+#include "RenderCommand.h"
 
-	enum class RendererAPI {
-		None = 0,
-		OpenGL = 1,
-		Vulkan = 2,
-		DirectX11 = 3,
-		DirectX12 = 4,
-		Metal = 5
-	};
+namespace Teddy {
 
 	class Renderer {
 	public:
-		inline static void SetAPI(RendererAPI API) { s_RendererAPI = API; }
-		inline static RendererAPI GetAPI() { return s_RendererAPI; }
-	private:
-		static RendererAPI s_RendererAPI;
+		static void BeginScene();
+		static void EndScene();
+
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	};
 }

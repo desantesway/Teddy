@@ -11,11 +11,11 @@ namespace Teddy {
 
 	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
 		switch (Renderer::GetAPI()) {
-			case RendererAPI::None:    
+		case RendererAPI::API::None:    
 				TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 				return nullptr;
 			#if TED_PLATFORM_WINDOWS
-			case RendererAPI::OpenGL:    return new OpenGLVertexBuffer(vertices, size);
+			case RendererAPI::API::OpenGL:    return new OpenGLVertexBuffer(vertices, size);
 			#endif
 		}
 
@@ -25,11 +25,11 @@ namespace Teddy {
 
 	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size){
 		switch (Renderer::GetAPI()) {
-			case RendererAPI::None:
+			case RendererAPI::API::None:
 				TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 				return nullptr;
 			#if TED_PLATFORM_WINDOWS
-			case RendererAPI::OpenGL:    return new OpenGLIndexBuffer(indices, size);
+			case RendererAPI::API::OpenGL:    return new OpenGLIndexBuffer(indices, size);
 			#endif
 		}
 

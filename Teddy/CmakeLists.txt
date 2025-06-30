@@ -63,6 +63,13 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/VertexArray.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RendererAPI.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RendererAPI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.cpp
     
 )
 

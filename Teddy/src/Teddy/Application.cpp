@@ -11,6 +11,8 @@
 #include "Teddy/KeyCodes.h"
 #include "Teddy/MouseCodes.h"
 
+#include "Teddy/Renderer/Renderer.h"
+
 namespace Teddy {
 
 	Application* Application::s_Instance = nullptr;
@@ -151,16 +153,17 @@ namespace Teddy {
 	void Application::Run() {
 		while (m_Running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+			
+			Renderer::BeginScene();
 
 			m_BlueShader->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_SquareVA);
 
-			m_Shader->Bind(); // bind shader before drawing
-			m_VertexArray->Bind(); // bind vertex array before drawing
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_Shader->Bind();
+			Renderer::Submit(m_VertexArray);
+
+			Renderer::EndScene();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
