@@ -73,6 +73,8 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Timestep.h
     
 )
 
