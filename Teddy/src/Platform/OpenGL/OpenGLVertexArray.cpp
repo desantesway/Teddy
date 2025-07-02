@@ -49,17 +49,17 @@ namespace Teddy {
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
-		uint32_t index = 0;
 		const auto& layoutRef = vertexBuffer->GetLayout();
 		for (const auto& element : layoutRef)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(),
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex,
+				element.GetComponentCount(),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layoutRef.GetStride(),
-				(const void*)element.Offset); // describing data at index index		
-			index++;
+				(const void*)(intptr_t)element.Offset); // describing data at index index		
+			m_VertexBufferIndex++;
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);
