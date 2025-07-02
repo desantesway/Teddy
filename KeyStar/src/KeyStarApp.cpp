@@ -157,7 +157,7 @@ public:
 
 		m_TextureShader.reset(Teddy::Shader::Create(texShaderVertexSrc, texShaderFragmentSrc));
 
-		m_Texture = Teddy::Texture2D::Create("assets/textures/piano/whiteshadow.png");
+		m_Texture = Teddy::Texture2D::Create("assets/textures/piano/pedal/sus.png");
 
 		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->Bind();
 		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
@@ -189,7 +189,7 @@ public:
 
 		Teddy::Renderer::BeginScene(m_Camera);
 
-		glm::vec3 grayColor(0.8f, 0.8f, 0.8f);
+		glm::vec3 whiteColor(1.0f, 1.0f, 1.0f);
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -206,7 +206,7 @@ public:
 					std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 				}
 				else {
-					std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->UploadUniformFloat3("u_Color", grayColor);
+					std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->UploadUniformFloat3("u_Color", whiteColor);
 				}
 
 				Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
