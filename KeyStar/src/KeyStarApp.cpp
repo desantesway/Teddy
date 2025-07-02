@@ -24,7 +24,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 1.0f, 1.0f
 		};
 
-		std::shared_ptr<Teddy::VertexBuffer> vertexBuffer;
+		Teddy::Ref<Teddy::VertexBuffer> vertexBuffer;
 		vertexBuffer.reset(Teddy::VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		Teddy::BufferLayout layout = {
@@ -36,7 +36,7 @@ public:
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		std::shared_ptr<Teddy::IndexBuffer> indexBuffer;
+		Teddy::Ref<Teddy::IndexBuffer> indexBuffer;
 		indexBuffer.reset(Teddy::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -48,14 +48,14 @@ public:
 			 0.5f,  0.5f, 0.0f,
 			-0.5f,  0.5f, 0.0f
 		};
-		std::shared_ptr<Teddy::VertexBuffer> squareVB;
+		Teddy::Ref<Teddy::VertexBuffer> squareVB;
 		squareVB.reset(Teddy::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
 			{ Teddy::ShaderDataType::Float3, "a_Position" }
 			});
 		m_SquareVA->AddVertexBuffer(squareVB);
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<Teddy::IndexBuffer> squareIB;
+		Teddy::Ref<Teddy::IndexBuffer> squareIB;
 		squareIB.reset(Teddy::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -202,11 +202,11 @@ public:
 
 private:
 
-	std::shared_ptr<Teddy::Shader> m_Shader;
-	std::shared_ptr<Teddy::VertexArray> m_VertexArray;
+	Teddy::Ref<Teddy::Shader> m_Shader;
+	Teddy::Ref<Teddy::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Teddy::Shader> m_BlueShader;
-	std::shared_ptr<Teddy::VertexArray> m_SquareVA;
+	Teddy::Ref<Teddy::Shader> m_BlueShader;
+	Teddy::Ref<Teddy::VertexArray> m_SquareVA;
 
 	Teddy::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

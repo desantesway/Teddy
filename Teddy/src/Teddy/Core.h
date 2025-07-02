@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <memory>
+
 #ifdef TED_PLATFORM_WINDOWS
 	#if TED_DYNAMIC_LINK
 		#ifdef TED_BUILD_DLL
@@ -32,3 +34,13 @@
 #define BIT(x) (1 << x)
 
 #define TED_BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+
+namespace Teddy {
+
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+
+}
