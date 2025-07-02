@@ -75,7 +75,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Timestep.h
-    
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

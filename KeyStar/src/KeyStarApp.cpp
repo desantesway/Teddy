@@ -1,8 +1,12 @@
 #include <Teddy.h>
 
+#include "Platform/OpenGL/OpenGLShader.h"
+
 #include "imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 class ExampleLayer : public Teddy::Layer
 {
@@ -87,7 +91,7 @@ public:
 			}
 		)";
 
-		m_Shader.reset(new Teddy::Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(Teddy::Shader::Create(vertexSrc, fragmentSrc));
 
 		std::string blueShaderVertexSrc = R"(
 			#version 330 core
@@ -108,13 +112,16 @@ public:
 			#version 330 core
 			layout(location = 0) out vec4 color;
 			in vec3 v_Position;
+	
+			uniform vec3 u_Color;
+
 			void main()
 			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 
-		m_BlueShader.reset(new Teddy::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+		m_BlueShader.reset(Teddy::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
 	}
 
 	void OnUpdate(Teddy::Timestep ts) override
@@ -143,13 +150,26 @@ public:
 
 		Teddy::Renderer::BeginScene(m_Camera);
 
+		glm::vec3 grayColor(0.8f, 0.8f, 0.8f);
+
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-		for (int y = 0; y < 20; y++)
+
+		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->Bind();
+
+		for (int y = -20; y < 20; y++)
 		{
-			for (int x = 0; x < 20; x++)
+			for (int x = -20; x < 20; x++)
 			{
-				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+				glm::vec3 pos(x * 0.1f, y * 0.1f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
+
+				if ((x+y)% 2 == 0) {
+					std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+				}
+				else {
+					std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_BlueShader)->UploadUniformFloat3("u_Color", grayColor);
+				}
+
 				Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
 			}
 		}
@@ -174,8 +194,9 @@ public:
 
 	void OnImGuiRender() override
 	{
-		ImGui::Begin("Example Layer");
-		ImGui::Text("Hello, this is an example layer!");
+		ImGui::Begin("Settings");
+		ImGui::Text("ChangeColor");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
 
@@ -190,6 +211,7 @@ private:
 	Teddy::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 
+	glm::vec3 m_SquareColor = {0.2f, 0.1f, 1.0f};
 	glm::vec3 m_SquarePosition;
 };
 
