@@ -78,6 +78,11 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

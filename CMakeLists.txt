@@ -88,6 +88,10 @@ target_include_directories(imgui PUBLIC Teddy/vendor/ImGui Teddy/vendor/ImGui/ba
 target_link_libraries(Teddy PRIVATE imgui)
 target_link_libraries(KeyStar PRIVATE imgui)
 
-#GLM
+# GLM
 target_include_directories(Teddy PRIVATE Teddy/vendor/GLM)
 target_include_directories(KeyStar PRIVATE Teddy/vendor/GLM)
+
+# stb_image
+target_include_directories(Teddy PRIVATE Teddy/vendor/stb_image)
+target_include_directories(KeyStar PRIVATE Teddy/vendor/stb_image)

@@ -42,16 +42,17 @@ public:
 
 		m_SquareVA.reset(Teddy::VertexArray::Create());
 
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+		float squareVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 		Teddy::Ref<Teddy::VertexBuffer> squareVB;
 		squareVB.reset(Teddy::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
-			{ Teddy::ShaderDataType::Float3, "a_Position" }
+			{ Teddy::ShaderDataType::Float3, "a_Position" },
+			{ Teddy::ShaderDataType::Float2, "a_TexCoord" }
 			});
 		m_SquareVA->AddVertexBuffer(squareVB);
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -122,6 +123,44 @@ public:
 		)";
 
 		m_BlueShader.reset(Teddy::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+
+		std::string texShaderVertexSrc = R"(
+			#version 330 core
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);		
+			}
+		)";
+		std::string texShaderFragmentSrc = R"(
+
+			#version 330 core
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+	
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+		m_TextureShader.reset(Teddy::Shader::Create(texShaderVertexSrc, texShaderFragmentSrc));
+
+		m_Texture = Teddy::Texture2D::Create("assets/textures/piano/whiteshadow.png");
+
+		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Teddy::Timestep ts) override
@@ -174,9 +213,13 @@ public:
 			}
 		}
 
-		glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
-		Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, squareTransform);
-		Teddy::Renderer::Submit(m_Shader, m_VertexArray);
+		m_Texture->Bind();
+		Teddy::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+		// triangle and square
+		//glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
+		//Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, squareTransform);
+		//Teddy::Renderer::Submit(m_Shader, m_VertexArray);
 
 		Teddy::Renderer::EndScene();
 	}
@@ -205,8 +248,10 @@ private:
 	Teddy::Ref<Teddy::Shader> m_Shader;
 	Teddy::Ref<Teddy::VertexArray> m_VertexArray;
 
-	Teddy::Ref<Teddy::Shader> m_BlueShader;
+	Teddy::Ref<Teddy::Shader> m_BlueShader, m_TextureShader;
 	Teddy::Ref<Teddy::VertexArray> m_SquareVA;
+
+	Teddy::Ref<Teddy::Texture2D> m_Texture;
 
 	Teddy::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
