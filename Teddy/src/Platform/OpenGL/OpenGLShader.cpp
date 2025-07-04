@@ -18,11 +18,18 @@ namespace Teddy {
 		std::string shaderSrc = ReadFile(filepath);
 		auto shaderSources = PreProcess(shaderSrc);
 		Compile(shaderSources);
+	
+		// Extract name from filepath
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filepath.rfind('.');
+		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+		m_Name = filepath.substr(lastSlash, count);
 	}
-
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc) 
+	
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		:m_Name(name)
 	{
-		
 		std::unordered_map<GLenum, std::string> sources;
 
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -62,7 +69,10 @@ namespace Teddy {
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSrcs) {
 
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSrcs.size());
+		TED_CORE_ASSERT(shaderSrcs.size() <= 2, "We only support 2 shaders!");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
+
 		for (auto& kv : shaderSrcs) {
 			GLenum type = kv.first;
 			const std::string& source = kv.second;
@@ -93,7 +103,8 @@ namespace Teddy {
 			}
 
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex] = shader;
+			glShaderIDIndex++;
 		}
 
 		glLinkProgram(program);
@@ -128,7 +139,7 @@ namespace Teddy {
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath) {
 		std::string result;
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
 		if (in)
 		{

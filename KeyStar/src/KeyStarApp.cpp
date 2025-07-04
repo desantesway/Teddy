@@ -1,6 +1,7 @@
 #include <Teddy.h>
 
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Teddy/Renderer/Shader.h"
 
 #include "imgui.h"
 
@@ -92,7 +93,7 @@ public:
 			}
 		)";
 
-		m_Shader.reset(Teddy::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader = Teddy::Shader::Create("triangleShader", vertexSrc, fragmentSrc);
 
 		std::string blueShaderVertexSrc = R"(
 			#version 330 core
@@ -122,14 +123,15 @@ public:
 			}
 		)";
 
-		m_BlueShader.reset(Teddy::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+		m_BlueShader = Teddy::Shader::Create("blueShader", blueShaderVertexSrc, blueShaderFragmentSrc);
 
-		m_TextureShader.reset(Teddy::Shader::Create("assets/shaders/Texture.glsl"));
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Teddy::Texture2D::Create("assets/textures/piano/pedal/sus.png");
+		m_TextureKey = Teddy::Texture2D::Create("assets/textures/piano/black.png");
 
-		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Teddy::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Teddy::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Teddy::Timestep ts) override
@@ -182,8 +184,12 @@ public:
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
+		m_TextureKey->Bind();
+		Teddy::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 		m_Texture->Bind();
-		Teddy::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Teddy::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		// triangle and square
 		glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
@@ -213,14 +219,15 @@ public:
 	}
 
 private:
+	Teddy::ShaderLibrary m_ShaderLibrary;
 
 	Teddy::Ref<Teddy::Shader> m_Shader;
 	Teddy::Ref<Teddy::VertexArray> m_VertexArray;
 
-	Teddy::Ref<Teddy::Shader> m_BlueShader, m_TextureShader;
+	Teddy::Ref<Teddy::Shader> m_BlueShader;
 	Teddy::Ref<Teddy::VertexArray> m_SquareVA;
 
-	Teddy::Ref<Teddy::Texture2D> m_Texture;
+	Teddy::Ref<Teddy::Texture2D> m_Texture, m_TextureKey;
 
 	Teddy::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
