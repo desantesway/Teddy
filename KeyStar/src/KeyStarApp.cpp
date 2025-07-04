@@ -150,14 +150,7 @@ public:
 
 	void OnEvent(Teddy::Event& event) override
 	{
-		m_CameraController.OnEvent(event);
-		Teddy::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(ExampleLayer::OnKeyPressedEvent));
-	}
-
-	bool OnKeyPressedEvent(Teddy::KeyPressedEvent& event)
-	{
-		return false; 
+		m_CameraController.OnEvent(event); // didnt do changing zoom level
 	}
 
 	void OnImGuiRender() override

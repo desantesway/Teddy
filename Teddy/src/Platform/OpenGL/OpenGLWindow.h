@@ -22,6 +22,9 @@ namespace Teddy {
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
 
+		inline void SetWidth(int width) override { m_Data.Width = width; }
+		inline void SetHeight(int height) override { m_Data.Height = height; }
+
 		inline virtual void* GetNativeWindow() const override  { return m_Window; }
 		inline virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
 
