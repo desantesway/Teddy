@@ -83,6 +83,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/OrthographicCameraController.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/OrthographicCameraController.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

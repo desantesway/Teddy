@@ -13,8 +13,7 @@ class ExampleLayer : public Teddy::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), 
-		m_CameraPosition(0.0f),
+		: Layer("Example"), m_CameraController(1920.0f / 1080.0f, true), 
 		m_SquarePosition(0.0f)
 	{
 		m_VertexArray.reset(Teddy::VertexArray::Create());
@@ -61,40 +60,6 @@ public:
 		squareIB.reset(Teddy::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
-		std::string vertexSrc = R"(
-
-			#version 330 core
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-
-			out vec3 v_Position;
-			out vec4 v_Color;
-			void main()
-			{
-				v_Position = a_Position;
-				v_Color = a_Color;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);		
-			}
-		)";
-		std::string fragmentSrc = R"(
-
-			#version 330 core
-			layout(location = 0) out vec4 color;
-
-			in vec3 v_Position;
-			in vec4 v_Color;
-			void main()
-			{
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
-				color = v_Color;
-			}
-		)";
-
-		m_Shader = Teddy::Shader::Create("triangleShader", vertexSrc, fragmentSrc);
-
 		std::string blueShaderVertexSrc = R"(
 			#version 330 core
 			layout(location = 0) in vec3 a_Position;
@@ -136,29 +101,14 @@ public:
 
 	void OnUpdate(Teddy::Timestep ts) override
 	{
+		m_CameraController.OnUpdate(ts);
 
 		//TED_TRACE("Delta time: {0}s {1}ms", ts.GetSeconds(), ts.GetMilliseconds());
-
-		if (Teddy::Input::IsKeyPressed(TED_KEY_LEFT)) {
-			m_CameraPosition.x -= 5.0f * ts.GetSeconds();
-		} else if (Teddy::Input::IsKeyPressed(TED_KEY_RIGHT)) {
-			m_CameraPosition.x += 5.0f * ts.GetSeconds();
-		}
-
-		if (Teddy::Input::IsKeyPressed(TED_KEY_A)) {
-			m_SquarePosition.x -= 2.5f * ts.GetSeconds();
-		}
-		else if (Teddy::Input::IsKeyPressed(TED_KEY_D)) {
-			m_SquarePosition.x += 2.5f * ts.GetSeconds();
-		}
 
 		Teddy::RenderCommand::SetClearColor({ 0.9f, 0.1f, 0.1f, 1 });
 		Teddy::RenderCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
-		//m_Camera.SetRotation(45.0f);
-
-		Teddy::Renderer::BeginScene(m_Camera);
+		Teddy::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		glm::vec3 whiteColor(1.0f, 1.0f, 1.0f);
 
@@ -191,16 +141,16 @@ public:
 		m_Texture->Bind();
 		Teddy::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
-		// triangle and square
-		glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
-		Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, squareTransform);
-		//Teddy::Renderer::Submit(m_Shader, m_VertexArray);
+		//  square
+		//glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
+		//Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, squareTransform);
 
 		Teddy::Renderer::EndScene();
 	}
 
 	void OnEvent(Teddy::Event& event) override
 	{
+		m_CameraController.OnEvent(event);
 		Teddy::EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(ExampleLayer::OnKeyPressedEvent));
 	}
@@ -229,8 +179,7 @@ private:
 
 	Teddy::Ref<Teddy::Texture2D> m_Texture, m_TextureKey;
 
-	Teddy::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
+	Teddy::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_SquareColor = {0.2f, 0.1f, 1.0f};
 	glm::vec3 m_SquarePosition;

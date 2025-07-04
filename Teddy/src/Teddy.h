@@ -12,6 +12,7 @@
 #include "Teddy/KeyCodes.h"
 #include "Teddy/MouseCodes.h"
 #include "Teddy/MidiCodes.h"
+#include "Teddy/OrthographicCameraController.h"
 
 #include "Teddy/ImGui/ImGuiLayer.h"
 
