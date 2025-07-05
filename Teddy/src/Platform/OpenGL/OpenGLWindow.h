@@ -38,7 +38,7 @@ namespace Teddy {
 	private:
 
 		SDL_Window* m_Window;
-		GraphicsContext* m_Context;
+		Scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{
