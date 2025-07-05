@@ -1,6 +1,9 @@
-.vs/
-bin/
-bin-int/
+# Ignore build directories
 VS-build/
 
-.user
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user

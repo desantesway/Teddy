@@ -8,7 +8,7 @@
 
 namespace Teddy
 {
-	Input* Input::s_Instance = new SDLInput();
+	Scope<Input> Input::s_Instance = CreateScope<SDLInput>();
 
 	bool SDLInput::IsKeyPressedImpl(int keycode) {
 		auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());

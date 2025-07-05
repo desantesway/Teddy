@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL3/SDL.h>
+
 namespace Teddy {
 
 	class GraphicsContext
@@ -11,5 +13,5 @@ namespace Teddy {
 		virtual void SwapBuffers() = 0;
 		virtual void Shutdown() = 0;
 	};
-
+	
 }
