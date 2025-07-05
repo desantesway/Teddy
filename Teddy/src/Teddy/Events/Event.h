@@ -1,7 +1,7 @@
 #pragma once	
 
 #include "teddyPch.h"
-#include "Teddy/Core.h"
+#include "Teddy/Core/Core.h"
 
 #include <SDL3/SDL.h>
 

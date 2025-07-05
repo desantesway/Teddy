@@ -8,11 +8,11 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
-#include "Teddy/Application.h"
+#include "Teddy/Core/Application.h"
 
-#include "Teddy/CodeConverter.h"
-#include "Teddy/KeyCodes.h"
-#include "Teddy/Input.h"
+#include "Teddy/Core/CodeConverter.h"
+#include "Teddy/Core/KeyCodes.h"
+#include "Teddy/Core/Input.h"
 
 namespace Teddy
 {

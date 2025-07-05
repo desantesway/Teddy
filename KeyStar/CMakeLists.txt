@@ -2,10 +2,13 @@ if(WIN32)
     add_executable(KeyStar WIN32)
     target_link_options(KeyStar PRIVATE
         $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:Release>:/SUBSYSTEM:CONSOLE>
     )
 else()
     add_executable(KeyStar)
 endif()
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bar)
 
 target_sources(KeyStar PRIVATE    
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStarApp.cpp
@@ -27,5 +30,6 @@ set_target_properties(KeyStar PROPERTIES
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bar)
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+     DESTINATION "${CMAKE_BINARY_DIR}/KeyStar/")
 

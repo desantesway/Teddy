@@ -1,8 +1,8 @@
 #include "teddyPch.h"
 #include "OrthographicCameraController.h"
 
-#include "Teddy/Input.h"
-#include "Teddy/KeyCodes.h"
+#include "Teddy/Core/Input.h"
+#include "Teddy/Core/KeyCodes.h"
 
 namespace Teddy
 {

@@ -22,32 +22,37 @@ endif()
 set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 set(OUTPUT_INT_DIR "${CMAKE_BINARY_DIR}/bin-int/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
-#sdl
-set(SDL_TEST OFF)
-
-#add_subdirectory(Teddy/vendor/SDL)
-include_directories(Teddy/vendor/SDL/include)
-
-# Add the precompiled library
-add_library(SDL3::SDL3 STATIC IMPORTED)
-set_target_properties(SDL3::SDL3 PROPERTIES
-    IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Debug/SDL3.lib"
-    IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Release/SDL3.lib"
-    IMPORTED_LOCATION_DIST "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Dist/SDL3.lib"
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/include"
-)
-
 # Engine & Application
 add_subdirectory(Teddy)
 add_subdirectory(KeyStar)
 
 target_link_libraries(KeyStar PRIVATE Teddy)
 
-# SDL3
-target_link_libraries(Teddy PRIVATE SDL3::SDL3)
-target_link_libraries(KeyStar PRIVATE SDL3::SDL3)
+#sdl
+set(SDL_TEST OFF)
+
+add_subdirectory(Teddy/vendor/SDL)
+include_directories(Teddy/vendor/SDL/include)
+
+# Add the precompiled library
+#add_library(SDL3::SDL3 STATIC IMPORTED)
+#set_target_properties(SDL3::SDL3 PROPERTIES
+#    IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Debug/SDL3.lib"
+#    IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Release/SDL3.lib"
+#    IMPORTED_LOCATION_DIST "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Dist/SDL3.lib"
+#    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/include"
+#)
+
+#set(SDL_STATIC ON CACHE INTERNAL "")
+#set(SDL3_DIR "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL" ${CMAKE_PREFIX_PATH})
+
+#find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-static)
+
+target_link_libraries(Teddy PRIVATE SDL3::SDL3-static)
+target_link_libraries(KeyStar PRIVATE SDL3::SDL3-static)
 
 # SpdLog
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries")
 add_subdirectory(Teddy/vendor/spdlog)
 
 target_link_libraries(Teddy PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
@@ -95,3 +100,10 @@ target_include_directories(KeyStar PRIVATE Teddy/vendor/GLM)
 # stb_image
 target_include_directories(Teddy PRIVATE Teddy/vendor/stb_image)
 target_include_directories(KeyStar PRIVATE Teddy/vendor/stb_image)
+
+# rtmidi
+add_subdirectory(Teddy/vendor/rtmidi)
+target_include_directories(Teddy PRIVATE Teddy/vendor/rtmidi/include)
+target_include_directories(KeyStar PRIVATE Teddy/vendor/rtmidi/include)
+target_link_libraries(Teddy PRIVATE rtmidi)
+target_link_libraries(KeyStar PRIVATE rtmidi)

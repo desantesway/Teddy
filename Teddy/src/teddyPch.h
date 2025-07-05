@@ -19,7 +19,7 @@
 
 //#include "Hazel/Core/Base.h"
 
-#include "Teddy/Log.h"
+#include "Teddy/Core/Log.h"
 
 //#include "Hazel/Debug/Instrumentor.h"
 

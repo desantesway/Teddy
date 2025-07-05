@@ -1,10 +1,10 @@
 #include "teddyPch.h"
 #include "SDLInput.h"
 
-#include "Teddy/Application.h"
+#include "Teddy/Core/Application.h"
 #include <SDL3/SDL.h>
 
-#include "Teddy/CodeConverter.h"
+#include "Teddy/Core/CodeConverter.h"
 
 namespace Teddy
 {

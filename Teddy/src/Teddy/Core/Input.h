@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Teddy/Core.h"
+#include "Teddy/Core/Core.h"
 
 namespace Teddy {
 	class TED_API Input {

@@ -1,17 +1,17 @@
 #pragma once	
 
 #include "teddyPch.h"
-#include "Teddy/Window.h"
+#include "Teddy/Core/Window.h"
 
 #include "Teddy/Events/ApplicationEvent.h"
 #include "Teddy/Events/KeyEvent.h"
 #include "Teddy/Events/MouseEvent.h"
 
-#include "Teddy/CodeConverter.h"
+#include "Teddy/Core/CodeConverter.h"
 
 namespace Teddy {
 
-	void Window::Events() {
+	void Window::SDLEvents() {
         SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {

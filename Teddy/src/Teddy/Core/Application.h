@@ -4,9 +4,9 @@
 
 #include "Window.h"
 
-#include "Teddy/LayerStack.h"
-#include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
+#include "Teddy/Core/LayerStack.h"
+#include "Teddy/Events/Event.h"
+#include "Teddy/Events/ApplicationEvent.h"
 
 #include "Teddy/Core/Timestep.h"
 

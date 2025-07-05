@@ -2,17 +2,17 @@
 
 // For use Teddy applications
 
-#include "Teddy/Application.h"
-#include "Teddy/Layer.h"
-#include "Teddy/Log.h"
+#include "Teddy/Core/Application.h"
+#include "Teddy/Core/Layer.h"
+#include "Teddy/Core/Log.h"
 
 #include "Teddy/Core/Timestep.h"
 
-#include "Teddy/Input.h"
-#include "Teddy/KeyCodes.h"
-#include "Teddy/MouseCodes.h"
-#include "Teddy/MidiCodes.h"
-#include "Teddy/OrthographicCameraController.h"
+#include "Teddy/Core/Input.h"
+#include "Teddy/Core/KeyCodes.h"
+#include "Teddy/Core/MouseCodes.h"
+#include "Teddy/Core/MidiCodes.h"
+#include "Teddy/Renderer/OrthographicCameraController.h"
 
 #include "Teddy/ImGui/ImGuiLayer.h"
 
@@ -29,5 +29,5 @@
 // ------------------------------------------
 
 // --- Entry Point --------------------------
-#include "Teddy/EntryPoint.h"
+#include "Teddy/Core/EntryPoint.h"
 // ------------------------------------------

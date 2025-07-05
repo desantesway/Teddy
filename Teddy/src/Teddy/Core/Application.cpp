@@ -1,15 +1,15 @@
 #include "teddyPch.h"
 #include "Application.h"
 
-#include "Teddy/Log.h"
+#include "Teddy/Core/Log.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
-#include "Teddy/Input.h"
-#include "Teddy/MidiCodes.h"
-#include "Teddy/KeyCodes.h"
-#include "Teddy/MouseCodes.h"
+#include "Teddy/Core/Input.h"
+#include "Teddy/Core/MidiCodes.h"
+#include "Teddy/Core/KeyCodes.h"
+#include "Teddy/Core/MouseCodes.h"
 
 #include "Teddy/Renderer/Renderer.h"
 

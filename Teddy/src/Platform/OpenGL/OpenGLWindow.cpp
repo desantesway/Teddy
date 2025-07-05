@@ -72,7 +72,8 @@ namespace Teddy {
 
 	void OpenGLWindow::OnUpdate()
 	{
-		Events();
+		SDLEvents();
+		RTMidiEvents();
 		m_Context->SwapBuffers();
 	}
 

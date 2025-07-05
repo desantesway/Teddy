@@ -2,7 +2,7 @@
 
 #include "teddyPch.h"
 
-#include "Teddy/Core.h"
+#include "Teddy/Core/Core.h"
 #include "Teddy/Events/Event.h"
 
 #include <SDL3/SDL.h>
@@ -32,7 +32,8 @@ namespace Teddy {
 		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
-		virtual void Events();
+		virtual void SDLEvents();
+		virtual void RTMidiEvents();
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
