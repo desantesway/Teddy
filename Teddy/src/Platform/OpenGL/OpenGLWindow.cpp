@@ -52,6 +52,10 @@ namespace Teddy {
 
 		m_Context = CreateScope<OpenGLContext>(m_Window);
 		m_Context->Init();
+		
+		midiDriver.Init(&EventCallback);
+		midiDriver.InitIn(0);
+		midiDriver.InitOut(2);
 
 		SetVSync(true);
 		
@@ -72,8 +76,9 @@ namespace Teddy {
 
 	void OpenGLWindow::OnUpdate()
 	{
+		midiDriver.OnUpdate();
 		SDLEvents();
-		RTMidiEvents();
+
 		m_Context->SwapBuffers();
 	}
 

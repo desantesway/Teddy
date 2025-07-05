@@ -9,4 +9,9 @@ namespace Teddy {
 
 	int TeddyToImGuiKey(int keycode);
 	int TeddyToImGuiMouse(int keycode);
+
+	int TeddyToRtmidi(int keycode);
+	int RtmidiToTeddy(int keycode);
+
+	std::string KeyToNote(unsigned int key);
 }

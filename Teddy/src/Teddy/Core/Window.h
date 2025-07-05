@@ -4,6 +4,7 @@
 
 #include "Teddy/Core/Core.h"
 #include "Teddy/Events/Event.h"
+#include "Teddy/Core/MidiDriver.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
@@ -20,7 +21,8 @@ namespace Teddy {
 			unsigned int width = 1920,
 			unsigned int height = 1080)
 			: Title(title), Width(width), Height(height)
-		{}
+		{
+		}
 	};
 
 	// Interface representing a desktop system based Window
@@ -33,7 +35,6 @@ namespace Teddy {
 
 		virtual void OnUpdate() = 0;
 		virtual void SDLEvents();
-		virtual void RTMidiEvents();
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
@@ -52,5 +53,6 @@ namespace Teddy {
 		static Window* Create(const WindowProps& props = WindowProps());
 
 		EventCallbackFn EventCallback;
+
 	};
 }

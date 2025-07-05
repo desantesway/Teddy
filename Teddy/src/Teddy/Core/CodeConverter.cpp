@@ -153,4 +153,57 @@ namespace Teddy {
 		return -1;
 	}
 
+    int TeddyToRtmidi(int keycode) {
+        // Teddy MIDI note codes are defined to match the MIDI note numbers (0-127)
+        // If the keycode is in the valid MIDI note range, return it as RtMidi code
+        if (keycode >= 0x00 && keycode <= 0x77) {
+            return keycode;
+        }
+        // Special case for pedal (sustain) control, if you use TED_MIDI_PEDAL
+        if (keycode == TED_MIDI_PEDAL) {
+            return 0x78;
+        }
+        // Not a valid MIDI note or mapped control
+        return 999;
+    }
+
+    int RtmidiToTeddy(int keycode) {
+        // Teddy MIDI note codes are defined to match the MIDI note numbers (0-127)
+        // If the keycode is in the valid MIDI note range, return it as Teddy code
+        if (keycode >= 0x00 && keycode <= 0x77) {
+            return keycode;
+        }
+        // Special case for pedal (sustain) control, if you use 0x78 for TED_MIDI_PEDAL
+        if (keycode == 0x78) {
+            return TED_MIDI_PEDAL;
+        }
+        // Not a valid MIDI note or mapped control
+        return 999;
+    }
+
+    std::string KeyToNote(unsigned int key) {
+        if (key < 0 || key > 119) {
+            return "Invalid note number";
+        }
+
+        const char* note;
+        switch (key % 12) {
+        case 0: note = "C"; break;
+        case 1: note = "C#"; break;
+        case 2: note = "D"; break;
+        case 3: note = "D#"; break;
+        case 4: note = "E"; break;
+        case 5: note = "F"; break;
+        case 6: note = "F#"; break;
+        case 7: note = "G"; break;
+        case 8: note = "G#"; break;
+        case 9: note = "A"; break;
+        case 10: note = "A#"; break;
+        case 11: note = "B"; break;
+        default: note = "?"; break;
+        }
+
+        int octave = key / 12;
+        return std::string(note) + std::to_string(octave);
+    }
 }

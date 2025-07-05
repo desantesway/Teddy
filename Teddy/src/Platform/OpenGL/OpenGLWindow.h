@@ -17,7 +17,6 @@ namespace Teddy {
 		virtual ~OpenGLWindow();
 
 		void OnUpdate() override;
-		
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -39,6 +38,7 @@ namespace Teddy {
 
 		SDL_Window* m_Window;
 		Scope<GraphicsContext> m_Context;
+		MidiDriver midiDriver;
 
 		struct WindowData
 		{

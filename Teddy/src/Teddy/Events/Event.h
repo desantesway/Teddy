@@ -11,7 +11,8 @@ namespace Teddy {
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender, // Application events
 		KeyPressed, KeyReleased, KeyTyped, // Keyboard events
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled // Mouse events
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled, // Mouse events
+		MidiKeyPressed, MidiKeyReleased, MidiPedalPressed, MidiPedalReleased // Midi events
 	};
 	
 	enum EventCategory {
@@ -20,7 +21,8 @@ namespace Teddy {
 		EventCategoryInput       = BIT(1),
 		EventCategoryKeyboard    = BIT(2),
 		EventCategoryMouse       = BIT(3),
-		EventCategoryMouseButton = BIT(4)
+		EventCategoryMouseButton = BIT(4),
+		EventCategoryMidi		 = BIT(5)
 	};
 
 	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\

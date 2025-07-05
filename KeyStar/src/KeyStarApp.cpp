@@ -145,6 +145,13 @@ public:
 		//glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
 		//Teddy::Renderer::Submit(m_BlueShader, m_SquareVA, squareTransform);
 
+		if (Teddy::Input::IsMidiKeyPressed(TED_MIDI_C4)) {
+			TED_INFO("C4 key pressed!");
+		}
+		
+		if (Teddy::Input::IsMidiPedalPressed()) {
+			TED_INFO("pedal pressed!");
+		}
 		Teddy::Renderer::EndScene();
 	}
 
