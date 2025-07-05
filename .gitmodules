@@ -1,12 +1,6 @@
-[submodule "Teddy/vendor/spdlog"]
-	path = Teddy/vendor/spdlog
-	url = https://github.com/gabime/spdlog
 [submodule "Teddy/vendor/SDL"]
 	path = Teddy/vendor/SDL
 	url = https://github.com/libsdl-org/SDL.git
-[submodule "Teddy/vendor/glad"]
-	path = Teddy/vendor/glad
-	url = https://github.com/Dav1dde/glad
 [submodule "Teddy/vendor/ImGui"]
 	path = Teddy/vendor/ImGui
 	url = https://github.com/ocornut/imgui.git
@@ -14,3 +8,9 @@
 [submodule "Teddy/vendor/GLM"]
 	path = Teddy/vendor/GLM
 	url = https://github.com/g-truc/glm
+[submodule "Teddy/vendor/spdlog"]
+	path = Teddy/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Teddy/vendor/rtmidi"]
+	path = Teddy/vendor/rtmidi
+	url = https://github.com/thestk/rtmidi.git
