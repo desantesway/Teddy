@@ -12,6 +12,8 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT b
 
 target_sources(KeyStar PRIVATE    
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStarApp.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStar2D.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStar2D.cpp
 )
 
 target_include_directories(KeyStar PUBLIC

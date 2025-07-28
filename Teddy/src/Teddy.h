@@ -27,7 +27,3 @@
 
 #include "Teddy/Renderer/OrthographicCamera.h"
 // ------------------------------------------
-
-// --- Entry Point --------------------------
-#include "Teddy/Core/EntryPoint.h"
-// ------------------------------------------

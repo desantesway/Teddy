@@ -1,13 +1,11 @@
+
 #include <Teddy.h>
 
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "Teddy/Renderer/Shader.h"
+// --- Entry Point --------------------------
+#include "Teddy/Core/EntryPoint.h"
+// ------------------------------------------
 
-#include "imgui.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "KeyStar2D.h"
 
 class ExampleLayer : public Teddy::Layer
 {
@@ -16,7 +14,7 @@ public:
 		: Layer("Example"), m_CameraController(1920.0f / 1080.0f, true), 
 		m_SquarePosition(0.0f)
 	{
-		m_VertexArray.reset(Teddy::VertexArray::Create());
+		m_VertexArray = Teddy::VertexArray::Create();
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.2f, 0.5f, 1.0f,
@@ -40,7 +38,7 @@ public:
 		indexBuffer.reset(Teddy::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_SquareVA.reset(Teddy::VertexArray::Create());
+		m_SquareVA = Teddy::VertexArray::Create();
 
 		float squareVertices[5 * 4] = {
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
@@ -157,7 +155,7 @@ public:
 
 	void OnEvent(Teddy::Event& event) override
 	{
-		m_CameraController.OnEvent(event); // didnt do changing zoom level
+		m_CameraController.OnEvent(event);
 	}
 
 	void OnImGuiRender() override
@@ -188,7 +186,8 @@ private:
 class KeyStar : public Teddy::Application {
 public:
 	KeyStar() {
-		PushLayer(new ExampleLayer());
+		// PushLayer(new ExampleLayer());
+		PushLayer(new KeyStar2D());
 	}
 	~KeyStar() {
 		// Cleanup code can go here
