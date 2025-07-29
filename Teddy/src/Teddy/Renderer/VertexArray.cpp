@@ -1,7 +1,7 @@
 #include "TeddyPch.h"
-#include "VertexArray.h"
+#include "Teddy/Renderer/VertexArray.h"
 
-#include "Renderer.h"
+#include "Teddy/Renderer/Renderer.h"
 
 #if TED_PLATFORM_WINDOWS
 	#include "Platform/OpenGL/OpenGLVertexArray.h"
@@ -16,7 +16,7 @@ namespace Teddy {
 			TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 			return nullptr;
 		#if TED_PLATFORM_WINDOWS
-		case RendererAPI::API::OpenGL:    return std::make_shared<OpenGLVertexArray>();
+		case RendererAPI::API::OpenGL:    return CreateRef<OpenGLVertexArray>();
 		#endif
 		}
 

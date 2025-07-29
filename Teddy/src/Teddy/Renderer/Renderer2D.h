@@ -1,8 +1,8 @@
 #pragma once
 
-#include "OrthographicCamera.h"
+#include "Teddy/Renderer/OrthographicCamera.h"
 
-#include "Texture.h"
+#include "Teddy/Renderer/Texture.h"
 
 namespace Teddy {
 

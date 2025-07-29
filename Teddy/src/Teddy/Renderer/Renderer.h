@@ -1,15 +1,17 @@
 #pragma once
 
-#include "RenderCommand.h"
+#include "Teddy/Renderer/RenderCommand.h"
 
-#include "OrthographicCamera.h"
-#include "Shader.h"
+#include "Teddy/Renderer/OrthographicCamera.h"
+#include "Teddy/Renderer/Shader.h"
 
 namespace Teddy {
 
 	class Renderer {
 	public:
 		static void Init();
+		static void Shutdown();
+
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(OrthographicCamera& camera);

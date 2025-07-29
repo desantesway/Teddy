@@ -1,7 +1,7 @@
 #include "teddyPch.h"
-#include "Texture.h"
+#include "Teddy/Renderer/Texture.h"
 
-#include "Renderer.h"
+#include "Teddy/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Teddy {

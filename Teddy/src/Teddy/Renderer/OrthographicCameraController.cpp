@@ -1,5 +1,5 @@
 #include "teddyPch.h"
-#include "OrthographicCameraController.h"
+#include "Teddy/Renderer/OrthographicCameraController.h"
 
 #include "Teddy/Core/Input.h"
 #include "Teddy/Core/KeyCodes.h"

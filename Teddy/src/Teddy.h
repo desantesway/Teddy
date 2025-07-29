@@ -2,6 +2,8 @@
 
 // For use Teddy applications
 
+#include "Teddy/Core/Core.h"
+
 #include "Teddy/Core/Application.h"
 #include "Teddy/Core/Layer.h"
 #include "Teddy/Core/Log.h"

@@ -44,22 +44,6 @@
 		#error "Unknown platform!"
 #endif // End of platform detection
 
-// DLL support
-#ifdef TED_PLATFORM_WINDOWS
-	#if TED_DYNAMIC_LINK
-		#ifdef TED_BUILD_DLL
-			#define TED_API __declspec(dllexport)
-		#else
-			#define TED_API __declspec(dllimport)
-	#endif
-	#else
-		#define TED_API
-	#endif
-#else
-	#error "Teddy only supports Windows platform."
-#endif
-
-
 #ifdef TED_DEBUG
 	#define TED_ENABLE_ASSERTS
 #endif

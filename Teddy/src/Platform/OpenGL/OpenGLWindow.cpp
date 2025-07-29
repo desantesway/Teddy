@@ -6,13 +6,15 @@
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
+// TODO: SUBSTRACT OPENGL CREATION
+
 namespace Teddy {
 	
 	static uint8_t s_SDLWindowCount = 0;
 
-	Window* Window::Create(const WindowProps& props)
+	Scope<Window> Window::Create(const WindowProps& props)
 	{
-		return new OpenGLWindow(props);
+		return CreateScope<OpenGLWindow>(props);
 	}
 
 	OpenGLWindow::OpenGLWindow(const WindowProps& props)
@@ -35,8 +37,6 @@ namespace Teddy {
 
 		if (s_SDLWindowCount == 0)
 		{
-			TED_CORE_INFO("Initializing GLFW");
-
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
 			int success = SDL_Init(SDL_INIT_VIDEO);
 			TED_CORE_ASSERT(success, "Could not intialize SDL!");
@@ -52,7 +52,7 @@ namespace Teddy {
 
 		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-		m_Context = CreateScope<OpenGLContext>(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 		
 		midiDriver.Init(&EventCallback);

@@ -1,5 +1,5 @@
 #include "teddyPch.h"
-#include "TeddyInput.h"
+#include "Teddy/Core/TeddyInput.h"
 
 #include "Teddy/Core/Application.h"
 #include <SDL3/SDL.h>

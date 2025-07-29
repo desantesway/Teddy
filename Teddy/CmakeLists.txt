@@ -45,6 +45,7 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/CodeConverter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/CodeConverter.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsContext.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsContext.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.h

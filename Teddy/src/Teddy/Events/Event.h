@@ -31,7 +31,7 @@ namespace Teddy {
 
 	#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class TED_API Event
+	class Event
 	{
 		friend class EventDispatcher;
 	public:

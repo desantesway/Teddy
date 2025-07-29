@@ -1,5 +1,5 @@
 #include "teddyPch.h"
-#include "OpenGLContext.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>

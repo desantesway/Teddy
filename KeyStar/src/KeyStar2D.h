@@ -5,7 +5,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Teddy/Renderer/Shader.h"
 
-#include "imgui.h"
+#include <imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
 

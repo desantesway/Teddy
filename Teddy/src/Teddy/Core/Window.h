@@ -26,7 +26,7 @@ namespace Teddy {
 	};
 
 	// Interface representing a desktop system based Window
-	class TED_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
@@ -50,7 +50,7 @@ namespace Teddy {
 		virtual void* GetNativeWindow() const = 0;
 		virtual void* GetNativeContext() const = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 
 		EventCallbackFn EventCallback;
 

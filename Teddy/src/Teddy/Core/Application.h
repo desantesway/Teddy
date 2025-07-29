@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core.h"
+#include "Teddy/Core/Core.h"
 
-#include "Window.h"
+#include "Teddy/Core/Window.h"
 
 #include "Teddy/Core/LayerStack.h"
 #include "Teddy/Events/Event.h"
@@ -14,11 +14,11 @@
 
 namespace Teddy{
 
-	class TED_API Application
+	class Application
 	{
 	public:
 			Application();
-			virtual ~Application() = default;
+			virtual ~Application();
 
 			void Run();
 

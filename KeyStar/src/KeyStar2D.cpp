@@ -28,10 +28,7 @@ void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 	Teddy::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, {0.9f, 0.3f, 0.1f, 1.0f});
 	Teddy::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_SustainTexture);
 	Teddy::Renderer2D::EndScene();
-	//std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_FlatColorShader)->Bind();
-	//std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
-
-	//Teddy::Renderer::Submit(m_FlatColorShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+	
 }
 
 void KeyStar2D::OnEvent(Teddy::Event& event)

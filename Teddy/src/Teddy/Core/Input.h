@@ -4,7 +4,7 @@
 #include "Teddy/Events/Event.h"
 
 namespace Teddy {
-	class TED_API Input {
+	class Input {
 
 	protected:
 		Input() = default;

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Teddy/Core/Core.h"
-#include "Layer.h"
+#include "Teddy/Core/Layer.h"
 
 #include <vector>
 
 namespace Teddy {
 
-	class TED_API LayerStack
+	class LayerStack
 	{
 	public:
 		LayerStack();

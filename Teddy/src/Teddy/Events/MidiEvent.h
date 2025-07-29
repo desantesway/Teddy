@@ -5,7 +5,7 @@
 
 namespace Teddy {
 
-	class TED_API MidiKeyPressedEvent : public Event
+	class MidiKeyPressedEvent : public Event
 	{
 	public:
 		MidiKeyPressedEvent(unsigned int key, unsigned int velocity)
@@ -28,7 +28,7 @@ namespace Teddy {
 		unsigned int m_Key, m_Velocity;
 	};
 
-	class TED_API MidiKeyReleasedEvent : public Event
+	class MidiKeyReleasedEvent : public Event
 	{
 	public:
 		MidiKeyReleasedEvent(unsigned int key, unsigned int velocity)
@@ -51,7 +51,7 @@ namespace Teddy {
 		unsigned int m_Key, m_Velocity;
 	};
 
-	class TED_API MidiPedalPressedEvent : public Event
+	class MidiPedalPressedEvent : public Event
 	{
 	public:
 		MidiPedalPressedEvent() {}
@@ -60,7 +60,7 @@ namespace Teddy {
 		EVENT_CLASS_CATEGORY(EventCategoryMidi | EventCategoryInput)
 	};
 
-	class TED_API MidiPedalReleasedEvent : public Event
+	class MidiPedalReleasedEvent : public Event
 	{
 	public:
 		MidiPedalReleasedEvent() {}
