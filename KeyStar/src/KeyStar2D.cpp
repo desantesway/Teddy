@@ -8,8 +8,7 @@ KeyStar2D::KeyStar2D()
 
 void KeyStar2D::OnAttach()
 {
-
-	
+	m_SustainTexture = Teddy::Texture2D::Create("assets/textures/piano/pedal/sus.png");
 }
 
 void KeyStar2D::OnDetach()
@@ -27,7 +26,7 @@ void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 	
 	Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
 	Teddy::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, {0.9f, 0.3f, 0.1f, 1.0f});
-
+	Teddy::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_SustainTexture);
 	Teddy::Renderer2D::EndScene();
 	//std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_FlatColorShader)->Bind();
 	//std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);

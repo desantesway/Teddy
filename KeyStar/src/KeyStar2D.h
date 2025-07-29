@@ -26,5 +26,7 @@ private:
 	Teddy::Ref<Teddy::Shader> m_FlatColorShader;
 	Teddy::OrthographicCameraController m_CameraController;
 
+	Teddy::Ref<Teddy::Texture2D> m_SustainTexture;
+
 	glm::vec4 m_SquareColor = { 0.2f, 0.1f, 1.0f, 1.0f };
 };

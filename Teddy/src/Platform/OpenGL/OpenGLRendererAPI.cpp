@@ -8,6 +8,8 @@ namespace Teddy {
 	void OpenGLRendererAPI::Init() {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	// SDL ignoring this for sum reason
