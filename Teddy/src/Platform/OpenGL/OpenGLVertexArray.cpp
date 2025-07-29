@@ -58,7 +58,7 @@ namespace Teddy {
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layoutRef.GetStride(),
-				(const void*)(intptr_t)element.Offset); // describing data at index index		
+				(const void*)element.Offset); // describing data at index index		
 			m_VertexBufferIndex++;
 		}
 

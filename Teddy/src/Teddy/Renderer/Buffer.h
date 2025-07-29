@@ -33,9 +33,11 @@ namespace Teddy {
 	{
 		std::string Name;
 		uint32_t Size;
-		uint32_t Offset;
+		size_t Offset;
 		ShaderDataType Type; // e.g., float, int, etc.
 		bool Normalized;
+
+		BufferElement() = default;
 
 		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
 			: Name(name), Size(ShaderDataTypeSize(type)), Offset(0), Type(type), Normalized(normalized) {}
@@ -85,7 +87,7 @@ namespace Teddy {
 
 		void CalculateOffsetsAndStride() {
 
-			uint32_t offset = 0;
+			size_t offset = 0;
 			m_Stride = 0;
 
 			for (auto& element : m_Elements) {

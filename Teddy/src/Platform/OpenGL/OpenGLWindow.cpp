@@ -8,7 +8,7 @@
 
 namespace Teddy {
 	
-	static bool SDL_Initialized = false;
+	static uint8_t s_SDLWindowCount = 0;
 
 	Window* Window::Create(const WindowProps& props)
 	{
@@ -33,13 +33,15 @@ namespace Teddy {
 
 		TED_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		if (!SDL_Initialized)
+		if (s_SDLWindowCount == 0)
 		{
+			TED_CORE_INFO("Initializing GLFW");
+
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
 			int success = SDL_Init(SDL_INIT_VIDEO);
 			TED_CORE_ASSERT(success, "Could not intialize SDL!");
 
-			SDL_Initialized = true;
+			++s_SDLWindowCount;
 		}
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -70,7 +72,11 @@ namespace Teddy {
 			m_Window = nullptr;
 		}
 
-		SDL_Quit();
+		s_SDLWindowCount--;
+		if (s_SDLWindowCount == 0) {
+			TED_CORE_INFO("Terminating SDL");
+			SDL_Quit();
+		}
 
 	}
 
