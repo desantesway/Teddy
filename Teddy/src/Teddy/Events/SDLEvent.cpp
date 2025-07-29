@@ -34,13 +34,13 @@ namespace Teddy {
 				break;
 			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
 				int button = SDLToTeddyMouse(event.button.button);
-				TED_ASSERT(button != -1, "Unknown mouse button pressed");
+				TED_CORE_ASSERT(button != -1, "Unknown mouse button pressed");
 				MouseButtonPressedEvent e(button);
 				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_BUTTON_UP: {
 				int button = SDLToTeddyMouse(event.button.button);
-				TED_ASSERT(button != -1, "Unknown mouse button pressed");
+				TED_CORE_ASSERT(button != -1, "Unknown mouse button pressed");
 				MouseButtonReleasedEvent e(button);
 				EventCallback(e);
 				break;

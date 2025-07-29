@@ -90,6 +90,9 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MidiDriver.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MidiDriver.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

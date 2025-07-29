@@ -18,6 +18,7 @@
 
 // --- Renderer ------------------------------
 #include "Teddy/Renderer/Renderer.h"
+#include "Teddy/Renderer/Renderer2D.h"
 #include "Teddy/Renderer/RenderCommand.h"
 
 #include "Teddy/Renderer/Buffer.h"
