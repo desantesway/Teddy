@@ -25,7 +25,8 @@ void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 
 	Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
 	
-	Teddy::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SquareColor);	
+	Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
+	Teddy::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, {0.9f, 0.3f, 0.1f, 1.0f});
 
 	Teddy::Renderer2D::EndScene();
 	//std::dynamic_pointer_cast<Teddy::OpenGLShader>(m_FlatColorShader)->Bind();
