@@ -14,7 +14,6 @@ namespace Teddy
 		~ImGuiLayer() = default;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
 
 		// SDL consumes events when listened, so we cant use the default ImGui event handling.
 		virtual void OnEvent(Event& event);

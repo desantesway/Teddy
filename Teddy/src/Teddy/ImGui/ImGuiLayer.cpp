@@ -76,11 +76,6 @@ namespace Teddy
 		SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
 	}
 
-	void ImGuiLayer::OnImGuiRender() {
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
-	}
-
 	void ImGuiLayer::OnEvent(Event& event) {
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
