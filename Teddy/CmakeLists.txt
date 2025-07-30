@@ -98,6 +98,8 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Debug/Instrumentor.h
 )
 
 target_precompile_headers(Teddy PRIVATE

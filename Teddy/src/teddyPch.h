@@ -17,13 +17,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
-
-
 //#include "Hazel/Core/Base.h"
 
 #include "Teddy/Core/Log.h"
 
-//#include "Hazel/Debug/Instrumentor.h"
+#include "Teddy/Debug/Instrumentor.h"
 
 #ifdef TED_PLATFORM_WINDOWS
 	#include <Windows.h>

@@ -28,12 +28,5 @@ private:
 
 	Teddy::Ref<Teddy::Texture2D> m_SustainTexture;
 
-	struct ProfileResult {
-		const char* name;
-		float time;
-	};
-
-	std::vector<ProfileResult> m_ProfileResults;
-
 	glm::vec4 m_SquareColor = { 0.2f, 0.1f, 1.0f, 1.0f };
 };

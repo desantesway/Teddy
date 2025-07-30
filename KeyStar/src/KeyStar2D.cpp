@@ -56,21 +56,21 @@ void KeyStar2D::OnDetach()
 
 void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 {
-	PROFILE_SCOPE("Sandbox2D::OnUpdate");
+	TED_PROFILE_FUNCTION();
 
 	{
-		PROFILE_SCOPE("CameraController::OnUpdate");
+		TED_PROFILE_SCOPE("CameraController::OnUpdate");
 		m_CameraController.OnUpdate(ts);
 	}
 
 	{
-		PROFILE_SCOPE("Renderer Prep");
+		TED_PROFILE_SCOPE("Renderer Prep");
 		Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
 		Teddy::RenderCommand::Clear();
 	}
 
 	{
-		PROFILE_SCOPE("Renderer Draw (CPU)");
+		TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 		Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
 	
 		Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
@@ -88,18 +88,10 @@ void KeyStar2D::OnEvent(Teddy::Event& event)
 
 void KeyStar2D::OnImGuiRender() 
 {
+	TED_PROFILE_FUNCTION();
 	ImGui::Begin("Settings");
 	ImGui::Text("ChangeColor");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-	for (const auto& result : m_ProfileResults)
-	{
-		char label[50];
-		strcpy(label, "%.3fms ");
-		strcat(label, result.name);
-		ImGui::Text(label, result.time);
-	}
-	m_ProfileResults.clear();
 
 	ImGui::End();
 }

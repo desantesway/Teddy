@@ -17,7 +17,6 @@ extern Teddy::Application* Teddy::CreateApplication();
 			SDL_SetMainReady();
 
 			Teddy::Log::Init();
-			TED_CORE_WARN("Teddy Engine Initialized!");
 
 			auto app = Teddy::CreateApplication();
 			app->Run();
@@ -29,13 +28,20 @@ extern Teddy::Application* Teddy::CreateApplication();
 		int main(int argc, char** argv) {
 
 			Teddy::Log::Init();
-			TED_CORE_WARN("Teddy Engine Initialized!");
 
 			SDL_SetMainReady();
 
+			TED_PROFILE_BEGIN_SESSION("Startup", "TeddyProfile-Startup.json");
 			auto app = Teddy::CreateApplication();
+			TED_PROFILE_END_SESSION();
+
+			TED_PROFILE_BEGIN_SESSION("Runtime", "TeddyProfile-Runtime.json");
 			app->Run();
+			TED_PROFILE_END_SESSION();
+
+			TED_PROFILE_BEGIN_SESSION("Shutdown", "TeddyProfile-Shutdown.json");
 			delete app;
+			TED_PROFILE_END_SESSION();
 
 			return 0;
 		}
