@@ -22,6 +22,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDLEvent.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Window.h 

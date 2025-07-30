@@ -65,7 +65,7 @@ void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 
 	{
 		PROFILE_SCOPE("Renderer Prep");
-		Teddy::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
 		Teddy::RenderCommand::Clear();
 	}
 
@@ -85,6 +85,7 @@ void KeyStar2D::OnEvent(Teddy::Event& event)
 	m_CameraController.OnEvent(event);
 
 }
+
 void KeyStar2D::OnImGuiRender() 
 {
 	ImGui::Begin("Settings");

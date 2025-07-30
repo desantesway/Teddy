@@ -1,106 +1,32 @@
-#include "OpenGLWindow.h"
+#include "teddyPch.h"
+#include "Platform/OpenGL/OpenGLWindow.h"
 
-#include "Teddy/Events/ApplicationEvent.h"
-#include "Teddy/Events/MouseEvent.h"
-#include "Teddy/Events/KeyEvent.h"
-
-#include "Platform/OpenGL/OpenGLContext.h"
-
-// TODO: SUBSTRACT OPENGL CREATION
+#include <SDL3/SDL.h>
+#include <glad/glad.h>
 
 namespace Teddy {
-	
-	static uint8_t s_SDLWindowCount = 0;
 
-	Scope<Window> Window::Create(const WindowProps& props)
+	OpenGLWindow::OpenGLWindow(const char* title, int width, int height)
+		: m_Title(title), m_Width(width), m_Height(height), m_Window(nullptr)
 	{
-		return CreateScope<OpenGLWindow>(props);
 	}
 
-	OpenGLWindow::OpenGLWindow(const WindowProps& props)
+	void OpenGLWindow::Init()
 	{
-		Init(props);
-	}
-
-	OpenGLWindow::~OpenGLWindow()
-	{
-		Shutdown();
-	}
-
-	void OpenGLWindow::Init(const WindowProps& props)
-	{
-		m_Data.Title = props.Title;
-		m_Data.Width = props.Width;
-		m_Data.Height = props.Height;
-
-		TED_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
-
-		if (s_SDLWindowCount == 0)
-		{
-			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
-			int success = SDL_Init(SDL_INIT_VIDEO);
-			TED_CORE_ASSERT(success, "Could not intialize SDL!");
-
-			++s_SDLWindowCount;
-		}
-
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-		m_Window = SDL_CreateWindow(m_Data.Title.c_str(), (int)props.Width, (int)props.Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-
-		m_Context = GraphicsContext::Create(m_Window);
-		m_Context->Init();
-		
-		midiDriver.Init(&EventCallback);
-		midiDriver.InitIn(0);
-		midiDriver.InitOut(2);
-
-		SetVSync(true);
-		
+		m_Window = SDL_CreateWindow(m_Title, m_Width, m_Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
 
-	void OpenGLWindow::Shutdown()
-	{	
-		m_Context->Shutdown();
-
+	void OpenGLWindow::Shutdown() {
 		if (m_Window) {
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;
 		}
-
-		s_SDLWindowCount--;
-		if (s_SDLWindowCount == 0) {
-			TED_CORE_INFO("Terminating SDL");
-			SDL_Quit();
-		}
-
-	}
-
-	void OpenGLWindow::OnUpdate()
-	{
-		midiDriver.OnUpdate();
-		SDLEvents();
-
-		m_Context->SwapBuffers();
-	}
-
-    void OpenGLWindow::SetVSync(bool enabled)
-    {
-		if (enabled)
-			SDL_GL_SetSwapInterval(1);
-		else
-			SDL_GL_SetSwapInterval(0);
-
-		m_Data.VSync = enabled;
-    }
-
-	bool OpenGLWindow::IsVSync() const
-	{
-		return m_Data.VSync;
 	}
 
 }

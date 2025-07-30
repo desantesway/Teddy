@@ -30,8 +30,6 @@ namespace Teddy{
 			inline static Application& Get() { return *s_Instance; }
 			inline Window& GetWindow() { return *m_Window; }
 
-			
-
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnMidiKeyPressed(MidiKeyPressedEvent& e);
