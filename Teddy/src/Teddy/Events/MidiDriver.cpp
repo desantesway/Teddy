@@ -119,7 +119,7 @@ namespace Teddy {
 	void MidiDriver::OnUpdate() {
 		TED_PROFILE_FUNCTION();
 
-		if (!(m_EventCallback.get()) || !midiIn->isPortOpen()) return;
+		if (!(*m_EventCallback) || !midiIn->isPortOpen()) return;
 		static std::vector<unsigned char> message;
 		int nBytes;
 

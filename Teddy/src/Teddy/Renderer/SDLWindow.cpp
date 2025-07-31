@@ -6,16 +6,9 @@
 
 #include "Teddy/Renderer/GraphicsContext.h"
 
-// TODO: midi into window data
-
 namespace Teddy {
 	
 	static uint8_t s_SDLWindowCount = 0;
-
-	Scope<Window> Window::Create(const WindowProps& props)
-	{
-		return CreateScope<SDLWindow>(props);
-	}
 
 	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) {
 		EventCallback = callback;

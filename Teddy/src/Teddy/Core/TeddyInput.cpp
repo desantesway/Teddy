@@ -8,7 +8,6 @@
 
 namespace Teddy
 {
-	Scope<Input> Input::s_Instance = CreateScope<TeddyInput>();
 
 	void TeddyInput::OnEventImpl(Event& e) {
 		EventDispatcher dispatcher(e);

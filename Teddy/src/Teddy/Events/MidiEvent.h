@@ -9,8 +9,8 @@ namespace Teddy {
 	{
 	public:
 		MidiKeyPressedEvent(MidiCode key, unsigned int velocity)
-			: m_Key(key), m_Velocity(velocity) {
-		}
+			: m_Key(key), m_Velocity(velocity) 
+		{}
 
 		inline MidiCode GetKey() const { return m_Key; }
 		inline int GetVelocity() const { return m_Velocity; }
@@ -33,8 +33,8 @@ namespace Teddy {
 	{
 	public:
 		MidiKeyReleasedEvent(MidiCode key, unsigned int velocity)
-			: m_Key(key), m_Velocity(velocity) {
-		}
+			: m_Key(key), m_Velocity(velocity) 
+		{}
 
 		inline MidiCode GetKey() const { return m_Key; }
 		inline int GetVelocity() const { return m_Velocity; }

@@ -34,6 +34,7 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Window.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Window.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Layer.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Layer.cpp 
@@ -45,6 +46,7 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLImGuiBuild.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.cpp
 

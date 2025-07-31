@@ -1,10 +1,15 @@
 #pragma once
 
+#include "Teddy/Core/Log.h"
+
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include <iomanip>
 #include <string>
 #include <thread>
+#include <mutex>
+#include <sstream>
 
 #pragma once
 
@@ -17,10 +22,15 @@
 #include <sstream>
 
 namespace Teddy {
+
+	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
+
 	struct ProfileResult
 	{
 		std::string Name;
-		long long Start, End;
+
+		FloatingPointMicroseconds Start;
+		std::chrono::microseconds ElapsedTime;
 		std::thread::id ThreadID;
 	};
 
@@ -31,34 +41,36 @@ namespace Teddy {
 
 	class Instrumentor
 	{
-	private:
-		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
-		std::ofstream m_OutputStream;
-		bool m_FirstProfile; // Track if first profile event
 	public:
-		Instrumentor()
-			: m_CurrentSession(nullptr), m_FirstProfile(true)
-		{
-		}
+		Instrumentor(const Instrumentor&) = delete;
+		Instrumentor(Instrumentor&&) = delete;
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
 			std::lock_guard lock(m_Mutex);
-			if (m_CurrentSession) {
-				if (Log::GetCoreLogger()) {
+			if (m_CurrentSession)
+			{
+				// If there is already a current session, then close it before beginning new one.
+				// Subsequent profiling output meant for the original session will end up in the
+				// newly opened session instead.  That's better than having badly formatted
+				// profiling output.
+				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
+				{
 					TED_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
 				}
 				InternalEndSession();
 			}
 			m_OutputStream.open(filepath);
-			if (m_OutputStream.is_open()) {
+
+			if (m_OutputStream.is_open())
+			{
 				m_CurrentSession = new InstrumentationSession({ name });
-				m_FirstProfile = true;
 				WriteHeader();
 			}
-			else {
-				if (Log::GetCoreLogger()) {
+			else
+			{
+				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
+				{
 					TED_CORE_ERROR("Instrumentor could not open results file '{0}'.", filepath);
 				}
 			}
@@ -74,37 +86,46 @@ namespace Teddy {
 		{
 			std::stringstream json;
 
-			std::string name = result.Name;
-			std::replace(name.begin(), name.end(), '"', '\'');
-
-			if (!m_FirstProfile)
-				json << ",";
-			else
-				m_FirstProfile = false;
-
-			json << "{";
+			json << std::setprecision(3) << std::fixed;
+			if (m_HeaderWrote) {
+				json << ",{";
+			}
+			else {
+				json << "{";
+				m_HeaderWrote = true;
+			}
 			json << "\"cat\":\"function\",";
-			json << "\"dur\":" << (result.End - result.Start) << ',';
-			json << "\"name\":\"" << name << "\",";
+			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
+			json << "\"name\":\"" << result.Name << "\",";
 			json << "\"ph\":\"X\",";
 			json << "\"pid\":0,";
 			json << "\"tid\":" << result.ThreadID << ",";
-			json << "\"ts\":" << result.Start;
+			json << "\"ts\":" << result.Start.count();
 			json << "}";
 
 			std::lock_guard lock(m_Mutex);
-			if (m_CurrentSession) {
+			if (m_CurrentSession)
+			{
 				m_OutputStream << json.str();
 				m_OutputStream.flush();
 			}
 		}
 
-		static Instrumentor& Get() {
+		static Instrumentor& Get()
+		{
 			static Instrumentor instance;
 			return instance;
 		}
-
 	private:
+		Instrumentor()
+			: m_CurrentSession(nullptr), m_HeaderWrote(false)
+		{
+		}
+
+		~Instrumentor()
+		{
+			EndSession();
+		}
 
 		void WriteHeader()
 		{
@@ -118,16 +139,23 @@ namespace Teddy {
 			m_OutputStream.flush();
 		}
 
-		void InternalEndSession() {
-			if (m_CurrentSession) {
+		// Note: you must already own lock on m_Mutex before
+		// calling InternalEndSession()
+		void InternalEndSession()
+		{
+			if (m_CurrentSession)
+			{
 				WriteFooter();
 				m_OutputStream.close();
 				delete m_CurrentSession;
 				m_CurrentSession = nullptr;
-				m_FirstProfile = true;
 			}
 		}
-
+	private:
+		std::mutex m_Mutex;
+		InstrumentationSession* m_CurrentSession;
+		std::ofstream m_OutputStream;
+		bool m_HeaderWrote;
 	};
 
 	class InstrumentationTimer
@@ -136,7 +164,7 @@ namespace Teddy {
 		InstrumentationTimer(const char* name)
 			: m_Name(name), m_Stopped(false)
 		{
-			m_StartTimepoint = std::chrono::high_resolution_clock::now();
+			m_StartTimepoint = std::chrono::steady_clock::now();
 		}
 
 		~InstrumentationTimer()
@@ -147,29 +175,60 @@ namespace Teddy {
 
 		void Stop()
 		{
-			auto endTimepoint = std::chrono::high_resolution_clock::now();
+			auto endTimepoint = std::chrono::steady_clock::now();
+			auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
+			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
 
-			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-
-			Instrumentor::Get().WriteProfile({ m_Name, start, end, std::this_thread::get_id() });
+			Instrumentor::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
 
 			m_Stopped = true;
 		}
 	private:
 		const char* m_Name;
-		std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimepoint;
+		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
 		bool m_Stopped;
 	};
+
+	namespace InstrumentorUtils {
+
+		template <size_t N>
+		struct ChangeResult
+		{
+			char Data[N];
+		};
+
+		template <size_t N, size_t K>
+		constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+		{
+			ChangeResult<N> result = {};
+
+			size_t srcIndex = 0;
+			size_t dstIndex = 0;
+			while (srcIndex < N)
+			{
+				size_t matchIndex = 0;
+				while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+					matchIndex++;
+				if (matchIndex == K - 1)
+					srcIndex += matchIndex;
+				result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+				srcIndex++;
+			}
+			return result;
+		}
+	}
 }
 
 #define TED_PROFILE 1
 #if TED_PROFILE
+	// Resolve which function signature macro will be used. Note that this only
+	// is resolved when the (pre)compiler starts, so the syntax highlighting
+	// could mark the wrong one in your editor!
 	#if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
 		#define TED_FUNC_SIG __PRETTY_FUNCTION__
 	#elif defined(__DMC__) && (__DMC__ >= 0x810)
 		#define TED_FUNC_SIG __PRETTY_FUNCTION__
-	#elif defined(__FUNCSIG__)
+	#elif (defined(__FUNCSIG__) || (_MSC_VER))
 		#define TED_FUNC_SIG __FUNCSIG__
 	#elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
 		#define TED_FUNC_SIG __FUNCTION__
@@ -181,17 +240,18 @@ namespace Teddy {
 		#define TED_FUNC_SIG __func__
 	#else
 		#define TED_FUNC_SIG "TED_FUNC_SIG unknown!"
-	#endif
+#endif
 
 	#define TED_PROFILE_BEGIN_SESSION(name, filepath) ::Teddy::Instrumentor::Get().BeginSession(name, filepath)
 	#define TED_PROFILE_END_SESSION() ::Teddy::Instrumentor::Get().EndSession()
-	#define TED_PROFILE_SCOPE(name) ::Teddy::InstrumentationTimer timer##__LINE__(name);
+	#define TED_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Teddy::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+											   ::Teddy::InstrumentationTimer timer##line(fixedName##line.Data)
+	#define TED_PROFILE_SCOPE_LINE(name, line) TED_PROFILE_SCOPE_LINE2(name, line)
+	#define TED_PROFILE_SCOPE(name) TED_PROFILE_SCOPE_LINE(name, __LINE__)
 	#define TED_PROFILE_FUNCTION() TED_PROFILE_SCOPE(TED_FUNC_SIG)
-	#define TED_PROFILE_RENDERER_FUNCTION() 
 #else
 	#define TED_PROFILE_BEGIN_SESSION(name, filepath)
 	#define TED_PROFILE_END_SESSION()
 	#define TED_PROFILE_SCOPE(name)
 	#define TED_PROFILE_FUNCTION()
-	#define TED_PROFILE_RENDERER_FUNCTION() 
 #endif

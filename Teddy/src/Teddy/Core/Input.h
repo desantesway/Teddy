@@ -26,6 +26,7 @@ namespace Teddy {
 		inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
 		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
+		static Scope<Input> Create();
 	protected:
 		virtual void OnEventImpl(Event& e) = 0;
 		virtual bool IsKeyPressedImpl(KeyCode keycode) = 0;
