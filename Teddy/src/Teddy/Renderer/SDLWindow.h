@@ -40,7 +40,7 @@ namespace Teddy {
 
 		Scope<GraphicsWindow> m_Window;
 		Scope<GraphicsContext> m_Context;
-		MidiDriver midiDriver;
+		MidiDriver m_MidiDriver;
 
 		struct WindowData
 		{

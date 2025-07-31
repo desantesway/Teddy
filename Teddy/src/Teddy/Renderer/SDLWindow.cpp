@@ -12,7 +12,7 @@ namespace Teddy {
 
 	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) {
 		EventCallback = callback;
-		midiDriver.SetEventCallback(std::make_shared<EventCallbackFn>(EventCallback));
+		m_MidiDriver.SetEventCallback(std::make_shared<EventCallbackFn>(EventCallback));
 	}
 
 	SDLWindow::SDLWindow(const WindowProps& props)
@@ -41,10 +41,10 @@ namespace Teddy {
 
 		if (s_SDLWindowCount == 0)
 		{
-			midiDriver.Init();
+			m_MidiDriver.Init();
 
-			midiDriver.InitIn(0);
-			midiDriver.InitOut(2);
+			m_MidiDriver.InitIn(0);
+			m_MidiDriver.InitOut(2);
 
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
 			int success = 0;
@@ -93,7 +93,7 @@ namespace Teddy {
 	{
 		TED_PROFILE_FUNCTION();
 
-		midiDriver.OnUpdate();
+		m_MidiDriver.OnUpdate();
 		SDLEvents();
 
 		m_Context->SwapBuffers();
