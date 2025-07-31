@@ -34,7 +34,7 @@ namespace Teddy {
 		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
-		virtual void SDLEvents();
+		virtual void SDLEvents() = 0;
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
@@ -51,8 +51,5 @@ namespace Teddy {
 		virtual void* GetNativeContext() const = 0;
 
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
-
-		EventCallbackFn EventCallback;
-
 	};
 }

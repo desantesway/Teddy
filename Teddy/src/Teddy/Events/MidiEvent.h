@@ -8,12 +8,12 @@ namespace Teddy {
 	class MidiKeyPressedEvent : public Event
 	{
 	public:
-		MidiKeyPressedEvent(unsigned int key, unsigned int velocity)
+		MidiKeyPressedEvent(MidiCode key, unsigned int velocity)
 			: m_Key(key), m_Velocity(velocity) {
 		}
 
-		inline float GetKey() const { return m_Key; }
-		inline float GetVelocity() const { return m_Velocity; }
+		inline MidiCode GetKey() const { return m_Key; }
+		inline int GetVelocity() const { return m_Velocity; }
 
 		std::string ToString() const override
 		{
@@ -25,18 +25,19 @@ namespace Teddy {
 		EVENT_CLASS_TYPE(MidiKeyPressed)
 		EVENT_CLASS_CATEGORY(EventCategoryMidi | EventCategoryInput)
 	private:
-		unsigned int m_Key, m_Velocity;
+		MidiCode m_Key;
+		unsigned int m_Velocity;
 	};
 
 	class MidiKeyReleasedEvent : public Event
 	{
 	public:
-		MidiKeyReleasedEvent(unsigned int key, unsigned int velocity)
+		MidiKeyReleasedEvent(MidiCode key, unsigned int velocity)
 			: m_Key(key), m_Velocity(velocity) {
 		}
 
-		inline float GetKey() const { return m_Key; }
-		inline float GetVelocity() const { return m_Velocity; }
+		inline MidiCode GetKey() const { return m_Key; }
+		inline int GetVelocity() const { return m_Velocity; }
 
 		std::string ToString() const override
 		{
@@ -48,7 +49,8 @@ namespace Teddy {
 		EVENT_CLASS_TYPE(MidiKeyReleased)
 		EVENT_CLASS_CATEGORY(EventCategoryMidi | EventCategoryInput)
 	private:
-		unsigned int m_Key, m_Velocity;
+		MidiCode m_Key;
+		unsigned int m_Velocity;
 	};
 
 	class MidiPedalPressedEvent : public Event

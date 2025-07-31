@@ -17,6 +17,7 @@ namespace Teddy {
 		virtual ~SDLWindow();
 
 		void OnUpdate() override;
+		virtual void SDLEvents() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -28,7 +29,8 @@ namespace Teddy {
 		inline virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
 
 		// Window attributes
-		inline void SetEventCallback(const EventCallbackFn& callback) override {EventCallback = callback; }
+		inline void SetEventCallback(const EventCallbackFn& callback) override;
+
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 	private:
@@ -48,6 +50,8 @@ namespace Teddy {
 		};
 
 		WindowData m_Data;
+
+		EventCallbackFn EventCallback;
 	};
 
 }

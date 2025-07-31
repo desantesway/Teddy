@@ -1,26 +1,27 @@
 #pragma once
 
-#include "Event.h"
+#include "Teddy/Events/Event.h"
+#include "Teddy/Core/Input.h"
 
 namespace Teddy {
 
 	class KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
+		inline KeyCode GetKeyCode() const { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-		KeyEvent(int keycode)
+		KeyEvent(KeyCode keycode)
 			: m_KeyCode(keycode) {}
 
-		int m_KeyCode;
+		KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, bool repeat)
+		KeyPressedEvent(KeyCode keycode, bool repeat)
 			: KeyEvent(keycode), m_RepeatCount(repeat) {
 		}
 
@@ -41,7 +42,7 @@ namespace Teddy {
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
+		KeyReleasedEvent(KeyCode keycode)
 			: KeyEvent(keycode) {
 		}
 
@@ -59,7 +60,7 @@ namespace Teddy {
 	{
 	public:
 		KeyTypedEvent(const char * keycode)
-			: KeyEvent((int)keycode), key(keycode){
+			: KeyEvent(static_cast<KeyCode>((int)keycode)), key(keycode){
 		}
 
 		const char* GetKey() const { return key; }

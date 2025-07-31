@@ -14,7 +14,7 @@ namespace Teddy {
 
 		void SetEventCallback(Ref<EventCallbackFn> callback);
 
-		void Init(Ref<EventCallbackFn> callback);
+		void Init();
 
 		void InitIn(unsigned int port);
 		void InitOut(unsigned int port);

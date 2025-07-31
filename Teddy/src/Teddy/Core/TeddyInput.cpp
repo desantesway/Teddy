@@ -20,12 +20,12 @@ namespace Teddy
 	}
 
 	bool TeddyInput::OnMidiKeyPressed(MidiKeyPressedEvent &e) {
-		m_MidiKeysPressed[e.GetKey()] = true;
+		m_MidiKeysPressed[static_cast<uint32_t>(e.GetKey())] = true;
 		return false;
 	}
 
 	bool TeddyInput::OnMidiKeyReleased(MidiKeyReleasedEvent& e) {
-		m_MidiKeysPressed[e.GetKey()] = false;
+		m_MidiKeysPressed[static_cast<uint32_t>(e.GetKey())] = false;
 		return false;
 	}
 
@@ -39,19 +39,20 @@ namespace Teddy
 		return false;
 	}
 
-	bool TeddyInput::IsKeyPressedImpl(int keycode) {
+	bool TeddyInput::IsKeyPressedImpl(KeyCode keycode) {
 		auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
 		const bool* state = SDL_GetKeyboardState(nullptr);
 		return state[SDL_GetScancodeFromKey(TeddyToSDLKey(keycode), nullptr)];
 	}
 
-	bool TeddyInput::IsMouseButtonPressedImpl(int button) {
+	bool TeddyInput::IsMouseButtonPressedImpl(MouseCode button) {
 		Uint32 buttons = SDL_GetMouseState(nullptr, nullptr);
 		return (buttons & (1 << ((TeddyToSDLMouse(button)) - 1))) != 0; // from definition of SDL_BUTTON
 	}
 
-	bool TeddyInput::IsMidiKeyPressedImpl(int keycode) {
-		if (m_MidiKeysPressed.count(keycode)) return m_MidiKeysPressed[keycode];
+	bool TeddyInput::IsMidiKeyPressedImpl(MidiCode keycode) {
+		if (m_MidiKeysPressed.count(static_cast<uint32_t>(keycode))) 
+			return m_MidiKeysPressed[static_cast<uint32_t>(keycode)];
 		else return false;
 	}
 

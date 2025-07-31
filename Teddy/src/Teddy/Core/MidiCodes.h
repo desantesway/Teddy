@@ -1,175 +1,189 @@
-
+#pragma once
 // MIDI note codes for Teddy
 
-#define TED_MIDI_C0    0x00000000u /**< MIDI note C0 */
-#define TED_MIDI_Cs0   0x00000001u /**< MIDI note C#0 */
-#define TED_MIDI_Db0   0x00000001u /**< MIDI note Db0 */
-#define TED_MIDI_D0    0x00000002u /**< MIDI note D0 */
-#define TED_MIDI_Ds0   0x00000003u /**< MIDI note D#0 */
-#define TED_MIDI_Eb0   0x00000003u /**< MIDI note Eb0 */
-#define TED_MIDI_E0    0x00000004u /**< MIDI note E0 */
-#define TED_MIDI_F0    0x00000005u /**< MIDI note F0 */
-#define TED_MIDI_Fs0   0x00000006u /**< MIDI note F#0 */
-#define TED_MIDI_Gb0   0x00000006u /**< MIDI note Gb0 */
-#define TED_MIDI_G0    0x00000007u /**< MIDI note G0 */
-#define TED_MIDI_Gs0   0x00000008u /**< MIDI note G#0 */
-#define TED_MIDI_Ab0   0x00000008u /**< MIDI note Ab0 */
-#define TED_MIDI_A0    0x00000009u /**< MIDI note A0 */
-#define TED_MIDI_As0   0x0000000Au /**< MIDI note A#0 */
-#define TED_MIDI_Bb0   0x0000000Au /**< MIDI note Bb0 */
-#define TED_MIDI_B0    0x0000000Bu /**< MIDI note B0 */
-#define TED_MIDI_C1    0x0000000Cu /**< MIDI note C1 */
-#define TED_MIDI_Cs1   0x0000000Du /**< MIDI note C#1 */
-#define TED_MIDI_Db1   0x0000000Du /**< MIDI note Db1 */
-#define TED_MIDI_D1    0x0000000Eu /**< MIDI note D1 */
-#define TED_MIDI_Ds1   0x0000000Fu /**< MIDI note D#1 */
-#define TED_MIDI_Eb1   0x0000000Fu /**< MIDI note Eb1 */
-#define TED_MIDI_E1    0x00000010u /**< MIDI note E1 */
-#define TED_MIDI_F1    0x00000011u /**< MIDI note F1 */
-#define TED_MIDI_Fs1   0x00000012u /**< MIDI note F#1 */
-#define TED_MIDI_Gb1   0x00000012u /**< MIDI note Gb1 */
-#define TED_MIDI_G1    0x00000013u /**< MIDI note G1 */
-#define TED_MIDI_Gs1   0x00000014u /**< MIDI note G#1 */
-#define TED_MIDI_Ab1   0x00000014u /**< MIDI note Ab1 */
-#define TED_MIDI_A1    0x00000015u /**< MIDI note A1 */
-#define TED_MIDI_As1   0x00000016u /**< MIDI note A#1 */
-#define TED_MIDI_Bb1   0x00000016u /**< MIDI note Bb1 */
-#define TED_MIDI_B1    0x00000017u /**< MIDI note B1 */
-#define TED_MIDI_C2    0x00000018u /**< MIDI note C2 */
-#define TED_MIDI_Cs2   0x00000019u /**< MIDI note C#2 */
-#define TED_MIDI_Db2   0x00000019u /**< MIDI note Db2 */
-#define TED_MIDI_D2    0x0000001Au /**< MIDI note D2 */
-#define TED_MIDI_Ds2   0x0000001Bu /**< MIDI note D#2 */
-#define TED_MIDI_Eb2   0x0000001Bu /**< MIDI note Eb2 */
-#define TED_MIDI_E2    0x0000001Cu /**< MIDI note E2 */
-#define TED_MIDI_F2    0x0000001Du /**< MIDI note F2 */
-#define TED_MIDI_Fs2   0x0000001Eu /**< MIDI note F#2 */
-#define TED_MIDI_Gb2   0x0000001Eu /**< MIDI note Gb2 */
-#define TED_MIDI_G2    0x0000001Fu /**< MIDI note G2 */
-#define TED_MIDI_Gs2   0x00000020u /**< MIDI note G#2 */
-#define TED_MIDI_Ab2   0x00000020u /**< MIDI note Ab2 */
-#define TED_MIDI_A2    0x00000021u /**< MIDI note A2 */
-#define TED_MIDI_As2   0x00000022u /**< MIDI note A#2 */
-#define TED_MIDI_Bb2   0x00000022u /**< MIDI note Bb2 */
-#define TED_MIDI_B2    0x00000023u /**< MIDI note B2 */
-#define TED_MIDI_C3    0x00000024u /**< MIDI note C3 */
-#define TED_MIDI_Cs3   0x00000025u /**< MIDI note C#3 */
-#define TED_MIDI_Db3   0x00000025u /**< MIDI note Db3 */
-#define TED_MIDI_D3    0x00000026u /**< MIDI note D3 */
-#define TED_MIDI_Ds3   0x00000027u /**< MIDI note D#3 */
-#define TED_MIDI_Eb3   0x00000027u /**< MIDI note Eb3 */
-#define TED_MIDI_E3    0x00000028u /**< MIDI note E3 */
-#define TED_MIDI_F3    0x00000029u /**< MIDI note F3 */
-#define TED_MIDI_Fs3   0x0000002Au /**< MIDI note F#3 */
-#define TED_MIDI_Gb3   0x0000002Au /**< MIDI note Gb3 */
-#define TED_MIDI_G3    0x0000002Bu /**< MIDI note G3 */
-#define TED_MIDI_Gs3   0x0000002Cu /**< MIDI note G#3 */
-#define TED_MIDI_Ab3   0x0000002Cu /**< MIDI note Ab3 */
-#define TED_MIDI_A3    0x0000002Du /**< MIDI note A3 */
-#define TED_MIDI_As3   0x0000002Eu /**< MIDI note A#3 */
-#define TED_MIDI_Bb3   0x0000002Eu /**< MIDI note Bb3 */
-#define TED_MIDI_B3    0x0000002Fu /**< MIDI note B3 */
-#define TED_MIDI_C4    0x00000030u /**< MIDI note C4 (Middle C) */
-#define TED_MIDI_Cs4   0x00000031u /**< MIDI note C#4 */
-#define TED_MIDI_Db4   0x00000031u /**< MIDI note Db4 */
-#define TED_MIDI_D4    0x00000032u /**< MIDI note D4 */
-#define TED_MIDI_Ds4   0x00000033u /**< MIDI note D#4 */
-#define TED_MIDI_Eb4   0x00000033u /**< MIDI note Eb4 */
-#define TED_MIDI_E4    0x00000034u /**< MIDI note E4 */
-#define TED_MIDI_F4    0x00000035u /**< MIDI note F4 */
-#define TED_MIDI_Fs4   0x00000036u /**< MIDI note F#4 */
-#define TED_MIDI_Gb4   0x00000036u /**< MIDI note Gb4 */
-#define TED_MIDI_G4    0x00000037u /**< MIDI note G4 */
-#define TED_MIDI_Gs4   0x00000038u /**< MIDI note G#4 */
-#define TED_MIDI_Ab4   0x00000038u /**< MIDI note Ab4 */
-#define TED_MIDI_A4    0x00000039u /**< MIDI note A4 (440 Hz) */
-#define TED_MIDI_As4   0x0000003Au /**< MIDI note A#4 */
-#define TED_MIDI_Bb4   0x0000003Au /**< MIDI note Bb4 */
-#define TED_MIDI_B4    0x0000003Bu /**< MIDI note B4 */
-#define TED_MIDI_C5    0x0000003Cu /**< MIDI note C5 */
-#define TED_MIDI_Cs5   0x0000003Du /**< MIDI note C#5 */
-#define TED_MIDI_Db5   0x0000003Du /**< MIDI note Db5 */
-#define TED_MIDI_D5    0x0000003Eu /**< MIDI note D5 */
-#define TED_MIDI_Ds5   0x0000003Fu /**< MIDI note D#5 */
-#define TED_MIDI_Eb5   0x0000003Fu /**< MIDI note Eb5 */
-#define TED_MIDI_E5    0x00000040u /**< MIDI note E5 */
-#define TED_MIDI_F5    0x00000041u /**< MIDI note F5 */
-#define TED_MIDI_Fs5   0x00000042u /**< MIDI note F#5 */
-#define TED_MIDI_Gb5   0x00000042u /**< MIDI note Gb5 */
-#define TED_MIDI_G5    0x00000043u /**< MIDI note G5 */
-#define TED_MIDI_Gs5   0x00000044u /**< MIDI note G#5 */
-#define TED_MIDI_Ab5   0x00000044u /**< MIDI note Ab5 */
-#define TED_MIDI_A5    0x00000045u /**< MIDI note A5 */
-#define TED_MIDI_As5   0x00000046u /**< MIDI note A#5 */
-#define TED_MIDI_Bb5   0x00000046u /**< MIDI note Bb5 */
-#define TED_MIDI_B5    0x00000047u /**< MIDI note B5 */
-#define TED_MIDI_C6    0x00000048u /**< MIDI note C6 */
-#define TED_MIDI_Cs6   0x00000049u /**< MIDI note C#6 */
-#define TED_MIDI_Db6   0x00000049u /**< MIDI note Db6 */
-#define TED_MIDI_D6    0x0000004Au /**< MIDI note D6 */
-#define TED_MIDI_Ds6   0x0000004Bu /**< MIDI note D#6 */
-#define TED_MIDI_Eb6   0x0000004Bu /**< MIDI note Eb6 */
-#define TED_MIDI_E6    0x0000004Cu /**< MIDI note E6 */
-#define TED_MIDI_F6    0x0000004Du /**< MIDI note F6 */
-#define TED_MIDI_Fs6   0x0000004Eu /**< MIDI note F#6 */
-#define TED_MIDI_Gb6   0x0000004Eu /**< MIDI note Gb6 */
-#define TED_MIDI_G6    0x0000004Fu /**< MIDI note G6 */
-#define TED_MIDI_Gs6   0x00000050u /**< MIDI note G#6 */
-#define TED_MIDI_Ab6   0x00000050u /**< MIDI note Ab6 */
-#define TED_MIDI_A6    0x00000051u /**< MIDI note A6 */
-#define TED_MIDI_As6   0x00000052u /**< MIDI note A#6 */
-#define TED_MIDI_Bb6   0x00000052u /**< MIDI note Bb6 */
-#define TED_MIDI_B6    0x00000053u /**< MIDI note B6 */
-#define TED_MIDI_C7    0x00000054u /**< MIDI note C7 */
-#define TED_MIDI_Cs7   0x00000055u /**< MIDI note C#7 */
-#define TED_MIDI_Db7   0x00000055u /**< MIDI note Db7 */
-#define TED_MIDI_D7    0x00000056u /**< MIDI note D7 */
-#define TED_MIDI_Ds7   0x00000057u /**< MIDI note D#7 */
-#define TED_MIDI_Eb7   0x00000057u /**< MIDI note Eb7 */
-#define TED_MIDI_E7    0x00000058u /**< MIDI note E7 */
-#define TED_MIDI_F7    0x00000059u /**< MIDI note F7 */
-#define TED_MIDI_Fs7   0x0000005Au /**< MIDI note F#7 */
-#define TED_MIDI_Gb7   0x0000005Au /**< MIDI note Gb7 */
-#define TED_MIDI_G7    0x0000005Bu /**< MIDI note G7 */
-#define TED_MIDI_Gs7   0x0000005Cu /**< MIDI note G#7 */
-#define TED_MIDI_Ab7   0x0000005Cu /**< MIDI note Ab7 */
-#define TED_MIDI_A7    0x0000005Du /**< MIDI note A7 */
-#define TED_MIDI_As7   0x0000005Eu /**< MIDI note A#7 */
-#define TED_MIDI_Bb7   0x0000005Eu /**< MIDI note Bb7 */
-#define TED_MIDI_B7    0x0000005Fu /**< MIDI note B7 */
-#define TED_MIDI_C8    0x00000060u /**< MIDI note C8 */
-#define TED_MIDI_Cs8   0x00000061u /**< MIDI note C#8 */
-#define TED_MIDI_Db8   0x00000061u /**< MIDI note Db8 */
-#define TED_MIDI_D8    0x00000062u /**< MIDI note D8 */
-#define TED_MIDI_Ds8   0x00000063u /**< MIDI note D#8 */
-#define TED_MIDI_Eb8   0x00000063u /**< MIDI note Eb8 */
-#define TED_MIDI_E8    0x00000064u /**< MIDI note E8 */
-#define TED_MIDI_F8    0x00000065u /**< MIDI note F8 */
-#define TED_MIDI_Fs8   0x00000066u /**< MIDI note F#8 */
-#define TED_MIDI_Gb8   0x00000066u /**< MIDI note Gb8 */
-#define TED_MIDI_G8    0x00000067u /**< MIDI note G8 */
-#define TED_MIDI_Gs8   0x00000068u /**< MIDI note G#8 */
-#define TED_MIDI_Ab8   0x00000068u /**< MIDI note Ab8 */
-#define TED_MIDI_A8    0x00000069u /**< MIDI note A8 */
-#define TED_MIDI_As8   0x0000006Au /**< MIDI note A#8 */
-#define TED_MIDI_Bb8   0x0000006Au /**< MIDI note Bb8 */
-#define TED_MIDI_B8    0x0000006Bu /**< MIDI note B8 */
-#define TED_MIDI_C9    0x0000006Cu /**< MIDI note C9 */
-#define TED_MIDI_Cs9   0x0000006Du /**< MIDI note C#9 */
-#define TED_MIDI_Db9   0x0000006Du /**< MIDI note Db9 */
-#define TED_MIDI_D9    0x0000006Eu /**< MIDI note D9 */
-#define TED_MIDI_Ds9   0x0000006Fu /**< MIDI note D#9 */
-#define TED_MIDI_Eb9   0x0000006Fu /**< MIDI note Eb9 */
-#define TED_MIDI_E9    0x00000070u /**< MIDI note E9 */
-#define TED_MIDI_F9    0x00000071u /**< MIDI note F9 */
-#define TED_MIDI_Fs9   0x00000072u /**< MIDI note F#9 */
-#define TED_MIDI_Gb9   0x00000072u /**< MIDI note Gb9 */
-#define TED_MIDI_G9    0x00000073u /**< MIDI note G9 */
-#define TED_MIDI_Gs9   0x00000074u /**< MIDI note G#9 */
-#define TED_MIDI_Ab9   0x00000074u /**< MIDI note Ab9 */
-#define TED_MIDI_A9    0x00000075u /**< MIDI note A9 */
-#define TED_MIDI_As9   0x00000076u /**< MIDI note A#9 */
-#define TED_MIDI_Bb9   0x00000076u /**< MIDI note Bb9 */
-#define TED_MIDI_B9    0x00000077u /**< MIDI note B9 */
+namespace Teddy
+{
+	typedef enum class MidiCode : uint16_t
+	{
+		C0		= 0x00000000u,
+		Cs0		= 0x00000001u,
+		Db0		= 0x00000001u,
+		D0		= 0x00000002u,
+		Ds0		= 0x00000003u,
+		Eb0		= 0x00000003u,
+		E0		= 0x00000004u,
+		F0		= 0x00000005u,
+		Fs0		= 0x00000006u,
+		Gb0		= 0x00000006u,
+		G0		= 0x00000007u,
+		Gs0		= 0x00000008u,
+		Ab0		= 0x00000008u,
+		A0		= 0x00000009u,
+		As0		= 0x0000000Au,
+		Bb0		= 0x0000000Au,
+		B0		= 0x0000000Bu,
+		C1		= 0x0000000Cu,
+		Cs1		= 0x0000000Du,
+		Db1		= 0x0000000Du,
+		D1		= 0x0000000Eu,
+		Ds1		= 0x0000000Fu,
+		Eb1		= 0x0000000Fu,
+		E1		= 0x00000010u,
+		F1		= 0x00000011u,
+		Fs1		= 0x00000012u,
+		Gb1		= 0x00000012u,
+		G1		= 0x00000013u,
+		Gs1		= 0x00000014u,
+		Ab1		= 0x00000014u,
+		A1		= 0x00000015u,
+		As1		= 0x00000016u,
+		Bb1		= 0x00000016u,
+		B1		= 0x00000017u,
+		C2		= 0x00000018u,
+		Cs2		= 0x00000019u,
+		Db2		= 0x00000019u,
+		D2		= 0x0000001Au,
+		Ds2		= 0x0000001Bu,
+		Eb2		= 0x0000001Bu,
+		E2		= 0x0000001Cu,
+		F2		= 0x0000001Du,
+		Fs2		= 0x0000001Eu,
+		Gb2		= 0x0000001Eu,
+		G2		= 0x0000001Fu,
+		Gs2		= 0x00000020u,
+		Ab2		= 0x00000020u,
+		A2		= 0x00000021u,
+		As2		= 0x00000022u,
+		Bb2		= 0x00000022u,
+		B2		= 0x00000023u,
+		C3		= 0x00000024u,
+		Cs3		= 0x00000025u,
+		Db3		= 0x00000025u,
+		D3		= 0x00000026u,
+		Ds3		= 0x00000027u,
+		Eb3		= 0x00000027u,
+		E3		= 0x00000028u,
+		F3		= 0x00000029u,
+		Fs3		= 0x0000002Au,
+		Gb3		= 0x0000002Au,
+		G3		= 0x0000002Bu,
+		Gs3		= 0x0000002Cu,
+		Ab3		= 0x0000002Cu,
+		A3		= 0x0000002Du,
+		As3		= 0x0000002Eu,
+		Bb3		= 0x0000002Eu,
+		B3		= 0x0000002Fu,
+		C4		= 0x00000030u,
+		Cs4		= 0x00000031u,
+		Db4		= 0x00000031u,
+		D4		= 0x00000032u,
+		Ds4		= 0x00000033u,
+		Eb4		= 0x00000033u,
+		E4		= 0x00000034u,
+		F4		= 0x00000035u,
+		Fs4		= 0x00000036u,
+		Gb4		= 0x00000036u,
+		G4		= 0x00000037u,
+		Gs4		= 0x00000038u,
+		Ab4		= 0x00000038u,
+		A4		= 0x00000039u,
+		As4		= 0x0000003Au,
+		Bb4		= 0x0000003Au,
+		B4		= 0x0000003Bu,
+		C5		= 0x0000003Cu,
+		Cs5		= 0x0000003Du,
+		Db5		= 0x0000003Du,
+		D5		= 0x0000003Eu,
+		Ds5		= 0x0000003Fu,
+		Eb5		= 0x0000003Fu,
+		E5		= 0x00000040u,
+		F5		= 0x00000041u,
+		Fs5		= 0x00000042u,
+		Gb5		= 0x00000042u,
+		G5		= 0x00000043u,
+		Gs5		= 0x00000044u,
+		Ab5		= 0x00000044u,
+		A5		= 0x00000045u,
+		As5		= 0x00000046u,
+		Bb5		= 0x00000046u,
+		B5		= 0x00000047u,
+		C6		= 0x00000048u,
+		Cs6		= 0x00000049u,
+		Db6		= 0x00000049u,
+		D6		= 0x0000004Au,
+		Ds6		= 0x0000004Bu,
+		Eb6		= 0x0000004Bu,
+		E6		= 0x0000004Cu,
+		F6		= 0x0000004Du,
+		Fs6		= 0x0000004Eu,
+		Gb6		= 0x0000004Eu,
+		G6		= 0x0000004Fu,
+		Gs6		= 0x00000050u,
+		Ab6		= 0x00000050u,
+		A6		= 0x00000051u,
+		As6		= 0x00000052u,
+		Bb6		= 0x00000052u,
+		B6		= 0x00000053u,
+		C7		= 0x00000054u,
+		Cs7		= 0x00000055u,
+		Db7		= 0x00000055u,
+		D7		= 0x00000056u,
+		Ds7		= 0x00000057u,
+		Eb7		= 0x00000057u,
+		E7		= 0x00000058u,
+		F7		= 0x00000059u,
+		Fs7		= 0x0000005Au,
+		Gb7		= 0x0000005Au,
+		G7		= 0x0000005Bu,
+		Gs7		= 0x0000005Cu,
+		Ab7		= 0x0000005Cu,
+		A7		= 0x0000005Du,
+		As7		= 0x0000005Eu,
+		Bb7		= 0x0000005Eu,
+		B7		= 0x0000005Fu,
+		C8		= 0x00000060u,
+		Cs8		= 0x00000061u,
+		Db8		= 0x00000061u,
+		D8		= 0x00000062u,
+		Ds8		= 0x00000063u,
+		Eb8		= 0x00000063u,
+		E8		= 0x00000064u,
+		F8		= 0x00000065u,
+		Fs8		= 0x00000066u,
+		Gb8		= 0x00000066u,
+		G8		= 0x00000067u,
+		Gs8		= 0x00000068u,
+		Ab8		= 0x00000068u,
+		A8		= 0x00000069u,
+		As8		= 0x0000006Au,
+		Bb8		= 0x0000006Au,
+		B8		= 0x0000006Bu,
+		C9		= 0x0000006Cu,
+		Cs9		= 0x0000006Du,
+		Db9		= 0x0000006Du,
+		D9		= 0x0000006Eu,
+		Ds9		= 0x0000006Fu,
+		Eb9		= 0x0000006Fu,
+		E9		= 0x00000070u,
+		F9		= 0x00000071u,
+		Fs9		= 0x00000072u,
+		Gb9		= 0x00000072u,
+		G9		= 0x00000073u,
+		Gs9		= 0x00000074u,
+		Ab9		= 0x00000074u,
+		A9		= 0x00000075u,
+		As9		= 0x00000076u,
+		Bb9		= 0x00000076u,
+		B9		= 0x00000077u,
+			   
+		Pedal	= 0x00000078u,
 
-#define TED_MIDI_PEDAL 0x00000078u /**< MIDI pedal (sustain) control */
+		Unknown = 0x00000080u
+	};
+
+	inline std::ostream& operator<<(std::ostream& os, MidiCode midiCode)
+	{
+		os << static_cast<int32_t>(midiCode);
+		return os;
+	}
+}

@@ -14,12 +14,12 @@ namespace Teddy
 			virtual bool OnMidiPedalPressed(MidiPedalPressedEvent& e);
 			virtual bool OnMidiPedalReleased(MidiPedalReleasedEvent& e);
 
-			virtual bool IsKeyPressedImpl(int keycode) override;
+			virtual bool IsKeyPressedImpl(KeyCode keycode) override;
 
-			virtual bool IsMidiKeyPressedImpl(int keycode) override;
+			virtual bool IsMidiKeyPressedImpl(MidiCode keycode) override;
 			virtual bool IsMidiPedalPressedImpl() override;
 
-			virtual bool IsMouseButtonPressedImpl(int button) override;
+			virtual bool IsMouseButtonPressedImpl(MouseCode button) override;
 			virtual std::pair<float, float> GetMousePositionImpl() override;
 			virtual float GetMouseXImpl() override;
 			virtual float GetMouseYImpl() override;

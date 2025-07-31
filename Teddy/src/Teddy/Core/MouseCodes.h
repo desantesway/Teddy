@@ -1,8 +1,21 @@
-
+#pragma once
 // Mouse codes for Teddy
 
-#define TED_MOUSE_LEFT     0x00000000u
-#define TED_MOUSE_MIDDLE   0x00000001u
-#define TED_MOUSE_RIGHT    0x00000002u
-#define TED_MOUSE_X1       0x00000003u
-#define TED_MOUSE_X2       0x00000004u
+namespace Teddy
+{
+	typedef enum class MouseCode : uint8_t
+	{
+		Left		= 0x00000000u,
+		Middle		= 0x00000001u,
+		Right		= 0x00000002u,
+		X1			= 0x00000003u,
+		X2			= 0x00000004u,
+		Unknown		= 0x00000005u,
+	};
+
+	inline std::ostream& operator<<(std::ostream& os, MouseCode mouseCode)
+	{
+		os << static_cast<int32_t>(mouseCode);
+		return os;
+	}
+}

@@ -1,7 +1,7 @@
 #pragma once	
 
 #include "teddyPch.h"
-#include "Teddy/Core/Window.h"
+#include "Teddy/Renderer/SDLWindow.h"
 
 #include "Teddy/Events/ApplicationEvent.h"
 #include "Teddy/Events/KeyEvent.h"
@@ -11,7 +11,7 @@
 
 namespace Teddy {
 
-	void Window::SDLEvents() {
+	void SDLWindow::SDLEvents() {
 		TED_PROFILE_FUNCTION();
 
         SDL_Event event;
@@ -35,14 +35,14 @@ namespace Teddy {
 				EventCallback(e);
 				break;
 			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-				int button = SDLToTeddyMouse(event.button.button);
-				TED_CORE_ASSERT(button != -1, "Unknown mouse button pressed");
+				MouseCode button = SDLToTeddyMouse(event.button.button);
+				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonPressedEvent e(button);
 				EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_BUTTON_UP: {
-				int button = SDLToTeddyMouse(event.button.button);
-				TED_CORE_ASSERT(button != -1, "Unknown mouse button pressed");
+				MouseCode button = SDLToTeddyMouse(event.button.button);
+				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonReleasedEvent e(button);
 				EventCallback(e);
 				break;

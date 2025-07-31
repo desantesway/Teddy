@@ -12,10 +12,8 @@ namespace Teddy {
 		m_EventCallback = callback;
 	}
 
-	void MidiDriver::Init(Ref<EventCallbackFn> callback) {
+	void MidiDriver::Init() {
 		TED_PROFILE_FUNCTION();
-
-		SetEventCallback(callback);
 
 		try {
 			midiIn = CreateScope<RtMidiIn>(RtMidi::UNSPECIFIED, "Teddy MidiIn");
@@ -121,20 +119,20 @@ namespace Teddy {
 	void MidiDriver::OnUpdate() {
 		TED_PROFILE_FUNCTION();
 
-		if (!(*m_EventCallback) || !midiIn->isPortOpen()) return;
+		if (!(m_EventCallback.get()) || !midiIn->isPortOpen()) return;
 		static std::vector<unsigned char> message;
 		int nBytes;
 
 		bool done = false;
 		double stamp;
-
+		
 		while (!done) {
 			stamp = midiIn->getMessage(&message);
 			nBytes = static_cast<int>(message.size());
 
 			if (nBytes > 0) {
 
-
+				
 				if (message[0] == 144) {
 					MidiKeyPressedEvent e(RtmidiToTeddy(message[1]), message[2]);
 					(*m_EventCallback)(e);

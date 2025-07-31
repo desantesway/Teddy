@@ -1,17 +1,21 @@
 #pragma once
 
+#include "Teddy/Core/KeyCodes.h"
+#include "Teddy/Core/MouseCodes.h"
+#include "Teddy/Core/MidiCodes.h"
+
 namespace Teddy {
 
-	int SDLToTeddyKey(int keycode);
-	int SDLToTeddyMouse(int keycode);
-	int TeddyToSDLKey(int keycode);
-	int TeddyToSDLMouse(int keycode);
+	KeyCode SDLToTeddyKey(uint32_t keycode);
+	MouseCode SDLToTeddyMouse(uint32_t keycode);
+	uint32_t TeddyToSDLKey(KeyCode keycode);
+	uint32_t TeddyToSDLMouse(MouseCode keycode);
 
-	int TeddyToImGuiKey(int keycode);
-	int TeddyToImGuiMouse(int keycode);
+	uint32_t TeddyToImGuiKey(KeyCode keycode);
+	uint32_t TeddyToImGuiMouse(MouseCode keycode);
 
-	int TeddyToRtmidi(int keycode);
-	int RtmidiToTeddy(int keycode);
+	uint32_t TeddyToRtmidi(MidiCode keycode);
+	MidiCode RtmidiToTeddy(uint32_t keycode);
 
-	std::string KeyToNote(unsigned int key);
+	std::string KeyToNote(MidiCode key);
 }

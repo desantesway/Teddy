@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Event.h"
+#include "Teddy/Events/Event.h"
+#include "Teddy/Core/MouseCodes.h"
 
 namespace Teddy {
 
@@ -53,28 +54,28 @@ namespace Teddy {
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline int GetMouseButton() const { return m_Button; }
+		inline MouseCode GetMouseButton() const { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	protected:
-		MouseButtonEvent(int button)
+		MouseButtonEvent(MouseCode button)
 			: m_Button(button) {
 		}
 
-		int m_Button;
+		MouseCode m_Button;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int button)
+		MouseButtonPressedEvent(MouseCode button)
 			: MouseButtonEvent(button) {
 		}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << m_Button;
+			ss << "MouseButtonPressedEvent: " << (int)m_Button;
 			return ss.str();
 		}
 
@@ -84,14 +85,14 @@ namespace Teddy {
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int button)
+		MouseButtonReleasedEvent(MouseCode button)
 			: MouseButtonEvent(button) {
 		}
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonReleasedEvent: " << m_Button;
+			ss << "MouseButtonReleasedEvent: " << (int)m_Button;
 			return ss.str();
 		}
 

@@ -17,6 +17,11 @@ namespace Teddy {
 		return CreateScope<SDLWindow>(props);
 	}
 
+	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) {
+		EventCallback = callback;
+		midiDriver.SetEventCallback(std::make_shared<EventCallbackFn>(EventCallback));
+	}
+
 	SDLWindow::SDLWindow(const WindowProps& props)
 	{
 		TED_PROFILE_FUNCTION();
@@ -43,7 +48,8 @@ namespace Teddy {
 
 		if (s_SDLWindowCount == 0)
 		{
-			midiDriver.Init(std::make_shared<EventCallbackFn>(EventCallback));
+			midiDriver.Init();
+
 			midiDriver.InitIn(0);
 			midiDriver.InitOut(2);
 
