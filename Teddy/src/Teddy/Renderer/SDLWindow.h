@@ -40,18 +40,20 @@ namespace Teddy {
 
 		Scope<GraphicsWindow> m_Window;
 		Scope<GraphicsContext> m_Context;
-		MidiDriver m_MidiDriver;
 
 		struct WindowData
 		{
 			std::string Title;
 			unsigned int Width, Height;
 			bool VSync;
+
+			EventCallbackFn EventCallback;
+			MidiDriver MidiDriver;
 		};
 
 		WindowData m_Data;
 
-		EventCallbackFn EventCallback;
+		
 	};
 
 }

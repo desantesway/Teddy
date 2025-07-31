@@ -19,44 +19,44 @@ namespace Teddy {
 			switch (event.type) {
 			case SDL_EVENT_QUIT: {
 				WindowCloseEvent e;
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			}
 			case SDL_EVENT_WINDOW_RESIZED: {
 				WindowResizeEvent e(event.window.data1, event.window.data2);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			}case SDL_EVENT_KEY_DOWN: {
 				KeyPressedEvent e(SDLToTeddyKey(event.key.key), event.key.repeat);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			} case  SDL_EVENT_KEY_UP: {
 				KeyReleasedEvent e(SDLToTeddyKey(event.key.key));
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
 				MouseCode button = SDLToTeddyMouse(event.button.button);
 				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonPressedEvent e(button);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_BUTTON_UP: {
 				MouseCode button = SDLToTeddyMouse(event.button.button);
 				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonReleasedEvent e(button);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_MOTION: {
 				MouseMovedEvent e(event.motion.x, event.motion.y);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			} case SDL_EVENT_MOUSE_WHEEL: {
 				MouseScrolledEvent e(event.wheel.x, event.wheel.y);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			}case SDL_EVENT_TEXT_INPUT: {
 				KeyTypedEvent e(event.text.text);
-				EventCallback(e);
+				m_Data.EventCallback(e);
 				break;
 			}default:
 				break;
