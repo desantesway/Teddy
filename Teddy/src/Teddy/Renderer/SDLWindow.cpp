@@ -68,6 +68,9 @@ namespace Teddy {
 		m_Context = GraphicsContext::Create(m_Window->GetWindow());
 		m_Context->Init(); 
 
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
 		SetVSync(true);
 	}
 
