@@ -14,6 +14,8 @@ namespace Teddy {
 
 	void OpenGLContext::Init()
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_Context = SDL_GL_CreateContext(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 		TED_CORE_ASSERT(status, "Could not intialize GLAD!");
@@ -34,10 +36,14 @@ namespace Teddy {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		TED_PROFILE_FUNCTION();
+
 		SDL_GL_SwapWindow(m_WindowHandle);
 	}
 
 	void OpenGLContext::Shutdown() {
+		TED_PROFILE_FUNCTION();
+
 		SDL_GL_DestroyContext(m_Context);
 	}
 

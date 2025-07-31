@@ -32,7 +32,6 @@ namespace Teddy{
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
-		bool OnMidiKeyPressed(MidiKeyPressedEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
 		std::unique_ptr<Window> m_Window;

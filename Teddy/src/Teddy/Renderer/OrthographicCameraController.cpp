@@ -13,6 +13,8 @@ namespace Teddy
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (Input::IsKeyPressed(TED_KEY_A)) {
 			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 			m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
@@ -51,6 +53,8 @@ namespace Teddy
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -58,6 +62,8 @@ namespace Teddy
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 
@@ -68,6 +74,8 @@ namespace Teddy
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		

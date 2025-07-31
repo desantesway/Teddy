@@ -6,7 +6,7 @@
 
 #include "Teddy/Renderer/GraphicsContext.h"
 
-// TODO: SUBSTRACT OPENGL CREATION
+// TODO: midi into window data
 
 namespace Teddy {
 	
@@ -19,16 +19,22 @@ namespace Teddy {
 
 	SDLWindow::SDLWindow(const WindowProps& props)
 	{
+		TED_PROFILE_FUNCTION();
+
 		Init(props);
 	}
 
 	SDLWindow::~SDLWindow()
 	{
+		TED_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
 	void SDLWindow::Init(const WindowProps& props)
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -37,28 +43,38 @@ namespace Teddy {
 
 		if (s_SDLWindowCount == 0)
 		{
+			midiDriver.Init(std::make_shared<EventCallbackFn>(EventCallback));
+			midiDriver.InitIn(0);
+			midiDriver.InitOut(2);
+
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
-			int success = SDL_Init(SDL_INIT_VIDEO);
+			int success = 0;
+
+			{
+				TED_PROFILE_SCOPE("SDL_Init");
+				success = SDL_Init(SDL_INIT_VIDEO);
+			}
+
 			TED_CORE_ASSERT(success, "Could not intialize SDL!");
 
 			++s_SDLWindowCount;
+
+			
 		}
 
 		m_Window = GraphicsWindow::Create(m_Data.Title.c_str(), (int)props.Width, (int)props.Height);
 		m_Window->Init();
 
 		m_Context = GraphicsContext::Create(m_Window->GetWindow());
-		m_Context->Init();
-		
-		midiDriver.Init(&EventCallback);
-		midiDriver.InitIn(0);
-		midiDriver.InitOut(2);
+		m_Context->Init(); 
 
 		SetVSync(true);
 	}
 
 	void SDLWindow::Shutdown()
 	{	
+		TED_PROFILE_FUNCTION();
+
 		m_Context->Shutdown();
 
 		m_Window->Shutdown();
@@ -73,6 +89,8 @@ namespace Teddy {
 
 	void SDLWindow::OnUpdate()
 	{
+		TED_PROFILE_FUNCTION();
+
 		midiDriver.OnUpdate();
 		SDLEvents();
 
@@ -81,6 +99,8 @@ namespace Teddy {
 
     void SDLWindow::SetVSync(bool enabled)
     {
+		TED_PROFILE_FUNCTION();
+
 		if (enabled)
 			SDL_GL_SetSwapInterval(1);
 		else

@@ -128,9 +128,11 @@ namespace Teddy {
 	#define TED_PROFILE_END_SESSION() ::Teddy::Instrumentor::Get().EndSession()
 	#define TED_PROFILE_SCOPE(name) ::Teddy::InstrumentationTimer timer##__LINE__(name);
 	#define TED_PROFILE_FUNCTION() TED_PROFILE_SCOPE(__FUNCSIG__)
+	#define TED_PROFILE_RENDERER_FUNCTION() 
 #else
 	#define TED_PROFILE_BEGIN_SESSION(name, filepath)
 	#define TED_PROFILE_END_SESSION()
 	#define TED_PROFILE_SCOPE(name)
 	#define TED_PROFILE_FUNCTION()
+	#define TED_PROFILE_RENDERER_FUNCTION() 
 #endif

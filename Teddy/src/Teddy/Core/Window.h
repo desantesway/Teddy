@@ -4,7 +4,7 @@
 
 #include "Teddy/Core/Core.h"
 #include "Teddy/Events/Event.h"
-#include "Teddy/Core/MidiDriver.h"
+#include "Teddy/Events/MidiDriver.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	

@@ -12,6 +12,8 @@
 namespace Teddy {
 
 	void Window::SDLEvents() {
+		TED_PROFILE_FUNCTION();
+
         SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {

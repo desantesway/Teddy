@@ -13,6 +13,8 @@ namespace Teddy {
 
 	void OpenGLWindow::Init()
 	{
+		TED_PROFILE_FUNCTION();
+
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -23,6 +25,8 @@ namespace Teddy {
 	}
 
 	void OpenGLWindow::Shutdown() {
+		TED_PROFILE_FUNCTION();
+
 		if (m_Window) {
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;

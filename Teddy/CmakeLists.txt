@@ -21,6 +21,8 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDLEvent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.h
@@ -93,9 +95,6 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MidiDriver.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MidiDriver.h
-
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.cpp
 
@@ -103,7 +102,7 @@ add_library(Teddy STATIC
 )
 
 target_precompile_headers(Teddy PRIVATE
-                            src/teddyPch.h)
+                            src/TeddyPch.h)
 
 target_include_directories(Teddy PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src

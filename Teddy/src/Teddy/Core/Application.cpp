@@ -20,6 +20,8 @@ namespace Teddy {
 	Application::Application()
 	{
 
+		TED_PROFILE_FUNCTION();
+
 		TED_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -35,22 +37,31 @@ namespace Teddy {
 
 	Application::~Application()
 	{
+		TED_PROFILE_FUNCTION();
+
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
-		
+		TED_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(TED_BIND_EVENT_FN(Application::OnWindowClose)); // if the event is Window close do OnWindowClose()
 		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(Application::OnWindowResize));
@@ -66,20 +77,31 @@ namespace Teddy {
 	}
 
 	void Application::Run() {
+		TED_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			TED_PROFILE_SCOPE("Application Run Loop");
+
 			float time = (float)SDL_GetTicks(); //Platform::GetTime
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized) {
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(timestep);
+				{
+					TED_PROFILE_SCOPE("LayerStack OnUpdate");
 
-				// ImGui minimizes too (?)
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+
 				m_ImGuiLayer->Begin();
-				for (Layer* layer : m_LayerStack)
-					layer->OnImGuiRender();
+				{
+					TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
+
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+				}
 				m_ImGuiLayer->End();
 			}
 
@@ -93,14 +115,10 @@ namespace Teddy {
 		return true;
 	}
 
-	bool Application::OnMidiKeyPressed(MidiKeyPressedEvent& e)
-	{
-		TED_CORE_TRACE("{0}", e);
-		return true;
-	}
-
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (e.GetWidth() == 0 || e.GetHeight() == 0) {
 			m_Minimized = true;
 			return false;

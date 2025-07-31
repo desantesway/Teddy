@@ -10,6 +10,8 @@ namespace Teddy {
 
 	void Renderer::Init()
 	{
+		TED_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}
