@@ -26,7 +26,7 @@ extern Teddy::Application* Teddy::CreateApplication();
 			app->Run();
 			TED_PROFILE_END_SESSION();
 
-			TED_PROFILE_BEGIN_SESSION("Shutdown", "profiles / TeddyProfile - Shutdown.json");
+			TED_PROFILE_BEGIN_SESSION("Shutdown", "profiles/TeddyProfile-Shutdown.json");
 			delete app;
 			TED_PROFILE_END_SESSION();
 
@@ -47,7 +47,7 @@ extern Teddy::Application* Teddy::CreateApplication();
 			app->Run();
 			TED_PROFILE_END_SESSION();
 
-			TED_PROFILE_BEGIN_SESSION("Shutdown", "profiles / TeddyProfile - Shutdown.json");
+			TED_PROFILE_BEGIN_SESSION("Shutdown", "profiles/TeddyProfile-Shutdown.json");
 			delete app;
 			TED_PROFILE_END_SESSION();
 
