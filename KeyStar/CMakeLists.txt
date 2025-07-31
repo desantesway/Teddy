@@ -8,7 +8,7 @@ else()
     add_executable(KeyStar)
 endif()
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bar)
+set_property(TARGET KeyStar PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/KeyStar")
 
 target_sources(KeyStar PRIVATE    
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/KeyStarApp.cpp
@@ -31,7 +31,4 @@ set_target_properties(KeyStar PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/KeyStar"
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-     DESTINATION "${CMAKE_BINARY_DIR}/KeyStar/")
 

@@ -25,31 +25,20 @@ set(OUTPUT_INT_DIR "${CMAKE_BINARY_DIR}/bin-int/${CMAKE_BUILD_TYPE}-${CMAKE_SYST
 # Engine & Application
 add_subdirectory(Teddy)
 add_subdirectory(KeyStar)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT KeyStar)
 
 target_link_libraries(KeyStar PRIVATE Teddy)
 
 #sdl
-set(SDL_TEST OFF)
+set(SDL_TEST OFF CACHE BOOL "Disable SDL test library")
+set(SDL_SHARED OFF)
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
 
 add_subdirectory(Teddy/vendor/SDL)
 include_directories(Teddy/vendor/SDL/include)
 
-# Add the precompiled library
-#add_library(SDL3::SDL3 STATIC IMPORTED)
-#set_target_properties(SDL3::SDL3 PROPERTIES
-#    IMPORTED_LOCATION_DEBUG "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Debug/SDL3.lib"
-#    IMPORTED_LOCATION_RELEASE "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Release/SDL3.lib"
-#    IMPORTED_LOCATION_DIST "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/Dist/SDL3.lib"
-#    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL/include"
-#)
-
-#set(SDL_STATIC ON CACHE INTERNAL "")
-#set(SDL3_DIR "${CMAKE_SOURCE_DIR}/Teddy/vendor/SDL" ${CMAKE_PREFIX_PATH})
-
-#find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-static)
-
-target_link_libraries(Teddy PRIVATE SDL3::SDL3-static)
-target_link_libraries(KeyStar PRIVATE SDL3::SDL3-static)
+target_link_libraries(Teddy PRIVATE SDL3-static)
+target_link_libraries(KeyStar PRIVATE SDL3-static)
 
 # SpdLog
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries")
