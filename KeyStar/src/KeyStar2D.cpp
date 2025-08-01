@@ -33,13 +33,17 @@ void KeyStar2D::OnUpdate(Teddy::Timestep ts)
 	}
 
 	{
+
+		static float rotation = 0.0f;
+		rotation += ts.GetSeconds() * 50.0f;
+
 		TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 		Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
 	
 		Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
-		Teddy::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, {0.9f, 0.3f, 0.1f, 1.0f});
+		Teddy::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, rotation, {0.2f, 0.8f, 0.1f, 1.0f});
 		Teddy::Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_SustainTexture, {0.1f, 0.1f, 0.9f, 1.0f});
-		Teddy::Renderer2D::DrawQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_SustainTexture, { 0.1f, 0.1f, 0.9f, 1.0f });
+		Teddy::Renderer2D::DrawRotatedQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, 45.0f, m_SustainTexture, { 0.1f, 0.1f, 0.9f, 1.0f });
 		Teddy::Renderer2D::EndScene();
 	}
 }
