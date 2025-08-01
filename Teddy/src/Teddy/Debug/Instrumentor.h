@@ -137,6 +137,7 @@ namespace Teddy {
 		{
 			m_OutputStream << "]}";
 			m_OutputStream.flush();
+			m_HeaderWrote = false;
 		}
 
 		// Note: you must already own lock on m_Mutex before
