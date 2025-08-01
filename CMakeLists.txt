@@ -9,7 +9,6 @@ if(NOT CMAKE_BUILD_TYPE) # default to Debug if not specified
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build" FORCE)
 endif()
 
-
 project(Teddy)
 
 # if windows add definitions for windows platform and set MultiThreaded with /utf-8 for spdlog
