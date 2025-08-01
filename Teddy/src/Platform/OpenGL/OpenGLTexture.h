@@ -3,7 +3,8 @@
 #include "Teddy/Renderer/Texture.h"
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class OpenGLTexture2D : public Texture2D
 	{

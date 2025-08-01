@@ -3,7 +3,8 @@
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	Scope<RendererAPI> RenderCommand::s_RendererAPI = RendererAPI::Create();
 

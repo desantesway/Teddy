@@ -2,7 +2,8 @@
 #include "Teddy/Core/Input.h"
 #include "Teddy/Core/TeddyInput.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 	Scope<Input> Input::s_Instance = Input::Create();
 
 	Scope<Input> Input::Create()

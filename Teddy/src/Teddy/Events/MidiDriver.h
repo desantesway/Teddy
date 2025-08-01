@@ -5,7 +5,8 @@
 
 namespace Teddy {
 
-	class MidiDriver {
+	class MidiDriver 
+	{
 	public:
 		MidiDriver() = default;
 		~MidiDriver() = default;

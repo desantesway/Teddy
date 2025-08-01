@@ -2,7 +2,8 @@
 
 #include <SDL3/SDL.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class GraphicsContext
 	{

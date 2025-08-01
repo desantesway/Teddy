@@ -4,7 +4,8 @@
 
 #include "Teddy/Renderer/Texture.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class Renderer2D 
 	{

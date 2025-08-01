@@ -7,8 +7,10 @@
 #include "Teddy/Core/KeyCodes.h"
 #include "Teddy/Core/MidiCodes.h"
 
-namespace Teddy {
-	class Input {
+namespace Teddy 
+{
+	class Input 
+	{
 
 	protected:
 		Input() = default;
@@ -16,15 +18,15 @@ namespace Teddy {
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;
 
-		inline static void OnEvent(Event& e) { return s_Instance->OnEventImpl(e); }
+		static void OnEvent(Event& e) { return s_Instance->OnEventImpl(e); }
 
-		inline static bool IsKeyPressed(KeyCode keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
-		inline static bool IsMidiKeyPressed(MidiCode keycode) { return s_Instance->IsMidiKeyPressedImpl(keycode); }
-		inline static bool IsMidiPedalPressed() { return s_Instance->IsMidiPedalPressedImpl(); }
-		inline static bool IsMouseButtonPressed(MouseCode button) { return s_Instance->IsMouseButtonPressedImpl(button); }
-		inline static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImpl(); }
-		inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
-		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
+		static bool IsKeyPressed(KeyCode keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
+		static bool IsMidiKeyPressed(MidiCode keycode) { return s_Instance->IsMidiKeyPressedImpl(keycode); }
+		static bool IsMidiPedalPressed() { return s_Instance->IsMidiPedalPressedImpl(); }
+		static bool IsMouseButtonPressed(MouseCode button) { return s_Instance->IsMouseButtonPressedImpl(button); }
+		static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImpl(); }
+		static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
+		static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
 		static Scope<Input> Create();
 	protected:

@@ -4,7 +4,8 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
@@ -21,7 +22,8 @@ namespace Teddy {
 		Renderer2D::Shutdown();
 	}
 
-	void Renderer::OnWindowResize(uint32_t width, uint32_t height) {
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height) 
+	{
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 

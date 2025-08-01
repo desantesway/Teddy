@@ -4,7 +4,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) 
 		: m_Width(width), m_Height(height)
@@ -47,11 +48,13 @@ namespace Teddy {
 		GLenum internalFormat = 0, 
 			dataFormat = 0;
 
-		if (channels == 4){
+		if (channels == 4)
+		{
 			internalFormat = GL_RGBA8;
 			dataFormat = GL_RGBA;
 		}
-		else if (channels == 3) {
+		else if (channels == 3) 
+		{
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
 		}

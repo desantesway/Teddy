@@ -20,7 +20,8 @@ namespace Teddy
 	ImGuiLayer::ImGuiLayer()
 		:Layer("ImGuiLayer"){}
 
-	void ImGuiLayer::OnAttach() {
+	void ImGuiLayer::OnAttach() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		IMGUI_CHECKVERSION();
@@ -44,7 +45,8 @@ namespace Teddy
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 	
-	void ImGuiLayer::OnDetach() {
+	void ImGuiLayer::OnDetach() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		ImGui_ImplOpenGL3_Shutdown();
@@ -52,7 +54,8 @@ namespace Teddy
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::Begin() {
+	void ImGuiLayer::Begin() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		ImGui_ImplOpenGL3_NewFrame();
@@ -60,7 +63,8 @@ namespace Teddy
 		ImGui::NewFrame();
 	}
 
-	void ImGuiLayer::End() {
+	void ImGuiLayer::End() 
+	{
 
 		TED_PROFILE_FUNCTION();
 
@@ -84,7 +88,8 @@ namespace Teddy
 		SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
 	}
 
-	void ImGuiLayer::OnEvent(Event& event) {
+	void ImGuiLayer::OnEvent(Event& event) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		EventDispatcher dispatcher(event);
@@ -101,7 +106,8 @@ namespace Teddy
 		
 	}
 
-	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e) {
+	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -120,7 +126,8 @@ namespace Teddy
 		return false;
 	}
 
-	bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e){
+	bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e)
+	{
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -129,7 +136,8 @@ namespace Teddy
 		return false;
 	}
 
-	bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e){ 
+	bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e)
+	{ 
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -137,7 +145,8 @@ namespace Teddy
 		return false; 
 	}
 
-	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e){ 
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+	{ 
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -151,7 +160,8 @@ namespace Teddy
 		return false; 
 	}
 
-	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e){ 
+	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
+	{ 
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -165,7 +175,8 @@ namespace Teddy
 		return false; 
 	}
 
-	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e){
+	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
+	{
 		
 		TED_PROFILE_FUNCTION();
 
@@ -174,7 +185,8 @@ namespace Teddy
 		return false;
 	}
 
-	bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent& e){ 
+	bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent& e)
+	{ 
 		TED_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();

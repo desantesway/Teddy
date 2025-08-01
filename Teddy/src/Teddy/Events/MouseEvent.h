@@ -3,17 +3,19 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Core/MouseCodes.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y)
-			: m_MouseX(x), m_MouseY(y) {
+			: m_MouseX(x), m_MouseY(y) 
+		{
 		}
 
-		inline float GetX() const { return m_MouseX; }
-		inline float GetY() const { return m_MouseY; }
+		float GetX() const { return m_MouseX; }
+		float GetY() const { return m_MouseY; }
 
 		std::string ToString() const override
 		{
@@ -32,11 +34,12 @@ namespace Teddy {
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
-			: m_XOffset(xOffset), m_YOffset(yOffset) {
+			: m_XOffset(xOffset), m_YOffset(yOffset) 
+		{
 		}
 
-		inline float GetXOffset() const { return m_XOffset; }
-		inline float GetYOffset() const { return m_YOffset; }
+		float GetXOffset() const { return m_XOffset; }
+		float GetYOffset() const { return m_YOffset; }
 
 		std::string ToString() const override
 		{
@@ -54,12 +57,13 @@ namespace Teddy {
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline MouseCode GetMouseButton() const { return m_Button; }
+		MouseCode GetMouseButton() const { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	protected:
 		MouseButtonEvent(MouseCode button)
-			: m_Button(button) {
+			: m_Button(button) 
+		{
 		}
 
 		MouseCode m_Button;
@@ -69,7 +73,8 @@ namespace Teddy {
 	{
 	public:
 		MouseButtonPressedEvent(MouseCode button)
-			: MouseButtonEvent(button) {
+			: MouseButtonEvent(button) 
+		{
 		}
 
 		std::string ToString() const override
@@ -86,7 +91,8 @@ namespace Teddy {
 	{
 	public:
 		MouseButtonReleasedEvent(MouseCode button)
-			: MouseButtonEvent(button) {
+			: MouseButtonEvent(button) 
+		{
 		}
 
 		std::string ToString() const override

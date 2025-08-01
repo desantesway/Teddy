@@ -15,22 +15,28 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
-		if (Input::IsKeyPressed(KeyCode::A)) {
+		if (Input::IsKeyPressed(KeyCode::A)) 
+		{
 			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 			m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 		}
-		else if (Input::IsKeyPressed(KeyCode::D)) {
+		else if (Input::IsKeyPressed(KeyCode::D)) 
+		{
 			m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 			m_CameraPosition.y += sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 		}
-		if (Input::IsKeyPressed(KeyCode::W)){
+
+		if (Input::IsKeyPressed(KeyCode::W))
+		{
 			m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 			m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 		}
-		else if (Input::IsKeyPressed(KeyCode::S)){
+		else if (Input::IsKeyPressed(KeyCode::S))
+		{
 			m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 			m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts.GetSeconds();
 		}
+
 		if (m_Rotation)
 		{
 			if (Input::IsKeyPressed(KeyCode::Q))

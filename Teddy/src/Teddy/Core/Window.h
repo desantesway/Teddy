@@ -9,7 +9,8 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	struct WindowProps
 	{
@@ -39,8 +40,8 @@ namespace Teddy {
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
-		virtual inline void SetWidth(int width) = 0;
-		virtual inline void SetHeight(int height) = 0;
+		virtual void SetWidth(int width) = 0;
+		virtual void SetHeight(int height) = 0;
 
 		// Window attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

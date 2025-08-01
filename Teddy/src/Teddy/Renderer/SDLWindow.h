@@ -8,7 +8,8 @@
 #include "Teddy/Renderer/GraphicsContext.h"
 #include "Teddy/Renderer/GraphicsWindow.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class SDLWindow : public Window
 	{
@@ -19,17 +20,17 @@ namespace Teddy {
 		void OnUpdate() override;
 		virtual void SDLEvents() override;
 
-		inline unsigned int GetWidth() const override { return m_Data.Width; }
-		inline unsigned int GetHeight() const override { return m_Data.Height; }
+		unsigned int GetWidth() const override { return m_Data.Width; }
+		unsigned int GetHeight() const override { return m_Data.Height; }
 
-		inline void SetWidth(int width) override { m_Data.Width = width; }
-		inline void SetHeight(int height) override { m_Data.Height = height; }
+		void SetWidth(int width) override { m_Data.Width = width; }
+		void SetHeight(int height) override { m_Data.Height = height; }
 
-		inline virtual void* GetNativeWindow() const override  { return m_Window->GetWindow(); }
-		inline virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
+		virtual void* GetNativeWindow() const override  { return m_Window->GetWindow(); }
+		virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
 
 		// Window attributes
-		inline void SetEventCallback(const EventCallbackFn& callback) override;
+		void SetEventCallback(const EventCallbackFn& callback) override;
 
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
@@ -52,8 +53,6 @@ namespace Teddy {
 		};
 
 		WindowData m_Data;
-
-		
 	};
 
 }

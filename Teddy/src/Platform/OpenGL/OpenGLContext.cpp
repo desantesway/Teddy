@@ -4,7 +4,8 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	OpenGLContext::OpenGLContext(SDL_Window* windowHandle)
 		: m_WindowHandle(windowHandle)
@@ -41,7 +42,8 @@ namespace Teddy {
 		SDL_GL_SwapWindow(m_WindowHandle);
 	}
 
-	void OpenGLContext::Shutdown() {
+	void OpenGLContext::Shutdown() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		SDL_GL_DestroyContext(m_Context);

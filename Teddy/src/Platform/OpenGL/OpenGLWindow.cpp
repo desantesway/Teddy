@@ -4,7 +4,8 @@
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	OpenGLWindow::OpenGLWindow(const char* title, int width, int height)
 		: m_Title(title), m_Width(width), m_Height(height), m_Window(nullptr)
@@ -30,10 +31,12 @@ namespace Teddy {
 		m_Window = SDL_CreateWindow(m_Title, m_Width, m_Height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
 
-	void OpenGLWindow::Shutdown() {
+	void OpenGLWindow::Shutdown() 
+	{
 		TED_PROFILE_FUNCTION();
 
-		if (m_Window) {
+		if (m_Window) 
+		{
 			SDL_DestroyWindow(m_Window);
 			m_Window = nullptr;
 		}

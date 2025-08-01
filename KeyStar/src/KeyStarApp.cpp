@@ -7,7 +7,8 @@
 
 #include "KeyStar2D.h"
 
-class KeyStar : public Teddy::Application {
+class KeyStar : public Teddy::Application 
+{
 public:
 	KeyStar() {
 		//PushLayer(new ExampleLayer());
@@ -19,6 +20,7 @@ public:
 };
 
 
-Teddy::Application* Teddy::CreateApplication() {
+Teddy::Application* Teddy::CreateApplication() 
+{
 	return new KeyStar();
 } // CreateApplication

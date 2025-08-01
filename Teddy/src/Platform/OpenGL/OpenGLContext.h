@@ -4,7 +4,8 @@
 
 #include <SDL3/SDL.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class OpenGLContext : public GraphicsContext
 	{

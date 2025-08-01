@@ -2,7 +2,8 @@
 
 #include "Teddy/Renderer/VertexArray.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class OpenGLVertexArray : public VertexArray
 	{

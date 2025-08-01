@@ -2,9 +2,11 @@
 
 #include <glm/glm.hpp>
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	class OrthographicCamera {
+	class OrthographicCamera 
+	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);
 

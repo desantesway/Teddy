@@ -1,7 +1,8 @@
 #include "teddyPch.h"
 #include "Teddy/Core/LayerStack.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	LayerStack::LayerStack()
 	{
@@ -9,7 +10,8 @@ namespace Teddy {
 
 	LayerStack::~LayerStack()
 	{
-		for (Layer* layer : m_Layers){
+		for (Layer* layer : m_Layers)
+		{
 			layer->OnDetach();
 			delete layer;
 		}

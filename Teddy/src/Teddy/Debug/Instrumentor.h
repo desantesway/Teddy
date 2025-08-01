@@ -21,7 +21,8 @@
 #include <mutex>
 #include <sstream>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
@@ -87,10 +88,12 @@ namespace Teddy {
 			std::stringstream json;
 
 			json << std::setprecision(3) << std::fixed;
-			if (m_HeaderWrote) {
+			if (m_HeaderWrote) 
+			{
 				json << ",{";
 			}
-			else {
+			else 
+			{
 				json << "{";
 				m_HeaderWrote = true;
 			}
@@ -190,7 +193,8 @@ namespace Teddy {
 		bool m_Stopped;
 	};
 
-	namespace InstrumentorUtils {
+	namespace InstrumentorUtils 
+	{
 
 		template <size_t N>
 		struct ChangeResult

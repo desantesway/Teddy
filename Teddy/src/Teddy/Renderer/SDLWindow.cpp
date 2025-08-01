@@ -6,11 +6,13 @@
 
 #include "Teddy/Renderer/GraphicsContext.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 	
 	static uint8_t s_SDLWindowCount = 0;
 
-	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) {
+	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) 
+	{
 		m_Data.EventCallback = callback;
 		m_Data.MidiDriver.SetEventCallback(std::make_shared<EventCallbackFn>(m_Data.EventCallback));
 	}
@@ -54,7 +56,7 @@ namespace Teddy {
 				success = SDL_Init(SDL_INIT_VIDEO);
 			}
 
-			TED_CORE_ASSERT(success, "Could not intialize SDL!");
+			TED_CORE_ASSERT(success, "Could not initialize SDL!");
 
 			++s_SDLWindowCount;
 
@@ -82,7 +84,8 @@ namespace Teddy {
 		m_Window->Shutdown();
 		
 		s_SDLWindowCount--;
-		if (s_SDLWindowCount == 0) {
+		if (s_SDLWindowCount == 0) 
+		{
 			TED_CORE_INFO("Terminating SDL");
 			SDL_Quit();
 		}

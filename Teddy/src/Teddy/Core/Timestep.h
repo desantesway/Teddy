@@ -1,8 +1,10 @@
 #pragma once
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	class Timestep {
+	class Timestep 
+	{
 	public:
 		Timestep(float time = 0.0f)
 			: m_Time(time) {

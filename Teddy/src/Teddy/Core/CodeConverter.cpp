@@ -3,17 +3,21 @@
 #include <SDL3/SDL.h>
 #include <imgui.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 	
-    KeyCode SDLToTeddyKey(uint32_t keycode) {
+    KeyCode SDLToTeddyKey(uint32_t keycode) 
+    {
 		return (KeyCode)keycode;
 	}
 
-    uint32_t TeddyToSDLKey(KeyCode keycode) {
+    uint32_t TeddyToSDLKey(KeyCode keycode) 
+    {
 		return (uint32_t)keycode;
 	}
 
-    MouseCode SDLToTeddyMouse(uint32_t keycode){
+    MouseCode SDLToTeddyMouse(uint32_t keycode)
+    {
 		if (keycode == SDL_BUTTON_LEFT) return      MouseCode::Left;
 		if (keycode == SDL_BUTTON_RIGHT) return     MouseCode::Right;
 		if (keycode == SDL_BUTTON_MIDDLE) return    MouseCode::Middle;
@@ -22,7 +26,8 @@ namespace Teddy {
 		return MouseCode::Unknown;
 	}
 	
-    uint32_t TeddyToSDLMouse(MouseCode keycode){
+    uint32_t TeddyToSDLMouse(MouseCode keycode)
+    {
 		if (keycode == MouseCode::Left)     return SDL_BUTTON_LEFT;
 		if (keycode == MouseCode::Right)    return SDL_BUTTON_RIGHT;
 		if (keycode == MouseCode::Middle)   return SDL_BUTTON_MIDDLE;
@@ -31,7 +36,8 @@ namespace Teddy {
 		return -1;
 	}
 
-    uint32_t TeddyToImGuiKey(KeyCode keycode){
+    uint32_t TeddyToImGuiKey(KeyCode keycode)
+    {
         switch (keycode)
         {
         case KeyCode::Tab: return ImGuiKey_Tab;
@@ -141,7 +147,8 @@ namespace Teddy {
         return ImGuiKey_None;
 	}
 
-    uint32_t TeddyToImGuiMouse(MouseCode keycode){
+    uint32_t TeddyToImGuiMouse(MouseCode keycode)
+    {
 		if (keycode == MouseCode::Left)     return 0;
 		if (keycode == MouseCode::Right)    return 1;
 		if (keycode == MouseCode::Middle)   return 2;
@@ -150,41 +157,50 @@ namespace Teddy {
 		return -1;
 	}
 
-    uint32_t TeddyToRtmidi(MidiCode keycode) {
+    uint32_t TeddyToRtmidi(MidiCode keycode) 
+    {
         // Teddy MIDI note codes are defined to match the MIDI note numbers (0-127)
         // If the keycode is in the valid MIDI note range, return it as RtMidi code
-        if (static_cast<uint32_t>(keycode) >= 0x00 && static_cast<uint32_t>(keycode) <= 0x77) {
+        if (static_cast<uint32_t>(keycode) >= 0x00 && static_cast<uint32_t>(keycode) <= 0x77) 
+        {
             return static_cast<uint32_t>(keycode);
         }
         // Special case for pedal (sustain) control, if you use TED_MIDI_PEDAL
-        if (keycode == MidiCode::Pedal) {
+        if (keycode == MidiCode::Pedal) 
+        {
             return 0x78;
         }
         // Not a valid MIDI note or mapped control
         return -1;
     }
 
-    MidiCode RtmidiToTeddy(uint32_t keycode) {
+    MidiCode RtmidiToTeddy(uint32_t keycode) 
+    {
         // Teddy MIDI note codes are defined to match the MIDI note numbers (0-127)
         // If the keycode is in the valid MIDI note range, return it as Teddy code
-        if (keycode >= 0x00 && keycode <= 0x77) {
+        if (keycode >= 0x00 && keycode <= 0x77) 
+        {
             return static_cast<MidiCode>(keycode);
         }
         // Special case for pedal (sustain) control, if you use 0x78 for TED_MIDI_PEDAL
-        if (keycode == 0x78) {
+        if (keycode == 0x78) 
+        {
             return MidiCode::Pedal;
         }
         // Not a valid MIDI note or mapped control
         return MidiCode::Unknown;
     }
 
-    std::string KeyToNote(MidiCode key) {
-        if (static_cast<uint32_t>(key) < 0 || static_cast<uint32_t>(key) > 120) {
+    std::string KeyToNote(MidiCode key) 
+    {
+        if (static_cast<uint32_t>(key) < 0 || static_cast<uint32_t>(key) > 120) 
+        {
             return "Invalid note number";
         }
 
         const char* note;
-        switch (static_cast<uint32_t>(key) % 12) {
+        switch (static_cast<uint32_t>(key) % 12) 
+        {
         case 0: note = "C"; break;
         case 1: note = "Db"; break;
         case 2: note = "D"; break;

@@ -6,65 +6,81 @@
 
 #include "Teddy/Core/CodeConverter.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	void MidiDriver::SetEventCallback(Ref<EventCallbackFn> callback) {
+	void MidiDriver::SetEventCallback(Ref<EventCallbackFn> callback) 
+	{
 		m_EventCallback = callback;
 	}
 
-	void MidiDriver::Init() {
+	void MidiDriver::Init() 
+	{
 		TED_PROFILE_FUNCTION();
 
-		try {
+		try 
+		{
 			midiIn = CreateScope<RtMidiIn>(RtMidi::UNSPECIFIED, "Teddy MidiIn");
 			midiIn->ignoreTypes(false, false, false);
 		}
-		catch (RtMidiError& error) {
+		catch (RtMidiError& error) 
+		{
 			TED_CORE_ERROR(error.getMessage());
 		}
 
-		try {
+		try 
+		{
 			midiOut = CreateScope<RtMidiOut>();
 		}
-		catch (RtMidiError& error) {
+		catch (RtMidiError& error) 
+		{
 			TED_CORE_ERROR(error.getMessage());
 		}
 
 	}
 
-	void MidiDriver::InitIn(unsigned int port) {
+	void MidiDriver::InitIn(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
-		try {
+		try 
+		{
 			midiIn->openPort(port);
 			TED_CORE_ASSERT(midiIn->isPortOpen(), "Could not initialize Midi In");
 		}
-		catch (RtMidiError& error) {
+		catch (RtMidiError& error) 
+		{
 			TED_CORE_ERROR(error.getMessage());
 		}
 	}
 
-	void MidiDriver::InitOut(unsigned int port) {
+	void MidiDriver::InitOut(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
-		try {
+		try 
+		{
 			midiOut->openPort(port);
 			TED_CORE_ASSERT(midiOut->isPortOpen(), "Error initializing Midi Output");
 		}
-		catch (RtMidiError& error) {
+		catch (RtMidiError& error) 
+		{
 			TED_CORE_ERROR(error.getMessage());
 		}
 	}
 
-	void MidiDriver::OpenInPort(unsigned int port) {
+	void MidiDriver::OpenInPort(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
-		if (midiIn) {
+		if (midiIn) 
+		{
 			midiIn->openPort(port);
 		}
 	}
 
-	void MidiDriver::OpenOutPort(unsigned int port) {
+	void MidiDriver::OpenOutPort(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		if (midiOut) {
@@ -72,51 +88,60 @@ namespace Teddy {
 		}
 	}
 
-	unsigned int MidiDriver::GetInPorts() {
+	unsigned int MidiDriver::GetInPorts() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		return midiIn->getPortCount();
 	}
 
-	unsigned int MidiDriver::GetOutPorts() {
+	unsigned int MidiDriver::GetOutPorts() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		return midiOut->getPortCount();
 	}
 
-	std::string MidiDriver::GetInPortName(unsigned int port) {
+	std::string MidiDriver::GetInPortName(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		return midiIn->getPortName(port);
 	}
 
-	std::string MidiDriver::GetOutPortName(unsigned int port) {
+	std::string MidiDriver::GetOutPortName(unsigned int port) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		return midiOut->getPortName(port);
 	}
 
-	std::unordered_map<unsigned int, std::string> MidiDriver::GetInPortsMap() {
+	std::unordered_map<unsigned int, std::string> MidiDriver::GetInPortsMap() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		std::unordered_map<unsigned int, std::string> ports;
-		for (unsigned int i = 0; i < midiIn->getPortCount(); ++i) {
+		for (unsigned int i = 0; i < midiIn->getPortCount(); ++i) 
+		{
 			ports[i] = midiIn->getPortName(i);
 		}
 		return ports;
 	}
 
-	std::unordered_map<unsigned int, std::string> MidiDriver::GetOutPortsMap() {
+	std::unordered_map<unsigned int, std::string> MidiDriver::GetOutPortsMap() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		std::unordered_map<unsigned int, std::string> ports;
-		for (unsigned int i = 0; i < midiOut->getPortCount(); ++i) {
+		for (unsigned int i = 0; i < midiOut->getPortCount(); ++i) 
+		{
 			ports[i] = midiOut->getPortName(i);
 		}
 		return ports;
 	}
 
-	void MidiDriver::OnUpdate() {
+	void MidiDriver::OnUpdate() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		if (!(*m_EventCallback) || !midiIn->isPortOpen()) return;
@@ -126,44 +151,54 @@ namespace Teddy {
 		bool done = false;
 		double stamp;
 		
-		while (!done) {
+		while (!done) 
+		{
 			stamp = midiIn->getMessage(&message);
 			nBytes = static_cast<int>(message.size());
 
-			if (nBytes > 0) {
+			if (nBytes > 0) 
+			{
 
-				
-				if (message[0] == 144) {
+				if (message[0] == 144) 
+				{
 					MidiKeyPressedEvent e(RtmidiToTeddy(message[1]), message[2]);
 					(*m_EventCallback)(e);
 				}
-				else if (message[0] == 128) {
+				else if (message[0] == 128) 
+				{
 					MidiKeyReleasedEvent e(RtmidiToTeddy(message[1]), message[2]);
 					(*m_EventCallback)(e);
 				}
-				else if (message[0] == 176) {
-					if (message[2] == 0) {
+				else if (message[0] == 176) 
+				{
+					if (message[2] == 0) 
+					{
 						MidiPedalReleasedEvent e;
 						(*m_EventCallback)(e);
 					}
-					else if (message[2] <= 127) {
+					else if (message[2] <= 127) 
+					{
 						MidiPedalPressedEvent e;
 						(*m_EventCallback)(e);
 					}
-					else {
+					else 
+					{
 						TED_CORE_TRACE("Pedal Event unrecognized: {0}", message[2]);
 					}
 				}
-				else {
+				else 
+				{
 					TED_CORE_TRACE("Midi Event unrecognized: {0}", message[0]);
 				}
 
-				if (midiOut->isPortOpen()) {
+				if (midiOut->isPortOpen()) 
+				{
 
 					midiOut->sendMessage(&message);
 				}
 			}
-			else {
+			else 
+			{
 				done = true;
 			}
 		}

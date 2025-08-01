@@ -3,7 +3,8 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	Ref<Shader> Shader::Create(const std::string& filepath)
 	{

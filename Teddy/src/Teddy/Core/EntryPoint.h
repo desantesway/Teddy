@@ -10,7 +10,8 @@ extern Teddy::Application* Teddy::CreateApplication();
 
 	#ifdef TED_DIST
 		int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-			LPSTR lpCmdLine, int nCmdShow) {
+			LPSTR lpCmdLine, int nCmdShow) 
+		{
 			(void)hInstance; (void)hPrevInstance;
 			(void)lpCmdLine; (void)nCmdShow;
 
@@ -33,7 +34,8 @@ extern Teddy::Application* Teddy::CreateApplication();
 			return 0;
 		}
 	#else
-		int main(int argc, char** argv) {
+		int main(int argc, char** argv) 
+		{
 
 			Teddy::Log::Init();
 

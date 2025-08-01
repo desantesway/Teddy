@@ -5,7 +5,8 @@
 
 #include <vector>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class LayerStack
 	{

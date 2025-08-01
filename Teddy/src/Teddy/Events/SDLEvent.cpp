@@ -9,57 +9,80 @@
 
 #include "Teddy/Core/CodeConverter.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	void SDLWindow::SDLEvents() {
+	void SDLWindow::SDLEvents() 
+	{
 		TED_PROFILE_FUNCTION();
 
         SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-			case SDL_EVENT_QUIT: {
+		while (SDL_PollEvent(&event)) 
+		{
+			switch (event.type) 
+			{
+			case SDL_EVENT_QUIT: 
+			{
 				WindowCloseEvent e;
 				m_Data.EventCallback(e);
 				break;
 			}
-			case SDL_EVENT_WINDOW_RESIZED: {
+			case SDL_EVENT_WINDOW_RESIZED: 
+			{
 				WindowResizeEvent e(event.window.data1, event.window.data2);
 				m_Data.EventCallback(e);
 				break;
-			}case SDL_EVENT_KEY_DOWN: {
+			}
+			case SDL_EVENT_KEY_DOWN:
+			{
 				KeyPressedEvent e(SDLToTeddyKey(event.key.key), event.key.repeat);
 				m_Data.EventCallback(e);
 				break;
-			} case  SDL_EVENT_KEY_UP: {
+			}
+			case SDL_EVENT_KEY_UP:
+			{
 				KeyReleasedEvent e(SDLToTeddyKey(event.key.key));
 				m_Data.EventCallback(e);
 				break;
-			}case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+			}
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
+			{
 				MouseCode button = SDLToTeddyMouse(event.button.button);
 				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonPressedEvent e(button);
 				m_Data.EventCallback(e);
 				break;
-			} case SDL_EVENT_MOUSE_BUTTON_UP: {
+			}
+			case SDL_EVENT_MOUSE_BUTTON_UP:
+			{
 				MouseCode button = SDLToTeddyMouse(event.button.button);
 				TED_CORE_ASSERT(static_cast<int>(button) != -1, "Unknown mouse button pressed");
 				MouseButtonReleasedEvent e(button);
 				m_Data.EventCallback(e);
 				break;
-			} case SDL_EVENT_MOUSE_MOTION: {
+			}
+			case SDL_EVENT_MOUSE_MOTION:
+			{
 				MouseMovedEvent e(event.motion.x, event.motion.y);
 				m_Data.EventCallback(e);
 				break;
-			} case SDL_EVENT_MOUSE_WHEEL: {
+			}
+			case SDL_EVENT_MOUSE_WHEEL:
+			{
 				MouseScrolledEvent e(event.wheel.x, event.wheel.y);
 				m_Data.EventCallback(e);
 				break;
-			}case SDL_EVENT_TEXT_INPUT: {
+			}
+			case SDL_EVENT_TEXT_INPUT: 
+			{
 				KeyTypedEvent e(event.text.text);
 				m_Data.EventCallback(e);
 				break;
-			}default:
+			}
+			default:
+			{
 				break;
+			}
 			}
 		}
 	}

@@ -2,7 +2,8 @@
 
 #include "Teddy/Renderer/Buffer.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class VertexArray
 	{

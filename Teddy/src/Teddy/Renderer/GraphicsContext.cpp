@@ -4,7 +4,8 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 	Scope<GraphicsContext> GraphicsContext::Create(void* window)
 	{
 		switch (Renderer::GetAPI())

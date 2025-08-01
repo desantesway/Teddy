@@ -7,11 +7,14 @@
 	#include "Platform/OpenGL/OpenGLVertexArray.h"
 #endif
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	Ref<VertexArray> VertexArray::Create() {
+	Ref<VertexArray> VertexArray::Create() 
+	{
 
-		switch (Renderer::GetAPI()) {
+		switch (Renderer::GetAPI()) 
+		{
 			case RendererAPI::API::None:
 				TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 				return nullptr;

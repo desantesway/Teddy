@@ -3,7 +3,8 @@
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 

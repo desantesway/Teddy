@@ -3,17 +3,19 @@
 #include "Event.h"
 #include "Teddy/Core/CodeConverter.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class MidiKeyPressedEvent : public Event
 	{
 	public:
 		MidiKeyPressedEvent(MidiCode key, unsigned int velocity)
 			: m_Key(key), m_Velocity(velocity) 
-		{}
+		{
+		}
 
-		inline MidiCode GetKey() const { return m_Key; }
-		inline int GetVelocity() const { return m_Velocity; }
+		MidiCode GetKey() const { return m_Key; }
+		int GetVelocity() const { return m_Velocity; }
 
 		std::string ToString() const override
 		{
@@ -34,10 +36,11 @@ namespace Teddy {
 	public:
 		MidiKeyReleasedEvent(MidiCode key, unsigned int velocity)
 			: m_Key(key), m_Velocity(velocity) 
-		{}
+		{
+		}
 
-		inline MidiCode GetKey() const { return m_Key; }
-		inline int GetVelocity() const { return m_Velocity; }
+		MidiCode GetKey() const { return m_Key; }
+		int GetVelocity() const { return m_Velocity; }
 
 		std::string ToString() const override
 		{

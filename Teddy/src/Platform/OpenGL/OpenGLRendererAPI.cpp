@@ -3,7 +3,8 @@
 
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	void OpenGLMessageCallback(unsigned source, unsigned type, unsigned id, unsigned severity, 
 		int length, const char* message, const void* userParam)
@@ -19,7 +20,8 @@ namespace Teddy {
 		TED_CORE_ASSERT(false, "Unknown severity level!");
 	}
 
-	void OpenGLRendererAPI::Init() {
+	void OpenGLRendererAPI::Init() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		#ifdef TED_DEBUG
@@ -36,25 +38,29 @@ namespace Teddy {
 	}
 
 	// SDL ignoring this for sum reason
-	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color) {
+	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLRendererAPI::Clear() {
+	void OpenGLRendererAPI::Clear() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
+	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) 
+	{
 		TED_PROFILE_FUNCTION();
 		
 		uint32_t count = indexCount ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;

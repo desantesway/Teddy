@@ -7,10 +7,13 @@
 	#include "Platform/OpenGL/OpenGLBuffer.h"
 #endif
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) {
-		switch (Renderer::GetAPI()) {
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size) 
+	{
+		switch (Renderer::GetAPI()) 
+		{
 		case RendererAPI::API::None:
 			TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 			return nullptr;
@@ -23,8 +26,10 @@ namespace Teddy {
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
-		switch (Renderer::GetAPI()) {
+	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) 
+	{
+		switch (Renderer::GetAPI()) 
+		{
 		case RendererAPI::API::None:    
 				TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 				return nullptr;
@@ -37,8 +42,10 @@ namespace Teddy {
 		return nullptr;	
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count){
-		switch (Renderer::GetAPI()) {
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	{
+		switch (Renderer::GetAPI()) 
+		{
 			case RendererAPI::API::None:
 				TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported");
 				return nullptr;

@@ -4,7 +4,8 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class OpenGLShader : public Shader
 	{

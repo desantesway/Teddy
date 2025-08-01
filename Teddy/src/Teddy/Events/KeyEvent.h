@@ -3,17 +3,20 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Core/Input.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	class KeyEvent : public Event
 	{
 	public:
-		inline KeyCode GetKeyCode() const { return m_KeyCode; }
+		KeyCode GetKeyCode() const { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
 		KeyEvent(KeyCode keycode)
-			: m_KeyCode(keycode) {}
+			: m_KeyCode(keycode) 
+		{
+		}
 
 		KeyCode m_KeyCode;
 	};
@@ -22,10 +25,11 @@ namespace Teddy {
 	{
 	public:
 		KeyPressedEvent(KeyCode keycode, bool repeat)
-			: KeyEvent(keycode), m_RepeatCount(repeat) {
+			: KeyEvent(keycode), m_RepeatCount(repeat) 
+		{
 		}
 
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		int GetRepeatCount() const { return m_RepeatCount; }
 
 		std::string ToString() const override
 		{
@@ -43,7 +47,8 @@ namespace Teddy {
 	{
 	public:
 		KeyReleasedEvent(KeyCode keycode)
-			: KeyEvent(keycode) {
+			: KeyEvent(keycode) 
+		{
 		}
 
 		std::string ToString() const override
@@ -60,7 +65,8 @@ namespace Teddy {
 	{
 	public:
 		KeyTypedEvent(const char * keycode)
-			: KeyEvent(static_cast<KeyCode>((int)keycode)), key(keycode){
+			: KeyEvent(static_cast<KeyCode>((int)keycode[0])), key(keycode) 
+		{
 		}
 
 		const char* GetKey() const { return key; }

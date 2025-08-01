@@ -4,8 +4,10 @@
 #include <glm/glm.hpp>
 #include "Teddy/Core/Core.h"
 
-namespace Teddy {
-	class Shader {
+namespace Teddy 
+{
+	class Shader 
+	{
 	public:
 		virtual ~Shader() = default;
 
@@ -26,7 +28,8 @@ namespace Teddy {
 			const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 
-	class ShaderLibrary {
+	class ShaderLibrary 
+	{
 	public:
 		void Add(const std::string& name, const Ref<Shader>& shader);
 		void Add(const Ref<Shader>& shader);

@@ -5,8 +5,10 @@
 
 #include <SDL3/SDL.h>
 
-namespace Teddy {
-	enum class EventType {
+namespace Teddy 
+{
+	enum class EventType 
+	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender, // Application events
@@ -15,7 +17,8 @@ namespace Teddy {
 		MidiKeyPressed, MidiKeyReleased, MidiPedalPressed, MidiPedalReleased // Midi events
 	};
 	
-	enum EventCategory {
+	enum EventCategory 
+	{
 		None = 0,
 		EventCategoryApplication = BIT(0),
 		EventCategoryInput       = BIT(1),
@@ -42,7 +45,7 @@ namespace Teddy {
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-		inline bool IsInCategory(EventCategory category)
+		bool IsInCategory(EventCategory category)
 		{
 			return GetCategoryFlags() & category;
 		}

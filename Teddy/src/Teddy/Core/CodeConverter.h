@@ -4,7 +4,8 @@
 #include "Teddy/Core/MouseCodes.h"
 #include "Teddy/Core/MidiCodes.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	KeyCode SDLToTeddyKey(uint32_t keycode);
 	MouseCode SDLToTeddyMouse(uint32_t keycode);

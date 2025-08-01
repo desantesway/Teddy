@@ -4,7 +4,8 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
 	{

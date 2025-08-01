@@ -3,7 +3,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	static GLenum ShaderTypeFromString(const std::string& type)
 	{
@@ -42,7 +43,8 @@ namespace Teddy {
 		Compile(sources);
 	}
 
-	OpenGLShader::~OpenGLShader() {
+	OpenGLShader::~OpenGLShader() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glDeleteProgram(m_RendererID);
@@ -84,7 +86,8 @@ namespace Teddy {
 		std::array<GLenum, 2> glShaderIDs;
 		int glShaderIDIndex = 0;
 
-		for (auto& kv : shaderSrcs) {
+		for (auto& kv : shaderSrcs) 
+		{
 			GLenum type = kv.first;
 			const std::string& source = kv.second;
 
@@ -132,7 +135,8 @@ namespace Teddy {
 
 			glDeleteProgram(program);
 
-			for (auto& id : glShaderIDs) {
+			for (auto& id : glShaderIDs) 
+			{
 				glDeleteShader(id);
 			}
 
@@ -141,7 +145,8 @@ namespace Teddy {
 			return;
 		}
 
-		for (auto& id : glShaderIDs) {
+		for (auto& id : glShaderIDs) 
+		{
 			glDetachShader(program, id);
 			glDeleteShader(id);
 		}
@@ -149,7 +154,8 @@ namespace Teddy {
 		m_RendererID = program;
 	}
 
-	std::string OpenGLShader::ReadFile(const std::string& filepath) {
+	std::string OpenGLShader::ReadFile(const std::string& filepath) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		std::string result;
@@ -173,20 +179,23 @@ namespace Teddy {
 				TED_CORE_ERROR("Could not read from file '{0}'", filepath);
 			}
 		}
-		else {
+		else 
+		{
 			TED_CORE_ERROR("Could not open shader file: '{0}'", filepath);
 		}
 
 		return result;
 	}
 
-	void OpenGLShader::Bind() const {
+	void OpenGLShader::Bind() const 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glUseProgram(m_RendererID);
 	}
 
-	void OpenGLShader::Unbind() const {
+	void OpenGLShader::Unbind() const 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glUseProgram(0);
@@ -240,7 +249,8 @@ namespace Teddy {
 		glUniform1i(location, value);
 	}
 
-	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count) {
+	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count) 
+	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform1iv(location, count, values);
 	}

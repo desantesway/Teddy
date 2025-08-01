@@ -2,7 +2,8 @@
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 #include <glad/glad.h>
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	{
@@ -26,31 +27,36 @@ namespace Teddy {
 
 	}
 
-	OpenGLVertexArray::OpenGLVertexArray(){
+	OpenGLVertexArray::OpenGLVertexArray()
+	{
 		TED_PROFILE_FUNCTION();
 
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
-	OpenGLVertexArray::~OpenGLVertexArray() {
+	OpenGLVertexArray::~OpenGLVertexArray() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
-	void OpenGLVertexArray::Bind() const {
+	void OpenGLVertexArray::Bind() const 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glBindVertexArray(m_RendererID);
 	}
 
-	void OpenGLVertexArray::Unbind() const {
+	void OpenGLVertexArray::Unbind() const 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glBindVertexArray(0);
 	}
 		 
-	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) 
+	{
 		
 		TED_PROFILE_FUNCTION();
 
@@ -75,7 +81,8 @@ namespace Teddy {
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) 
+	{
 		TED_PROFILE_FUNCTION();
 
 		glBindVertexArray(m_RendererID);

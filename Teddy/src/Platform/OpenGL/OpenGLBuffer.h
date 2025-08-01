@@ -2,9 +2,11 @@
 
 #include "Teddy/Renderer/Buffer.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
-	class OpenGLVertexBuffer : public VertexBuffer {
+	class OpenGLVertexBuffer : public VertexBuffer 
+	{
 	public:
 
 		OpenGLVertexBuffer(uint32_t size);
@@ -23,7 +25,8 @@ namespace Teddy {
 		BufferLayout m_Layout;
 	};
 
-	class OpenGLIndexBuffer : public IndexBuffer {
+	class OpenGLIndexBuffer : public IndexBuffer 
+	{
 	public:
 
 		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);

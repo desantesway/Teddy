@@ -4,7 +4,8 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLWindow.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 	Scope<GraphicsWindow> GraphicsWindow::Create(const char* title, int width, int height)
 	{
 		switch (Renderer::GetAPI())

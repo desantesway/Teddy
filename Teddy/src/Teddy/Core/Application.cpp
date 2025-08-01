@@ -13,7 +13,8 @@
 
 #include "Teddy/Renderer/Renderer.h"
 
-namespace Teddy {
+namespace Teddy 
+{
 
 	Application* Application::s_Instance = nullptr;
 
@@ -76,7 +77,8 @@ namespace Teddy {
 		Input::OnEvent(e);
 	}
 
-	void Application::Run() {
+	void Application::Run() 
+	{
 		TED_PROFILE_FUNCTION();
 
 		while (m_Running)
@@ -87,7 +89,8 @@ namespace Teddy {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			if (!m_Minimized) {
+			if (!m_Minimized) 
+			{
 				{
 					TED_PROFILE_SCOPE("LayerStack OnUpdate");
 
@@ -119,7 +122,8 @@ namespace Teddy {
 	{
 		TED_PROFILE_FUNCTION();
 
-		if (e.GetWidth() == 0 || e.GetHeight() == 0) {
+		if (e.GetWidth() == 0 || e.GetHeight() == 0) 
+		{
 			m_Minimized = true;
 			return false;
 		}
