@@ -1,109 +1,185 @@
 # shared library Teddy
 
-#TODO ORGANIZE THIS
-
 add_library(Teddy STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
 
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> General <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.cpp   
 
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Core <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Entry Point
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/EntryPoint.h
+
+    # Base
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Base.h
+
+    # Logs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Log.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Log.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/EntryPoint.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Base.h
-
+    # Application
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Application.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Application.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDLEvent.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
+    # Window
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Window.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Window.cpp
 
+    # Layer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Layer.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Layer.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/LayerStack.h  
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/LayerStack.cpp 
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLImGuiBuild.cpp
-
+    
+    # Input
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.cpp
 
+    # Input Codes and Converter
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/KeyCodes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MouseCodes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/MidiCodes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/CodeConverter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/CodeConverter.cpp
 
+    # Delta time
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Timestep.h
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Events <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Event System
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/Event.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/ApplicationEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/SDLEvent.cpp
+
+    # Keyboard
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/KeyEvent.h
+
+    # Mouse
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MouseEvent.h
+
+    # Midi
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiEvent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Events/MidiDriver.h
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Renderer <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Window
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsWindow.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/SDLWindow.h
+
+    # Context
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsContext.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/GraphicsContext.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.h
 
+    # Shader
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Shader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Shader.cpp
 
+    # Renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer.cpp
 
+    # Buffer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Buffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Buffer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.cpp
 
+    # Vertex Array
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/VertexArray.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/VertexArray.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.cpp
 
+    # Renderer API
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RendererAPI.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RendererAPI.cpp
+
+    # Render Command
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.cpp
 
+    # Camera
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Timestep.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.cpp
-
+    # Texture
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.cpp
 
+    # Camera Controller
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.cpp
 
+    # Renderer 2D
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.cpp
 
+    # Framebuffer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Framebuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Framebuffer.cpp
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Profiling
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Debug/Instrumentor.h
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> ImGui <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Layer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/ImGui/ImGuiLayer.cpp
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> OpenGL <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Window 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGlWindow.h
+
+    # ImGui
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLImGuiBuild.cpp
+
+    # Context
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLContext.h
+
+    # Buffer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLBuffer.cpp
+
+    # Vertex Array
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLVertexArray.cpp
+
+    # Renderer API
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLRendererAPI.cpp
+
+    # Shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLShader.cpp
+
+    # Texture
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

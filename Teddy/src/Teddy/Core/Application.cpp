@@ -20,7 +20,6 @@ namespace Teddy
 
 	Application::Application()
 	{
-
 		TED_PROFILE_FUNCTION();
 
 		TED_CORE_ASSERT(!s_Instance, "Application already exists!");

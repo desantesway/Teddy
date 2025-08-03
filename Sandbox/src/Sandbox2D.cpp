@@ -66,7 +66,6 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 void Sandbox2D::OnEvent(Teddy::Event& event)
 {
 	m_CameraController.OnEvent(event);
-
 }
 
 void Sandbox2D::OnImGuiRender() 
