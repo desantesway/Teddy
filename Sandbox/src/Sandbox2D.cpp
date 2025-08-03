@@ -13,6 +13,11 @@ void Sandbox2D::OnAttach()
 	TED_PROFILE_FUNCTION();
 
 	m_BoardTexture = Teddy::Texture2D::Create("assets/textures/checkerboard.jpg");
+
+	Teddy::FramebufferSpecification fbSpec;
+	fbSpec.Width = 1920;
+	fbSpec.Height = 1080;
+	m_Framebuffer = Teddy::Framebuffer::Create(fbSpec);
 }
 
 void Sandbox2D::OnDetach()
@@ -30,6 +35,9 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 
 	{
 		TED_PROFILE_SCOPE("Renderer Prep");
+
+		m_Framebuffer->Bind();
+
 		Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
 		Teddy::RenderCommand::Clear();
 	}
@@ -60,6 +68,8 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 		}
 
 		Teddy::Renderer2D::EndScene();
+
+		m_Framebuffer->Unbind();
 	}
 }
 
@@ -166,6 +176,12 @@ void Sandbox2D::OnImGuiRender()
     ImGui::Begin("Textures");
 
 	ImGui::Image(m_BoardTexture->GetRendererID(), ImVec2(64.0f, 64.0f));
+
+    ImGui::End();
+
+    ImGui::Begin("Render");
+
+    ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(), ImVec2(1280.0f, 720.0f), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
     ImGui::End();
 

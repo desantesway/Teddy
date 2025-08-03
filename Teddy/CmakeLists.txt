@@ -180,6 +180,10 @@ add_library(Teddy STATIC
     # Texture
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTexture.cpp
+
+    # Framebuffer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLFramebuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLFramebuffer.cpp
 )
 
 target_precompile_headers(Teddy PRIVATE

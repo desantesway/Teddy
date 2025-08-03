@@ -16,4 +16,4 @@ namespace Teddy
 		TED_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
-} // namespace Teddy
+}
