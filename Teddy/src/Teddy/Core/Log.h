@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Teddy/Core/Core.h"
+#include "Teddy/Core/Base.h"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"

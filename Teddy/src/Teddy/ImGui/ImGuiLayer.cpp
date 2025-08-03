@@ -103,7 +103,11 @@ namespace Teddy
 		dispatcher.Dispatch<KeyTypedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
 
 		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
-		
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+		event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 	}
 
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e) 

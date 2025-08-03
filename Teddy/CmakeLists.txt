@@ -13,7 +13,7 @@ add_library(Teddy STATIC
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/EntryPoint.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Core.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Base.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Application.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Application.cpp

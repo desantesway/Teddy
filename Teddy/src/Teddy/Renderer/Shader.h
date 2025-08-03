@@ -2,7 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "Teddy/Core/Core.h"
+#include "Teddy/Core/Base.h"
 
 namespace Teddy 
 {

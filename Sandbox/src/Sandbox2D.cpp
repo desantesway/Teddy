@@ -45,7 +45,7 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 		Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
 		Teddy::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, rotation, {0.2f, 0.8f, 0.1f, 1.0f});
 		Teddy::Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_BoardTexture, {0.1f, 0.1f, 0.9f, 1.0f});
-		Teddy::Renderer2D::DrawRotatedQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, 45.0f, m_BoardTexture, { 0.8f, 0.8f, 0.9f, 1.0f });
+		Teddy::Renderer2D::DrawRotatedQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, -rotation, m_BoardTexture, { 0.8f, 0.8f, 0.9f, 1.0f });
 		Teddy::Renderer2D::EndScene();
 
 		Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
@@ -54,7 +54,7 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 		{
 			for (float x = -5.0f; x < 5.0f; x += 0.5f)
 			{
-				glm::vec4 color = {(x + 5.0f) / 10.0f, 0.3f, (y + 5.0f) / 10.0f, 1.0f };
+				glm::vec4 color = {(x + 5.0f) / 10.0f, 0.3f, (y + 5.0f) / 10.0f, 0.75f };
 				Teddy::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
 			}
 		}

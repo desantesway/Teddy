@@ -16,7 +16,7 @@ namespace Teddy
 		virtual void OnDetach() override;
 
 		// SDL consumes events when listened, so we cant use the default ImGui event handling.
-		virtual void OnEvent(Event& event);
+		virtual void OnEvent(Event& event) override;
 
 		void Begin();
 		void End();

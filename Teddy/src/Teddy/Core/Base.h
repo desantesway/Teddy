@@ -8,7 +8,7 @@
 	/* Windows x64/x86 */
 	#ifdef _WIN64
 		/* Windows x64  */
-		#define HZ_PLATFORM_WINDOWS
+		#define TED_PLATFORM_WINDOWS 1
 	#else
 			/* Windows x86 */
 		#error "x86 Builds are not supported!"
@@ -22,10 +22,10 @@
 		#if TARGET_IPHONE_SIMULATOR == 1
 			#error "IOS simulator is not supported!"
 		#elif TARGET_OS_IPHONE == 1
-			#define HZ_PLATFORM_IOS
+			#define TED_PLATFORM_IOS
 			#error "IOS is not supported!"
 		#elif TARGET_OS_MAC == 1
-			#define HZ_PLATFORM_MACOS
+			#define TED_PLATFORM_MACOS
 			#error "MacOS is not supported!"
 		#else
 			#error "Unknown Apple platform!"
@@ -34,10 +34,10 @@
 	  * since android is based on the linux kernel
 	  * it has __linux__ defined */
 	#elif defined(__ANDROID__)
-		#define HZ_PLATFORM_ANDROID
+		#define TED_PLATFORM_ANDROID
 		#error "Android is not supported!"
 	#elif defined(__linux__)
-		#define HZ_PLATFORM_LINUX
+		#define TED_PLATFORM_LINUX
 		#error "Linux is not supported!"
 	#else
 		/* Unknown compiler/platform */
@@ -46,11 +46,21 @@
 
 #ifdef TED_DEBUG
 	#define TED_ENABLE_ASSERTS
+	#if defined(TED_PLATFORM_WINDOWS)
+		#define TED_DEBUGBREAK() __debugbreak()
+	#elif defined(TED_PLATFORM_LINUX)
+		#include <signal.h>
+		#define TED_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error "Platform doesn't support debugbreak yet!"
+	#endif
+#else
+	#define TED_DEBUGBREAK()
 #endif
 
 #ifdef TED_ENABLE_ASSERTS
-#define TED_ASSERT(x, ...) { if(!(x)) { TED_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#define TED_CORE_ASSERT(x, ...) { if(!(x)) { TED_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define TED_ASSERT(x, ...) { if(!(x)) { TED_ERROR("Assertion Failed: {0}", __VA_ARGS__); TED_DEBUGBREAK(); } }
+#define TED_CORE_ASSERT(x, ...) { if(!(x)) { TED_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); TED_DEBUGBREAK(); } }
 #else
 #define TED_ASSERT(x, ...)
 #define TED_CORE_ASSERT(x, ...)

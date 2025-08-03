@@ -1,5 +1,5 @@
 #pragma once
-#include "Teddy/Core/Core.h"
+#include "Teddy/Core/Base.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL3/SDL.h>

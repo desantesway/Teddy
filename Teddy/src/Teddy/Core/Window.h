@@ -2,7 +2,7 @@
 
 #include "teddyPch.h"
 
-#include "Teddy/Core/Core.h"
+#include "Teddy/Core/Base.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/MidiDriver.h"
 
