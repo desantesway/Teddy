@@ -1,0 +1,7 @@
+[08:41:33] [info] TEDDY: Creating window Teddy Engine (1920, 1080)
+[08:41:33] [error] TEDDY: MidiInWinMM::openPort: error creating Windows MM MIDI input port.
+[08:41:33] [info] TEDDY: OpenGL Info:
+[08:41:33] [info] TEDDY:   Vendor: NVIDIA Corporation
+[08:41:33] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
+[08:41:33] [info] TEDDY:   Version: 4.6.0 NVIDIA 577.00
+[08:41:38] [info] TEDDY: Terminating SDL

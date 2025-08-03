@@ -23,10 +23,10 @@ set(OUTPUT_INT_DIR "${CMAKE_BINARY_DIR}/bin-int/${CMAKE_BUILD_TYPE}-${CMAKE_SYST
 
 # Engine & Application
 add_subdirectory(Teddy)
-add_subdirectory(KeyStar)
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT KeyStar)
+add_subdirectory(Sandbox)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Sandbox)
 
-target_link_libraries(KeyStar PRIVATE Teddy)
+target_link_libraries(Sandbox PRIVATE Teddy)
 
 #sdl
 set(SDL_TEST OFF CACHE BOOL "Disable SDL test library")
@@ -37,14 +37,14 @@ add_subdirectory(Teddy/vendor/SDL)
 include_directories(Teddy/vendor/SDL/include)
 
 target_link_libraries(Teddy PRIVATE SDL3-static)
-target_link_libraries(KeyStar PRIVATE SDL3-static)
+target_link_libraries(Sandbox PRIVATE SDL3-static)
 
 # SpdLog
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries")
 add_subdirectory(Teddy/vendor/spdlog)
 
 target_link_libraries(Teddy PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
-target_link_libraries(KeyStar PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+target_link_libraries(Sandbox PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 # Glad
 find_package(OpenGL REQUIRED)
@@ -55,7 +55,7 @@ add_library(glad STATIC ${GLAD_SRC})
 target_include_directories(glad PUBLIC ${GLAD_INC})
 
 target_link_libraries(Teddy PRIVATE glad)
-target_link_libraries(KeyStar PRIVATE glad)
+target_link_libraries(Sandbox PRIVATE glad)
 
 # ImGui
 include_directories(Teddy/vendor/ImGui)
@@ -79,19 +79,19 @@ add_library(imgui STATIC ${IMGUI_SRC})
 target_include_directories(imgui PUBLIC Teddy/vendor/ImGui Teddy/vendor/ImGui/backends)
 
 target_link_libraries(Teddy PRIVATE imgui)
-target_link_libraries(KeyStar PRIVATE imgui)
+target_link_libraries(Sandbox PRIVATE imgui)
 
 # GLM
 target_include_directories(Teddy PRIVATE Teddy/vendor/GLM)
-target_include_directories(KeyStar PRIVATE Teddy/vendor/GLM)
+target_include_directories(Sandbox PRIVATE Teddy/vendor/GLM)
 
 # stb_image
 target_include_directories(Teddy PRIVATE Teddy/vendor/stb_image)
-target_include_directories(KeyStar PRIVATE Teddy/vendor/stb_image)
+target_include_directories(Sandbox PRIVATE Teddy/vendor/stb_image)
 
 # rtmidi
 add_subdirectory(Teddy/vendor/rtmidi)
 target_include_directories(Teddy PRIVATE Teddy/vendor/rtmidi/include)
-target_include_directories(KeyStar PRIVATE Teddy/vendor/rtmidi/include)
+target_include_directories(Sandbox PRIVATE Teddy/vendor/rtmidi/include)
 target_link_libraries(Teddy PRIVATE rtmidi)
-target_link_libraries(KeyStar PRIVATE rtmidi)
+target_link_libraries(Sandbox PRIVATE rtmidi)
