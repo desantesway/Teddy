@@ -30,10 +30,8 @@ namespace Teddy
 
 		Renderer::Init();
 
-		#if defined(TED_DEBUG) || defined(TED_RELEASE)
-			m_ImGuiLayer = new ImGuiLayer();
-			PushOverlay(m_ImGuiLayer);
-		#endif
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -97,16 +95,15 @@ namespace Teddy
 					for (Layer* layer : m_LayerStack)
 						layer->OnUpdate(timestep);
 				}
-				#if defined(TED_DEBUG) || defined(TED_RELEASE)
-					m_ImGuiLayer->Begin();
-					{
-						TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
 
-						for (Layer* layer : m_LayerStack)
-							layer->OnImGuiRender();
-					}
-					m_ImGuiLayer->End();
-				#endif
+				m_ImGuiLayer->Begin();
+				{
+					TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
+
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
 				
 			}
 
