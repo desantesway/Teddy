@@ -12,8 +12,8 @@ set_property(TARGET Tedditor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOU
 
 target_sources(Tedditor PRIVATE    
                                 ${CMAKE_CURRENT_SOURCE_DIR}/src/TedditorApp.cpp
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/TedditorLayer.h
-                                ${CMAKE_CURRENT_SOURCE_DIR}/src/TedditorLayer.cpp
+                                ${CMAKE_CURRENT_SOURCE_DIR}/src/EditorLayer.h
+                                ${CMAKE_CURRENT_SOURCE_DIR}/src/EditorLayer.cpp
 )
 
 target_include_directories(Tedditor PUBLIC

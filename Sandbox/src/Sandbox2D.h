@@ -25,7 +25,6 @@ class Sandbox2D : public Teddy::Layer
 
 		Teddy::Ref<Teddy::VertexArray> m_SquareVA;
 		Teddy::Ref<Teddy::Shader> m_FlatColorShader;
-		Teddy::Ref<Teddy::Framebuffer> m_Framebuffer;
 
 		Teddy::Ref<Teddy::Texture2D> m_BoardTexture;
 

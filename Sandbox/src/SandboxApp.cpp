@@ -10,11 +10,12 @@
 class Sandbox : public Teddy::Application 
 {
 public:
-	Sandbox() {
-		//PushLayer(new ExampleLayer());
+	Sandbox() 
+	{
 		PushLayer(new Sandbox2D());
 	}
-	~Sandbox() {
+	~Sandbox() 
+	{
 		// Cleanup code can go here
 	}
 };
@@ -23,4 +24,4 @@ public:
 Teddy::Application* Teddy::CreateApplication() 
 {
 	return new Sandbox();
-} // CreateApplication
+}

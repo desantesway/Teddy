@@ -5,22 +5,28 @@
 #include "Teddy/Core/EntryPoint.h"
 // ------------------------------------------
 
-#include "TedditorLayer.h"
+#include "EditorLayer.h"
 
-class Sandbox : public Teddy::Application 
+namespace Teddy
 {
-public:
-	Sandbox() {
-		//PushLayer(new ExampleLayer());
-		PushLayer(new Sandbox2D());
-	}
-	~Sandbox() {
-		// Cleanup code can go here
-	}
-};
+	class Tedditor : public Application
+	{
+	public:
+		Tedditor() 
+			: Application("Tedditor") // Initialize the base Application with a name
+		{
+			PushLayer(new EditorLayer());
+		}
+
+		~Tedditor() 
+		{
+
+		}
+	};
 
 
-Teddy::Application* Teddy::CreateApplication() 
-{
-	return new Sandbox();
-} // CreateApplication
+	Application* CreateApplication()
+	{
+		return new Tedditor();
+	}
+}
