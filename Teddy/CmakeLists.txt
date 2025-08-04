@@ -39,9 +39,7 @@ add_library(Teddy STATIC
     
     # Input
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/TeddyInput.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/PCInput.cpp
 
     # Input Codes and Converter
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/KeyCodes.h

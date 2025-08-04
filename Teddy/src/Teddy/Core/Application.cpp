@@ -72,7 +72,7 @@ namespace Teddy
 			(*it)->OnEvent(e);
 		}
 
-		Input::OnEvent(e);
+		m_Input.OnEvent(e);
 	}
 
 	void Application::Run() 

@@ -51,6 +51,8 @@ namespace Teddy
 		LayerStack m_LayerStack;
 
 		float m_LastFrameTime = 0.0f;
+
+		Input m_Input;
 	private:
 		static Application* s_Instance;
 		

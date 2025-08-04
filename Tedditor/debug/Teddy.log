@@ -1,7 +1,229 @@
-[12:24:59] [info] TEDDY: Creating window Tedditor (1920, 1080)
-[12:24:59] [error] TEDDY: MidiInWinMM::openPort: error creating Windows MM MIDI input port.
-[12:24:59] [info] TEDDY: OpenGL Info:
-[12:24:59] [info] TEDDY:   Vendor: NVIDIA Corporation
-[12:24:59] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
-[12:24:59] [info] TEDDY:   Version: 4.6.0 NVIDIA 577.00
-[12:25:34] [info] TEDDY: Terminating SDL
+[14:16:46] [info] TEDDY: Creating window Tedditor (1920, 1080)
+[14:16:46] [info] TEDDY: OpenGL Info:
+[14:16:46] [info] TEDDY:   Vendor: NVIDIA Corporation
+[14:16:46] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
+[14:16:46] [info] TEDDY:   Version: 4.6.0 NVIDIA 577.00
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:48] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:51] [info] TEDDY: Mouse 1 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:53] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:54] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:55] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:56] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:57] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:58] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:16:59] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:00] [info] TEDDY: C4 pressed
+[14:17:02] [info] TEDDY: Terminating SDL
