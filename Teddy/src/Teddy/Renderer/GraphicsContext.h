@@ -8,6 +8,8 @@ namespace Teddy
 	class GraphicsContext
 	{
 	public:
+		virtual ~GraphicsContext() = default;
+
 		virtual void* GetContext() = 0;
 
 		virtual void Init() = 0;

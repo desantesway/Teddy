@@ -18,6 +18,8 @@ namespace Teddy
 		Input(const Input&) = delete;
 		Input& operator=(const Input&) = delete;
 
+		virtual ~Input() = default;
+
 		static void OnEvent(Event& e) { return s_Instance->OnEventImpl(e); }
 
 		static bool IsKeyPressed(KeyCode keycode) { return s_Instance->IsKeyPressedImpl(keycode); }

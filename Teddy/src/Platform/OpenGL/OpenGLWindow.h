@@ -11,6 +11,7 @@ namespace Teddy
 	{
 	public:
 		OpenGLWindow(const char* title, int width, int height);
+		virtual ~OpenGLWindow() = default;
 
 		virtual void* GetWindow() override { return m_Window; }
 

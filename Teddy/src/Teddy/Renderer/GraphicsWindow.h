@@ -9,6 +9,8 @@ namespace Teddy
 	class GraphicsWindow
 	{
 	public:
+		virtual ~GraphicsWindow() = default;
+
 		virtual void* GetWindow() = 0;
 
 		virtual void Init() = 0;

@@ -11,6 +11,7 @@ namespace Teddy
 	{
 	public:
 		OpenGLContext(SDL_Window* windowHandle);
+		virtual ~OpenGLContext() = default;
 
 		virtual void* GetContext() override { return m_Context; }
 
