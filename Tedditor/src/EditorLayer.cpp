@@ -32,6 +32,14 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
+        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        {
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         m_CameraController.OnUpdate(ts);
 
         Renderer2D::ResetStats();
@@ -46,7 +54,6 @@ namespace Teddy
         }
 
         {
-
             static float rotation = 0.0f;
             rotation += ts.GetSeconds() * 50.0f;
 
@@ -181,13 +188,8 @@ namespace Teddy
         ImGui::Begin("ViewPort");
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        if (glm::vec2(m_ViewportSize.x, m_ViewportSize.y) != glm::vec2(viewportPanelSize.x, viewportPanelSize.y))
-        {
-            m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-        }
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
         
         ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(), 
             ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
