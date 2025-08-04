@@ -1,6 +1,6 @@
-[14:50:33] [info] TEDDY: Creating window Tedditor (1920, 1080)
-[14:50:34] [info] TEDDY: OpenGL Info:
-[14:50:34] [info] TEDDY:   Vendor: NVIDIA Corporation
-[14:50:34] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
-[14:50:34] [info] TEDDY:   Version: 4.6.0 NVIDIA 577.00
-[14:51:16] [info] TEDDY: Terminating SDL
+[14:55:48] [info] TEDDY: Creating window Tedditor (1920, 1080)
+[14:55:48] [info] TEDDY: OpenGL Info:
+[14:55:48] [info] TEDDY:   Vendor: NVIDIA Corporation
+[14:55:48] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
+[14:55:48] [info] TEDDY:   Version: 4.6.0 NVIDIA 577.00
+[14:56:00] [info] TEDDY: Terminating SDL
