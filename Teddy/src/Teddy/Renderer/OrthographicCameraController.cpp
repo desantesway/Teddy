@@ -57,6 +57,14 @@ namespace Teddy
 
 	}
 
+	void OrthographicCameraController::OnResize(float width, float height)
+	{
+		TED_PROFILE_FUNCTION();
+
+		m_AspectRatio = width / height;
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
+
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		TED_PROFILE_FUNCTION();
@@ -80,10 +88,7 @@ namespace Teddy
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
-		TED_PROFILE_FUNCTION();
-
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		
 		return false;
 	}
