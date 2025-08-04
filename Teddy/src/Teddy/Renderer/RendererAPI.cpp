@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/RendererAPI.h"
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"

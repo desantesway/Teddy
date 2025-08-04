@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Hazel/Core/PlatformDetection.h"
+//#include "Teddy/Core/PlatformDetection.h"
 
 #include <iostream>
 #include <memory>
@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-//#include "Hazel/Core/Base.h"
+#include "Teddy/Core/Base.h"
 
 #include "Teddy/Core/Log.h"
 

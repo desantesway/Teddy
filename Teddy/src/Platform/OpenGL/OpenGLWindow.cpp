@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLWindow.h"
 
 #include <SDL3/SDL.h>

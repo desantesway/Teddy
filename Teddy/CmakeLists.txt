@@ -6,8 +6,8 @@ add_library(Teddy STATIC
     #<> General <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/teddyPch.cpp   
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/TeddyPch.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/TeddyPch.cpp   
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Core <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
@@ -203,7 +203,7 @@ set_target_properties(Teddy PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
     RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/Teddy"
     PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
-    PCH_INCLUDE "teddyPch.h"
+    PCH_INCLUDE "TeddyPch.h"
 )
 
 if(MSVC)

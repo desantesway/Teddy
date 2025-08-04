@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Core/Log.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>

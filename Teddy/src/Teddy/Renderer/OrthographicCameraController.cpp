@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/OrthographicCameraController.h"
 
 #include "Teddy/Core/Input.h"

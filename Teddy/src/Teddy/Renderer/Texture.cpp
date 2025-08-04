@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/Texture.h"
 
 #include "Teddy/Renderer/Renderer.h"

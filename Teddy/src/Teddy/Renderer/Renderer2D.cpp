@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/Renderer2D.h"
 
 #include "Teddy/Renderer/VertexArray.h"

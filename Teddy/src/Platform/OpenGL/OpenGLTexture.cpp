@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 #define STB_IMAGE_IMPLEMENTATION

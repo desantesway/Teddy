@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <glm/gtc/type_ptr.hpp>

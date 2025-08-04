@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/OrthographicCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>

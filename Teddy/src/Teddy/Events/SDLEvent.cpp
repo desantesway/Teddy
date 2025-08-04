@@ -1,6 +1,6 @@
 #pragma once	
 
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Renderer/SDLWindow.h"
 
 #include "Teddy/Events/ApplicationEvent.h"

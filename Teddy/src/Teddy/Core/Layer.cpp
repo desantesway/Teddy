@@ -1,5 +1,4 @@
-#include "teddyPch.h"
-#include "Layer.h"
+#include "TeddyPch.h"
 #include "Teddy/Core/Layer.h"
 
 namespace Teddy 
