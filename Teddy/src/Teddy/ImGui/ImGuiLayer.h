@@ -20,6 +20,8 @@ namespace Teddy
 
 		void Begin();
 		void End();
+
+		void SetBlockEvents(bool block) { m_BlockEvents = block; }
 	private:
 		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
@@ -30,5 +32,7 @@ namespace Teddy
 		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
 		bool OnKeyTypedEvent(KeyTypedEvent& e);
 		bool OnWindowResizeEvent(WindowResizeEvent& e);
+	private:
+		bool m_BlockEvents = false;
 	};
 } // namespace Teddy

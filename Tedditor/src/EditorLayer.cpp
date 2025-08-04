@@ -40,7 +40,7 @@ namespace Teddy
             m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        m_CameraController.OnUpdate(ts);
+        if (m_ViewportFocused) m_CameraController.OnUpdate(ts);
 
         Renderer2D::ResetStats();
 
@@ -85,6 +85,8 @@ namespace Teddy
 
     void EditorLayer::OnEvent(Event& event)
     {
+        if (!(m_ViewportFocused)) return;
+
         m_CameraController.OnEvent(event);
     }
 
@@ -186,6 +188,9 @@ namespace Teddy
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
 
         ImGui::Begin("ViewPort");
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
