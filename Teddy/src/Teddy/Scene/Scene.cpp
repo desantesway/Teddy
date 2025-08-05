@@ -11,16 +11,6 @@
 namespace Teddy
 {
 
-	static void DoMath(const glm::mat4& transform) 
-	{
-	}
-
-	static void OnTransformConstruct(entt::registry& registry, entt::entity entity)
-	{
-		auto& transform = registry.get<glm::mat4>(entity);
-		DoMath(transform);
-	}
-
 	Scene::Scene()
 	{
 		TED_PROFILE_FUNCTION();
@@ -52,7 +42,7 @@ namespace Teddy
 			auto& transform = std::get<0>(tuple);
 			auto& sprite = std::get<1>(tuple);
 
-			Renderer2D::DrawQuad(transform, sprite.Color);
+			Renderer2D::DrawQuad(transform, { .Color = sprite.Color });
 		}
 	}
 }
