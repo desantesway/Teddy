@@ -19,6 +19,7 @@
 #include "Teddy/ImGui/ImGuiLayer.h"
 
 #include "Teddy/Scene/Scene.h"
+#include "Teddy/Scene/Entity.h"
 #include "Teddy/Scene/Components.h"
 
 // --- Renderer ------------------------------

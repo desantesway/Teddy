@@ -24,11 +24,9 @@ namespace Teddy
 
 		m_ActiveScene = CreateRef<Scene>();
 
-        m_SquareEntity = m_ActiveScene->CreateEntity();
-
-		m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4(0.2f, 0.1f, 1.0f, 1.0f));
-
+        m_SquareEntity = m_ActiveScene->CreateEntity("Editable Square");
+        
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.2f, 0.8f, 1.0f));
     }
 
     void EditorLayer::OnDetach()
@@ -173,8 +171,13 @@ namespace Teddy
 
         ImGui::Begin("Colors");
 
-		auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+        if (m_SquareEntity) 
+        {
+			ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
+
+            auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+            ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+        }
 
         ImGui::End();
 
