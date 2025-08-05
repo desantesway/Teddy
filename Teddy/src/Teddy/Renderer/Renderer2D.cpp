@@ -191,15 +191,10 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) FlushAndReset();
-
-		const float texIndex = 0.0f;
-		const float tilingFactor = 1.0f;
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		SetQuad(transform, color, texIndex, tilingFactor);
+		DrawQuad(transform, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tintColor)
@@ -236,6 +231,18 @@ namespace Teddy
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		SetQuad(transform, tintColor, textureIndex, tilingFactor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) 
+	{
+		TED_PROFILE_FUNCTION();
+
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) FlushAndReset();
+
+		const float texIndex = 0.0f;
+		const float tilingFactor = 1.0f;
+
+		SetQuad(transform, color, texIndex, tilingFactor);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)

@@ -133,9 +133,12 @@ add_library(Teddy STATIC
     #<> Scene <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    # Event System
+    # Scene
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Scene.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Scene.cpp
+
+    # Component
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Components.h
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

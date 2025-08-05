@@ -18,6 +18,9 @@
 
 #include "Teddy/ImGui/ImGuiLayer.h"
 
+#include "Teddy/Scene/Scene.h"
+#include "Teddy/Scene/Components.h"
+
 // --- Renderer ------------------------------
 #include "Teddy/Renderer/Renderer.h"
 #include "Teddy/Renderer/Renderer2D.h"

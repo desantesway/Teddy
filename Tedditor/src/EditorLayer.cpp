@@ -1,5 +1,4 @@
 #include "EditorLayer.h"
-#include "Teddy/Scene/Scene.h"
 
 #include <chrono>
 
@@ -23,8 +22,13 @@ namespace Teddy
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
-        Scene* scene = new Scene();
-        
+		m_ActiveScene = CreateRef<Scene>();
+
+        m_SquareEntity = m_ActiveScene->CreateEntity();
+
+		m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4(0.2f, 0.1f, 1.0f, 1.0f));
+
     }
 
     void EditorLayer::OnDetach()
@@ -57,30 +61,14 @@ namespace Teddy
             RenderCommand::Clear();
         }
 
+
         {
-            static float rotation = 0.0f;
-            rotation += ts.GetSeconds() * 50.0f;
 
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
             Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-            Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareColor);
-            Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, rotation, { 0.2f, 0.8f, 0.1f, 1.0f });
-            Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_BoardTexture, { 0.1f, 0.1f, 0.9f, 1.0f });
-            Renderer2D::DrawRotatedQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, -rotation, m_BoardTexture, { 0.8f, 0.8f, 0.9f, 1.0f });
-            Renderer2D::EndScene();
-
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-            for (float y = -5.0f; y < 5.0f; y += 0.5f)
-            {
-                for (float x = -5.0f; x < 5.0f; x += 0.5f)
-                {
-                    glm::vec4 color = { (x + 5.0f) / 10.0f, 0.3f, (y + 5.0f) / 10.0f, 0.75f };
-                    Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-                }
-            }
-
+            m_ActiveScene->OnUpdate(ts);
+            
             Renderer2D::EndScene();
 
             m_Framebuffer->Unbind();
@@ -185,7 +173,8 @@ namespace Teddy
 
         ImGui::Begin("Colors");
 
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+		auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 
         ImGui::End();
 

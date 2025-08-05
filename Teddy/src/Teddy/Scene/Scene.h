@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include "Teddy/Core/Timestep.h"
 
 namespace Teddy 
 {
@@ -8,8 +9,13 @@ namespace Teddy
 	{
 	public:
 		Scene();
-		~Scene();
-		//void OnUpdate(Timestep ts);
+		~Scene(); 
+
+		entt::entity CreateEntity() { return m_Registry.create(); }
+
+		entt::registry& Reg() { return m_Registry; }
+
+		void OnUpdate(Timestep ts);
 		//void OnRender();
 		//void OnResize(uint32_t width, uint32_t height);
 		//void SetViewportSize(float width, float height) { m_ViewportSize = { width, height }; }
