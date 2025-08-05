@@ -107,6 +107,11 @@ target_link_libraries(Tedditor PRIVATE rtmidi)
 target_link_libraries(Sandbox PRIVATE Teddy)
 target_link_libraries(Tedditor PRIVATE Teddy)
 
+# entt
+target_include_directories(Teddy PRIVATE Teddy/vendor/entt/single_include)
+target_include_directories(Sandbox PRIVATE Teddy/vendor/entt/single_include)
+target_include_directories(Tedditor PRIVATE Teddy/vendor/entt/single_include)
+
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Game")

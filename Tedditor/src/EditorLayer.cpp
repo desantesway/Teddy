@@ -1,4 +1,5 @@
 #include "EditorLayer.h"
+#include "Teddy/Scene/Scene.h"
 
 #include <chrono>
 
@@ -21,6 +22,9 @@ namespace Teddy
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+
+        Scene* scene = new Scene();
+        
     }
 
     void EditorLayer::OnDetach()
