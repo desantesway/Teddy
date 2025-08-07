@@ -1,11 +1,16 @@
 #pragma once
 
 #include "Teddy/Renderer/OrthographicCamera.h"
+#include "Teddy/Renderer/Camera.h"
 
 #include "Teddy/Renderer/Texture.h"
 
 namespace Teddy 
 {
+	struct RenderCamera {
+		glm::mat4 ViewMatrix;
+		glm::mat4 Projection;
+	};
 
 	struct Quad 
 	{
@@ -20,7 +25,8 @@ namespace Teddy
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove this
 		static void EndScene();
 
 		static void Flush();

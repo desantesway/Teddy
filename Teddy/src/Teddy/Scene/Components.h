@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Teddy/Renderer/Camera.h"
+
 namespace Teddy
 {
 
@@ -36,6 +38,17 @@ namespace Teddy
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct CameraComponent
+	{
+		Camera Camera; 
+		bool Primary = true;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Camera(projection) {}
 	};
 
 }

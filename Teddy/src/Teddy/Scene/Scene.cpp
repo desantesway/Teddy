@@ -36,6 +36,29 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
+		Camera* activeCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
+		{
+			auto view = m_Registry.view<CameraComponent>();
+			for (auto entity : view) {
+				auto& camera = view.get<CameraComponent>(entity);
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+				
+				if (camera.Primary) {
+					activeCamera = &camera.Camera;
+					cameraTransform = &transform.Transform;
+					break;
+				}
+			}
+		}
+
+		if (!activeCamera) {
+			TED_CORE_ERROR("No active camera found in the scene!");
+			return;
+		}
+		
+		Renderer2D::BeginScene(activeCamera->GetProjection(), *cameraTransform);
+
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group) {
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
@@ -44,5 +67,7 @@ namespace Teddy
 
 			Renderer2D::DrawQuad(transform, { .Color = sprite.Color });
 		}
+
+		Renderer2D::EndScene();
 	}
 }

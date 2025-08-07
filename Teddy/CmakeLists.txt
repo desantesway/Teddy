@@ -110,6 +110,7 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/RenderCommand.cpp
 
     # Camera
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Camera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
 
