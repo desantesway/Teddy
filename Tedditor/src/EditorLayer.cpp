@@ -34,6 +34,34 @@ namespace Teddy
         m_SecondCamera = m_ActiveScene->CreateEntity("2 Camera Entity");
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate()
+            {
+            }
+
+            void OnDestroy()
+            {
+            }
+
+            void OnUpdate(Timestep ts)
+            {
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                const static float speed = 5.0f;
+                if (Input::IsKeyPressed(KeyCode::A))
+                    transform[3][0] -= speed * ts;
+                if (Input::IsKeyPressed(KeyCode::D))
+                    transform[3][0] += speed * ts;
+                if (Input::IsKeyPressed(KeyCode::W))
+                    transform[3][1] += speed * ts;
+                if (Input::IsKeyPressed(KeyCode::S))
+                    transform[3][1] -= speed * ts;
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()

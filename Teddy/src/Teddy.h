@@ -20,6 +20,7 @@
 
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Scene/Entity.h"
+#include "Teddy/Scene/ScriptableEntity.h"
 #include "Teddy/Scene/Components.h"
 
 // --- Renderer ------------------------------

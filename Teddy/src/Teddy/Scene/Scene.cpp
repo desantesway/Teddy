@@ -36,14 +36,31 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
+		// Scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					if (!nsc.Instance)
+					{
+						nsc.InstantiateFunction(nsc.Instance);
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						if (nsc.OnCreateFunction)
+							nsc.OnCreateFunction(nsc.Instance);
+					}
+					if (nsc.OnUpdateFunction)
+						nsc.OnUpdateFunction(nsc.Instance, ts);
+				});
+		}
+
+		// Render
 		Camera* activeCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
 		{
 			auto view = m_Registry.view<CameraComponent>();
 			for (auto entity : view) 
 			{
-				auto& camera = view.get<CameraComponent>(entity);
-				auto& transform = m_Registry.get<TransformComponent>(entity);
+				auto camera = view.get<CameraComponent>(entity);
+				auto transform = m_Registry.get<TransformComponent>(entity);
 				
 				if (camera.Primary) 
 				{
@@ -60,14 +77,15 @@ namespace Teddy
 			return;
 		}
 		
+		// Entities
 		Renderer2D::BeginScene(activeCamera->GetProjection(), *cameraTransform);
 
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group) 
 		{
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			auto& transform = std::get<0>(tuple);
-			auto& sprite = std::get<1>(tuple);
+			auto transform = std::get<0>(tuple);
+			auto sprite = std::get<1>(tuple);
 
 			Renderer2D::DrawQuad(transform, { .Color = sprite.Color });
 		}
