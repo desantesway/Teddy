@@ -232,7 +232,7 @@ namespace Teddy
 			float textureIndex = 0.0f;
 			for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 			{
-				if (*s_Data.TextureSlots[i].get() == *quad.Texture.get())
+				if (*s_Data.TextureSlots[i] == *quad.Texture)
 				{
 					textureIndex = (float)i;
 					break;

@@ -46,20 +46,20 @@ namespace Teddy
 		return false;
 	}
 
-	bool Input::IsKeyPressed(KeyCode keycode) 
+	bool Input::IsKeyPressed(const KeyCode keycode) 
 	{
-		auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
+		auto* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
 		const bool* state = SDL_GetKeyboardState(nullptr);
 		return state[SDL_GetScancodeFromKey(TeddyToSDLKey(keycode), nullptr)];
 	}
 
-	bool Input::IsMouseButtonPressed(MouseCode button) 
+	bool Input::IsMouseButtonPressed(const MouseCode button)
 	{
 		Uint32 buttons = SDL_GetMouseState(nullptr, nullptr);
 		return (buttons & (1 << ((TeddyToSDLMouse(button)) - 1))) != 0; // from definition of SDL_BUTTON
 	}
 
-	bool Input::IsMidiKeyPressed(MidiCode keycode) 
+	bool Input::IsMidiKeyPressed(const MidiCode keycode)
 	{
 		if (m_MidiKeysPressed.count(static_cast<uint32_t>(keycode))) 
 			return m_MidiKeysPressed[static_cast<uint32_t>(keycode)];
@@ -71,7 +71,7 @@ namespace Teddy
 		return m_MidiPedal;
 	}
 
-	std::pair<float, float> Input::GetMousePosition() 
+	glm::vec2 Input::GetMousePosition()
 	{
 		float x, y;
 		SDL_GetMouseState(&x, &y);
@@ -81,13 +81,11 @@ namespace Teddy
 
 	float Input::GetMouseX() 
 	{
-		auto [x, y] = GetMousePosition();
-		return x;
+		return GetMousePosition().x;
 	}
 
 	float Input::GetMouseY() 
 	{
-		auto [x, y] = GetMousePosition();
-		return y;
+		return GetMousePosition().y;
 	}
 }

@@ -1,7 +1,9 @@
 #pragma once	
 
 #include "TeddyPch.h"
-#include "Teddy/Core/Base.h"
+#include <functional>
+
+#include "Teddy/Debug/Instrumentor.h"
 
 #include <SDL3/SDL.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
+#include <glm/glm.hpp>
 #include "Teddy/Events/MidiEvent.h"
 
 #include "Teddy/Core/MouseCodes.h"
@@ -18,13 +18,13 @@ namespace Teddy
 		bool OnMidiPedalPressed(MidiPedalPressedEvent& e);
 		bool OnMidiPedalReleased(MidiPedalReleasedEvent& e);
 
-		static bool IsKeyPressed(KeyCode keycode);
+		static bool IsKeyPressed(const KeyCode keycode);
 
-		static bool IsMidiKeyPressed(MidiCode keycode);
+		static bool IsMidiKeyPressed(const MidiCode keycode);
 		static bool IsMidiPedalPressed();
 
-		static bool IsMouseButtonPressed(MouseCode button);
-		static std::pair<float, float> GetMousePosition();
+		static bool IsMouseButtonPressed(const MouseCode button);
+		static glm::vec2 GetMousePosition();
 		static float GetMouseX();
 		static float GetMouseY();
 	};

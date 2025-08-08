@@ -160,10 +160,10 @@ namespace Teddy
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), true);
 
-		if (e.GetKeyCode() == KeyCode::LCtrl	|| e.GetKeyCode() == KeyCode::RCtrl	) io.AddKeyEvent(ImGuiMod_Ctrl, true);
-		if (e.GetKeyCode() == KeyCode::LShift	|| e.GetKeyCode() == KeyCode::RShift	) io.AddKeyEvent(ImGuiMod_Shift, true);
-		if (e.GetKeyCode() == KeyCode::LAlt		|| e.GetKeyCode() == KeyCode::RAlt	) io.AddKeyEvent(ImGuiMod_Alt, true);
-		if (e.GetKeyCode() == KeyCode::LGui		|| e.GetKeyCode() == KeyCode::RGui	) io.AddKeyEvent(ImGuiMod_Super, true);
+		if (e.GetKeyCode() == Key::LCtrl	|| e.GetKeyCode() == Key::RCtrl	) io.AddKeyEvent(ImGuiMod_Ctrl, true);
+		if (e.GetKeyCode() == Key::LShift	|| e.GetKeyCode() == Key::RShift	) io.AddKeyEvent(ImGuiMod_Shift, true);
+		if (e.GetKeyCode() == Key::LAlt		|| e.GetKeyCode() == Key::RAlt	) io.AddKeyEvent(ImGuiMod_Alt, true);
+		if (e.GetKeyCode() == Key::LGui		|| e.GetKeyCode() == Key::RGui	) io.AddKeyEvent(ImGuiMod_Super, true);
 
 		return false; 
 	}
@@ -175,10 +175,10 @@ namespace Teddy
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddKeyEvent((ImGuiKey)TeddyToImGuiKey(e.GetKeyCode()), false);
 		
-		if (!Input::IsKeyPressed(KeyCode::LCtrl		) && !Input::IsKeyPressed(KeyCode::RCtrl	)) io.AddKeyEvent(ImGuiMod_Ctrl, false);
-		if (!Input::IsKeyPressed(KeyCode::LShift	) && !Input::IsKeyPressed(KeyCode::RShift	)) io.AddKeyEvent(ImGuiMod_Shift, false);
-		if (!Input::IsKeyPressed(KeyCode::LAlt		) && !Input::IsKeyPressed(KeyCode::RAlt		)) io.AddKeyEvent(ImGuiMod_Alt, false);
-		if (!Input::IsKeyPressed(KeyCode::LGui		) && !Input::IsKeyPressed(KeyCode::RGui		)) io.AddKeyEvent(ImGuiMod_Super, false);
+		if (!Input::IsKeyPressed(Key::LCtrl		) && !Input::IsKeyPressed(Key::RCtrl	)) io.AddKeyEvent(ImGuiMod_Ctrl, false);
+		if (!Input::IsKeyPressed(Key::LShift	) && !Input::IsKeyPressed(Key::RShift	)) io.AddKeyEvent(ImGuiMod_Shift, false);
+		if (!Input::IsKeyPressed(Key::LAlt		) && !Input::IsKeyPressed(Key::RAlt		)) io.AddKeyEvent(ImGuiMod_Alt, false);
+		if (!Input::IsKeyPressed(Key::LGui		) && !Input::IsKeyPressed(Key::RGui		)) io.AddKeyEvent(ImGuiMod_Super, false);
 
 		return false; 
 	}

@@ -12,6 +12,8 @@
 
 #include "Teddy/ImGui/ImGuiLayer.h"
 
+#include "Teddy/Core/Input.h"
+
 #ifdef TED_DIST
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		LPSTR lpCmdLine, int nCmdShow);

@@ -7,8 +7,8 @@ namespace Teddy
 
 	struct FramebufferSpecification
 	{
-		uint32_t Width = 1920;
-		uint32_t Height = 1080;
+		uint32_t Width = 0;
+		uint32_t Height = 0;
 		uint32_t Samples = 1; // Multisampling
 		bool SwapChainTarget = false; // If true, this framebuffer is used as a swapchain target
 	};

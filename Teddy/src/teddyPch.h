@@ -1,6 +1,12 @@
 #pragma once
 
-//#include "Teddy/Core/PlatformDetection.h"
+#include "Teddy/Core/PlatformDetection.h"
+
+#ifdef TED_PLATFORM_WINDOWS
+	#ifndef NOMINMAX
+		#define NOMINMAX
+	#endif
+#endif
 
 #include <iostream>
 #include <memory>

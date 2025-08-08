@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Teddy/Events/Event.h"
-#include "Teddy/Core/Input.h"
+#include "Teddy/Core/KeyCodes.h"
 
 namespace Teddy 
 {
@@ -13,7 +13,7 @@ namespace Teddy
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-		KeyEvent(KeyCode keycode)
+		KeyEvent(const KeyCode keycode)
 			: m_KeyCode(keycode) 
 		{
 		}
@@ -24,7 +24,7 @@ namespace Teddy
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(KeyCode keycode, bool repeat)
+		KeyPressedEvent(const KeyCode keycode, const bool repeat)
 			: KeyEvent(keycode), m_RepeatCount(repeat) 
 		{
 		}
@@ -46,7 +46,7 @@ namespace Teddy
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(KeyCode keycode)
+		KeyReleasedEvent(const KeyCode keycode)
 			: KeyEvent(keycode) 
 		{
 		}

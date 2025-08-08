@@ -18,21 +18,21 @@ namespace Teddy
 
     MouseCode SDLToTeddyMouse(uint32_t keycode)
     {
-		if (keycode == SDL_BUTTON_LEFT) return      MouseCode::Left;
-		if (keycode == SDL_BUTTON_RIGHT) return     MouseCode::Right;
-		if (keycode == SDL_BUTTON_MIDDLE) return    MouseCode::Middle;
-		if (keycode == SDL_BUTTON_X1) return        MouseCode::X1;
-		if (keycode == SDL_BUTTON_X2) return        MouseCode::X2;
-		return MouseCode::Unknown;
+		if (keycode == SDL_BUTTON_LEFT) return      Mouse::Left;
+		if (keycode == SDL_BUTTON_RIGHT) return     Mouse::Right;
+		if (keycode == SDL_BUTTON_MIDDLE) return    Mouse::Middle;
+		if (keycode == SDL_BUTTON_X1) return        Mouse::X1;
+		if (keycode == SDL_BUTTON_X2) return        Mouse::X2;
+		return Mouse::Unknown;
 	}
 	
     uint32_t TeddyToSDLMouse(MouseCode keycode)
     {
-		if (keycode == MouseCode::Left)     return SDL_BUTTON_LEFT;
-		if (keycode == MouseCode::Right)    return SDL_BUTTON_RIGHT;
-		if (keycode == MouseCode::Middle)   return SDL_BUTTON_MIDDLE;
-		if (keycode == MouseCode::X1)       return SDL_BUTTON_X1;
-		if (keycode == MouseCode::X2)       return SDL_BUTTON_X2;
+		if (keycode == Mouse::Left)     return SDL_BUTTON_LEFT;
+		if (keycode == Mouse::Right)    return SDL_BUTTON_RIGHT;
+		if (keycode == Mouse::Middle)   return SDL_BUTTON_MIDDLE;
+		if (keycode == Mouse::X1)       return SDL_BUTTON_X1;
+		if (keycode == Mouse::X2)       return SDL_BUTTON_X2;
 		return -1;
 	}
 
@@ -40,108 +40,108 @@ namespace Teddy
     {
         switch (keycode)
         {
-        case KeyCode::Tab: return ImGuiKey_Tab;
-        case KeyCode::Left: return ImGuiKey_LeftArrow;
-        case KeyCode::Right: return ImGuiKey_RightArrow;
-        case KeyCode::Up: return ImGuiKey_UpArrow;
-        case KeyCode::Down: return ImGuiKey_DownArrow;
-        case KeyCode::PageUp: return ImGuiKey_PageUp;
-        case KeyCode::PageDown: return ImGuiKey_PageDown;
-        case KeyCode::Home: return ImGuiKey_Home;
-        case KeyCode::End: return ImGuiKey_End;
-        case KeyCode::Insert: return ImGuiKey_Insert;
-        case KeyCode::Delete: return ImGuiKey_Delete;
-        case KeyCode::Backspace: return ImGuiKey_Backspace;
-        case KeyCode::Space: return ImGuiKey_Space;
-        case KeyCode::Return: return ImGuiKey_Enter;
-        case KeyCode::Escape: return ImGuiKey_Escape;
-        case KeyCode::Apostrophe: return ImGuiKey_Apostrophe;
-        case KeyCode::Comma: return ImGuiKey_Comma;
-        case KeyCode::Minus: return ImGuiKey_Minus;
-        case KeyCode::Period: return ImGuiKey_Period;
-        case KeyCode::Slash: return ImGuiKey_Slash;
-        case KeyCode::Semicolon: return ImGuiKey_Semicolon;
-        case KeyCode::Equals: return ImGuiKey_Equal;
-        case KeyCode::LeftBracket: return ImGuiKey_LeftBracket;
-        case KeyCode::Backslash: return ImGuiKey_Backslash;
-        case KeyCode::RightBracket: return ImGuiKey_RightBracket;
-        case KeyCode::Grave: return ImGuiKey_GraveAccent;
-        case KeyCode::CapsLock: return ImGuiKey_CapsLock;
-        case KeyCode::ScrollLock: return ImGuiKey_ScrollLock;
-        case KeyCode::NumLockClear: return ImGuiKey_NumLock;
-        case KeyCode::PrintScreen: return ImGuiKey_PrintScreen;
-        case KeyCode::Pause: return ImGuiKey_Pause;
-        case KeyCode::LCtrl: return ImGuiKey_LeftCtrl;
-        case KeyCode::LShift: return ImGuiKey_LeftShift;
-        case KeyCode::LAlt: return ImGuiKey_LeftAlt;
-        case KeyCode::LGui: return ImGuiKey_LeftSuper;
-        case KeyCode::RCtrl: return ImGuiKey_RightCtrl;
-        case KeyCode::RShift: return ImGuiKey_RightShift;
-        case KeyCode::RAlt: return ImGuiKey_RightAlt;
-        case KeyCode::RGui: return ImGuiKey_RightSuper;
-        case KeyCode::Application: return ImGuiKey_Menu;
-        case KeyCode::D0: return ImGuiKey_0;
-        case KeyCode::D1: return ImGuiKey_1;
-        case KeyCode::D2: return ImGuiKey_2;
-        case KeyCode::D3: return ImGuiKey_3;
-        case KeyCode::D4: return ImGuiKey_4;
-        case KeyCode::D5: return ImGuiKey_5;
-        case KeyCode::D6: return ImGuiKey_6;
-        case KeyCode::D7: return ImGuiKey_7;
-        case KeyCode::D8: return ImGuiKey_8;
-        case KeyCode::D9: return ImGuiKey_9;
-        case KeyCode::A: return ImGuiKey_A;
-        case KeyCode::B: return ImGuiKey_B;
-        case KeyCode::C: return ImGuiKey_C;
-        case KeyCode::D: return ImGuiKey_D;
-        case KeyCode::E: return ImGuiKey_E;
-        case KeyCode::F: return ImGuiKey_F;
-        case KeyCode::G: return ImGuiKey_G;
-        case KeyCode::H: return ImGuiKey_H;
-        case KeyCode::I: return ImGuiKey_I;
-        case KeyCode::J: return ImGuiKey_J;
-        case KeyCode::K: return ImGuiKey_K;
-        case KeyCode::L: return ImGuiKey_L;
-        case KeyCode::M: return ImGuiKey_M;
-        case KeyCode::N: return ImGuiKey_N;
-        case KeyCode::O: return ImGuiKey_O;
-        case KeyCode::P: return ImGuiKey_P;
-        case KeyCode::Q: return ImGuiKey_Q;
-        case KeyCode::R: return ImGuiKey_R;
-        case KeyCode::S: return ImGuiKey_S;
-        case KeyCode::T: return ImGuiKey_T;
-        case KeyCode::U: return ImGuiKey_U;
-        case KeyCode::V: return ImGuiKey_V;
-        case KeyCode::W: return ImGuiKey_W;
-        case KeyCode::X: return ImGuiKey_X;
-        case KeyCode::Y: return ImGuiKey_Y;
-        case KeyCode::Z: return ImGuiKey_Z;
-        case KeyCode::F1: return ImGuiKey_F1;
-        case KeyCode::F2: return ImGuiKey_F2;
-        case KeyCode::F3: return ImGuiKey_F3;
-        case KeyCode::F4: return ImGuiKey_F4;
-        case KeyCode::F5: return ImGuiKey_F5;
-        case KeyCode::F6: return ImGuiKey_F6;
-        case KeyCode::F7: return ImGuiKey_F7;
-        case KeyCode::F8: return ImGuiKey_F8;
-        case KeyCode::F9: return ImGuiKey_F9;
-        case KeyCode::F10: return ImGuiKey_F10;
-        case KeyCode::F11: return ImGuiKey_F11;
-        case KeyCode::F12: return ImGuiKey_F12;
-        case KeyCode::F13: return ImGuiKey_F13;
-        case KeyCode::F14: return ImGuiKey_F14;
-        case KeyCode::F15: return ImGuiKey_F15;
-        case KeyCode::F16: return ImGuiKey_F16;
-        case KeyCode::F17: return ImGuiKey_F17;
-        case KeyCode::F18: return ImGuiKey_F18;
-        case KeyCode::F19: return ImGuiKey_F19;
-        case KeyCode::F20: return ImGuiKey_F20;
-        case KeyCode::F21: return ImGuiKey_F21;
-        case KeyCode::F22: return ImGuiKey_F22;
-        case KeyCode::F23: return ImGuiKey_F23;
-        case KeyCode::F24: return ImGuiKey_F24;
-        case KeyCode::AcBack: return ImGuiKey_AppBack;
-        case KeyCode::AcForward: return ImGuiKey_AppForward;
+        case Key::Tab: return ImGuiKey_Tab;
+        case Key::Left: return ImGuiKey_LeftArrow;
+        case Key::Right: return ImGuiKey_RightArrow;
+        case Key::Up: return ImGuiKey_UpArrow;
+        case Key::Down: return ImGuiKey_DownArrow;
+        case Key::PageUp: return ImGuiKey_PageUp;
+        case Key::PageDown: return ImGuiKey_PageDown;
+        case Key::Home: return ImGuiKey_Home;
+        case Key::End: return ImGuiKey_End;
+        case Key::Insert: return ImGuiKey_Insert;
+        case Key::Delete: return ImGuiKey_Delete;
+        case Key::Backspace: return ImGuiKey_Backspace;
+        case Key::Space: return ImGuiKey_Space;
+        case Key::Return: return ImGuiKey_Enter;
+        case Key::Escape: return ImGuiKey_Escape;
+        case Key::Apostrophe: return ImGuiKey_Apostrophe;
+        case Key::Comma: return ImGuiKey_Comma;
+        case Key::Minus: return ImGuiKey_Minus;
+        case Key::Period: return ImGuiKey_Period;
+        case Key::Slash: return ImGuiKey_Slash;
+        case Key::Semicolon: return ImGuiKey_Semicolon;
+        case Key::Equals: return ImGuiKey_Equal;
+        case Key::LeftBracket: return ImGuiKey_LeftBracket;
+        case Key::Backslash: return ImGuiKey_Backslash;
+        case Key::RightBracket: return ImGuiKey_RightBracket;
+        case Key::Grave: return ImGuiKey_GraveAccent;
+        case Key::CapsLock: return ImGuiKey_CapsLock;
+        case Key::ScrollLock: return ImGuiKey_ScrollLock;
+        case Key::NumLockClear: return ImGuiKey_NumLock;
+        case Key::PrintScreen: return ImGuiKey_PrintScreen;
+        case Key::Pause: return ImGuiKey_Pause;
+        case Key::LCtrl: return ImGuiKey_LeftCtrl;
+        case Key::LShift: return ImGuiKey_LeftShift;
+        case Key::LAlt: return ImGuiKey_LeftAlt;
+        case Key::LGui: return ImGuiKey_LeftSuper;
+        case Key::RCtrl: return ImGuiKey_RightCtrl;
+        case Key::RShift: return ImGuiKey_RightShift;
+        case Key::RAlt: return ImGuiKey_RightAlt;
+        case Key::RGui: return ImGuiKey_RightSuper;
+        case Key::Application: return ImGuiKey_Menu;
+        case Key::D0: return ImGuiKey_0;
+        case Key::D1: return ImGuiKey_1;
+        case Key::D2: return ImGuiKey_2;
+        case Key::D3: return ImGuiKey_3;
+        case Key::D4: return ImGuiKey_4;
+        case Key::D5: return ImGuiKey_5;
+        case Key::D6: return ImGuiKey_6;
+        case Key::D7: return ImGuiKey_7;
+        case Key::D8: return ImGuiKey_8;
+        case Key::D9: return ImGuiKey_9;
+        case Key::A: return ImGuiKey_A;
+        case Key::B: return ImGuiKey_B;
+        case Key::C: return ImGuiKey_C;
+        case Key::D: return ImGuiKey_D;
+        case Key::E: return ImGuiKey_E;
+        case Key::F: return ImGuiKey_F;
+        case Key::G: return ImGuiKey_G;
+        case Key::H: return ImGuiKey_H;
+        case Key::I: return ImGuiKey_I;
+        case Key::J: return ImGuiKey_J;
+        case Key::K: return ImGuiKey_K;
+        case Key::L: return ImGuiKey_L;
+        case Key::M: return ImGuiKey_M;
+        case Key::N: return ImGuiKey_N;
+        case Key::O: return ImGuiKey_O;
+        case Key::P: return ImGuiKey_P;
+        case Key::Q: return ImGuiKey_Q;
+        case Key::R: return ImGuiKey_R;
+        case Key::S: return ImGuiKey_S;
+        case Key::T: return ImGuiKey_T;
+        case Key::U: return ImGuiKey_U;
+        case Key::V: return ImGuiKey_V;
+        case Key::W: return ImGuiKey_W;
+        case Key::X: return ImGuiKey_X;
+        case Key::Y: return ImGuiKey_Y;
+        case Key::Z: return ImGuiKey_Z;
+        case Key::F1: return ImGuiKey_F1;
+        case Key::F2: return ImGuiKey_F2;
+        case Key::F3: return ImGuiKey_F3;
+        case Key::F4: return ImGuiKey_F4;
+        case Key::F5: return ImGuiKey_F5;
+        case Key::F6: return ImGuiKey_F6;
+        case Key::F7: return ImGuiKey_F7;
+        case Key::F8: return ImGuiKey_F8;
+        case Key::F9: return ImGuiKey_F9;
+        case Key::F10: return ImGuiKey_F10;
+        case Key::F11: return ImGuiKey_F11;
+        case Key::F12: return ImGuiKey_F12;
+        case Key::F13: return ImGuiKey_F13;
+        case Key::F14: return ImGuiKey_F14;
+        case Key::F15: return ImGuiKey_F15;
+        case Key::F16: return ImGuiKey_F16;
+        case Key::F17: return ImGuiKey_F17;
+        case Key::F18: return ImGuiKey_F18;
+        case Key::F19: return ImGuiKey_F19;
+        case Key::F20: return ImGuiKey_F20;
+        case Key::F21: return ImGuiKey_F21;
+        case Key::F22: return ImGuiKey_F22;
+        case Key::F23: return ImGuiKey_F23;
+        case Key::F24: return ImGuiKey_F24;
+        case Key::AcBack: return ImGuiKey_AppBack;
+        case Key::AcForward: return ImGuiKey_AppForward;
         default: break;
         }
         return ImGuiKey_None;
@@ -149,11 +149,11 @@ namespace Teddy
 
     uint32_t TeddyToImGuiMouse(MouseCode keycode)
     {
-		if (keycode == MouseCode::Left)     return 0;
-		if (keycode == MouseCode::Right)    return 1;
-		if (keycode == MouseCode::Middle)   return 2;
-		if (keycode == MouseCode::X1)       return 3;
-		if (keycode == MouseCode::X2)       return 4;
+		if (keycode == Mouse::Left)     return 0;
+		if (keycode == Mouse::Right)    return 1;
+		if (keycode == Mouse::Middle)   return 2;
+		if (keycode == Mouse::X1)       return 3;
+		if (keycode == Mouse::X2)       return 4;
 		return -1;
 	}
 
@@ -166,7 +166,7 @@ namespace Teddy
             return static_cast<uint32_t>(keycode);
         }
         // Special case for pedal (sustain) control, if you use TED_MIDI_PEDAL
-        if (keycode == MidiCode::Pedal) 
+        if (keycode == Midi::Pedal) 
         {
             return 0x78;
         }
@@ -185,10 +185,10 @@ namespace Teddy
         // Special case for pedal (sustain) control, if you use 0x78 for TED_MIDI_PEDAL
         if (keycode == 0x78) 
         {
-            return MidiCode::Pedal;
+            return Midi::Pedal;
         }
         // Not a valid MIDI note or mapped control
-        return MidiCode::Unknown;
+        return Midi::Unknown;
     }
 
     std::string KeyToNote(MidiCode key) 
