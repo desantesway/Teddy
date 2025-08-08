@@ -2,6 +2,13 @@
 
 #include <chrono>
 
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "Teddy/Renderer/Shader.h"
+
+#include <imgui.h>
+
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Teddy
 {
 
@@ -64,6 +71,8 @@ namespace Teddy
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -204,6 +213,8 @@ namespace Teddy
         ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
         ImGui::End();
+
+        m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Entities");
 

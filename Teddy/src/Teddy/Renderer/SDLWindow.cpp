@@ -31,6 +31,15 @@ namespace Teddy
 		Shutdown();
 	}
 
+	// TODO: FINISH THIS
+	bool SDLWindow::resizingEventWatcher(void* data, SDL_Event* event) {
+		if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+			WindowResizeEvent e(event->window.data1, event->window.data2);
+			static_cast<SDLWindow*>(data)->m_Data.EventCallback(e);
+		}
+		return true;
+	}
+
 	void SDLWindow::Init(const WindowProps& props)
 	{
 		TED_PROFILE_FUNCTION();
@@ -65,6 +74,8 @@ namespace Teddy
 
 		m_Window = GraphicsWindow::Create(m_Data.Title.c_str(), (int)props.Width, (int)props.Height);
 		m_Window->Init();
+
+		SDL_AddEventWatch(resizingEventWatcher, this);
 
 		m_Context = GraphicsContext::Create(m_Window->GetWindow());
 		m_Context->Init(); 

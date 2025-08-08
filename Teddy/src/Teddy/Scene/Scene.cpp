@@ -58,8 +58,8 @@ namespace Teddy
 			auto view = m_Registry.view<CameraComponent>();
 			for (auto entity : view) 
 			{
-				auto camera = view.get<CameraComponent>(entity);
-				auto transform = m_Registry.get<TransformComponent>(entity);
+				auto& camera = view.get<CameraComponent>(entity);
+				auto& transform = m_Registry.get<TransformComponent>(entity);
 				
 				if (camera.Primary) 
 				{
@@ -83,8 +83,8 @@ namespace Teddy
 		for (auto entity : group) 
 		{
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			auto transform = std::get<0>(tuple);
-			auto sprite = std::get<1>(tuple);
+			auto& transform = std::get<0>(tuple);
+			auto& sprite = std::get<1>(tuple);
 
 			Renderer2D::DrawQuad(transform, { .Color = sprite.Color });
 		}
