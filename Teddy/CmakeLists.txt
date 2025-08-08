@@ -145,6 +145,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Entity.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Entity.cpp
 
+    # Scene Camera
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneCamera.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneCamera.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -40,11 +40,13 @@ namespace Teddy
 		glm::mat4* cameraTransform = nullptr;
 		{
 			auto view = m_Registry.view<CameraComponent>();
-			for (auto entity : view) {
+			for (auto entity : view) 
+			{
 				auto& camera = view.get<CameraComponent>(entity);
 				auto& transform = m_Registry.get<TransformComponent>(entity);
 				
-				if (camera.Primary) {
+				if (camera.Primary) 
+				{
 					activeCamera = &camera.Camera;
 					cameraTransform = &transform.Transform;
 					break;
@@ -52,7 +54,8 @@ namespace Teddy
 			}
 		}
 
-		if (!activeCamera) {
+		if (!activeCamera) 
+		{
 			TED_CORE_ERROR("No active camera found in the scene!");
 			return;
 		}
@@ -60,7 +63,8 @@ namespace Teddy
 		Renderer2D::BeginScene(activeCamera->GetProjection(), *cameraTransform);
 
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group) {
+		for (auto entity : group) 
+		{
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			auto& transform = std::get<0>(tuple);
 			auto& sprite = std::get<1>(tuple);
@@ -69,5 +73,24 @@ namespace Teddy
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		TED_PROFILE_FUNCTION();
+
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view) 
+		{
+			auto& camera = view.get<CameraComponent>(entity);
+			if (!camera.FixedAspectRatio)
+			{
+				camera.Camera.SetViewportSize(width, height);
+			}
+		}
+	
 	}
 }
