@@ -127,19 +127,6 @@ namespace Teddy
 		s_Data.TextureSlotIndex = 1;
 	}
 
-	void Renderer2D::BeginScene(const OrthographicCamera& camera)
-	{
-		TED_PROFILE_FUNCTION();
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
-	}
-
 	void Renderer2D::EndScene()
 	{
 		TED_PROFILE_FUNCTION();

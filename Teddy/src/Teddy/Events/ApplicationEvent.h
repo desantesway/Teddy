@@ -6,6 +6,21 @@
 
 namespace Teddy 
 {
+	class WindowMovedEvent : public Event
+	{
+	public:
+		WindowMovedEvent() = default;
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Window Moved";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(WindowMoved)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
 	class WindowResizeEvent : public Event
 	{

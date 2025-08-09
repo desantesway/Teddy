@@ -64,6 +64,7 @@ namespace Teddy
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(TED_BIND_EVENT_FN(Application::OnWindowClose)); // if the event is Window close do OnWindowClose()
 		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(Application::OnWindowResize));
+		dispatcher.Dispatch<WindowMovedEvent>(TED_BIND_EVENT_FN(Application::OnWindowMoved));
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
@@ -79,12 +80,14 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
-		float time = (float)SDL_GetTicks(); //Platform::GetTime
+		// put this inside of if, if you want to time go and not freeze
+		float time = (float)SDL_GetTicks();
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;
 
 		if (!m_Minimized)
 		{
+
 			{
 				TED_PROFILE_SCOPE("LayerStack OnUpdate");
 
@@ -100,7 +103,7 @@ namespace Teddy
 					layer->OnImGuiRender();
 			}
 			m_ImGuiLayer->End();
-
+		
 		}
 
 		m_Window->OnUpdate();
@@ -142,6 +145,12 @@ namespace Teddy
 
 		m_Minimized = false;
 
-		return false;
+		return true;
+	}
+
+	bool Application::OnWindowMoved(WindowMovedEvent& e)
+	{
+		OnUpdate();
+		return true;
 	}
 }

@@ -13,19 +13,28 @@
 
 namespace Teddy 
 {
+	// TODO: Optimize this - i think it is being called to render way too often
+	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) 
+	{
+		static bool pendingExpose = false;
 
-	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) {
-		
-		if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+		if (event->type == SDL_EVENT_WINDOW_RESIZED ) 
+		{
 			SDLWindow* window = static_cast<SDLWindow*>(data);
-
 			WindowResizeEvent e(event->window.data1, event->window.data2);
+			window->m_Data.EventCallback(e);
+		}
+		else if (event->type == SDL_EVENT_WINDOW_MOVED)
+		{
+			SDLWindow* window = static_cast<SDLWindow*>(data);
+			WindowMovedEvent e;
 			window->m_Data.EventCallback(e);
 		}
 
 		return true;
 	}
 
+	// TODO: Window minimize
 	void SDLWindow::SDLEvents() 
 	{
 		TED_PROFILE_FUNCTION();
