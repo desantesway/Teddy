@@ -67,12 +67,43 @@ namespace Teddy
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			//if (e.Handled)
-				//break;
+			if (e.Handled)
+				break;
 			(*it)->OnEvent(e);
 		}
 
 		m_Input.OnEvent(e);
+	}
+
+	void Application::OnUpdate()
+	{
+		TED_PROFILE_FUNCTION();
+
+		float time = (float)SDL_GetTicks(); //Platform::GetTime
+		Timestep timestep = time - m_LastFrameTime;
+		m_LastFrameTime = time;
+
+		if (!m_Minimized)
+		{
+			{
+				TED_PROFILE_SCOPE("LayerStack OnUpdate");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
+
+			m_ImGuiLayer->Begin();
+			{
+				TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnImGuiRender();
+			}
+			m_ImGuiLayer->End();
+
+		}
+
+		m_Window->OnUpdate();
 	}
 
 	void Application::Run() 
@@ -83,31 +114,7 @@ namespace Teddy
 		{
 			TED_PROFILE_SCOPE("Application Run Loop");
 
-			float time = (float)SDL_GetTicks(); //Platform::GetTime
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
-
-			if (!m_Minimized) 
-			{
-				{
-					TED_PROFILE_SCOPE("LayerStack OnUpdate");
-
-					for (Layer* layer : m_LayerStack)
-						layer->OnUpdate(timestep);
-				}
-
-				m_ImGuiLayer->Begin();
-				{
-					TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
-
-					for (Layer* layer : m_LayerStack)
-						layer->OnImGuiRender();
-				}
-				m_ImGuiLayer->End();
-				
-			}
-
-			m_Window->OnUpdate();
+			OnUpdate();
 		}
 	}
 
@@ -130,6 +137,8 @@ namespace Teddy
 		m_Window->SetWidth(e.GetWidth());
 		m_Window->SetHeight(e.GetHeight());
 		Renderer::OnWindowResize(m_Window->GetWidth(), m_Window->GetHeight());
+
+		OnUpdate();
 
 		m_Minimized = false;
 

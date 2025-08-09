@@ -9,9 +9,22 @@
 
 #include "Teddy/Core/CodeConverter.h"
 
-// TODO : Change to event watcher
+#include "Teddy/Renderer/Renderer.h"
+
 namespace Teddy 
 {
+
+	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) {
+		
+		if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+			SDLWindow* window = static_cast<SDLWindow*>(data);
+
+			WindowResizeEvent e(event->window.data1, event->window.data2);
+			window->m_Data.EventCallback(e);
+		}
+
+		return true;
+	}
 
 	void SDLWindow::SDLEvents() 
 	{
@@ -25,6 +38,12 @@ namespace Teddy
 				case SDL_EVENT_QUIT: 
 				{
 					WindowCloseEvent e;
+					m_Data.EventCallback(e);
+					break;
+				}
+				case SDL_EVENT_WINDOW_RESIZED:
+				{
+					WindowResizeEvent e(event.window.data1, event.window.data2);
 					m_Data.EventCallback(e);
 					break;
 				}

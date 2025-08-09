@@ -17,6 +17,8 @@ namespace Teddy
 			void OnUpdate(Timestep ts) override;
 			void OnEvent(Event& event) override;
 			virtual void OnImGuiRender() override;
+
+			static bool ResizingWatcher(void* data, SDL_Event* event);
 		private:
 			OrthographicCameraController m_CameraController;
 

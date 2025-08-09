@@ -8,6 +8,7 @@
 #include <imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Teddy
 {
@@ -67,6 +68,11 @@ namespace Teddy
                     transform[3][1] += speed * ts;
                 if (Input::IsKeyPressed(Key::S))
                     transform[3][1] -= speed * ts;
+                
+                float rotation = 0.0f;
+                rotation = rotation + glm::radians(45.0f) * ts;
+
+                transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
             }
         };
 
@@ -83,6 +89,7 @@ namespace Teddy
     void EditorLayer::OnUpdate(Timestep ts)
     {
         TED_PROFILE_FUNCTION();
+
 
         if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
@@ -107,7 +114,6 @@ namespace Teddy
             RenderCommand::Clear();
         }
 
-
         {
 
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
@@ -121,8 +127,6 @@ namespace Teddy
     void EditorLayer::OnEvent(Event& event)
     {
         if (!(m_ViewportFocused)) return;
-
-        m_CameraController.OnEvent(event);
     }
 
     void EditorLayer::OnImGuiRender()

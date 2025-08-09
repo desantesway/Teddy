@@ -27,25 +27,27 @@ namespace Teddy
 	class Application
 	{
 	public:
-			Application(const std::string& name = "Teddy App");
-			virtual ~Application();
+		Application(const std::string& name = "Teddy App");
+		virtual ~Application();
 
-			void OnEvent(Event& e);
+		void OnEvent(Event& e);
 
-			void PushLayer(Layer* layer);
-			void PushOverlay(Layer* layer);
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* layer);
 
-			Window& GetWindow() { return *m_Window; }
+		Window& GetWindow() { return *m_Window; }
 
-			void Close() { m_Running = false; }
+		void Close() { m_Running = false; }
 
-			ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
-			static Application& Get() { return *s_Instance; }
+		static Application& Get() { return *s_Instance; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
+		void OnUpdate();
 		void Run();
 
 		std::unique_ptr<Window> m_Window;

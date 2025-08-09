@@ -34,9 +34,9 @@ namespace Teddy
 
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
-	private:
-		static bool resizingEventWatcher(void* data, SDL_Event* event);
 
+		static bool EventWatcher(void* data, SDL_Event* event);
+	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 	private:
