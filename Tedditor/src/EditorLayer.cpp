@@ -36,9 +36,30 @@ namespace Teddy
         
         m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.2f, 0.8f, 1.0f));
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>();
+        class SquareController : public ScriptableEntity
+        {
+        public:
+            void OnCreate()
+            {
+            }
 
+            void OnDestroy()
+            {
+            }
+
+            void OnUpdate(Timestep ts)
+            {
+                float rotation = 0.0f;
+                rotation = rotation + glm::radians(45.0f) * ts;
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
+            }
+        };
+        m_SquareEntity.AddComponent<NativeScriptComponent>().Bind<SquareController>();
+		
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity.AddComponent<CameraComponent>();
+        
         m_SecondCamera = m_ActiveScene->CreateEntity("2 Camera Entity");
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
@@ -68,11 +89,6 @@ namespace Teddy
                     transform[3][1] += speed * ts;
                 if (Input::IsKeyPressed(Key::S))
                     transform[3][1] -= speed * ts;
-                
-                float rotation = 0.0f;
-                rotation = rotation + glm::radians(45.0f) * ts;
-
-                transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
             }
         };
 
