@@ -53,7 +53,7 @@ namespace Teddy
 
 		// Render
 		Camera* activeCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent>();
 			for (auto entity : view) 
@@ -64,7 +64,7 @@ namespace Teddy
 				if (camera.Primary) 
 				{
 					activeCamera = &camera.Camera;
-					cameraTransform = &transform.Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -77,7 +77,7 @@ namespace Teddy
 		}
 		
 		// Entities
-		Renderer2D::BeginScene(*activeCamera, *cameraTransform);
+		Renderer2D::BeginScene(*activeCamera, cameraTransform);
 
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group) 
@@ -86,7 +86,7 @@ namespace Teddy
 			auto& transform = std::get<0>(tuple);
 			auto& sprite = std::get<1>(tuple);
 
-			Renderer2D::DrawQuad(transform, { .Color = sprite.Color });
+			Renderer2D::DrawQuad(transform.GetTransform(), {.Color = sprite.Color});
 		}
 
 		Renderer2D::EndScene();
