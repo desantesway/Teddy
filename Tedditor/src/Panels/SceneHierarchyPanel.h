@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Teddy/Core/Base.h"
-#include "Teddy/Core/Log.h"
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Scene/Entity.h"
 

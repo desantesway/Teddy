@@ -20,13 +20,8 @@
 	#define TED_DEBUGBREAK()
 #endif
 
-#ifdef TED_ENABLE_ASSERTS
-#define TED_ASSERT(x, ...) { if(!(x)) { TED_ERROR("Assertion Failed: {0}", __VA_ARGS__); TED_DEBUGBREAK(); } }
-#define TED_CORE_ASSERT(x, ...) { if(!(x)) { TED_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); TED_DEBUGBREAK(); } }
-#else
-#define TED_ASSERT(x, ...)
-#define TED_CORE_ASSERT(x, ...)
-#endif
+#define TED_EXPAND_MACRO(x) x
+#define TED_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1 << x)
 
@@ -52,3 +47,6 @@ namespace Teddy
 	}
 
 }
+
+#include "Teddy/Core/Log.h"
+#include "Teddy/Core/Assert.h"

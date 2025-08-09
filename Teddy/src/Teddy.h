@@ -7,6 +7,7 @@
 #include "Teddy/Core/Application.h"
 #include "Teddy/Core/Layer.h"
 #include "Teddy/Core/Log.h"
+#include "Teddy/Core/Assert.h"
 
 #include "Teddy/Core/Timestep.h"
 

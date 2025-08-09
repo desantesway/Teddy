@@ -35,7 +35,7 @@ namespace Teddy
 	void Scene::OnUpdate(Timestep ts)
 	{
 		TED_PROFILE_FUNCTION();
-
+		
 		// Scripts
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
@@ -77,7 +77,7 @@ namespace Teddy
 		}
 		
 		// Entities
-		Renderer2D::BeginScene(activeCamera->GetProjection(), *cameraTransform);
+		Renderer2D::BeginScene(*activeCamera, *cameraTransform);
 
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group) 

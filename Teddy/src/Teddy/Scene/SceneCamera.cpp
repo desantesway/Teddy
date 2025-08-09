@@ -10,6 +10,15 @@ namespace Teddy
 		RecalculateProjection();
 	}
 
+	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
+	{
+		m_ProjectionType = ProjectionType::Perspective;
+		m_PerspectiveFOV = verticalFOV;
+		m_PerspectiveNear = nearClip;
+		m_PerspectiveFar = farClip;
+		RecalculateProjection();
+	}
+
 	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
@@ -17,15 +26,6 @@ namespace Teddy
 		m_OrthographicNear = nearClip;
 		m_OrthographicFar = farClip;
 
-		RecalculateProjection();
-	}
-
-	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
-	{
-		m_ProjectionType = ProjectionType::Perspective;
-		m_PerspectiveFOV = verticalFOV;
-		m_PerspectiveNear = nearClip;
-		m_PerspectiveFar = farClip;
 		RecalculateProjection();
 	}
 
