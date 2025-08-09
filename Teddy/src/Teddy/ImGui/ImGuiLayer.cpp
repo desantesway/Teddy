@@ -92,17 +92,6 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
-		dispatcher.Dispatch<MouseButtonReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
-		dispatcher.Dispatch<MouseMovedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
-		dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
-
-		dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-		dispatcher.Dispatch<KeyReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
-		dispatcher.Dispatch<KeyTypedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
-
-		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 
 		if (m_BlockEvents)
 		{
@@ -110,8 +99,19 @@ namespace Teddy
 
 			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
 			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+
+			EventDispatcher dispatcher(event);
+			dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
+			dispatcher.Dispatch<MouseButtonReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
+			dispatcher.Dispatch<MouseMovedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
+			dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
+
+			dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+			dispatcher.Dispatch<KeyReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
+			dispatcher.Dispatch<KeyTypedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+
+			dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 		}
-		
 	}
 
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e) 

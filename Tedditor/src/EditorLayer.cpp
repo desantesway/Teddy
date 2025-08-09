@@ -49,8 +49,10 @@ namespace Teddy
 
             void OnUpdate(Timestep ts)
             {
-                float rotation = 0.0f;
+                static float rotation = 0.0f;
                 rotation = rotation + glm::radians(45.0f) * ts;
+                if (glm::degrees(rotation) >= 360.0f) rotation = 0.0f;
+                else if (glm::degrees(rotation) < 0.0f) rotation = 0.0f;
                 auto& rotated = GetComponent<TransformComponent>().Rotation;
 				rotated.z = rotation;
             }
