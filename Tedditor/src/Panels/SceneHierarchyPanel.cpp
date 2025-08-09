@@ -38,7 +38,7 @@ namespace Teddy
 		}
 
 		bool entityDeleted = false;
-		if (ImGui::BeginPopupContextWindow(0, 1))
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
 				m_Context->CreateEntity("Empty Entity");
@@ -112,6 +112,21 @@ namespace Teddy
 			if (opened)
 				ImGui::TreePop();
 			ImGui::TreePop();
+		}
+
+		bool entityDeleted = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+				entityDeleted = true;
+
+			ImGui::EndPopup();
+		}
+
+		if (entityDeleted)
+		{
+			m_Context->DestroyEntity(m_SelectionContext);
+			m_SelectionContext = {};
 		}
 	}
 
