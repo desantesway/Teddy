@@ -23,13 +23,48 @@ namespace Teddy
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		// TODO: group entities to their components
+		std::unordered_map<std::string, std::vector<Entity> > entityTree;
+
 		auto view = m_Context->m_Registry.view<entt::entity>();
 		for (auto entityID : view)
 		{
 			Entity entity = Entity(entityID, m_Context.get());
-			DrawEntityNode(entity);
+			
+			bool isEmpty = true;
 
+			if (entity.HasComponent<CameraComponent>())
+			{
+				entityTree["Cameras"].push_back(entity);
+				isEmpty = false;
+			}
+			if (entity.HasComponent<SpriteRendererComponent>()) 
+			{
+				entityTree["Sprites"].push_back(entity);
+				isEmpty = false;
+			}
+			if (isEmpty)
+			{
+				entityTree["Empty"].push_back(entity);
+			}
+		}
+
+		
+		int i = 0;
+		for (auto& components : entityTree)
+		{
+			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)i, ImGuiTreeNodeFlags_DefaultOpen, components.first.c_str());
+
+			if (opened)
+			{
+				for (const auto& entity : components.second)
+				{
+					DrawEntityNode(entity);
+				}
+				
+				ImGui::TreePop();
+			}
+
+			i++;
 		}
 
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
@@ -119,7 +154,7 @@ namespace Teddy
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				entityDeleted = true;
-
+		
 			ImGui::EndPopup();
 		}
 
@@ -292,15 +327,15 @@ namespace Teddy
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 
 			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
-			if (ImGui::Button("+", ImVec2{ 20, 20 }))
+			if (ImGui::Button("+##CameraComponentSettings", ImVec2{ 20, 20 }))
 			{
-				ImGui::OpenPopup("ComponentSettings");
+				ImGui::OpenPopup("CameraComponentSettings");
 			}
 			ImGui::PopStyleVar();
 
 			bool removeComponent = false;
 
-			if (ImGui::BeginPopup("ComponentSettings"))
+			if (ImGui::BeginPopup("CameraComponentSettings"))
 			{
 				if (ImGui::MenuItem("Remove component"))
 					removeComponent = true;
@@ -324,17 +359,17 @@ namespace Teddy
 			}
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-
+			
 			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
-			if (ImGui::Button("+", ImVec2{ 20, 20 }))
+			if (ImGui::Button("+##SpriteRendererComponentSettings", ImVec2{ 20, 20 }))
 			{
-				ImGui::OpenPopup("ComponentSettings");
+				ImGui::OpenPopup("SpriteRendererComponentSettings");
 			}
 			ImGui::PopStyleVar();
 
 			bool removeComponent = false;
 
-			if (ImGui::BeginPopup("ComponentSettings"))
+			if (ImGui::BeginPopup("SpriteRendererComponentSettings"))
 			{
 				if (ImGui::MenuItem("Remove component"))
 					removeComponent = true;
