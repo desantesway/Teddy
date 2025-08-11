@@ -156,6 +156,10 @@ add_library(Teddy STATIC
     # Scripting
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/ScriptableEntity.h
 
+    # Serializer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneSerializer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneSerializer.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

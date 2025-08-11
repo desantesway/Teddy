@@ -75,9 +75,16 @@ namespace Teddy
 			}
 		}
 
+		static int errorDelay = 499;
+		errorDelay++;
 		if (!activeCamera) 
 		{
-			TED_CORE_ERROR("No active camera found in the scene!");
+			if (errorDelay == 500)
+			{
+				TED_CORE_ERROR("No active camera found in the scene!");
+				errorDelay = 0;
+			}
+			
 			return;
 		}
 		

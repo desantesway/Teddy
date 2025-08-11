@@ -10,6 +10,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Teddy/Scene/SceneSerializer.h"
+
 namespace Teddy
 {
 
@@ -30,74 +32,7 @@ namespace Teddy
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
-		m_ActiveScene = CreateRef<Scene>();
-
-        m_SquareEntity = m_ActiveScene->CreateEntity("Editable Square");
-        
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.2f, 0.8f, 1.0f));
-
-        class SquareController : public ScriptableEntity
-        {
-        public:
-            void OnCreate()
-            {
-            }
-
-            void OnDestroy()
-            {
-            }
-
-            void OnUpdate(Timestep ts)
-            {
-                static float rotation = 0.0f;
-                rotation = rotation + glm::radians(45.0f) * ts;
-                if (glm::degrees(rotation) >= 360.0f) rotation = 0.0f;
-                else if (glm::degrees(rotation) < 0.0f) rotation = 0.0f;
-                auto& rotated = GetComponent<TransformComponent>().Rotation;
-				rotated.z = rotation;
-            }
-        };
-        m_SquareEntity.AddComponent<NativeScriptComponent>().Bind<SquareController>();
-
-        auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-        redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
-		
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-        m_CameraEntity.AddComponent<CameraComponent>();
-        
-        m_SecondCamera = m_ActiveScene->CreateEntity("2 Camera B");
-        auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
-		cc.Primary = false;
-
-        class CameraController : public ScriptableEntity
-        {
-        public:
-            void OnCreate()
-            {
-                auto& translation = GetComponent<TransformComponent>().Translation;
-                translation.x = rand() % 10 - 5.0f;
-            }
-
-            void OnDestroy()
-            {
-            }
-
-            void OnUpdate(Timestep ts)
-            {
-                auto& translation = GetComponent<TransformComponent>().Translation;
-                const static float speed = 5.0f;
-                if (Input::IsKeyPressed(Key::A))
-                    translation.x -= speed * ts;
-                if (Input::IsKeyPressed(Key::D))
-                    translation.x += speed * ts;
-                if (Input::IsKeyPressed(Key::W))
-                    translation.y += speed * ts;
-                if (Input::IsKeyPressed(Key::S))
-                    translation.y -= speed * ts;
-            }
-        };
-
-        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+        m_ActiveScene = CreateRef<Scene>();
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
@@ -211,6 +146,19 @@ namespace Teddy
                 ImGui::MenuItem("Padding", NULL, &opt_padding);
                 ImGui::Separator();
 
+                if (ImGui::MenuItem("Save Scene"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Serialize("assets/scenes/Teddy.hazel");
+                }
+
+                if (ImGui::MenuItem("Load Scene"))
+                {
+                    // TODO : Reset Scene
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Deserialize("assets/scenes/Teddy.hazel");
+                }
+
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
             }
@@ -252,13 +200,13 @@ namespace Teddy
         ImGui::Begin("ViewPort");
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-        
-        ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(), 
+
+        ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(),
             ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
         ImGui::End();
@@ -266,5 +214,6 @@ namespace Teddy
         ImGui::PopStyleVar();
 
         ImGui::End();
+
     }
 }

@@ -12,7 +12,6 @@ namespace Teddy
 	public:
 		Scene();
 		~Scene(); 
-
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
@@ -26,6 +25,7 @@ namespace Teddy
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		friend class Entity;
+		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 		};
 }

@@ -112,6 +112,15 @@ target_include_directories(Teddy PRIVATE Teddy/vendor/entt/single_include)
 target_include_directories(Sandbox PRIVATE Teddy/vendor/entt/single_include)
 target_include_directories(Tedditor PRIVATE Teddy/vendor/entt/single_include)
 
+# yaml
+add_subdirectory(Teddy/vendor/yaml-cpp)
+target_link_libraries(Teddy PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(Tedditor PUBLIC yaml-cpp::yaml-cpp)
+#target_include_directories(Teddy PRIVATE Teddy/vendor/yaml-cpp/include)
+#target_include_directories(Sandbox PRIVATE Teddy/vendor/yaml-cpp/include)
+#target_include_directories(Tedditor PRIVATE Teddy/vendor/yaml-cpp/include)
+
+
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Game")

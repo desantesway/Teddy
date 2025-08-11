@@ -23,5 +23,6 @@
 	url = https://github.com/skypjack/entt
 	branch = master
 [submodule "Teddy/vendor/yaml"]
-	path = Teddy/vendor/yaml
+	path = Teddy/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp/
+	branch = master
