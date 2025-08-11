@@ -22,6 +22,8 @@ namespace Teddy
 		void End();
 
 		void SetBlockEvents(bool block) { m_BlockEvents = block; }
+
+		void SetDarkThemeColors();
 	private:
 		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);

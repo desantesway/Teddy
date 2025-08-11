@@ -31,11 +31,25 @@ namespace Teddy
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	      // Enable Multi-Viewport / Platform Windows
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	      // Enable Multi-Viewport / Platform Windows
+		// TODO : Multi viewport stopped working(?)
+
+		io.Fonts->AddFontFromFileTTF(
+			"assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf", 18.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF(
+			"assets/fonts/instrument-sans/ttf/InstrumentSans-Regular.ttf", 18.0f);
 
 		ImGui::StyleColorsDark();
 
+		SetDarkThemeColors();
+
 		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
 
 		Application& app = Application::Get();
 		SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
@@ -92,6 +106,17 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
+		dispatcher.Dispatch<MouseMovedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
+		dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
+
+		dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<KeyReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
+		dispatcher.Dispatch<KeyTypedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+
+		dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 
 		if (m_BlockEvents)
 		{
@@ -99,18 +124,6 @@ namespace Teddy
 
 			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
 			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-
-			EventDispatcher dispatcher(event);
-			dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
-			dispatcher.Dispatch<MouseButtonReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
-			dispatcher.Dispatch<MouseMovedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
-			dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
-
-			dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-			dispatcher.Dispatch<KeyReleasedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
-			dispatcher.Dispatch<KeyTypedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
-
-			dispatcher.Dispatch<WindowResizeEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 		}
 	}
 
@@ -204,5 +217,40 @@ namespace Teddy
 		glViewport(0,0, e.GetWidth(), e.GetHeight());
 
 		return false; 
+	}
+
+	void ImGuiLayer::SetDarkThemeColors()
+	{
+		auto& colors = ImGui::GetStyle().Colors;
+
+		colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+
+		// Headers
+		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.25f, 0.25f, 0.25f, 1.0f };
+		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.15f, 0.15f, 1.0f };
+
+		// Buttons
+		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.25f, 0.25f, 0.25f, 1.0f };
+		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+
+		// Frame BG
+		colors[ImGuiCol_FrameBg] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.294f, 0.294f, 0.294f, 1.0f };
+		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.294f, 0.294f, 0.294f, 1.0f };
+
+		// Tabs
+		colors[ImGuiCol_Tab] = ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+		colors[ImGuiCol_TabHovered] = ImVec4{ 0.25f, 0.25f, 0.25f, 1.0f };
+		colors[ImGuiCol_TabActive] = ImVec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+		colors[ImGuiCol_TabSelectedOverline] = ImVec4{ 0.5f, 0.5f, 0.5f, 1.0f };
+
+		// Title
+		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	}
 }
