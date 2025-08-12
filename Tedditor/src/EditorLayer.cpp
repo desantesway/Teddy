@@ -228,25 +228,26 @@ namespace Teddy
 
         switch (e.GetKeyCode())
         {
-        case Key::N:
-        {
-            if (control)
-                NewScene();
-            break;
+            case Key::N:
+            {
+                if (control)
+                    NewScene();
+                break;
+            }
+            case Key::O:
+            {
+                if (control)
+                    OpenScene();
+                break;
+            }
+            case Key::S:
+            {
+                if (control && shift)
+                    SaveSceneAs();
+                break;
+            }
         }
-        case Key::O:
-        {
-            if (control)
-                OpenScene();
-            break;
-        }
-        case Key::S:
-        {
-            if (control && shift)
-                SaveSceneAs();
-            break;
-        }
-        }
+        return false;
     }
 
     void EditorLayer::NewScene()
@@ -258,24 +259,24 @@ namespace Teddy
 
     void EditorLayer::OpenScene()
     {
-        std::string filepath = FileDialogs::OpenFile("Teddy Scene (*.teddy)\0*.teddy\0");
-        if (!filepath.empty())
+        std::optional<std::string> filepath = FileDialogs::OpenFile("Teddy Scene (*.teddy)\0*.teddy\0");
+        if (filepath)
         {
             m_ActiveScene = CreateRef<Scene>();
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(filepath);
+            serializer.Deserialize(*filepath);
         }
     }
 
     void EditorLayer::SaveSceneAs()
     {
-        std::string filepath = FileDialogs::SaveFile("Teddy Scene (*.teddy)\0*.teddy\0");
-        if (!filepath.empty())
+        std::optional<std::string> filepath = FileDialogs::SaveFile("Teddy Scene (*.teddy)\0*.teddy\0");
+        if (filepath)
         {
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Serialize(filepath);
+            serializer.Serialize(*filepath);
         }
     }
 }
