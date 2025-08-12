@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 #include "Teddy/Core/Timestep.h"
+#include "Teddy/Events/Event.h"
 
 namespace Teddy 
 {
@@ -16,6 +17,7 @@ namespace Teddy
 		void DestroyEntity(Entity entity);
 
 		void OnUpdate(Timestep ts);
+		void OnEvent(Event& event);
 		void OnViewportResize(uint32_t width, uint32_t height);
 	private:
 		template<typename T>

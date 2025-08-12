@@ -37,6 +37,21 @@ namespace Teddy
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::OnEvent(Event& event)
+	{
+		m_Registry.view<NativeScriptComponent>().each([&](auto entity, auto& nsc)
+			{
+				// TODO: Move to Scene::OnScenePlay
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->m_Entity = Entity{ entity, this };
+					nsc.Instance->OnCreate();
+				}
+				nsc.Instance->OnEvent(event);
+			});
+	}
+
 	void Scene::OnUpdate(Timestep ts)
 	{
 		TED_PROFILE_FUNCTION();

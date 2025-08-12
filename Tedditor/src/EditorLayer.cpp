@@ -35,6 +35,37 @@ namespace Teddy
 
         m_ActiveScene = CreateRef<Scene>();
 
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate()
+            {
+                auto& translation = GetComponent<TransformComponent>().Translation;
+                translation.x = rand() % 10 - 5.0f;
+            }
+
+            void OnDestroy()
+            {
+            }
+
+            void OnEvent(Event& event)
+            {
+                auto& translation = GetComponent<TransformComponent>().Translation;
+                const static float speed = 0.1f;
+                if (event.GetEventType() == EventType::KeyPressed)
+                    translation.x += speed;
+            }
+
+        };
+
+        auto redSquare = m_ActiveScene->CreateEntity("Red Square");
+        redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
+        m_CameraEntity.AddComponent<CameraComponent>();
+        
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
@@ -84,6 +115,8 @@ namespace Teddy
     void EditorLayer::OnEvent(Event& event)
     {
         if (!(m_ViewportFocused)) return;
+
+		m_ActiveScene->OnEvent(event);  
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
@@ -200,7 +233,12 @@ namespace Teddy
         ImGui::Begin("ViewPort");
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
+        ImGuiLayer* layer = Application::Get().GetImGuiLayer();
+        if (!ImGui::IsAnyItemActive())
+            layer->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+        else
+            layer->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
