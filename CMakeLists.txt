@@ -115,11 +115,8 @@ target_include_directories(Tedditor PRIVATE Teddy/vendor/entt/single_include)
 # yaml
 add_subdirectory(Teddy/vendor/yaml-cpp)
 target_link_libraries(Teddy PUBLIC yaml-cpp::yaml-cpp)
+#target_link_libraries(Sandbox PUBLIC yaml-cpp::yaml-cpp)
 target_link_libraries(Tedditor PUBLIC yaml-cpp::yaml-cpp)
-#target_include_directories(Teddy PRIVATE Teddy/vendor/yaml-cpp/include)
-#target_include_directories(Sandbox PRIVATE Teddy/vendor/yaml-cpp/include)
-#target_include_directories(Tedditor PRIVATE Teddy/vendor/yaml-cpp/include)
-
 
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Game")
@@ -128,6 +125,11 @@ set_target_properties(Tedditor PROPERTIES FOLDER "Game")
 
 set_target_properties(imgui PROPERTIES FOLDER "Dependencies")
 set_target_properties(glad PROPERTIES FOLDER "Dependencies")
+
+set_target_properties(yaml-cpp PROPERTIES FOLDER "Dependencies")
+set_target_properties(yaml-cpp-parse PROPERTIES FOLDER "Dependencies")
+set_target_properties(yaml-cpp-read PROPERTIES FOLDER "Dependencies")
+set_target_properties(yaml-cpp-sandbox PROPERTIES FOLDER "Dependencies")
 
 get_property(RTMIDI_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/rtmidi PROPERTY BUILDSYSTEM_TARGETS)
 foreach(target IN LISTS RTMIDI_TARGETS)

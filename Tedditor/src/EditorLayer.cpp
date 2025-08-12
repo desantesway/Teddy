@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Teddy/Scene/SceneSerializer.h"
+#include "Teddy/Utils/PlatformUtils.h"
 
 namespace Teddy
 {
@@ -83,6 +84,9 @@ namespace Teddy
     void EditorLayer::OnEvent(Event& event)
     {
         if (!(m_ViewportFocused)) return;
+
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
     }
 
     void EditorLayer::OnImGuiRender()
@@ -146,18 +150,14 @@ namespace Teddy
                 ImGui::MenuItem("Padding", NULL, &opt_padding);
                 ImGui::Separator();
 
-                if (ImGui::MenuItem("Save Scene"))
-                {
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Serialize("assets/scenes/Teddy.hazel");
-                }
+                if (ImGui::MenuItem("New", "Ctrl+N"))
+                    NewScene();
 
-                if (ImGui::MenuItem("Load Scene"))
-                {
-                    // TODO : Reset Scene
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Deserialize("assets/scenes/Teddy.hazel");
-                }
+                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                    OpenScene();
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                    SaveSceneAs();
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
@@ -215,5 +215,67 @@ namespace Teddy
 
         ImGui::End();
 
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        // Shortcuts
+        if (e.GetRepeatCount() > 0)
+            return false;
+
+        bool control = Input::IsKeyPressed(Key::LCtrl) || Input::IsKeyPressed(Key::RCtrl);
+        bool shift = Input::IsKeyPressed(Key::LShift) || Input::IsKeyPressed(Key::RShift);
+
+        switch (e.GetKeyCode())
+        {
+        case Key::N:
+        {
+            if (control)
+                NewScene();
+            break;
+        }
+        case Key::O:
+        {
+            if (control)
+                OpenScene();
+            break;
+        }
+        case Key::S:
+        {
+            if (control && shift)
+                SaveSceneAs();
+            break;
+        }
+        }
+    }
+
+    void EditorLayer::NewScene()
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = FileDialogs::OpenFile("Teddy Scene (*.teddy)\0*.teddy\0");
+        if (!filepath.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>();
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filepath = FileDialogs::SaveFile("Teddy Scene (*.teddy)\0*.teddy\0");
+        if (!filepath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(filepath);
+        }
     }
 }

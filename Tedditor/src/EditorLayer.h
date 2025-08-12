@@ -19,6 +19,11 @@ namespace Teddy
 			virtual void OnImGuiRender() override;
 
 			static bool ResizingWatcher(void* data, SDL_Event* event);
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
 		private:
 			OrthographicCameraController m_CameraController;
 
