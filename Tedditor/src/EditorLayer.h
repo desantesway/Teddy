@@ -4,6 +4,8 @@
 
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Teddy/Renderer/EditorCamera.h"
+
 namespace Teddy
 {
 	class EditorLayer : public Layer
@@ -37,6 +39,8 @@ namespace Teddy
 			Entity m_SecondCamera;
 
 			bool m_PrimaryCamera = true;
+
+			EditorCamera m_EditorCamera;
 
 			Ref<Texture2D> m_BoardTexture;
 

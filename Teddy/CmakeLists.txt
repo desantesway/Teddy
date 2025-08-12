@@ -134,6 +134,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Framebuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Framebuffer.cpp
 
+    # Editor Camera
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/EditorCamera.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/EditorCamera.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Scene <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

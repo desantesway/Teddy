@@ -1,8 +1,10 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include "Teddy/Core/Timestep.h"
+#include "Teddy/Renderer/EditorCamera.h"
 #include "Teddy/Events/Event.h"
+
+#include <entt/entt.hpp>
 
 namespace Teddy 
 {
@@ -16,7 +18,9 @@ namespace Teddy
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep ts);
+		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
+
 		void OnEvent(Event& event);
 		void OnViewportResize(uint32_t width, uint32_t height);
 	private:

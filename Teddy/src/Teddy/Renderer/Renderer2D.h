@@ -4,6 +4,7 @@
 #include "Teddy/Renderer/Camera.h"
 
 #include "Teddy/Renderer/Texture.h"
+#include "Teddy/Renderer/EditorCamera.h"
 
 namespace Teddy 
 {
@@ -26,6 +27,7 @@ namespace Teddy
 		static void Shutdown();
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
 
 		static void Flush();

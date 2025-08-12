@@ -35,36 +35,10 @@ namespace Teddy
 
         m_ActiveScene = CreateRef<Scene>();
 
-        class CameraController : public ScriptableEntity
-        {
-        public:
-            void OnCreate()
-            {
-                auto& translation = GetComponent<TransformComponent>().Translation;
-                translation.x = rand() % 10 - 5.0f;
-            }
-
-            void OnDestroy()
-            {
-            }
-
-            void OnEvent(Event& event)
-            {
-                auto& translation = GetComponent<TransformComponent>().Translation;
-                const static float speed = 0.1f;
-                if (event.GetEventType() == EventType::KeyPressed)
-                    translation.x += speed;
-            }
-
-        };
+        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
-
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-        m_CameraEntity.AddComponent<CameraComponent>();
-        
-        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
@@ -86,10 +60,13 @@ namespace Teddy
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
+            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
         if (m_ViewportFocused) m_CameraController.OnUpdate(ts);
+
+        m_EditorCamera.OnUpdate(ts);
 
         Renderer2D::ResetStats();
 
@@ -106,7 +83,7 @@ namespace Teddy
 
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
-            m_ActiveScene->OnUpdate(ts);
+            m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
             m_Framebuffer->Unbind();
         }
@@ -117,6 +94,7 @@ namespace Teddy
         if (!(m_ViewportFocused)) return;
 
 		m_ActiveScene->OnEvent(event);  
+        m_EditorCamera.OnEvent(event);
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
@@ -246,6 +224,9 @@ namespace Teddy
 
         ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(),
             ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+
+        const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+        glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
         ImGui::End();
 

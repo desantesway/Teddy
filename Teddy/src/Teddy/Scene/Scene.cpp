@@ -52,7 +52,7 @@ namespace Teddy
 			});
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnUpdateRuntime(Timestep ts)
 	{
 		TED_PROFILE_FUNCTION();
 		
@@ -114,6 +114,22 @@ namespace Teddy
 			auto& sprite = std::get<1>(tuple);
 
 			Renderer2D::DrawQuad(transform.GetTransform(), {.Color = sprite.Color});
+		}
+
+		Renderer2D::EndScene();
+	}
+
+	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			Renderer2D::DrawQuad(transform.GetTransform(), { .Color = sprite.Color });
 		}
 
 		Renderer2D::EndScene();
