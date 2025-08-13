@@ -103,8 +103,6 @@ namespace Teddy
 			samplers[i] = i;
 
 		s_Data.TextureShader = Shader::Create("../Teddy/assets/shaders/Texture.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;

@@ -49,7 +49,6 @@ namespace Teddy
 
 		static const char* GetCacheDirectory()
 		{
-			// TODO: make sure the assets directory is valid
 			return "assets/cache/shader/opengl";
 		}
 
@@ -223,24 +222,32 @@ namespace Teddy
 				data.resize(size / sizeof(uint32_t));
 				in.read((char*)data.data(), size);
 			}
-			shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
-
-			if (module.GetCompilationStatus() != shaderc_compilation_status_success)
+			else 
 			{
-				TED_CORE_ERROR(module.GetErrorMessage());
-				TED_CORE_ASSERT(false);
-			}
+				shaderc::SpvCompilationResult module;
+				{ 
+					TED_PROFILE_SCOPE("CompileGlslToSpv - OpenGLShader::CompileOrGetVulkanBinaries");
 
-			shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
+					module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
+				}
 
-			std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
+				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
+				{
+					TED_CORE_ERROR(module.GetErrorMessage());
+					TED_CORE_ASSERT(false);
+				}
 
-			if (out.is_open())
-			{
-				auto& data = shaderData[stage];
-				out.write((char*)data.data(), data.size() * sizeof(uint32_t));
-				out.flush();
-				out.close();
+				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
+
+				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
+
+				if (out.is_open())
+				{
+					auto& data = shaderData[stage];
+					out.write((char*)data.data(), data.size() * sizeof(uint32_t));
+					out.flush();
+					out.close();
+				}
 			}
 		}
 
@@ -250,12 +257,14 @@ namespace Teddy
 
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
 	{
+		TED_PROFILE_FUNCTION();
+
 		auto& shaderData = m_OpenGLSPIRV;
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		const bool optimize = false;
+		const bool optimize = true;
 		if (optimize)
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 
@@ -271,6 +280,7 @@ namespace Teddy
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
 			if (in.is_open())
 			{
+				TED_CORE_INFO(cachedPath.generic_string());
 				in.seekg(0, std::ios::end);
 				auto size = in.tellg();
 				in.seekg(0, std::ios::beg);
@@ -308,6 +318,8 @@ namespace Teddy
 
 	void OpenGLShader::CreateProgram()
 	{
+		TED_PROFILE_FUNCTION();
+
 		GLuint program = glCreateProgram();
 
 		std::vector<GLuint> shaderIDs;
@@ -349,6 +361,8 @@ namespace Teddy
 
 	void OpenGLShader::Reflect(GLenum stage, const std::vector<uint32_t>& shaderData)
 	{
+		TED_PROFILE_FUNCTION();
+
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 

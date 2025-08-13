@@ -22,7 +22,6 @@ target_include_directories(Sandbox PUBLIC
 
 target_compile_definitions(Sandbox PRIVATE
     $<$<CONFIG:Debug>:TED_DEBUG>
-    $<$<CONFIG:Debug>:TED_PROFILE>
     $<$<CONFIG:Release>:TED_RELEASE>
     $<$<CONFIG:Dist>:TED_DIST>
 )
