@@ -118,6 +118,33 @@ target_link_libraries(Teddy PUBLIC yaml-cpp::yaml-cpp)
 #target_link_libraries(Sandbox PUBLIC yaml-cpp::yaml-cpp)
 target_link_libraries(Tedditor PUBLIC yaml-cpp::yaml-cpp)
 
+# vulkan sdk
+find_package(Vulkan REQUIRED FATAL_ERROR)
+
+if(Vulkan_FOUND)
+    message(STATUS "Found Vulkan SDK: ${Vulkan_LIBRARY}")
+    message(STATUS "Vulkan Headers: ${Vulkan_INCLUDE_DIRS}")
+    
+    # Link Vulkan to all targets
+    target_include_directories(Teddy PRIVATE ${Vulkan_INCLUDE_DIRS})
+    target_include_directories(Sandbox PRIVATE ${Vulkan_INCLUDE_DIRS})
+    target_include_directories(Tedditor PRIVATE ${Vulkan_INCLUDE_DIRS})
+    
+    target_link_libraries(Teddy PRIVATE ${Vulkan_LIBRARIES})
+    target_link_libraries(Sandbox PRIVATE ${Vulkan_LIBRARIES})
+    target_link_libraries(Tedditor PRIVATE ${Vulkan_LIBRARIES})
+    
+    # Add Vulkan compile definition
+    target_compile_definitions(Teddy PRIVATE TED_VULKAN_ENABLED)
+    target_compile_definitions(Sandbox PRIVATE TED_VULKAN_ENABLED)
+    target_compile_definitions(Tedditor PRIVATE TED_VULKAN_ENABLED)
+else()
+    message(WARNING "Vulkan SDK not found. Vulkan rendering will be disabled.")
+endif()
+
+# shaderc
+#add_subdirectory(Teddy/vendor/shaderc)
+
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Game")
