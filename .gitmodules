@@ -26,3 +26,6 @@
 	path = Teddy/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp/
 	branch = master
+[submodule "Teddy/vendor/shaderc"]
+	path = Teddy/vendor/shaderc
+	url = https://github.com/google/shaderc.git
