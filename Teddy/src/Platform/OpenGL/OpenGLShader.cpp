@@ -295,7 +295,13 @@ namespace Teddy
 				m_OpenGLSourceCode[stage] = glslCompiler.compile();
 				auto& source = m_OpenGLSourceCode[stage];
 
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
+				shaderc::SpvCompilationResult module;
+				{
+					TED_PROFILE_SCOPE("CompileGlslToSpv - OpenGLShader::CompileOrGetOpenGLBinaries");
+
+					module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
+				}
+
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					TED_CORE_ERROR(module.GetErrorMessage());

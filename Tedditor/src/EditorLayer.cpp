@@ -197,6 +197,8 @@ namespace Teddy
             ImGui::EndMenuBar();
         }
 
+
+
         ImGui::Begin("Stats");
 
         auto stats = Renderer2D::GetStats();
@@ -209,6 +211,7 @@ namespace Teddy
         ImGui::End();
 
         m_SceneHierarchyPanel.OnImGuiRender();
+        m_ContentBrowserPanel.OnImGuiRender();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
 

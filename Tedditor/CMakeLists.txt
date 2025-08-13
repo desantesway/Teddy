@@ -17,6 +17,9 @@ target_sources(Tedditor PRIVATE
 
                                 ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/SceneHierarchyPanel.h
                                 ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/SceneHierarchyPanel.cpp
+
+                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/ContentBrowserPanel.h
+                                ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/ContentBrowserPanel.cpp
 )
 
 target_include_directories(Tedditor PUBLIC
