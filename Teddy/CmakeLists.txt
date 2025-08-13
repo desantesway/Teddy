@@ -138,6 +138,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/EditorCamera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/EditorCamera.cpp
 
+    # Uniform Buffer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/UniformBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/UniformBuffer.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Scene <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -224,6 +228,10 @@ add_library(Teddy STATIC
     # Framebuffer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLFramebuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLFramebuffer.cpp
+
+    # Uniform Buffer
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLUniformBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLUniformBuffer.cpp
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Windows <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
