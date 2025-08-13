@@ -10,7 +10,8 @@
 class Sandbox : public Teddy::Application 
 {
 public:
-	Sandbox() 
+	Sandbox(Teddy::ApplicationCommandLineArgs args)
+		: Application("Sandbox", args)
 	{
 		PushLayer(new Sandbox2D());
 	}
@@ -21,7 +22,8 @@ public:
 };
 
 
-Teddy::Application* Teddy::CreateApplication() 
+Teddy::Application* Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs args)
+	
 {
-	return new Sandbox();
+	return new Sandbox(args);
 }
