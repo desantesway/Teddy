@@ -1,9 +1,20 @@
-#include "Sandbox2D.h"
+#include "SandBox2D.h"
 
 #include <chrono>
 
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "Teddy/Renderer/Shader.h"
+
+#include <imgui.h>
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Teddy/Scene/SceneSerializer.h"
+#include "Teddy/Utils/PlatformUtils.h"
+
 Sandbox2D::Sandbox2D() 
-	: Layer("Example"), m_CameraController(1920.0f / 1080.0f, true)
+	: Layer("Example")
 {
 
 }
@@ -13,6 +24,13 @@ void Sandbox2D::OnAttach()
 	TED_PROFILE_FUNCTION();
 
 	m_BoardTexture = Teddy::Texture2D::Create("assets/textures/checkerboard.jpg");
+
+	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
+
+	m_EditorCamera = Teddy::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+	auto redSquare = m_ActiveScene->CreateEntity("Red Square");
+	redSquare.AddComponent<Teddy::SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
 }
 
 void Sandbox2D::OnDetach()
@@ -24,49 +42,28 @@ void Sandbox2D::OnUpdate(Teddy::Timestep ts)
 {
 	TED_PROFILE_FUNCTION();
 
-	m_CameraController.OnUpdate(ts);
+	m_EditorCamera.OnUpdate(ts);
 
 	Teddy::Renderer2D::ResetStats();
 
-	{
-		TED_PROFILE_SCOPE("Renderer Prep");
+    {
+        TED_PROFILE_SCOPE("Renderer Prep");
 
-		Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
-		Teddy::RenderCommand::Clear();
-	}
+        Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
+        Teddy::RenderCommand::Clear();
+    }
 
-	{
+    {
 
-		static float rotation = 0.0f;
-		rotation += ts.GetSeconds() * 50.0f;
+        TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
-		TED_PROFILE_SCOPE("Renderer Draw (CPU)");
-		Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
-	
-		Teddy::Renderer2D::DrawQuad({ 0.0f, -1.0f }, { 1.0f, 1.0f }, { .Color = m_SquareColor });
-		Teddy::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 0.25f, 1.0f }, { .Color = { 0.2f, 0.8f, 0.1f, 1.0f } } , rotation);
-		Teddy::Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, { .Texture = m_BoardTexture, .Color = {0.1f, 0.1f, 0.9f, 1.0f} } );
-		Teddy::Renderer2D::DrawQuad({ -15.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, { .Texture = m_BoardTexture, .Color = { 0.8f, 0.8f, 0.9f, 1.0f } }, -rotation);
-		Teddy::Renderer2D::EndScene();
-
-		Teddy::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		for(float y= -5.0f; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 color = {(x + 5.0f) / 10.0f, 0.3f, (y + 5.0f) / 10.0f, 0.75f };
-				Teddy::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, { .Color = color });
-			}
-		}
-
-		Teddy::Renderer2D::EndScene();
-	}
+        m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+    }
 }
 
 void Sandbox2D::OnEvent(Teddy::Event& event)
 {
-	m_CameraController.OnEvent(event);
+    m_ActiveScene->OnEvent(event);
 }
 
 void Sandbox2D::OnImGuiRender() 

@@ -26,8 +26,6 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
-        m_BoardTexture = Texture2D::Create("assets/textures/checkerboard.jpg");
-
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;

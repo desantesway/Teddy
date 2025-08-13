@@ -21,12 +21,15 @@ class Sandbox2D : public Teddy::Layer
 		void OnEvent(Teddy::Event& event) override;
 		virtual void OnImGuiRender() override;
 	private:
-		Teddy::OrthographicCameraController m_CameraController;
+
+		Teddy::Ref<Teddy::Scene> m_ActiveScene;
 
 		Teddy::Ref<Teddy::VertexArray> m_SquareVA;
 		Teddy::Ref<Teddy::Shader> m_FlatColorShader;
 
 		Teddy::Ref<Teddy::Texture2D> m_BoardTexture;
+
+		Teddy::EditorCamera m_EditorCamera;
 
 		glm::vec4 m_SquareColor = { 0.2f, 0.1f, 1.0f, 1.0f };
 };

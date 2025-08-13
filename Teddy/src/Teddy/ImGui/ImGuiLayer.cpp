@@ -35,9 +35,9 @@ namespace Teddy
 		// TODO : Multi viewport stopped working(?)
 
 		io.Fonts->AddFontFromFileTTF(
-			"assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf", 18.0f);
+			"../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf", 18.0f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF(
-			"assets/fonts/instrument-sans/ttf/InstrumentSans-Regular.ttf", 18.0f);
+			"../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Regular.ttf", 18.0f);
 
 		ImGui::StyleColorsDark();
 
