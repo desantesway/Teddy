@@ -27,8 +27,6 @@ namespace Teddy
 		void OpenScene();
 		void SaveSceneAs();
 		private:
-			OrthographicCameraController m_CameraController;
-
 			Ref<VertexArray> m_SquareVA;
 			Ref<Shader> m_FlatColorShader;
 			Ref<Framebuffer> m_Framebuffer;

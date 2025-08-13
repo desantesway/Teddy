@@ -8,6 +8,8 @@ VS-build/
 **.vcxproj.filters
 **.vcxproj.user
 
-# Debug files
+# Temporary files
 SandBox/debug/
 Tedditor/debug/
+SandBox/assets/cache/
+Tedditor/assets/cache/
