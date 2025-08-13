@@ -20,6 +20,8 @@ namespace Teddy
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -68,7 +70,8 @@ namespace Teddy
 			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" }
+			{ ShaderDataType::Float, "a_TilingFactor" },
+			{ ShaderDataType::Float, "a_EntityID" }
 			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -184,7 +187,7 @@ namespace Teddy
 	}
 
 	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
-		const float& texIndex, const float& tilingFactor)
+		const float& texIndex, const float& tilingFactor, int entityID)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -198,6 +201,7 @@ namespace Teddy
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
@@ -206,12 +210,14 @@ namespace Teddy
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Quad& quad, float rotation)
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, 
+		const SpriteRendererComponent& sprite, float rotation, int entityID)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, quad, rotation);
+		DrawQuad({ position.x, position.y, 0.0f }, size, sprite, rotation, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Quad& quad, float rotation)
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, 
+		const SpriteRendererComponent& sprite, float rotation, int entityID)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -229,19 +235,19 @@ namespace Teddy
 				* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 		}
 
-		DrawQuad(transform, quad);
+		DrawQuad(transform, sprite, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Quad& quad)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID)
 	{
 		TED_PROFILE_FUNCTION();
 
-		if (quad.Texture != nullptr)
+		if (sprite.Texture != nullptr)
 		{
 			float textureIndex = 0.0f;
 			for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 			{
-				if (*s_Data.TextureSlots[i] == *quad.Texture)
+				if (*s_Data.TextureSlots[i] == *sprite.Texture)
 				{
 					textureIndex = (float)i;
 					break;
@@ -253,11 +259,11 @@ namespace Teddy
 				if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) NextBatch();
 
 				textureIndex = (float)s_Data.TextureSlotIndex;
-				s_Data.TextureSlots[s_Data.TextureSlotIndex] = quad.Texture;
+				s_Data.TextureSlots[s_Data.TextureSlotIndex] = sprite.Texture;
 				s_Data.TextureSlotIndex++;
 			}
 
-			SetQuad(transform, quad.Color, textureIndex, quad.TilingFactor);
+			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, entityID);
 
 		}
 		else
@@ -266,7 +272,7 @@ namespace Teddy
 
 			const float textureIndex = 0.0f;
 
-			SetQuad(transform, quad.Color, textureIndex, quad.TilingFactor);
+			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, entityID);
 		}
 	}
 

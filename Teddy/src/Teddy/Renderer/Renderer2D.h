@@ -5,19 +5,13 @@
 
 #include "Teddy/Renderer/Texture.h"
 #include "Teddy/Renderer/EditorCamera.h"
+#include "Teddy/Scene/Components.h"
 
 namespace Teddy 
 {
 	struct RenderCamera {
 		glm::mat4 ViewMatrix;
 		glm::mat4 Projection;
-	};
-
-	struct Quad 
-	{
-		Ref<Texture2D> Texture = nullptr;
-		glm::vec4 Color{1.0f};
-		float TilingFactor = 1.0f;
 	};
 
 	class Renderer2D 
@@ -33,11 +27,13 @@ namespace Teddy
 		static void Flush();
 
 		static void SetQuad(const glm::mat4& transform, const glm::vec4& color,
-			const float& texIndex, const float& tilingFactor);
+			const float& texIndex, const float& tilingFactor, int entityID = -1);
 
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Quad& quad, float rotation = 0.0f);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Quad& quad, float rotation = 0.0f);
-		static void DrawQuad(const glm::mat4& transform, const Quad& quad);
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, 
+			const SpriteRendererComponent& sprite, float rotation = 0.0f, int entityID = -1);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, 
+			const SpriteRendererComponent& sprite, float rotation = 0.0f, int entityID = -1);
+		static void DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID = -1);
 	
 		struct Statistics
 		{

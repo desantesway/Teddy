@@ -16,6 +16,8 @@
 namespace Teddy
 {
 
+    extern const std::filesystem::path g_AssetPath;
+
     EditorLayer::EditorLayer()
         : Layer("Editor Layer")
     {
@@ -232,8 +234,15 @@ namespace Teddy
         ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(),
             ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
-        const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-        glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_CONTENT_BROWSER_ITEM"))
+            {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                OpenScene(std::filesystem::path(g_AssetPath) / path);
+            } 
+            ImGui::EndDragDropTarget();
+        }
 
         ImGui::End();
 
@@ -288,12 +297,17 @@ namespace Teddy
         std::string filepath = FileDialogs::OpenFile("Teddy Scene (*.teddy)\0*.teddy\0");
         if (!filepath.empty())
         {
-            m_ActiveScene = CreateRef<Scene>();
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(filepath);
+            OpenScene(filepath);
         }
+    }
+
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneSerializer serializer(m_ActiveScene);
+        serializer.Deserialize(path.string());
     }
 
     void EditorLayer::SaveSceneAs()

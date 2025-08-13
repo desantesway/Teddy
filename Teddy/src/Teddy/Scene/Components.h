@@ -5,6 +5,7 @@
 
 #include "Teddy/Scene/SceneCamera.h"
 #include "Teddy/Scene/ScriptableEntity.h"
+#include "Teddy/Renderer/Texture.h"
 
 namespace Teddy
 {
@@ -45,6 +46,8 @@ namespace Teddy
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color{ 1.0f };
+		Ref<Texture2D> Texture;
+		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;

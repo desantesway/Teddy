@@ -113,9 +113,9 @@ namespace Teddy
 			auto& transform = std::get<0>(tuple);
 			auto& sprite = std::get<1>(tuple);
 
-			Renderer2D::DrawQuad(transform.GetTransform(), {.Color = sprite.Color});
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
 		}
-
+		
 		Renderer2D::EndScene();
 	}
 
@@ -129,7 +129,7 @@ namespace Teddy
 		{
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer2D::DrawQuad(transform.GetTransform(), { .Color = sprite.Color });
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
 		}
 
 		Renderer2D::EndScene();

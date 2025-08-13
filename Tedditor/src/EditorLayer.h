@@ -26,6 +26,7 @@ namespace Teddy
 		bool OnKeyPressed(KeyPressedEvent& e);
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 		private:
 			Ref<VertexArray> m_SquareVA;
