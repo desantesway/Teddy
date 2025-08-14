@@ -26,3 +26,6 @@
 	path = Teddy/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp/
 	branch = master
+[submodule "Teddy/vendor/box2d"]
+	path = Teddy/vendor/box2d
+	url = https://github.com/erincatto/box2d
