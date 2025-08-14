@@ -28,6 +28,9 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
+        m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
@@ -72,8 +75,6 @@ namespace Teddy
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
-        m_EditorCamera.OnUpdate(ts);
-
         Renderer2D::ResetStats();
 
         {
@@ -89,7 +90,20 @@ namespace Teddy
 
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
-            m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+            switch (m_SceneState)
+            {
+                case SceneState::Edit:
+                {
+                    m_EditorCamera.OnUpdate(ts);
+                    m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+                    break;
+                }
+                case SceneState::Play:
+                {
+                    m_ActiveScene->OnUpdateRuntime(ts);
+                    break;
+                }
+            }
 
             m_Framebuffer->Unbind();
         }
@@ -244,12 +258,47 @@ namespace Teddy
             ImGui::EndDragDropTarget();
         }
 
+
+
         ImGui::End();
 
         ImGui::PopStyleVar();
 
+        UI_Toolbar();
+
         ImGui::End();
 
+    }
+
+    void EditorLayer::UI_Toolbar()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+        ImGui::Begin("toolbar##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+        float size = ImGui::GetWindowHeight() - 5.0f;
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+
+        if (ImGui::ImageButton("Play", (ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1)))
+        {
+            if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+
+            else if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+        }
+
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+
+        ImGui::End();
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -318,5 +367,15 @@ namespace Teddy
             SceneSerializer serializer(m_ActiveScene);
             serializer.Serialize(filepath);
         }
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
     }
 }
