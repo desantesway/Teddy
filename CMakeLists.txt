@@ -104,8 +104,6 @@ target_link_libraries(Teddy PRIVATE rtmidi)
 target_link_libraries(Sandbox PRIVATE rtmidi)
 target_link_libraries(Tedditor PRIVATE rtmidi)
 
-target_link_libraries(Sandbox PRIVATE Teddy)
-target_link_libraries(Tedditor PRIVATE Teddy)
 
 # entt
 target_include_directories(Teddy PRIVATE Teddy/vendor/entt/single_include)
@@ -198,6 +196,19 @@ else()
     message(WARNING "Vulkan SDK not found. Vulkan rendering will be disabled.")
 endif()
 
+# Box2D
+add_subdirectory(Teddy/vendor/box2d)
+
+target_link_libraries(Teddy PRIVATE box2d::box2d)
+target_link_libraries(Sandbox PRIVATE box2d::box2d)
+target_link_libraries(Tedditor PRIVATE box2d::box2d)
+
+set_target_properties(box2d PROPERTIES FOLDER "Dependencies")
+
+# Engine linking
+target_link_libraries(Sandbox PRIVATE Teddy)
+target_link_libraries(Tedditor PRIVATE Teddy)
+
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Game")
@@ -222,5 +233,6 @@ get_property(SDL3_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/SDL
 foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies")
 endforeach()
+
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
