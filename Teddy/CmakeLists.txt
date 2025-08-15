@@ -58,6 +58,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/PlatformDetection.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Assert.h
 
+    # UUID
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Events <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

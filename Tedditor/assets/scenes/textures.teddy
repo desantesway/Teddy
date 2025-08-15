@@ -1,15 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 12837192831273
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [-0.4, 0, 0.5]
-      Rotation: [2.5586529, 2.0437806, 0.567232]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.5999978, 0.85328186, 0.35251415, 1]
-  - Entity: 12837192831273
+  - Entity: 1506521732220557589
     TagComponent:
       Tag: Red Square
     TransformComponent:
@@ -18,3 +9,12 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0.5, 0.5, 1]
+  - Entity: 12505929783088803374
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [-0.4, 0, 0.5]
+      Rotation: [2.5586529, 2.0437806, 0.567232]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.5999978, 0.85328186, 0.35251415, 1]

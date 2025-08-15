@@ -51,6 +51,7 @@ namespace Teddy
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
+		redSquare.AddComponent<Rigidbody2DComponent>();
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
@@ -381,11 +382,13 @@ namespace Teddy
 
     void EditorLayer::OnScenePlay()
     {
+		m_ActiveScene->OnRuntimeStart();
         m_SceneState = SceneState::Play;
     }
 
     void EditorLayer::OnSceneStop()
     {
+        m_ActiveScene->OnRuntimeStop();
         m_SceneState = SceneState::Edit;
     }
 }

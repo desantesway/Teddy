@@ -4,11 +4,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Teddy/Scene/SceneCamera.h"
-#include "Teddy/Scene/ScriptableEntity.h"
+#include "Teddy/Core/UUID.h"
 #include "Teddy/Renderer/Texture.h"
 
 namespace Teddy
 {
+
+	class ScriptableEntity;
+
+	struct IDComponent
+	{
+		UUID ID;
+		IDComponent() = default;
+		IDComponent(const UUID& id) : ID(id) {}
+		IDComponent(const IDComponent&) = default;
+	};
 
 	struct TagComponent
 	{
@@ -79,5 +89,35 @@ namespace Teddy
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	
+	};
+
+	// Physics
+	struct Rigidbody2DComponent
+	{
+		enum class BodyType { Static = 0, Kinematic, Dynamic };
+		BodyType Type = BodyType::Static;
+
+		bool FixedRotation = false;
+
+		void* RuntimeBody = nullptr;
+
+		Rigidbody2DComponent() = default;
+		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		// TODO: move into physics material in the future (maybe)
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+
+		void* RuntimeFixture = nullptr; // TODO: remove raw pointer
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 }
