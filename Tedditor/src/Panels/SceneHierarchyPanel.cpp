@@ -32,92 +32,103 @@ namespace Teddy
 		m_SelectionContext = {};
 	}
 
-	void SceneHierarchyPanel::OnImGuiRender() 
+	void SceneHierarchyPanel::CalculateComponentTree()
 	{
-		ImGui::Begin("Scene Hierarchy");
-
-		std::unordered_map<std::string, std::vector<Entity> > entityTree;
+		m_ComponentToEntityTree = {};
 
 		auto view = m_Context->m_Registry.view<entt::entity>();
 		for (auto entityID : view)
 		{
 			Entity entity = Entity(entityID, m_Context.get());
-			
+
 			bool isEmpty = true;
 
 			// TODO: Add a simple template to check for component existence
 			if (entity.HasComponent<CameraComponent>())
 			{
-				entityTree["Cameras"].push_back(entity);
+				m_ComponentToEntityTree["Cameras"].push_back(entity);
 				isEmpty = false;
 			}
-			if (entity.HasComponent<SpriteRendererComponent>()) 
+			if (entity.HasComponent<SpriteRendererComponent>())
 			{
-				entityTree["Sprites"].push_back(entity);
+				m_ComponentToEntityTree["Sprites"].push_back(entity);
 				isEmpty = false;
 			}
 			if (entity.HasComponent<Rigidbody2DComponent>())
 			{
-				entityTree["Rigidbody2D"].push_back(entity);
+				m_ComponentToEntityTree["Rigidbody2D"].push_back(entity);
 				isEmpty = false;
 			}
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
-				entityTree["BoxCollider2D"].push_back(entity);
+				m_ComponentToEntityTree["BoxCollider2D"].push_back(entity);
 				isEmpty = false;
 			}
 			if (isEmpty)
 			{
-				entityTree["Empty"].push_back(entity);
+				m_ComponentToEntityTree["Empty"].push_back(entity);
 			}
 		}
+	}
 
-		
-		int i = 0;
-		for (auto& components : entityTree)
+	void SceneHierarchyPanel::OnImGuiRender() 
+	{
+		ImGui::Begin("Scene Hierarchy");
+
+		if (m_Context) 
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen |
-				ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth
-				| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
-			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)i, flags, components.first.c_str());
+			CalculateComponentTree();
 
-			if (opened)
+			int i = 0;
+			bool entityDeleted = false;
+			for (auto& components : m_ComponentToEntityTree)
 			{
-				for (const auto& entity : components.second)
+				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen |
+					ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth
+					| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
+				bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)i, flags, components.first.c_str());
+
+				if (opened)
 				{
-					DrawEntityNode(entity);
+					for (const auto& entity : components.second)
+					{
+						entityDeleted = DrawEntityNode(entity);
+						if (entityDeleted) break;
+					}
+
+					ImGui::TreePop();
 				}
-				
-				ImGui::TreePop();
+
+				i++;
+
+				if (entityDeleted) break;
 			}
 
-			i++;
-		}
-
-		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
-		{
-			m_SelectionContext = {};
-		}
-
-		bool entityDeleted = false;
-		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
-		{
-			if (ImGui::MenuItem("Create Empty Entity"))
-				m_Context->CreateEntity("Empty Entity");
-
-			if (m_SelectionContext) 
+			if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(0))
 			{
-				if (ImGui::MenuItem("Delete Entity"))
-					entityDeleted = true;
+				m_SelectionContext = {};
 			}
 
-			ImGui::EndPopup();
-		}
+			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+			{
+				if (ImGui::MenuItem("Create Empty Entity"))
+					m_Context->CreateEntity("Empty Entity");
 
-		if (entityDeleted)
-		{
-			m_Context->DestroyEntity(m_SelectionContext);
-			m_SelectionContext = {};
+				if (m_SelectionContext)
+				{
+					if (ImGui::MenuItem("Delete Entity"))
+						entityDeleted = true;
+				}
+
+				ImGui::EndPopup();
+			}
+
+			if (entityDeleted)
+			{
+				m_Context->DestroyEntity(m_SelectionContext);
+				m_SelectionContext = {};
+			}
+
 		}
 
 		ImGui::End();
@@ -129,10 +140,15 @@ namespace Teddy
 			DrawComponents(m_SelectionContext);
 		}
 
-		ImGui::End();
+		ImGui::End();		
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
+	}
+
+	bool SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>();
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -162,11 +178,7 @@ namespace Teddy
 			ImGui::EndPopup();
 		}
 
-		if (entityDeleted)
-		{
-			m_Context->DestroyEntity(m_SelectionContext);
-			m_SelectionContext = {};
-		}
+		return entityDeleted;
 	}
 
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)

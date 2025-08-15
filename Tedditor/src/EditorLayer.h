@@ -20,17 +20,22 @@ namespace Teddy
 			void OnUpdate(Timestep ts) override;
 			void OnEvent(Event& event) override;
 			virtual void OnImGuiRender() override;
-
-			static bool ResizingWatcher(void* data, SDL_Event* event);
 	private:
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
+
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
 		void SaveSceneAs();
+
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void OnDuplicateEntity();
 
 		// UI Panels
 		void UI_Toolbar();
@@ -40,9 +45,13 @@ namespace Teddy
 			Ref<Framebuffer> m_Framebuffer;
 
 			Ref<Scene> m_ActiveScene;
+			Ref<Scene> m_EditorScene;
+			std::filesystem::path m_EditorScenePath;
 			Entity m_SquareEntity;
 			Entity m_CameraEntity;
 			Entity m_SecondCamera;
+
+			Entity m_HoveredEntity;
 
 			bool m_PrimaryCamera = true;
 
@@ -52,6 +61,7 @@ namespace Teddy
 
 			bool m_ViewportFocused = false, m_ViewportHovered = false;
 			glm::vec2 m_ViewportSize = {0.0f, 0.0f};
+			glm::vec2 m_ViewportBounds[2];
 
 			enum class SceneState
 			{

@@ -1,41 +1,5 @@
 Scene: Untitled
 Entities:
-  - Entity: 16498433574636828674
-    TagComponent:
-      Tag: floor
-    TransformComponent:
-      Translation: [0, -1.9, 0]
-      Rotation: [0, 0, 0.05235988]
-      Scale: [7.2, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-    Rigidbody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-  - Entity: 1267238637736371631
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 19.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.7853982
-        PerspectiveNear: 0.01
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
   - Entity: 16624279819734155023
     TagComponent:
       Tag: Red Square
@@ -54,3 +18,39 @@ Entities:
       Density: 1
       Friction: 1
       Restitution: 0.57
+  - Entity: 1267238637736371631
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 19.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 16498433574636828674
+    TagComponent:
+      Tag: floor
+    TransformComponent:
+      Translation: [0, -1.9, 0]
+      Rotation: [0, 0, -0.06806784]
+      Scale: [7.2, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0

@@ -32,8 +32,9 @@ namespace Teddy
         m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
-        fbSpec.Width = 1920;
-        fbSpec.Height = 1080;
+        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+        fbSpec.Width = 1280;
+        fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
         m_ActiveScene = CreateRef<Scene>();
@@ -52,8 +53,6 @@ namespace Teddy
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
 		redSquare.AddComponent<Rigidbody2DComponent>();
-
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -87,6 +86,8 @@ namespace Teddy
             RenderCommand::Clear();
         }
 
+        m_Framebuffer->ClearAttachment(1, -1);
+
         {
 
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
@@ -106,6 +107,20 @@ namespace Teddy
                 }
             }
 
+            auto [mx, my] = ImGui::GetMousePos();
+            mx -= m_ViewportBounds[0].x;
+            my -= m_ViewportBounds[0].y;
+            glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+            my = viewportSize.y - my;
+            int mouseX = (int)mx;
+            int mouseY = (int)my;
+
+            if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+            {
+                int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+                m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+            }
+
             m_Framebuffer->Unbind();
         }
     }
@@ -119,6 +134,7 @@ namespace Teddy
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
     }
 
     void EditorLayer::OnImGuiRender()
@@ -233,6 +249,13 @@ namespace Teddy
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
 
         ImGui::Begin("ViewPort");
+
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
 
@@ -327,10 +350,30 @@ namespace Teddy
             }
             case Key::S:
             {
-                if (control && shift)
-                    SaveSceneAs();
+                if (control)
+                {
+                    if (shift)
+                        SaveSceneAs();
+                    else
+                        SaveScene();
+                }
                 break;
             }
+            case Key::D:
+            {
+                if (control)
+                    OnDuplicateEntity();
+            }
+        }
+        return false;
+    }
+
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == Mouse::Left)
+        {
+            if (m_ViewportHovered && !Input::IsKeyPressed(Key::LAlt))
+                m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
         }
         return false;
     }
@@ -340,10 +383,15 @@ namespace Teddy
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        m_EditorScenePath = std::filesystem::path();
     }
 
     void EditorLayer::OpenScene()
     {
+        if (m_SceneState != SceneState::Edit)
+            OnSceneStop();
+
         std::string filepath = FileDialogs::OpenFile("Teddy Scene (*.teddy)\0*.teddy\0");
         if (!filepath.empty())
         {
@@ -364,10 +412,21 @@ namespace Teddy
 
         if (serializer.Deserialize(path.string()))
         {
-            m_ActiveScene = newScene;
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+            m_EditorScene = newScene;
+            m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_EditorScene);
+
+            m_ActiveScene = m_EditorScene;
+            m_EditorScenePath = path;
         }
+    }
+
+    void EditorLayer::SaveScene()
+    {
+        if (!m_EditorScenePath.empty())
+            SerializeScene(m_ActiveScene, m_EditorScenePath);
+        else
+            SaveSceneAs();
     }
 
     void EditorLayer::SaveSceneAs()
@@ -375,20 +434,42 @@ namespace Teddy
         std::string filepath = FileDialogs::SaveFile("Teddy Scene (*.teddy)\0*.teddy\0");
         if (!filepath.empty())
         {
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Serialize(filepath);
+            SerializeScene(m_ActiveScene, filepath);
+            m_EditorScenePath = filepath;
         }
+    }
+
+    void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+    {
+        SceneSerializer serializer(scene);
+        serializer.Serialize(path.string());
     }
 
     void EditorLayer::OnScenePlay()
     {
+        m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
         m_SceneState = SceneState::Play;
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_ActiveScene->OnRuntimeStop();
         m_SceneState = SceneState::Edit;
+
+        m_ActiveScene = m_EditorScene;
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+    
+    void EditorLayer::OnDuplicateEntity()
+    {
+        if (m_SceneState != SceneState::Edit)
+            return;
+        Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+
+        if (selectedEntity)
+            m_EditorScene->DuplicateEntity(selectedEntity);
     }
 }
