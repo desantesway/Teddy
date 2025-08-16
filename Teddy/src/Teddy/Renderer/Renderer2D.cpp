@@ -334,6 +334,7 @@ namespace Teddy
 		DrawLine(p1, p2, color);
 		DrawLine(p2, p3, color);
 		DrawLine(p3, p0, color);
+		DrawLine(p0, p2, color);
 	}
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
@@ -346,6 +347,7 @@ namespace Teddy
 		DrawLine(lineVertices[1], lineVertices[2], color);
 		DrawLine(lineVertices[2], lineVertices[3], color);
 		DrawLine(lineVertices[3], lineVertices[0], color);
+		DrawLine(lineVertices[0], lineVertices[2], color);
 	}
 
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)

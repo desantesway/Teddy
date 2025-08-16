@@ -95,5 +95,5 @@ void main()
 	}
 	o_Color = texColor;
 
-	o_EnityID = v_EntityID;
+	o_EntityID = v_EntityID;
 }
