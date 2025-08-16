@@ -317,7 +317,7 @@ namespace Teddy
 
     void EditorLayer::OnOverlayRender()
     {
-        if (m_SceneState != SceneState::Edit)
+        if (m_SceneState == SceneState::Play)
         {
             Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
             if (camera)
