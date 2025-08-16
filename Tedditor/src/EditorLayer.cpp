@@ -29,6 +29,7 @@ namespace Teddy
         TED_PROFILE_FUNCTION();
 
         m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconSimulate = Texture2D::Create("Resources/Icons/PlayButton.png");
         m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
@@ -105,9 +106,19 @@ namespace Teddy
                     m_ActiveScene->OnUpdateRuntime(ts);
                     break;
                 }
+                case SceneState::Simulate:
+                {
+                    m_EditorCamera.OnUpdate(ts);
+                    m_ActiveScene->SimulatePhysics(ts);
+                    m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+                    break;
+                }
             }
 
-            OnOverlayRender();
+            {
+                TED_PROFILE_SCOPE("Overlay Renderer");
+                OnOverlayRender();
+            }
 
             auto [mx, my] = ImGui::GetMousePos();
             mx -= m_ViewportBounds[0].x;
@@ -364,18 +375,49 @@ namespace Teddy
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
         ImGui::Begin("toolbar##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-        float size = ImGui::GetWindowHeight() - 5.0f;
-        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        float size = ImGui::GetWindowHeight() - 4.0f;
+        Ref<Texture2D> playIcon;
+        Ref<Texture2D> simulateIcon;
 
-        if (ImGui::ImageButton("Play", (ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1)))
+        switch (m_SceneState)
         {
+        case SceneState::Edit:
+            playIcon = m_IconPlay;
+			simulateIcon = m_IconSimulate;
+			break;
+        case SceneState::Play:
+            playIcon = m_IconStop;
+            simulateIcon = m_IconSimulate;
+			break;
+		case SceneState::Simulate:
+            playIcon = m_IconPlay;
+            simulateIcon = m_IconStop;
+			break;
+        }
+
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size));
+
+        if (ImGui::ImageButton("Play", (ImTextureID)playIcon->GetRendererID(), 
+            ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+            ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
             if (m_SceneState == SceneState::Edit)
                 OnScenePlay();
 
             else if (m_SceneState == SceneState::Play)
                 OnSceneStop();
         }
+
+        ImGui::SameLine();
+        if (ImGui::ImageButton("Simulate", (ImTextureID)simulateIcon->GetRendererID(), 
+            ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
+            ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
+            if (m_SceneState == SceneState::Edit)
+                OnSceneSimulate();
+
+            else if (m_SceneState == SceneState::Simulate)
+                OnSceneStop();
+        }
+
 
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
@@ -521,6 +563,15 @@ namespace Teddy
         m_SceneState = SceneState::Edit;
 
         m_ActiveScene = m_EditorScene;
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+
+    void EditorLayer::OnSceneSimulate()
+    {
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_ActiveScene->OnRuntimeStart();
+        m_SceneState = SceneState::Simulate;
+
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
     

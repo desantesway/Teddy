@@ -126,6 +126,40 @@ namespace Teddy
 			});
 	}
 
+	void Scene::SimulatePhysics(Timestep ts)
+	{
+		float timeStep;
+		if (ts > 1.0f)
+		{
+			timeStep = 1.0f / 60.0f;
+		}
+		else
+		{
+			timeStep = ts;
+		}
+
+		int subStepCount = 4;
+
+		// TODO/DEBUG: Timeset probably should be fixed, not variable
+		b2World_Step(m_PhysicsWorld, timeStep, subStepCount);
+
+		auto view = m_Registry.view<Rigidbody2DComponent>();
+		for (auto e : view)
+		{
+			Entity entity{ e, this };
+			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+			b2BodyId body = *static_cast<b2BodyId*>(rb2d.RuntimeBody);
+			b2Vec2 position = b2Body_GetPosition(body);
+			b2Rot rotation = b2Body_GetRotation(body);
+
+			transform.Translation.x = position.x;
+			transform.Translation.y = position.y;
+			transform.Rotation.z = b2Rot_GetAngle(rotation);
+		}
+	}
+
 	// TODO: Reset scene if loaded while playing
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
@@ -148,37 +182,7 @@ namespace Teddy
 
 		// Physics
 		{
-			float timeStep;
-			if(ts > 1.0f)
-			{
-				timeStep = 1.0f / 60.0f;
-			}
-			else
-			{
-				timeStep = ts;
-			}
-			
-			int subStepCount = 4;
-
-			// TODO/DEBUG: Timeset probably should be fixed, not variable
-			b2World_Step(m_PhysicsWorld, timeStep, subStepCount);
-
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-				b2BodyId body = *static_cast<b2BodyId*>(rb2d.RuntimeBody);
-				b2Vec2 position = b2Body_GetPosition(body);
-				b2Rot rotation = b2Body_GetRotation(body);
-
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = b2Rot_GetAngle(rotation);
-			}
-
+			SimulatePhysics(ts);
 		}
 
 		// Render

@@ -36,6 +36,7 @@ namespace Teddy
 		void OnEvent(Event& event);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		void SimulatePhysics(Timestep ts);
 		void DuplicateEntity(Entity entity);
 
 		template<typename... Components>

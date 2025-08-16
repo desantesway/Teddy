@@ -36,6 +36,7 @@ namespace Teddy
 
 		void OnScenePlay();
 		void OnSceneStop();
+		void OnSceneSimulate();
 
 		void OnDuplicateEntity();
 
@@ -68,7 +69,7 @@ namespace Teddy
 
 			enum class SceneState
 			{
-				Edit = 0, Play = 1
+				Edit = 0, Play = 1, Simulate = 2
 			};
 			SceneState m_SceneState = SceneState::Edit;
 
@@ -77,6 +78,6 @@ namespace Teddy
 			ContentBrowserPanel m_ContentBrowserPanel;
 
 			// Editor Resources
-			Ref<Texture2D> m_IconPlay, m_IconStop;
+			Ref<Texture2D> m_IconPlay, m_IconStop, m_IconSimulate;
 	};
 }
