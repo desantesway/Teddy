@@ -148,11 +148,20 @@ namespace Teddy
 
 		// Physics
 		{
-			float timeStep = 1.0f / 60.0f;
+			float timeStep;
+			if(ts > 1.0f)
+			{
+				timeStep = 1.0f / 60.0f;
+			}
+			else
+			{
+				timeStep = ts;
+			}
+			
 			int subStepCount = 4;
 
 			// TODO/DEBUG: Timeset probably should be fixed, not variable
-			b2World_Step(m_PhysicsWorld, ts, subStepCount);
+			b2World_Step(m_PhysicsWorld, timeStep, subStepCount);
 
 			auto view = m_Registry.view<Rigidbody2DComponent>();
 			for (auto e : view)
@@ -339,6 +348,8 @@ namespace Teddy
 
 	void Scene::OnRuntimeStop()
 	{
+		b2DestroyWorld(m_PhysicsWorld);
+		m_PhysicsWorld = b2_nullWorldId;
 	}
 
 	void Scene::DuplicateEntity(Entity entity)
