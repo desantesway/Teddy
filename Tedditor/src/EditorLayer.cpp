@@ -107,6 +107,8 @@ namespace Teddy
                 }
             }
 
+            OnOverlayRender();
+
             auto [mx, my] = ImGui::GetMousePos();
             mx -= m_ViewportBounds[0].x;
             my -= m_ViewportBounds[0].y;
@@ -246,6 +248,10 @@ namespace Teddy
         m_SceneHierarchyPanel.OnImGuiRender();
         m_ContentBrowserPanel.OnImGuiRender();
 
+        ImGui::Begin("Settings");
+        ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+        ImGui::End();
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
 
         ImGui::Begin("ViewPort");
@@ -292,6 +298,51 @@ namespace Teddy
 
         ImGui::End();
 
+    }
+
+    void EditorLayer::OnOverlayRender()
+    {
+        if (m_SceneState != SceneState::Edit)
+        {
+            Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+        }
+        else 
+        {
+            Renderer2D::BeginScene(m_EditorCamera);
+        }
+
+        if (m_ShowPhysicsColliders)
+        {
+            auto viewCircle = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+            for (auto [entity, tc, cc2d] : viewCircle.each())
+            {
+                glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
+
+                glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+                    * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                    * glm::scale(glm::mat4(1.0f), tc.Scale);
+
+                Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.02f);
+
+            }
+
+            auto viewBox = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+            for (auto [entity, tc, bc2d] : viewBox.each())
+            {
+                glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
+                glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+
+                glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+                    * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                    * glm::scale(glm::mat4(1.0f), scale);
+
+                Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+
+            }
+        }
+
+		Renderer2D::EndScene();
     }
 
     void EditorLayer::UI_Toolbar()

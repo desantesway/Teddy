@@ -32,6 +32,8 @@ namespace Teddy
 
 		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
+		void OnOverlayRender();
+
 		void OnScenePlay();
 		void OnSceneStop();
 
@@ -52,6 +54,7 @@ namespace Teddy
 			Entity m_SecondCamera;
 
 			Entity m_HoveredEntity;
+			bool m_ShowPhysicsColliders = true;
 
 			bool m_PrimaryCamera = true;
 
