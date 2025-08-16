@@ -41,7 +41,7 @@ namespace Teddy
         NewScene();
         m_EditorScene = m_ActiveScene;
 
-        auto commandLineArgs = Application::Get().GetCommandLineArgs();
+        auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 
         if (commandLineArgs.Count > 1)
         {
@@ -58,6 +58,7 @@ namespace Teddy
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
 
+        Renderer2D::SetLineWidth(4.0f);
     }
 
     void EditorLayer::OnDetach()
@@ -225,6 +226,9 @@ namespace Teddy
                 if (ImGui::MenuItem("Open...", "Ctrl+O"))
                     OpenScene();
 
+                if (ImGui::MenuItem("Save", "Ctrl+S"))
+                    SaveScene();
+
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
@@ -349,8 +353,10 @@ namespace Teddy
                     * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                     * glm::scale(glm::mat4(1.0f), tc.Scale);
 
-                Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.02f);
-
+                Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth()/100);
+                // TODO: Learn a better way than this
+                Renderer2D::DrawCircle(glm::translate(transform, 
+                    glm::vec3(0.0f,0.0f,-0.001f)), glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth()/100);
             }
 
             auto viewBox = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -366,6 +372,14 @@ namespace Teddy
                 Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
 
             }
+        }
+
+        // Draw selected entity outline 
+        if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
+
+            TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
+            Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+
         }
 
 		Renderer2D::EndScene();

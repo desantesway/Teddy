@@ -10,8 +10,8 @@
 class Sandbox : public Teddy::Application 
 {
 public:
-	Sandbox(Teddy::ApplicationCommandLineArgs args)
-		: Application("Sandbox", args)
+	Sandbox(const Teddy::ApplicationSpecification& specification)
+		: Teddy::Application(specification)
 	{
 		PushLayer(new Sandbox2D());
 	}
@@ -25,5 +25,11 @@ public:
 Teddy::Application* Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs args)
 	
 {
-	return new Sandbox(args);
+	ApplicationSpecification spec;
+
+	spec.Name = "Sandbox";
+	spec.WorkingDirectory = "../Tedditor";
+	spec.CommandLineArgs = args;
+
+	return new Sandbox(spec);
 }

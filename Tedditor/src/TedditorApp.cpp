@@ -12,8 +12,8 @@ namespace Teddy
 	class Tedditor : public Application
 	{
 	public:
-		Tedditor(ApplicationCommandLineArgs args)
-			: Application("Tedditor", args) // Initialize the base Application with a name
+		Tedditor(const ApplicationSpecification& spec)
+			: Application(spec)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -27,6 +27,10 @@ namespace Teddy
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new Tedditor(args);
+		ApplicationSpecification spec;
+		spec.Name = "Tedditor";
+		spec.CommandLineArgs = args;
+
+		return new Tedditor(spec);
 	}
 }

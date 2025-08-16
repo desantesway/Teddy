@@ -1,14 +1,5 @@
 Scene: Untitled
 Entities:
-  - Entity: 1506521732220557589
-    TagComponent:
-      Tag: Red Square
-    TransformComponent:
-      Translation: [0, 0.5, 0.9]
-      Rotation: [-0.76969016, 0.64751714, 0.6824237]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.5, 0.5, 1]
   - Entity: 12505929783088803374
     TagComponent:
       Tag: Empty Entity
@@ -18,3 +9,15 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.5999978, 0.85328186, 0.35251415, 1]
+      TilingFactor: 1
+  - Entity: 1506521732220557589
+    TagComponent:
+      Tag: Red Square
+    TransformComponent:
+      Translation: [0, 0.5, 0.9]
+      Rotation: [-0.76969016, 0.64751714, 0.6824237]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.5, 0.5, 1]
+      TexturePath: assets\textures\checkerboard.jpg
+      TilingFactor: 1

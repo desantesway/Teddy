@@ -37,10 +37,17 @@ namespace Teddy
 		}
 	};
 
+	struct ApplicationSpecification
+	{
+		std::string Name = "Teddy App";
+		std::string WorkingDirectory;
+		ApplicationCommandLineArgs CommandLineArgs;
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Teddy App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
 
 		void OnEvent(Event& e);
@@ -56,7 +63,7 @@ namespace Teddy
 
 		static Application& Get() { return *s_Instance; }
 
-		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 	private:
 		void Run();
 		void OnUpdate();
@@ -65,7 +72,7 @@ namespace Teddy
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowMoved(WindowMovedEvent& e);
 	private:
-		ApplicationCommandLineArgs m_CommandLineArgs;
+		ApplicationSpecification m_Specification;
 
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
