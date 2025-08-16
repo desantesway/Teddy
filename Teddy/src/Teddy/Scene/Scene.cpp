@@ -89,6 +89,7 @@ namespace Teddy
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
 	}
@@ -306,6 +307,21 @@ namespace Teddy
 				b2Polygon box = b2MakeBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
 				b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &box);
 			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2ShapeDef shapeDef = b2DefaultShapeDef();
+				shapeDef.density = bc2d.Density;
+				shapeDef.material.restitution = bc2d.Restitution;
+				shapeDef.material.friction = bc2d.Friction;
+
+				b2Circle circle;
+				circle.center = { bc2d.Offset.x, bc2d.Offset.y};
+				circle.radius = bc2d.Radius;
+				b2ShapeId myShapeId = b2CreateCircleShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &circle);
+			}
 		}
 	}
 
@@ -325,6 +341,7 @@ namespace Teddy
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 	}
 
 	template<typename T>
@@ -377,6 +394,11 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 }

@@ -350,6 +350,13 @@ namespace Teddy
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>() &&
+				ImGui::MenuItem("Circle Collider 2D"))
+			{
+				m_SelectionContext.AddComponent<CircleCollider2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -486,6 +493,14 @@ namespace Teddy
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 			});
-		
+	
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", true, entity, [](auto& component)
+			{
+				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+				ImGui::DragFloat("Radius", &component.Radius);
+				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			});
 	}
 }
