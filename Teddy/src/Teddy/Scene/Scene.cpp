@@ -232,8 +232,10 @@ namespace Teddy
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			auto& transform = std::get<0>(tuple);
 			auto& sprite = std::get<1>(tuple);
+			auto& color = sprite.Color;
 
 			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
+			Renderer2D::DrawRect(transform.GetTransform(), color);
 		}
 
 		// Draw circles
@@ -245,6 +247,8 @@ namespace Teddy
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
 			}
 		}
+
+		Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec2(1.0f), glm::vec4(1, 1, 1, 1));
 
 		Renderer2D::EndScene();
 	}
