@@ -27,6 +27,6 @@ namespace Teddy
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
 
-		std::unordered_map<std::string, std::vector<Entity>> m_ComponentToEntityTree;
+		std::map<std::string, std::vector<Entity>> m_ComponentToEntityTree;
 	};
 }

@@ -26,6 +26,8 @@ namespace Teddy
 
 		static void Flush();
 
+		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entityID = -1);
+
 		static void SetQuad(const glm::mat4& transform, const glm::vec4& color,
 			const float& texIndex, const float& tilingFactor, int entityID = -1);
 

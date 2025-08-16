@@ -84,6 +84,7 @@ namespace Teddy
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
@@ -170,8 +171,6 @@ namespace Teddy
 
 		}
 
-
-
 		// Render
 		Camera* activeCamera = nullptr;
 		glm::mat4 cameraTransform;
@@ -190,25 +189,45 @@ namespace Teddy
 				}
 			}
 		}
-
-		static int errorDelay = 499;
-		errorDelay++;
-		if (!activeCamera) 
-		{
-			if (errorDelay == 500)
-			{
-				TED_CORE_ERROR("No active camera found in the scene!");
-				errorDelay = 0;
-			}
-			
-			return;
-		}
 		
 		// Entities
-		Renderer2D::BeginScene(*activeCamera, cameraTransform);
+		if (activeCamera)
+		{
+			Renderer2D::BeginScene(*activeCamera, cameraTransform);
 
+			// Draw sprites
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group) 
+			{
+				auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto& transform = std::get<0>(tuple);
+				auto& sprite = std::get<1>(tuple);
+
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
+			}
+
+			// Draw circles
+			{
+				auto group = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
+				for (auto entity : group)
+				{
+					auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
+				}
+			}
+		
+			Renderer2D::EndScene();
+
+		}
+	}
+
+	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		// Draw sprites
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group) 
+		for (auto entity : group)
 		{
 			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			auto& transform = std::get<0>(tuple);
@@ -216,21 +235,15 @@ namespace Teddy
 
 			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
 		}
-		
-		Renderer2D::EndScene();
-	}
 
-	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
-	{
-		Renderer2D::BeginScene(camera);
-
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
-		for (auto entity : group)
+		// Draw circles
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
+			auto group = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
+			}
 		}
 
 		Renderer2D::EndScene();
@@ -303,6 +316,7 @@ namespace Teddy
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
@@ -334,6 +348,11 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
 	}
 

@@ -54,14 +54,9 @@ namespace Teddy
 				m_ComponentToEntityTree["Sprites"].push_back(entity);
 				isEmpty = false;
 			}
-			if (entity.HasComponent<Rigidbody2DComponent>())
+			if (entity.HasComponent<CircleRendererComponent>())
 			{
-				m_ComponentToEntityTree["Rigidbody2D"].push_back(entity);
-				isEmpty = false;
-			}
-			if (entity.HasComponent<BoxCollider2DComponent>())
-			{
-				m_ComponentToEntityTree["BoxCollider2D"].push_back(entity);
+				m_ComponentToEntityTree["Circles"].push_back(entity);
 				isEmpty = false;
 			}
 			if (isEmpty)
@@ -332,7 +327,13 @@ namespace Teddy
 			{
 				m_SelectionContext.AddComponent<SpriteRendererComponent>();
 				ImGui::CloseCurrentPopup();
+			}
 
+			if (!m_SelectionContext.HasComponent<CircleRendererComponent>() &&
+				ImGui::MenuItem("Circle Renderer"))
+			{
+				m_SelectionContext.AddComponent<CircleRendererComponent>();
+				ImGui::CloseCurrentPopup();
 			}
 
 			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>() &&
@@ -443,6 +444,13 @@ namespace Teddy
 				}
 
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+			});
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", true, entity, [](auto& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
+				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
 			});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", true, entity, [](auto& component)
