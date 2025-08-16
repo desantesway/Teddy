@@ -38,7 +38,8 @@ namespace Teddy
         fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
-        m_ActiveScene = CreateRef<Scene>();
+        NewScene();
+        m_EditorScene = m_ActiveScene;
 
         auto commandLineArgs = Application::Get().GetCommandLineArgs();
 
@@ -53,7 +54,10 @@ namespace Teddy
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
-		redSquare.AddComponent<Rigidbody2DComponent>();
+
+        auto cam = m_ActiveScene->CreateEntity("Camera");
+        cam.AddComponent<CameraComponent>();
+
     }
 
     void EditorLayer::OnDetach()
