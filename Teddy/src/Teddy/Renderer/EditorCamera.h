@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Camera.h"
+#include "Teddy/Renderer/Camera.h"
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/MouseEvent.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.h"
+#include "Teddy/Events/Event.h"
 #include "Teddy/Core/CodeConverter.h"
 
 namespace Teddy 

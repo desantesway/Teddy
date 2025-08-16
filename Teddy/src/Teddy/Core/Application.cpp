@@ -3,15 +3,17 @@
 
 #include "Teddy/Core/Log.h"
 
-#include <SDL3/SDL.h>
-#include <glad/glad.h>
-
 #include "Teddy/Core/Input.h"
 #include "Teddy/Core/MidiCodes.h"
 #include "Teddy/Core/KeyCodes.h"
 #include "Teddy/Core/MouseCodes.h"
 
 #include "Teddy/Renderer/Renderer.h"
+
+#include "Teddy/Utils/PlatformUtils.h"
+
+#include <SDL3/SDL.h>
+#include <glad/glad.h>
 
 namespace Teddy 
 {
@@ -82,13 +84,12 @@ namespace Teddy
 		TED_PROFILE_FUNCTION();
 
 		// put this inside of if, if you want to time go and not freeze
-		float time = (float)SDL_GetTicks();
+		float time = Time::GetTime();
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;
 
 		if (!m_Minimized)
 		{
-
 			{
 				TED_PROFILE_SCOPE("LayerStack OnUpdate");
 

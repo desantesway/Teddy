@@ -147,7 +147,11 @@ namespace Teddy
         if (!(m_ViewportFocused)) return;
 
 		m_ActiveScene->OnEvent(event);  
-        m_EditorCamera.OnEvent(event);
+
+        if (m_SceneState == SceneState::Edit)
+        {
+            m_EditorCamera.OnEvent(event);
+        }
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
@@ -432,7 +436,7 @@ namespace Teddy
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {
         // Shortcuts
-        if (e.GetRepeatCount() > 0)
+        if (e.IsRepeat())
             return false;
 
         bool control = Input::IsKeyPressed(Key::LCtrl) || Input::IsKeyPressed(Key::RCtrl);

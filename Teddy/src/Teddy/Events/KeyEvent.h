@@ -24,23 +24,23 @@ namespace Teddy
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode keycode, const bool repeat)
-			: KeyEvent(keycode), m_RepeatCount(repeat) 
+		KeyPressedEvent(const KeyCode keycode, const bool repeat = false)
+			: KeyEvent(keycode), m_IsRepeat(repeat) 
 		{
 		}
 
-		int GetRepeatCount() const { return m_RepeatCount; }
+		int IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << m_KeyCode << " (Repeated = " << m_IsRepeat << ")";
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyPressed)
 	private:
-		bool m_RepeatCount;
+		bool m_IsRepeat;
 	};
 
 	class KeyReleasedEvent : public KeyEvent

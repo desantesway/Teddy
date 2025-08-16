@@ -3,10 +3,10 @@
 
 #include "Teddy/Core/Window.h"
 
-#include <SDL3/SDL.h>
-
 #include "Teddy/Renderer/GraphicsContext.h"
 #include "Teddy/Renderer/GraphicsWindow.h"
+
+#include <SDL3/SDL.h>
 
 namespace Teddy 
 {

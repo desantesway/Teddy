@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include <memory>
-
 #include "Teddy/Core/PlatformDetection.h"
+
+#include <memory>
 
 #ifdef TED_DEBUG
 	#define TED_ENABLE_ASSERTS

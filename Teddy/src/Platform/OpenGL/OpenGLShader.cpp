@@ -1,13 +1,15 @@
 #include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
+#include "Teddy/Core/Timer.h"
+
 #include <glm/gtc/type_ptr.hpp>
 
+#pragma warning(push, 0)
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_cross.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
-
-#include "Teddy/Core/Timer.h"
+#pragma warning(pop)
 
 namespace Teddy 
 {

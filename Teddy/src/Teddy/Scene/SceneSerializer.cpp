@@ -298,6 +298,7 @@ namespace Teddy
 		}
 		catch (YAML::ParserException e)
 		{
+			TED_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 

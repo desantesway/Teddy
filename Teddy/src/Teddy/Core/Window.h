@@ -1,13 +1,13 @@
 #pragma once
 
-#include <sstream>
-
 #include "Teddy/Core/Base.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/MidiDriver.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
+
+#include <sstream>
 
 namespace Teddy 
 {

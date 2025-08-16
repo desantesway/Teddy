@@ -1,15 +1,20 @@
 #include "TeddyPch.h"
 #include "Teddy/Utils/PlatformUtils.h"
 
+#include "Teddy/Core/Application.h"
+
 #include <commdlg.h>
 
 #define SDL_PLATFORM_WIN32 1
 #include <SDL3/SDL.h>
 
-#include "Teddy/Core/Application.h"
-
 namespace Teddy 
 {
+
+	float Time::GetTime()
+	{
+		return SDL_GetTicks();
+	}
 
 	HWND GetSDLNativeWindow()
 	{

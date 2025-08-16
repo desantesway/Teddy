@@ -2,9 +2,10 @@
 #include "Teddy/Core/Input.h"
 
 #include "Teddy/Core/Application.h"
-#include <SDL3/SDL.h>
 
 #include "Teddy/Core/CodeConverter.h"
+
+#include <SDL3/SDL.h>
 
 namespace Teddy
 {

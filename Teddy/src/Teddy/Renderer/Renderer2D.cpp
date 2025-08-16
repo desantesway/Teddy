@@ -5,9 +5,9 @@
 #include "Teddy/Renderer/Shader.h"
 #include "Teddy/Renderer/RenderCommand.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "Teddy/Renderer/UniformBuffer.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 // TODO: For 3D implement instancing instead of batching
 namespace Teddy 

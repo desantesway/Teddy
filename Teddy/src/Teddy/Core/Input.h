@@ -1,11 +1,12 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include "Teddy/Events/MidiEvent.h"
 
 #include "Teddy/Core/MouseCodes.h"
 #include "Teddy/Core/KeyCodes.h"
 #include "Teddy/Core/MidiCodes.h"
+
+#include <glm/glm.hpp>
 
 namespace Teddy 
 {

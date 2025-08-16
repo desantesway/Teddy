@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rtmidi.h"
 #include "Teddy/Events/Event.h"
+#include <rtmidi.h>
 
 namespace Teddy {
 

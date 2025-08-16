@@ -1,18 +1,18 @@
 #include "TeddyPch.h"
 #include "Teddy/ImGui/ImGuiLayer.h"
 
+#include "Teddy/Core/Application.h"
+
+#include "Teddy/Core/CodeConverter.h"
+#include "Teddy/Core/KeyCodes.h"
+#include "Teddy/Core/Input.h"
+
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
-
-#include "Teddy/Core/Application.h"
-
-#include "Teddy/Core/CodeConverter.h"
-#include "Teddy/Core/KeyCodes.h"
-#include "Teddy/Core/Input.h"
 
 namespace Teddy
 {

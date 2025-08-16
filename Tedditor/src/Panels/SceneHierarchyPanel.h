@@ -19,6 +19,9 @@ namespace Teddy
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity);
 	private:
+		template<typename T>
+		void DisplayAddComponentEntry(const std::string& entryName);
+
 		void CalculateComponentTree();
 
 		bool DrawEntityNode(Entity entity);

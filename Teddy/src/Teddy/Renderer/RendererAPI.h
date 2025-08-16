@@ -1,7 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include "Teddy/Renderer/VertexArray.h"
+
+#include <glm/glm.hpp>
 
 namespace Teddy 
 {

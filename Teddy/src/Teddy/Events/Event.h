@@ -1,11 +1,11 @@
 #pragma once	
 
 #include "TeddyPch.h"
-#include <functional>
 
 #include "Teddy/Debug/Instrumentor.h"
 
 #include <SDL3/SDL.h>
+#include <functional>
 
 namespace Teddy 
 {

@@ -11,16 +11,7 @@
 #include <mutex>
 #include <sstream>
 
-#pragma once
-
-#include <algorithm>
-#include <chrono>
-#include <fstream>
-#include <string>
-#include <thread>
-#include <mutex>
-#include <sstream>
-
+// TODO: Improve this
 namespace Teddy 
 {
 

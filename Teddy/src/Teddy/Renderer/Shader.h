@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Teddy/Core/Base.h"
+
 #include <string>
 #include <glm/glm.hpp>
-#include "Teddy/Core/Base.h"
 
 namespace Teddy 
 {

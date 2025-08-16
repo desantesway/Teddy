@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Teddy/Renderer/OrthographicCamera.h"
 #include "Teddy/Core/Timestep.h"
 		  

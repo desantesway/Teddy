@@ -2,6 +2,10 @@
 
 #include "Teddy/Core/PlatformDetection.h"
 
+#include "Teddy/Core/Base.h"
+#include "Teddy/Core/Log.h"
+
+#include "Teddy/Debug/Instrumentor.h"
 #ifdef TED_PLATFORM_WINDOWS
 	#ifndef NOMINMAX
 		#define NOMINMAX
@@ -22,12 +26,6 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-
-#include "Teddy/Core/Base.h"
-
-#include "Teddy/Core/Log.h"
-
-#include "Teddy/Debug/Instrumentor.h"
 
 #ifdef TED_PLATFORM_WINDOWS
 	#include <Windows.h>
