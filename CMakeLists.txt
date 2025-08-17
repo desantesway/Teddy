@@ -28,24 +28,39 @@ add_subdirectory(Tedditor)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Tedditor)
 
 #sdl
-set(SDL3_TEST OFF)
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 
 add_subdirectory(Teddy/vendor/SDL)
 include_directories(Teddy/vendor/SDL/include)
 
-target_link_libraries(Teddy PRIVATE SDL3-static)
-target_link_libraries(Sandbox PRIVATE SDL3-static)
-target_link_libraries(Tedditor PRIVATE SDL3-static)
+target_link_libraries(Teddy PUBLIC SDL3-static)
+
+get_property(SDL3_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/SDL PROPERTY BUILDSYSTEM_TARGETS)
+foreach(target IN LISTS SDL3_TARGETS)
+    set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
+endforeach()
+
+#sdl_ttf
+set(SDL_TTF_STATIC ON CACHE BOOL "" FORCE)
+
+add_subdirectory(Teddy/vendor/SDL_ttf)
+
+target_link_libraries(Teddy PUBLIC SDL3_ttf-static)
+
+set_target_properties(SDL3_ttf-static PROPERTIES FOLDER "Dependencies/Font")
+set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Font")
+set_target_properties(harfbuzz PROPERTIES FOLDER "Dependencies/Font")
+set_target_properties(plutosvg PROPERTIES FOLDER "Dependencies/Font")
+set_target_properties(plutovg PROPERTIES FOLDER "Dependencies/Font")
 
 # SpdLog
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries")
 add_subdirectory(Teddy/vendor/spdlog)
 
-target_link_libraries(Teddy PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
-target_link_libraries(Sandbox PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
-target_link_libraries(Tedditor PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+target_link_libraries(Teddy PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+
+set_target_properties(spdlog PROPERTIES FOLDER "Dependencies/Log")
 
 # Glad
 find_package(OpenGL REQUIRED)
@@ -55,9 +70,9 @@ set(GLAD_INC Teddy/vendor/glad/include)
 add_library(glad STATIC ${GLAD_SRC})
 target_include_directories(glad PUBLIC ${GLAD_INC})
 
-target_link_libraries(Teddy PRIVATE glad)
-target_link_libraries(Sandbox PRIVATE glad)
-target_link_libraries(Tedditor PRIVATE glad)
+target_link_libraries(Teddy PUBLIC glad)
+
+set_target_properties(glad PROPERTIES FOLDER "Dependencies/OpenGL")
 
 # ImGui
 include_directories(Teddy/vendor/ImGui)
@@ -80,42 +95,38 @@ set(IMGUI_SRC
 add_library(imgui STATIC ${IMGUI_SRC})
 target_include_directories(imgui PUBLIC Teddy/vendor/ImGui Teddy/vendor/ImGui/backends)
 
-target_link_libraries(Teddy PRIVATE imgui)
-target_link_libraries(Sandbox PRIVATE imgui)
-target_link_libraries(Tedditor PRIVATE imgui)
+target_link_libraries(Teddy PUBLIC imgui)
+
+set_target_properties(imgui PROPERTIES FOLDER "Dependencies/Gui")
 
 # GLM
-target_include_directories(Teddy PRIVATE Teddy/vendor/GLM)
-target_include_directories(Sandbox PRIVATE Teddy/vendor/GLM)
-target_include_directories(Tedditor PRIVATE Teddy/vendor/GLM)
+target_include_directories(Teddy PUBLIC Teddy/vendor/GLM)
 
 # stb_image
-target_include_directories(Teddy PRIVATE Teddy/vendor/stb_image)
-target_include_directories(Sandbox PRIVATE Teddy/vendor/stb_image)
-target_include_directories(Tedditor PRIVATE Teddy/vendor/stb_image)
+target_include_directories(Teddy PUBLIC Teddy/vendor/stb_image)
 
 # rtmidi
 add_subdirectory(Teddy/vendor/rtmidi)
-target_include_directories(Teddy PRIVATE Teddy/vendor/rtmidi/include)
-target_include_directories(Sandbox PRIVATE Teddy/vendor/rtmidi/include)
-target_include_directories(Tedditor PRIVATE Teddy/vendor/rtmidi/include)
+target_include_directories(Teddy PUBLIC Teddy/vendor/rtmidi/include)
 
-target_link_libraries(Teddy PRIVATE rtmidi)
-target_link_libraries(Sandbox PRIVATE rtmidi)
-target_link_libraries(Tedditor PRIVATE rtmidi)
+target_link_libraries(Teddy PUBLIC rtmidi)
 
+get_property(RTMIDI_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/rtmidi PROPERTY BUILDSYSTEM_TARGETS)
+foreach(target IN LISTS RTMIDI_TARGETS)
+    set_target_properties(${target} PROPERTIES FOLDER "Dependencies/RtMidi")
+endforeach()
 
 # entt
-target_include_directories(Teddy PRIVATE Teddy/vendor/entt/single_include)
-target_include_directories(Sandbox PRIVATE Teddy/vendor/entt/single_include)
-target_include_directories(Tedditor PRIVATE Teddy/vendor/entt/single_include)
+target_include_directories(Teddy PUBLIC Teddy/vendor/entt/single_include)
 
 # yaml
 add_subdirectory(Teddy/vendor/yaml-cpp)
 target_link_libraries(Teddy PUBLIC yaml-cpp::yaml-cpp)
-#target_link_libraries(Sandbox PUBLIC yaml-cpp::yaml-cpp)
-target_link_libraries(Tedditor PUBLIC yaml-cpp::yaml-cpp)
 
+set_target_properties(yaml-cpp PROPERTIES FOLDER "Dependencies/Yaml")
+set_target_properties(yaml-cpp-parse PROPERTIES FOLDER "Dependencies/Yaml")
+set_target_properties(yaml-cpp-read PROPERTIES FOLDER "Dependencies/Yaml")
+set_target_properties(yaml-cpp-sandbox PROPERTIES FOLDER "Dependencies/Yaml")
 # vulkan sdk
 find_package(Vulkan REQUIRED COMPONENTS shaderc_combined)
 
@@ -199,40 +210,17 @@ endif()
 # Box2D
 add_subdirectory(Teddy/vendor/box2d)
 
-target_link_libraries(Teddy PRIVATE box2d::box2d)
-target_link_libraries(Sandbox PRIVATE box2d::box2d)
-target_link_libraries(Tedditor PRIVATE box2d::box2d)
+target_link_libraries(Teddy PUBLIC box2d::box2d)
 
-set_target_properties(box2d PROPERTIES FOLDER "Dependencies")
+set_target_properties(box2d PROPERTIES FOLDER "Dependencies/Physics")
 
 # Engine linking
 target_link_libraries(Sandbox PRIVATE Teddy)
 target_link_libraries(Tedditor PRIVATE Teddy)
 
 # VS folders
-set_target_properties(Teddy PROPERTIES FOLDER "Game")
-set_target_properties(Sandbox PROPERTIES FOLDER "Game")
-set_target_properties(Tedditor PROPERTIES FOLDER "Game")
-
-set_target_properties(imgui PROPERTIES FOLDER "Dependencies")
-set_target_properties(glad PROPERTIES FOLDER "Dependencies")
-
-set_target_properties(yaml-cpp PROPERTIES FOLDER "Dependencies")
-set_target_properties(yaml-cpp-parse PROPERTIES FOLDER "Dependencies")
-set_target_properties(yaml-cpp-read PROPERTIES FOLDER "Dependencies")
-set_target_properties(yaml-cpp-sandbox PROPERTIES FOLDER "Dependencies")
-
-get_property(RTMIDI_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/rtmidi PROPERTY BUILDSYSTEM_TARGETS)
-foreach(target IN LISTS RTMIDI_TARGETS)
-    set_target_properties(${target} PROPERTIES FOLDER "Dependencies")
-endforeach()
-
-set_target_properties(spdlog PROPERTIES FOLDER "Dependencies")
-
-get_property(SDL3_TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Teddy/vendor/SDL PROPERTY BUILDSYSTEM_TARGETS)
-foreach(target IN LISTS SDL3_TARGETS)
-    set_target_properties(${target} PROPERTIES FOLDER "Dependencies")
-endforeach()
-
+set_target_properties(Teddy PROPERTIES FOLDER "Engine")
+set_target_properties(Sandbox PROPERTIES FOLDER "Engine/Game")
+set_target_properties(Tedditor PROPERTIES FOLDER "Engine/Game")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
