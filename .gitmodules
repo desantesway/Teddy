@@ -20,12 +20,13 @@
 	branch = master
 [submodule "Teddy/vendor/entt"]
 	path = Teddy/vendor/entt
-	url = https://github.com/skypjack/entt
+	url = https://github.com/skypjack/entt.git
 	branch = master
-[submodule "Teddy/vendor/yaml"]
+[submodule "Teddy/vendor/yaml-cpp"]
 	path = Teddy/vendor/yaml-cpp
-	url = https://github.com/jbeder/yaml-cpp/
+	url = https://github.com/jbeder/yaml-cpp.git
 	branch = master
 [submodule "Teddy/vendor/box2d"]
 	path = Teddy/vendor/box2d
-	url = https://github.com/erincatto/box2d
+	url = https://github.com/erincatto/box2d.git
+	branch = main
