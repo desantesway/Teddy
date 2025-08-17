@@ -33,3 +33,9 @@
 [submodule "Teddy/vendor/SDL_ttf"]
 	path = Teddy/vendor/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "Teddy/vendor/msdf-atlas-gen"]
+	path = Teddy/vendor/msdf-atlas-gen
+	url = https://github.com/Chlumsky/msdf-atlas-gen.git
+[submodule "Teddy/vendor/freetype"]
+	path = Teddy/vendor/freetype
+	url = https://github.com/freetype/freetype.git
