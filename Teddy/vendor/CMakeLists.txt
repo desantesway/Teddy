@@ -12,19 +12,6 @@ foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
 endforeach()
 
-#sdl_ttf
-set(SDL_TTF_STATIC ON CACHE BOOL "" FORCE)
-
-add_subdirectory(SDL_ttf)
-
-target_link_libraries(Teddy PUBLIC SDL3_ttf-static)
-
-set_target_properties(SDL3_ttf-static PROPERTIES FOLDER "Dependencies/Font")
-set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Font")
-set_target_properties(harfbuzz PROPERTIES FOLDER "Dependencies/Font")
-set_target_properties(plutosvg PROPERTIES FOLDER "Dependencies/Font")
-set_target_properties(plutovg PROPERTIES FOLDER "Dependencies/Font")
-
 # ImGui
 include_directories(ImGui)
 
