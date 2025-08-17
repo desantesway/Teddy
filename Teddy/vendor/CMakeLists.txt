@@ -1,4 +1,4 @@
-#sdl
+# sdl
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 
@@ -11,6 +11,201 @@ get_property(SDL3_TARGETS DIRECTORY SDL PROPERTY BUILDSYSTEM_TARGETS)
 foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
 endforeach()
+
+# freetype
+add_subdirectory(freetype)
+set_target_properties( freetype PROPERTIES FOLDER "Dependencies/Text")
+
+# TODO: Remove files i dont use from msdfgen
+# msdfgen
+include_directories(msdf-atlas-gen/msdfgen)
+
+set(MSDF_SRC
+    msdf-atlas-gen/msdfgen/main.cpp
+    msdf-atlas-gen/msdfgen/msdfgen.h
+    msdf-atlas-gen/msdfgen/msdfgen-ext.h
+    msdf-atlas-gen/msdfgen/resource.h
+    msdf-atlas-gen/msdfgen/ext/import-font.cpp
+    msdf-atlas-gen/msdfgen/ext/import-font.h
+    msdf-atlas-gen/msdfgen/ext/import-svg.cpp
+    msdf-atlas-gen/msdfgen/ext/import-svg.h
+    msdf-atlas-gen/msdfgen/ext/resolve-shape-geometry.cpp
+    msdf-atlas-gen/msdfgen/ext/resolve-shape-geometry.h
+    msdf-atlas-gen/msdfgen/ext/save-png.cpp
+    msdf-atlas-gen/msdfgen/ext/save-png.h
+    msdf-atlas-gen/msdfgen/core/arithmetics.hpp
+    msdf-atlas-gen/msdfgen/core/base.h
+    msdf-atlas-gen/msdfgen/core/bitmap-interpolation.hpp
+    msdf-atlas-gen/msdfgen/core/Bitmap.h
+    msdf-atlas-gen/msdfgen/core/Bitmap.hpp
+    msdf-atlas-gen/msdfgen/core/BitmapRef.hpp
+    msdf-atlas-gen/msdfgen/core/contour-combiners.cpp
+    msdf-atlas-gen/msdfgen/core/contour-combiners.h
+    msdf-atlas-gen/msdfgen/core/Contour.cpp
+    msdf-atlas-gen/msdfgen/core/Contour.h
+    msdf-atlas-gen/msdfgen/core/convergent-curve-ordering.cpp
+    msdf-atlas-gen/msdfgen/core/convergent-curve-ordering.h
+    msdf-atlas-gen/msdfgen/core/DistanceMapping.cpp
+    msdf-atlas-gen/msdfgen/core/DistanceMapping.h
+    msdf-atlas-gen/msdfgen/core/edge-coloring.cpp
+    msdf-atlas-gen/msdfgen/core/edge-coloring.h
+    msdf-atlas-gen/msdfgen/core/edge-segments.cpp
+    msdf-atlas-gen/msdfgen/core/edge-segments.h
+    msdf-atlas-gen/msdfgen/core/edge-selectors.cpp
+    msdf-atlas-gen/msdfgen/core/edge-selectors.h
+    msdf-atlas-gen/msdfgen/core/EdgeColor.h
+    msdf-atlas-gen/msdfgen/core/EdgeHolder.cpp
+    msdf-atlas-gen/msdfgen/core/EdgeHolder.h
+    msdf-atlas-gen/msdfgen/core/equation-solver.cpp
+    msdf-atlas-gen/msdfgen/core/equation-solver.h
+    msdf-atlas-gen/msdfgen/core/export-svg.cpp
+    msdf-atlas-gen/msdfgen/core/export-svg.h
+    msdf-atlas-gen/msdfgen/core/generator-config.h
+    msdf-atlas-gen/msdfgen/core/msdf-error-correction.cpp
+    msdf-atlas-gen/msdfgen/core/msdf-error-correction.h
+    msdf-atlas-gen/msdfgen/core/MSDFErrorCorrection.cpp
+    msdf-atlas-gen/msdfgen/core/MSDFErrorCorrection.h
+    msdf-atlas-gen/msdfgen/core/msdfgen.cpp
+    msdf-atlas-gen/msdfgen/core/pixel-conversion.hpp
+    msdf-atlas-gen/msdfgen/core/Projection.cpp
+    msdf-atlas-gen/msdfgen/core/Projection.h
+    msdf-atlas-gen/msdfgen/core/Range.hpp
+    msdf-atlas-gen/msdfgen/core/rasterization.cpp
+    msdf-atlas-gen/msdfgen/core/rasterization.h
+    msdf-atlas-gen/msdfgen/core/render-sdf.cpp
+    msdf-atlas-gen/msdfgen/core/render-sdf.h
+    msdf-atlas-gen/msdfgen/core/save-bmp.cpp
+    msdf-atlas-gen/msdfgen/core/save-bmp.h
+    msdf-atlas-gen/msdfgen/core/save-fl32.cpp
+    msdf-atlas-gen/msdfgen/core/save-fl32.h
+    msdf-atlas-gen/msdfgen/core/save-rgba.cpp
+    msdf-atlas-gen/msdfgen/core/save-rgba.h
+    msdf-atlas-gen/msdfgen/core/save-tiff.cpp
+    msdf-atlas-gen/msdfgen/core/save-tiff.h
+    msdf-atlas-gen/msdfgen/core/Scanline.cpp
+    msdf-atlas-gen/msdfgen/core/Scanline.h
+    msdf-atlas-gen/msdfgen/core/sdf-error-estimation.cpp
+    msdf-atlas-gen/msdfgen/core/sdf-error-estimation.h
+    msdf-atlas-gen/msdfgen/core/SDFTransformation.h
+    msdf-atlas-gen/msdfgen/core/shape-description.cpp
+    msdf-atlas-gen/msdfgen/core/shape-description.h
+    msdf-atlas-gen/msdfgen/core/Shape.cpp
+    msdf-atlas-gen/msdfgen/core/Shape.h
+    msdf-atlas-gen/msdfgen/core/ShapeDistanceFinder.h
+    msdf-atlas-gen/msdfgen/core/ShapeDistanceFinder.hpp
+    msdf-atlas-gen/msdfgen/core/SignedDistance.hpp
+    msdf-atlas-gen/msdfgen/core/Vector2.hpp
+)
+
+add_library(msdfgen STATIC ${MSDF_SRC})
+
+target_compile_definitions(msdfgen PUBLIC MSDFGEN_PUBLIC=)
+
+target_include_directories(msdfgen PUBLIC 
+            msdf-atlas-gen/msdfgen/
+            msdf-atlas-gen/msdfgen/core
+            msdf-atlas-gen/msdfgen/ext
+)
+
+target_link_libraries(msdfgen PUBLIC freetype)
+
+# artery font
+include_directories(msdf-atlas-gen/artery-font-format/artery-font)
+
+set(ARTERY_FONT_SRC
+    msdf-atlas-gen/artery-font-format/artery-font/artery-font.h
+    msdf-atlas-gen/artery-font-format/artery-font/crc32.h
+    msdf-atlas-gen/artery-font-format/artery-font/crc32.hpp
+    msdf-atlas-gen/artery-font-format/artery-font/enums.h
+    msdf-atlas-gen/artery-font-format/artery-font/serialization.h
+    msdf-atlas-gen/artery-font-format/artery-font/serialization.hpp
+    msdf-atlas-gen/artery-font-format/artery-font/std-artery-font.h
+    msdf-atlas-gen/artery-font-format/artery-font/stdio-serialization.h
+    msdf-atlas-gen/artery-font-format/artery-font/stdio-serialization.hpp
+    msdf-atlas-gen/artery-font-format/artery-font/structures.h
+    msdf-atlas-gen/artery-font-format/artery-font/types.h
+)
+
+add_library(artery-font INTERFACE)
+target_sources(artery-font INTERFACE ${ARTERY_FONT_SRC})
+target_include_directories(artery-font INTERFACE 
+    msdf-atlas-gen/artery-font-format/
+    msdf-atlas-gen/artery-font-format/artery-font/
+)
+
+
+# msdf-atlas-gen
+include_directories(msdf-atlas-gen)
+
+set(MSDF_ATLAS_SRC
+    msdf-atlas-gen/resource.h
+    msdf-atlas-gen/msdf-atlas-gen/artery-font-export.cpp
+    msdf-atlas-gen/msdf-atlas-gen/artery-font-export.h
+    msdf-atlas-gen/msdf-atlas-gen/AtlasGenerator.h
+    msdf-atlas-gen/msdf-atlas-gen/AtlasStorage.h
+    msdf-atlas-gen/msdf-atlas-gen/bitmap-blit.cpp
+    msdf-atlas-gen/msdf-atlas-gen/bitmap-blit.h
+    msdf-atlas-gen/msdf-atlas-gen/BitmapAtlasStorage.h
+    msdf-atlas-gen/msdf-atlas-gen/BitmapAtlasStorage.hpp
+    msdf-atlas-gen/msdf-atlas-gen/charset-parser.cpp
+    msdf-atlas-gen/msdf-atlas-gen/Charset.cpp
+    msdf-atlas-gen/msdf-atlas-gen/Charset.h
+    msdf-atlas-gen/msdf-atlas-gen/csv-export.cpp
+    msdf-atlas-gen/msdf-atlas-gen/csv-export.h
+    msdf-atlas-gen/msdf-atlas-gen/DynamicAtlas.h
+    msdf-atlas-gen/msdf-atlas-gen/DynamicAtlas.hpp
+    msdf-atlas-gen/msdf-atlas-gen/FontGeometry.cpp
+    msdf-atlas-gen/msdf-atlas-gen/FontGeometry.h
+    msdf-atlas-gen/msdf-atlas-gen/glyph-generators.cpp
+    msdf-atlas-gen/msdf-atlas-gen/glyph-generators.h
+    msdf-atlas-gen/msdf-atlas-gen/GlyphBox.h
+    msdf-atlas-gen/msdf-atlas-gen/GlyphGeometry.cpp
+    msdf-atlas-gen/msdf-atlas-gen/GlyphGeometry.h
+    msdf-atlas-gen/msdf-atlas-gen/GridAtlasPacker.cpp
+    msdf-atlas-gen/msdf-atlas-gen/GridAtlasPacker.h
+    msdf-atlas-gen/msdf-atlas-gen/image-encode.cpp
+    msdf-atlas-gen/msdf-atlas-gen/image-encode.h
+    msdf-atlas-gen/msdf-atlas-gen/image-save.h
+    msdf-atlas-gen/msdf-atlas-gen/image-save.hpp
+    msdf-atlas-gen/msdf-atlas-gen/ImmediateAtlasGenerator.h
+    msdf-atlas-gen/msdf-atlas-gen/ImmediateAtlasGenerator.hpp
+    msdf-atlas-gen/msdf-atlas-gen/json-export.cpp
+    msdf-atlas-gen/msdf-atlas-gen/json-export.h
+    msdf-atlas-gen/msdf-atlas-gen/main.cpp
+    msdf-atlas-gen/msdf-atlas-gen/msdf-atlas-gen.h
+    msdf-atlas-gen/msdf-atlas-gen/Padding.cpp
+    msdf-atlas-gen/msdf-atlas-gen/Padding.h
+    msdf-atlas-gen/msdf-atlas-gen/rectangle-packing.h
+    msdf-atlas-gen/msdf-atlas-gen/rectangle-packing.hpp
+    msdf-atlas-gen/msdf-atlas-gen/Rectangle.h
+    msdf-atlas-gen/msdf-atlas-gen/RectanglePacker.cpp
+    msdf-atlas-gen/msdf-atlas-gen/RectanglePacker.h
+    msdf-atlas-gen/msdf-atlas-gen/Remap.h
+    msdf-atlas-gen/msdf-atlas-gen/shadron-preview-generator.cpp
+    msdf-atlas-gen/msdf-atlas-gen/shadron-preview-generator.h
+    msdf-atlas-gen/msdf-atlas-gen/size-selectors.cpp
+    msdf-atlas-gen/msdf-atlas-gen/size-selectors.h
+    msdf-atlas-gen/msdf-atlas-gen/TightAtlasPacker.cpp
+    msdf-atlas-gen/msdf-atlas-gen/TightAtlasPacker.h
+    msdf-atlas-gen/msdf-atlas-gen/types.h
+    msdf-atlas-gen/msdf-atlas-gen/utf8.cpp
+    msdf-atlas-gen/msdf-atlas-gen/utf8.h
+    msdf-atlas-gen/msdf-atlas-gen/utils.hpp
+    msdf-atlas-gen/msdf-atlas-gen/Workload.cpp
+    msdf-atlas-gen/msdf-atlas-gen/Workload.h
+)
+
+add_library(msdf-atlas-gen STATIC ${MSDF_ATLAS_SRC})
+
+target_include_directories(msdf-atlas-gen PUBLIC 
+            msdf-atlas-gen 
+            msdf-atlas-gen/msdf-atlas-gen/ 
+)
+
+target_link_libraries(msdf-atlas-gen PUBLIC artery-font)
+target_link_libraries(msdf-atlas-gen PUBLIC msdfgen)
+
+target_link_libraries(Teddy PUBLIC msdf-atlas-gen)
 
 # ImGui
 include_directories(ImGui)
