@@ -30,9 +30,6 @@
 	path = Teddy/vendor/box2d
 	url = https://github.com/erincatto/box2d.git
 	branch = main
-[submodule "Teddy/vendor/SDL_ttf"]
-	path = Teddy/vendor/SDL_ttf
-	url = https://github.com/libsdl-org/SDL_ttf.git
 [submodule "Teddy/vendor/msdf-atlas-gen"]
 	path = Teddy/vendor/msdf-atlas-gen
 	url = https://github.com/Chlumsky/msdf-atlas-gen.git
