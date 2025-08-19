@@ -17,12 +17,14 @@
 namespace Teddy
 {
 
+	static Font* s_Font;
+
     extern const std::filesystem::path g_AssetPath;
 
     EditorLayer::EditorLayer()
         : Layer("Editor Layer")
     {
-        Font font("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
+        s_Font = new Font("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
     }
 
     void EditorLayer::OnAttach()
@@ -55,6 +57,7 @@ namespace Teddy
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.5f, 0.5f, 1.0f });
+		redSquare.GetComponent<SpriteRendererComponent>().Texture = s_Font->GetAtlasTexture();
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();

@@ -16,8 +16,6 @@ endforeach()
 add_subdirectory(freetype)
 set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Text")
 
-#target_link_libraries(freetype PUBLIC zlib)
-
 # TODO: Remove files i dont use from msdfgen
 # msdfgen
 include_directories(msdf-atlas-gen/msdfgen)
