@@ -36,9 +36,3 @@
 [submodule "Teddy/vendor/freetype"]
 	path = Teddy/vendor/freetype
 	url = https://github.com/freetype/freetype.git
-[submodule "Teddy/vendor/libpng"]
-	path = Teddy/vendor/libpng
-	url = https://github.com/pnggroup/libpng.git
-[submodule "Teddy/vendor/zlib"]
-	path = Teddy/vendor/zlib
-	url = https://github.com/madler/zlib.git

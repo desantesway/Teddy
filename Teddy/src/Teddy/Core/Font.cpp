@@ -4,7 +4,6 @@
 #define MSDFGEN_USE_LIBPNG
 
 #include <msdf-atlas-gen.h>
-#include <msdfgen.h>
 
 namespace Teddy
 {

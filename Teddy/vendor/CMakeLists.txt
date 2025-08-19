@@ -12,13 +12,6 @@ foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
 endforeach()
 
-# zlib
-add_subdirectory(zlib)
-set_target_properties(zlib PROPERTIES FOLDER "Dependencies/Compression")
-
-set(ZLIB_LIBRARY "zlib")
-set(ZLIB_INCLUDE_DIR "zlib")
-
 # freetype
 add_subdirectory(freetype)
 set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Text")
