@@ -12,9 +12,18 @@ foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
 endforeach()
 
+# zlib
+add_subdirectory(zlib)
+set_target_properties(zlib PROPERTIES FOLDER "Dependencies/Compression")
+
+set(ZLIB_LIBRARY "zlib")
+set(ZLIB_INCLUDE_DIR "zlib")
+
 # freetype
 add_subdirectory(freetype)
-set_target_properties( freetype PROPERTIES FOLDER "Dependencies/Text")
+set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Text")
+
+#target_link_libraries(freetype PUBLIC zlib)
 
 # TODO: Remove files i dont use from msdfgen
 # msdfgen
@@ -109,6 +118,8 @@ target_include_directories(msdfgen PUBLIC
 
 target_link_libraries(msdfgen PUBLIC freetype)
 
+set_target_properties(msdfgen PROPERTIES FOLDER "Dependencies/Text")
+
 # artery font
 include_directories(msdf-atlas-gen/artery-font-format/artery-font)
 
@@ -133,6 +144,7 @@ target_include_directories(artery-font INTERFACE
     msdf-atlas-gen/artery-font-format/artery-font/
 )
 
+set_target_properties(artery-font PROPERTIES FOLDER "Dependencies/Text")
 
 # msdf-atlas-gen
 include_directories(msdf-atlas-gen)
@@ -206,6 +218,8 @@ target_link_libraries(msdf-atlas-gen PUBLIC artery-font)
 target_link_libraries(msdf-atlas-gen PUBLIC msdfgen)
 
 target_link_libraries(Teddy PUBLIC msdf-atlas-gen)
+
+set_target_properties(msdf-atlas-gen PROPERTIES FOLDER "Dependencies/Text")
 
 # ImGui
 include_directories(ImGui)

@@ -4,6 +4,7 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Teddy/Renderer/Shader.h"
+#include "Teddy/Core/Font.h"
 
 #include <imgui.h>
 
@@ -21,7 +22,7 @@ namespace Teddy
     EditorLayer::EditorLayer()
         : Layer("Editor Layer")
     {
-
+        Font font("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
     }
 
     void EditorLayer::OnAttach()
