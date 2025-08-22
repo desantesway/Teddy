@@ -42,26 +42,19 @@ The goal: Build a **scalable, low-level game engine** to enable:
 
 ---
 
-## 🎮 Functionality
+## 🎮 Features
 
-### ✅ 2D Features
-
-- ✔️ Scenes + Entity Component System (ECS)
-- ✔️ Sprite rendering with texture batching
-- ✔️ AABB collision detection & response
-- ✔️ Real-time physics simulation (velocity, gravity, restitution)
-- ✔️ Keyboard, mouse, and MIDI input abstraction
-- ✔️ ImGui-powered scene editor and live inspector
-- ✔️ Save/load scenes with YAML serialization
-- ✔️ Runtime debug visualizations (bounding boxes, quad number, etc.)
-
----
-
-### 🚧 Coming Soon
-
-- 🔜 Vulkan backend (in progress)
-- 🔜 Audio engine (SDL Audio)
-- 🔜 Scene transitions and asset streaming
+Engine                 | 2D                    | 3D                     | Coming
+-------------          | -------------         | -------------          | -------------
+Scenes Serialization   | Quad rendering        | Perspective Camera     | Fustrum Culling
+ECS                    | Textures              |                        | Audio Engine
+Physics                | Circle rendering      |                        | Protection
+Keyboard IO            | Batching              |                        | Vulkan
+Mouse IO               | Perspective Camera    |                        | Compression
+Midi IO                | Orthographic Camera   |                        | Mip Mapping
+ImGui editor           | Dynamic font rendering|                        | Better profiler
+Profiler               |                       |                        | 2D lights
+Stats                  |                       |                        | ...
 
 ---
 
