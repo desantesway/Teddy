@@ -52,7 +52,7 @@ Physics                | Circle rendering      |                        | Protec
 Keyboard IO            | Batching              |                        | Vulkan
 Mouse IO               | Perspective Camera    |                        | Compression
 Midi IO                | Orthographic Camera   |                        | Mip Mapping
-ImGui editor           | Dynamic font rendering|                        | Better profiler
+Scene editor           | Dynamic font rendering|                        | Better profiler
 Profiler               |                       |                        | 2D lights
 Stats                  |                       |                        | ...
 
