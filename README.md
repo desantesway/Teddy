@@ -7,6 +7,8 @@ It provides a modern, modular foundation for both 2D and future 3D game developm
 
 ## 🧪 Usage (Windows)
 
+### ⚠️ Requires VulkanSDK
+
 1. Clone the repository
 ```bash
   git clone https://github.com/desantesway/Teddy.git
