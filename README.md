@@ -55,18 +55,3 @@ Midi IO                | Orthographic Camera   |                        | Mip Ma
 Scene editor           | Dynamic font rendering|                        | Better profiler
 Profiler               |                       |                        | 2D lights
 Stats                  |                       |                        | ...
-
----
-
-## 🛠️ Technologies
-
-- **Language:** C++
-- **Rendering:** OpenGL (with backend abstraction)
-- **Window/Input:** SDL3
-- **UI:** ImGui
-- **Build System:** CMake
-- **Serialization:** JSON (nlohmann/json)
-
----
-
-## ⭐️ Star this project if you're into custom engine development!
