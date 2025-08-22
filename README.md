@@ -44,14 +44,14 @@ The goal: Build a **scalable, low-level game engine** to enable:
 
 ## 🎮 Features
 
-Engine                 | 2D                    | 3D                     | Coming
--------------          | -------------         | -------------          | -------------
-Scenes Serialization   | Quad rendering        | Perspective Camera     | Fustrum Culling
-ECS                    | Textures              |                        | Audio Engine
-Physics                | Circle rendering      |                        | Protection
-Keyboard IO            | Batching              |                        | Vulkan
-Mouse IO               | Perspective Camera    |                        | Compression
-Midi IO                | Orthographic Camera   |                        | Mip Mapping
-Scene editor           | Dynamic font rendering|                        | Better profiler
-Profiler               |                       |                        | 2D lights
-Stats                  |                       |                        | ...
+Engine                 | 2D                          | 3D                     | Coming
+-------------          | -------------               | -------------          | -------------
+Scenes Serialization   | Quad/Circle/Line rendering  | Perspective Camera     | Fustrum Culling
+ECS                    | Textures                    |                        | Audio Engine
+Physics                | Collider rendering          |                        | Protection
+Keyboard IO            | Batching                    |                        | Vulkan
+Mouse IO               | Perspective Camera          |                        | Compression
+Midi IO                | Orthographic Camera         |                        | Mip Mapping
+Scene editor           | Dynamic font rendering      |                        | Better profiler
+Profiler               |                             |                        | 2D lights
+Stats                  |                             |                        | ...
