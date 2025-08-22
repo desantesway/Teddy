@@ -5,7 +5,7 @@ It provides a modern, modular foundation for both 2D and future 3D game developm
 
 ---
 
-## 🧪 Usage
+## 🧪 Usage (Windows)
 
 1. Clone the repository
 ```bash
