@@ -1,14 +1,80 @@
 Scene: Untitled
 Entities:
-  - Entity: 12421205768851650281
+  - Entity: 10718302771081779153
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.005
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.69
+  - Entity: 11564119540436878805
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 11.9]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 12421205768851650281
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [-1.6, 2.8, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
     TextComponent:
-      TextString: "aasd>?\nadfksdk\nfds"
+      TextString: "aasd>?\nadfksdk\nfddf"
       Color: [0.4324324, 1, 0.71731174, 1]
       Kerning: 0
       LineSpacing: 0
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 1
+      Restitution: 0.53
+  - Entity: 13926145505531267921
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, -1.8, 0]
+      Rotation: [0, 0, 0]
+      Scale: [6.3, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0

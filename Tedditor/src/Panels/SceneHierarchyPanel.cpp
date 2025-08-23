@@ -59,6 +59,11 @@ namespace Teddy
 				m_ComponentToEntityTree["Circles"].push_back(entity);
 				isEmpty = false;
 			}
+			if (entity.HasComponent<TextComponent>())
+			{
+				m_ComponentToEntityTree["Text"].push_back(entity);
+				isEmpty = false;
+			}
 			if (isEmpty)
 			{
 				m_ComponentToEntityTree["Empty"].push_back(entity);
