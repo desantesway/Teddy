@@ -328,6 +328,7 @@ namespace Teddy
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
+			DisplayAddComponentEntry<TextComponent>("Text");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
@@ -476,6 +477,28 @@ namespace Teddy
 				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			});
+
+		DrawComponent<TextComponent>("Text", true, entity, [](auto& component)
+			{
+
+				auto& string = component.TextString;
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				std::strncpy(buffer, string.c_str(), sizeof(buffer));
+
+				if (ImGui::InputText("##Text", buffer, sizeof(buffer)))
+				{
+					string = std::string(buffer);
+				}
+
+				// TODO : Font selection
+
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				ImGui::DragFloat("Kerning", &component.Kerning, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.1f, 0.0f, 100.0f);
 			});
 	}
 }

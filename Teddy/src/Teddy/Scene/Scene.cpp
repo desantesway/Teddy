@@ -237,6 +237,16 @@ namespace Teddy
 				}
 			}
 
+			// Draw strings
+			{
+				auto group = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
+				for (auto entity : group)
+				{
+					auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
+					Renderer2D::DrawString(text.TextString, text.FontAsset, transform.GetTransform(), text.Color);
+				}
+			}
+
 			Renderer2D::EndScene();
 
 		}
@@ -268,20 +278,15 @@ namespace Teddy
 			}
 		}
 
-		Renderer2D::DrawString(R"(Ora boas
-			
-			swfgujsdhf
-sdfksdjmnf
-sdf
-s
-dfmksdmf
-msdk
-f
-ksdmf
-ksmd
-fkm
-			
-			)", Font::GetDefault(), glm::mat4(1.0f), glm::vec4(1.0f));
+		// Draw strings
+		{
+			auto group = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
+				Renderer2D::DrawString(text.TextString, text.FontAsset, transform.GetTransform(), text.Color);
+			}
+		}
 
 		Renderer2D::EndScene();
 	}
@@ -397,6 +402,11 @@ fkm
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
 	{
 	}
 
