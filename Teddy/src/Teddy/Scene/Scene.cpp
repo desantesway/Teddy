@@ -337,7 +337,11 @@ fkm
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
 
-				b2Polygon box = b2MakeBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
+				b2CosSin cs = b2ComputeCosSin(transform.Rotation.z);
+				b2Polygon box = b2MakeOffsetBox(bc2d.Size.x * transform.Scale.x, 
+					bc2d.Size.y * transform.Scale.y, {bc2d.Offset.x, bc2d.Offset.y}, 
+					b2MakeRot(0));
+
 				b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &box);
 			}
 
