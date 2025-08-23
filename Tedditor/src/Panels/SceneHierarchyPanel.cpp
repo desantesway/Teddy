@@ -490,6 +490,7 @@ namespace Teddy
 				}
 
 				// TODO : Font selection
+				// TODO : Recalculate text on font change
 
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 

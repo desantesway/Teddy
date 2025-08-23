@@ -1,50 +1,14 @@
 Scene: Untitled
 Entities:
-  - Entity: 3801410004892991688
+  - Entity: 12421205768851650281
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-  - Entity: 8220521913706875342
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.7853982
-        PerspectiveNear: 0.01
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-  - Entity: 7044118930539804777
-    TagComponent:
-      Tag: Red Square
-    TransformComponent:
-      Translation: [2.3, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.5, 0.5, 1]
-      TexturePath: ""
-      TilingFactor: 1
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
+    TextComponent:
+      TextString: "aasd>?\nadfksdk\nfds"
+      Color: [0.4324324, 1, 0.71731174, 1]
+      Kerning: 0
+      LineSpacing: 0

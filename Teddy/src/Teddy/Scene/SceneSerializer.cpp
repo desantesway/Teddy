@@ -87,6 +87,7 @@ namespace YAML
 	};
 
 }
+
 namespace Teddy 
 {
 
@@ -221,6 +222,22 @@ namespace Teddy
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (entity.HasComponent<TextComponent>())
+		{
+			out << YAML::Key << "TextComponent";
+			out << YAML::BeginMap; // TextComponent
+
+			auto& textComponent = entity.GetComponent<TextComponent>();
+
+			out << YAML::Key << "TextString" << YAML::Value << textComponent.TextString;
+			//out << YAML::Key << "FontAsset" << YAML::Value << textComponent.FontAsset; // TODO
+			out << YAML::Key << "Color" << YAML::Value << textComponent.Color;
+			out << YAML::Key << "Kerning" << YAML::Value << textComponent.Kerning;
+			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
+
+			out << YAML::EndMap; // TextComponent
 		}
 
 		if (entity.HasComponent<Rigidbody2DComponent>())
@@ -378,6 +395,19 @@ namespace Teddy
 					crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
 					crc.Thickness = circleRendererComponent["Thickness"].as<float>();
 					crc.Fade = circleRendererComponent["Fade"].as<float>();
+				}
+
+				auto textComponent = entity["TextComponent"];
+
+				if (textComponent)
+				{
+					auto& txc = deserializedEntity.AddComponent<TextComponent>();
+					txc.TextString = textComponent["TextString"].as<std::string>();
+					//txc.FontAsset = textComponent["FontAsset"].as<std::string>(); // TODO
+					txc.Color = textComponent["Color"].as<glm::vec4>();
+					txc.Kerning = textComponent["Kerning"].as<float>();
+					txc.LineSpacing = textComponent["LineSpacing"].as<float>();
+					txc.CalculateTextQuad();
 				}
 
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
