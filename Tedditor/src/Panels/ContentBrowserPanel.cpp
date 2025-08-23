@@ -65,10 +65,16 @@ namespace Teddy
 				if (filenameString.ends_with(".teddy"))
 				{
 					ImGui::SetDragDropPayload("SCENE_CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
-				} else if (filenameString.ends_with(".png") || filenameString.ends_with(".jpg"))
+				} 
+				else if (filenameString.ends_with(".png") || filenameString.ends_with(".jpg"))
 				{
 					ImGui::SetDragDropPayload("TEXTURE_CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
 				}
+				else if (filenameString.ends_with(".ttf"))
+				{
+					ImGui::SetDragDropPayload("FONT_CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				}
+
 
 				ImGui::EndDragDropSource();
 			}

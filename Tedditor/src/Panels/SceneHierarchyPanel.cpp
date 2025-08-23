@@ -494,6 +494,25 @@ namespace Teddy
 					component.SetString(std::string(textBuffer));
 				}
 
+				ImGui::Button("Font", ImVec2(100.0f, 0.0f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FONT_CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path fontPath = std::filesystem::path(g_AssetPath) / path;
+
+						static Ref<Font> font;
+						font = CreateRef<Font>(fontPath);
+
+						if (font)
+							component.FontAsset = font;
+						else
+							TED_WARN("Could not load font {0}", fontPath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
 				// TODO : Font selection
 				// TODO : Recalculate text on font change
 
