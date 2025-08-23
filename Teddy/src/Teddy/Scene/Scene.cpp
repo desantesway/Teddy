@@ -6,6 +6,9 @@
 #include "Teddy/Scene/Entity.h"
 #include "Teddy/Scene/ScriptableEntity.h"
 
+#include "Teddy/Renderer/MSDFData.h"
+
+#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/glm.hpp>
 
 namespace Teddy
@@ -313,6 +316,94 @@ namespace Teddy
 	
 	}
 
+	glm::mat4 GetTextTransformm(TextComponent& text)
+	{
+		const auto& fontGeometry = text.FontAsset->GetMSDFData()->FontGeometry;
+		const auto& metrics = fontGeometry.getMetrics();
+
+		double x = 0.0;
+		double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+		double y = 0.0;
+		const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
+
+		// Initialize bounding box
+		glm::vec2 minBound(std::numeric_limits<float>::max());
+		glm::vec2 maxBound(std::numeric_limits<float>::lowest());
+
+		for (size_t i = 0; i < text.TextString.size(); i++)
+		{
+			char character = text.TextString[i];
+
+			if (character == '\r')
+				continue;
+
+			if (character == '\n')
+			{
+				x = 0;
+				y -= fsScale * metrics.lineHeight + text.LineSpacing;
+				continue;
+			}
+
+			if (character == ' ')
+			{
+				float advance = spaceGlyphAdvance;
+				if (i < text.TextString.size() - 1)
+				{
+					char nextCharacter = text.TextString[i + 1];
+					double dAdvance;
+					fontGeometry.getAdvance(dAdvance, character, nextCharacter);
+					advance = (float)dAdvance;
+				}
+
+				x += fsScale * advance + text.Kerning;
+				continue;
+			}
+
+			if (character == '\t')
+			{
+				x += 4.0f * (fsScale * spaceGlyphAdvance + text.Kerning);
+				continue;
+			}
+
+			auto glyph = fontGeometry.getGlyph(character);
+
+			if (!glyph)
+				glyph = fontGeometry.getGlyph('?');
+			if (!glyph)
+				break;
+
+			double pl, pb, pr, pt;
+			glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+			glm::vec2 quadMin((float)pl, (float)pb);
+			glm::vec2 quadMax((float)pr, (float)pt);
+
+			quadMin *= fsScale, quadMax *= fsScale;
+			quadMin += glm::vec2(x, y);
+			quadMax += glm::vec2(x, y);
+
+			minBound = glm::min(minBound, quadMin);
+			maxBound = glm::max(maxBound, quadMax);
+
+			if (i < text.TextString.size() - 1)
+			{
+				double advance = glyph->getAdvance();
+				char nextCharacter = text.TextString[i + 1];
+				fontGeometry.getAdvance(advance, character, nextCharacter);
+
+				x += fsScale * advance + text.Kerning;
+			}
+		}
+
+		glm::vec2 textSize = maxBound - minBound;
+		glm::vec2 center = (minBound + maxBound) * 0.5f;
+
+		glm::vec3 position = glm::vec3(center, 0.0f);
+		glm::vec3 scale = glm::vec3(textSize, 1.0f);
+
+		return glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), scale);
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		b2WorldDef worldDef = b2DefaultWorldDef();
@@ -329,15 +420,17 @@ namespace Teddy
 
 			b2BodyDef bodyDef = b2DefaultBodyDef();
 			bodyDef.type = Rigidbody2DTypeToBox2Body(rb2d.Type);
-			bodyDef.position = b2Vec2( transform.Translation.x, transform.Translation.y );
 			bodyDef.rotation = b2MakeRot(transform.Rotation.z);
 			bodyDef.motionLocks.angularZ = rb2d.FixedRotation;
+			bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
+
 			
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
 
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
 				shapeDef.density = bc2d.Density;
@@ -345,9 +438,30 @@ namespace Teddy
 				shapeDef.material.friction = bc2d.Friction;
 
 				b2CosSin cs = b2ComputeCosSin(transform.Rotation.z);
-				b2Polygon box = b2MakeOffsetBox(bc2d.Size.x * transform.Scale.x, 
-					bc2d.Size.y * transform.Scale.y, {bc2d.Offset.x, bc2d.Offset.y}, 
-					b2MakeRot(0));
+				b2Polygon box;
+
+				if (entity.HasComponent<TextComponent>())
+				{
+					auto& text = entity.GetComponent<TextComponent>();
+					
+					glm::vec3 scale, translation, skew;
+					glm::quat rotation;
+					glm::vec4 perspective;
+
+					glm::decompose(GetTextTransformm(text), scale, rotation, translation, skew, perspective);
+
+					box = b2MakeOffsetBox(bc2d.Size.x * transform.Scale.x * scale.x,
+						bc2d.Size.y * transform.Scale.y * scale.y,
+						{ bc2d.Offset.x + translation.x, 
+						bc2d.Offset.y + translation.y },
+						b2MakeRot(0));
+				}
+				else
+				{
+					box = b2MakeOffsetBox(bc2d.Size.x * transform.Scale.x,
+						bc2d.Size.y * transform.Scale.y, { bc2d.Offset.x, bc2d.Offset.y },
+						b2MakeRot(0));
+				}
 
 				b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &box);
 			}
