@@ -1,5 +1,6 @@
 #include "TeddyPch.h"
-#include "Teddy/Core/Font.h"
+#include "Teddy/Renderer/Font.h"
+#include "Teddy/Renderer/MSDFData.h"
 
 #include <msdf-atlas-gen.h>
 #include <msdf-atlas-gen/FontGeometry.h>
@@ -8,14 +9,10 @@
 namespace Teddy
 {
 
-    struct MSDFData
+    Font::~Font() 
     {
-        msdfgen::FontHandle* Font;
-        msdf_atlas::FontGeometry FontGeometry;
-		std::vector<msdf_atlas::GlyphGeometry> Glyphs;
-    };
-
-    Font::~Font() = default;
+        delete m_MSDFData;
+    }
 
     template<typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
     static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
@@ -92,6 +89,31 @@ namespace Teddy
             int width, height;
             atlasPacker.getDimensions(width, height);
 
+            #define DEFAULT_ANGLE_THRESHOLD 3.0
+            #define LCG_MULTIPLIER 6364136223846793005ull
+            #define LCG_INCREMENT 1442695040888963407ull
+            #define THREAD_COUNT 8
+
+            uint64_t coloringSeed = 0;
+            bool expensiveColoring = false;
+
+            if (expensiveColoring)
+            {
+                msdf_atlas::Workload([&glyphs = m_MSDFData->Glyphs, &coloringSeed](int i, int threadNo) -> bool {
+                    unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
+                    glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+                    return true;
+                    }, m_MSDFData->Glyphs.size()).finish(THREAD_COUNT);
+            }
+            else {
+                unsigned long long glyphSeed = coloringSeed;
+                for (msdf_atlas::GlyphGeometry& glyph : m_MSDFData->Glyphs)
+                {
+                    glyphSeed *= LCG_MULTIPLIER;
+                    glyph.edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+                }
+            }
+
             m_AtlasTexture = CreateAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("Test", 
                 (float)atlasPacker.getScale(), m_MSDFData->Glyphs, m_MSDFData->FontGeometry, width, height);
 
@@ -99,5 +121,14 @@ namespace Teddy
         }
         msdfgen::deinitializeFreetype(ft);
 	}
+
+    Ref<Font> Font::GetDefault()
+    {
+        static Ref<Font> DefaultFont;
+        if (!DefaultFont)
+            DefaultFont = CreateRef<Font>("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
+
+        return DefaultFont;
+    }
 
 }

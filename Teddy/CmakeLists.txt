@@ -62,10 +62,6 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.cpp
 
-    # Font
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Font.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/Font.cpp
-
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Events <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -152,6 +148,11 @@ add_library(Teddy STATIC
     # Uniform Buffer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/UniformBuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/UniformBuffer.cpp
+
+    # Font
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Font.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Font.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/MSDFData.h
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Scene <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

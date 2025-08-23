@@ -236,7 +236,7 @@ namespace Teddy
 					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
 				}
 			}
-		
+
 			Renderer2D::EndScene();
 
 		}
@@ -267,6 +267,21 @@ namespace Teddy
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
 			}
 		}
+
+		Renderer2D::DrawString(R"(Ora boas
+			
+			swfgujsdhf
+sdfksdjmnf
+sdf
+s
+dfmksdmf
+msdk
+f
+ksdmf
+ksmd
+fkm
+			
+			)", Font::GetDefault(), glm::mat4(1.0f), glm::vec4(1.0f));
 
 		Renderer2D::EndScene();
 	}

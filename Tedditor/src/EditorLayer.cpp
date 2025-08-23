@@ -4,7 +4,7 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Teddy/Renderer/Shader.h"
-#include "Teddy/Core/Font.h"
+#include "Teddy/Renderer/Font.h"
 
 #include <imgui.h>
 
@@ -17,14 +17,14 @@
 namespace Teddy
 {
 
-	static Font* s_Font;
+	static Ref<Font> s_Font;
 
     extern const std::filesystem::path g_AssetPath;
 
     EditorLayer::EditorLayer()
         : Layer("Editor Layer")
     {
-        s_Font = new Font("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
+        s_Font = Font::GetDefault();
     }
 
     void EditorLayer::OnAttach()
@@ -366,12 +366,12 @@ namespace Teddy
             auto viewBox = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
             for (auto [entity, tc, bc2d] : viewBox.each())
             {
-                glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
                 glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
-                glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-                    * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                    * glm::scale(glm::mat4(1.0f), scale);
+                glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+                * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
+                * glm::scale(glm::mat4(1.0f), scale);
 
                 Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
 
