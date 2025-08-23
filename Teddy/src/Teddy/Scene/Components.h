@@ -156,7 +156,14 @@ namespace Teddy
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;
 
+		TransformComponent TextQuad;
+
 		TextComponent() = default;
+
+		TextComponent(const TextComponent&) = default;
+		void CalculateTextQuad();
+
+		void SetString(std::string string) { TextString = string; CalculateTextQuad();}
 	};
 
 	template<typename... Component>

@@ -164,6 +164,7 @@ add_library(Teddy STATIC
 
     # Component
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Components.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Components.cpp
 
     # Entity
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/Entity.h

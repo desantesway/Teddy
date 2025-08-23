@@ -486,7 +486,7 @@ namespace Teddy
 				memset(textBuffer, 0, sizeof(textBuffer));
 				strncpy(textBuffer, component.TextString.c_str(), sizeof(textBuffer) - 1);
 				if (ImGui::InputTextMultiline("Text", textBuffer, sizeof(textBuffer))) {
-					component.TextString = std::string(textBuffer);
+					component.SetString(std::string(textBuffer));
 				}
 
 				// TODO : Font selection

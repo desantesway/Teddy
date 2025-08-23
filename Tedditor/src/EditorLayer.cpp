@@ -55,7 +55,7 @@ namespace Teddy
 
         auto redSquare = m_ActiveScene->CreateEntity("Red Square");
         redSquare.AddComponent<TextComponent>();
-		redSquare.GetComponent<TextComponent>().TextString = "Teddy Engine";
+		redSquare.GetComponent<TextComponent>().SetString("Teddy Engine");
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
@@ -313,8 +313,6 @@ namespace Teddy
             ImGui::EndDragDropTarget();
         }
 
-
-
         ImGui::End();
 
         ImGui::PopStyleVar();
@@ -323,95 +321,6 @@ namespace Teddy
 
         ImGui::End();
 
-    }
-
-	// TODO: Move to TextComponent and calculate it on text change
-    glm::mat4 GetTextTransform(TextComponent& text)
-    {
-        const auto& fontGeometry = text.FontAsset->GetMSDFData()->FontGeometry;
-        const auto& metrics = fontGeometry.getMetrics();
-
-        double x = 0.0;
-        double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
-        double y = 0.0;
-        const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
-
-        // Initialize bounding box
-        glm::vec2 minBound(std::numeric_limits<float>::max());
-        glm::vec2 maxBound(std::numeric_limits<float>::lowest());
-
-        for (size_t i = 0; i < text.TextString.size(); i++)
-        {
-            char character = text.TextString[i];
-
-            if (character == '\r')
-                continue;
-
-            if (character == '\n')
-            {
-                x = 0;
-                y -= fsScale * metrics.lineHeight + text.LineSpacing;
-                continue;
-            }
-
-            if (character == ' ')
-            {
-                float advance = spaceGlyphAdvance;
-                if (i < text.TextString.size() - 1)
-                {
-                    char nextCharacter = text.TextString[i + 1];
-                    double dAdvance;
-                    fontGeometry.getAdvance(dAdvance, character, nextCharacter);
-                    advance = (float)dAdvance;
-                }
-
-                x += fsScale * advance + text.Kerning;
-                continue;
-            }
-
-            if (character == '\t')
-            {
-                x += 4.0f * (fsScale * spaceGlyphAdvance + text.Kerning);
-                continue;
-            }
-
-            auto glyph = fontGeometry.getGlyph(character);
-
-            if (!glyph)
-                glyph = fontGeometry.getGlyph('?');
-            if (!glyph)
-                break;
-
-            double pl, pb, pr, pt;
-            glyph->getQuadPlaneBounds(pl, pb, pr, pt);
-            glm::vec2 quadMin((float)pl, (float)pb);
-            glm::vec2 quadMax((float)pr, (float)pt);
-
-            quadMin *= fsScale, quadMax *= fsScale;
-            quadMin += glm::vec2(x, y);
-            quadMax += glm::vec2(x, y);
-
-            minBound = glm::min(minBound, quadMin);
-            maxBound = glm::max(maxBound, quadMax);
-
-            if (i < text.TextString.size() - 1)
-            {
-                double advance = glyph->getAdvance();
-                char nextCharacter = text.TextString[i + 1];
-                fontGeometry.getAdvance(advance, character, nextCharacter);
-
-                x += fsScale * advance + text.Kerning;
-            }
-        }
-
-        glm::vec2 textSize = maxBound - minBound;
-        glm::vec2 center = (minBound + maxBound) * 0.5f;
-
-        glm::vec3 position = glm::vec3(center, 0.0f);
-        glm::vec3 scale = glm::vec3(textSize, 1.0f);
-
-        return glm::translate(glm::mat4(1.0f), position)
-            * glm::scale(glm::mat4(1.0f), scale);
     }
 
     void EditorLayer::OnOverlayRender()
@@ -467,7 +376,7 @@ namespace Teddy
                         * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                         * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
                         * glm::scale(glm::mat4(1.0f), scale)
-                        * GetTextTransform(ent.GetComponent<TextComponent>());
+                        * ent.GetComponent<TextComponent>().TextQuad.GetTransform();
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
@@ -498,7 +407,7 @@ namespace Teddy
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
                     * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                     * glm::scale(glm::mat4(1.0f), scale)
-                    * GetTextTransform(selectedEntity.GetComponent<TextComponent>());
+                    * selectedEntity.GetComponent<TextComponent>().TextQuad.GetTransform();
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
