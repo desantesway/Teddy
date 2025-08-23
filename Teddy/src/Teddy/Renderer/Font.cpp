@@ -40,7 +40,7 @@ namespace Teddy
     }
 
 	Font::Font(const std::filesystem::path& filepath)
-		: m_MSDFData(new MSDFData())
+		: m_MSDFData(new MSDFData()), m_Path(filepath.string())
 	{
         msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
 

@@ -40,13 +40,14 @@ Entities:
       FixedAspectRatio: false
   - Entity: 12421205768851650281
     TagComponent:
-      Tag: Empty Entity
+      Tag: text
     TransformComponent:
       Translation: [-1.6, 2.8, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     TextComponent:
       TextString: "aasd>?\nadfksdk\nfddf"
+      FontAsset: assets\fonts\instrument-sans\ttf\InstrumentSansCondensed-Italic.ttf
       Color: [0.4324324, 1, 0.71731174, 1]
       Kerning: 0
       LineSpacing: 0

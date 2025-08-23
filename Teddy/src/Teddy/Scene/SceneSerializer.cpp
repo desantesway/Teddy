@@ -232,7 +232,9 @@ namespace Teddy
 			auto& textComponent = entity.GetComponent<TextComponent>();
 
 			out << YAML::Key << "TextString" << YAML::Value << textComponent.TextString;
-			//out << YAML::Key << "FontAsset" << YAML::Value << textComponent.FontAsset; // TODO
+
+			out << YAML::Key << "FontAsset" << YAML::Value << textComponent.FontAsset->GetPath();
+
 			out << YAML::Key << "Color" << YAML::Value << textComponent.Color;
 			out << YAML::Key << "Kerning" << YAML::Value << textComponent.Kerning;
 			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
@@ -403,7 +405,14 @@ namespace Teddy
 				{
 					auto& txc = deserializedEntity.AddComponent<TextComponent>();
 					txc.TextString = textComponent["TextString"].as<std::string>();
-					//txc.FontAsset = textComponent["FontAsset"].as<std::string>(); // TODO
+
+					if (textComponent["FontAsset"])
+						txc.FontAsset = CreateRef<Font>(textComponent["FontAsset"].as<std::string>());
+					else
+					{
+						txc.FontAsset = Font::GetDefault();
+					}
+
 					txc.Color = textComponent["Color"].as<glm::vec4>();
 					txc.Kerning = textComponent["Kerning"].as<float>();
 					txc.LineSpacing = textComponent["LineSpacing"].as<float>();

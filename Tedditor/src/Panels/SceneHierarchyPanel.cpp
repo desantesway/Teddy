@@ -486,12 +486,14 @@ namespace Teddy
 
 		DrawComponent<TextComponent>("Text", true, entity, [](auto& component)
 			{
+				bool recalculate = false;
 
 				static char textBuffer[1024 * 4];
 				memset(textBuffer, 0, sizeof(textBuffer));
 				strncpy(textBuffer, component.TextString.c_str(), sizeof(textBuffer) - 1);
 				if (ImGui::InputTextMultiline("Text", textBuffer, sizeof(textBuffer))) {
-					component.SetString(std::string(textBuffer));
+					component.TextString = std::string(textBuffer);
+					recalculate = true;
 				}
 
 				ImGui::Button("Font", ImVec2(100.0f, 0.0f));
@@ -509,17 +511,18 @@ namespace Teddy
 							component.FontAsset = font;
 						else
 							TED_WARN("Could not load font {0}", fontPath.filename().string());
+						recalculate = true;
 					}
 					ImGui::EndDragDropTarget();
 				}
 
-				// TODO : Font selection
-				// TODO : Recalculate text on font change
+				recalculate = recalculate || ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				recalculate = recalculate || ImGui::DragFloat("Kerning", &component.Kerning, 0.01f, 0.0f, 10.0f);
+				recalculate = recalculate || ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.1f, 0.0f, 100.0f);
 
-				ImGui::DragFloat("Kerning", &component.Kerning, 0.01f, 0.0f, 10.0f);
-				ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.1f, 0.0f, 100.0f);
+				if (recalculate)
+					component.CalculateTextQuad();
 			});
 	}
 }

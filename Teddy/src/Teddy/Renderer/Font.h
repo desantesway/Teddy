@@ -17,9 +17,14 @@ namespace Teddy
 		Ref<Texture2D> GetAtlasTexture() const { return m_AtlasTexture; }
 
 		static Ref<Font> GetDefault();
+
+		std::string& GetPath() { return m_Path; }
+
 	private:
 		MSDFData* m_MSDFData;
 		Ref<Texture2D> m_AtlasTexture;
+
+		std::string m_Path;
 	};
 
 }
