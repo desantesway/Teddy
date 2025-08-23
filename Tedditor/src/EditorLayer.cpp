@@ -353,7 +353,11 @@ namespace Teddy
             {
 
                 // Default is 0.5f and / 0.5f = * 2
-                glm::vec3 scale = glm::vec3(cc2d.Radius * tc.Scale.x * 2, cc2d.Radius * tc.Scale.y * 2, 1.0f);
+                
+                float sx = std::abs(tc.Scale.x);
+                float sy = std::abs(tc.Scale.y);
+                float maxScale = glm::max(sx, sy) * cc2d.Radius;
+                glm::vec3 scale = glm::vec3(maxScale * 2, maxScale * 2, 1.0f);
 
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
                     * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
