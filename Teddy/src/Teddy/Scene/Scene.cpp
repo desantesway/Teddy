@@ -224,7 +224,7 @@ namespace Teddy
 				auto& transform = std::get<0>(tuple);
 				auto& sprite = std::get<1>(tuple);
 
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
 			}
 
 			// Draw circles
@@ -233,7 +233,8 @@ namespace Teddy
 				for (auto entity : group)
 				{
 					auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
+					Renderer2D::DrawCircle(transform.GetTransform(), 
+						circle.Color, circle.Thickness, circle.Fade, (int)entity);
 				}
 			}
 
@@ -243,7 +244,7 @@ namespace Teddy
 				for (auto entity : group)
 				{
 					auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
-					Renderer2D::DrawString(text.TextString, text.FontAsset, transform.GetTransform(), text.Color);
+					Renderer2D::DrawString(text, transform.GetTransform(), (int)entity);
 				}
 			}
 
@@ -265,7 +266,7 @@ namespace Teddy
 			auto& sprite = std::get<1>(tuple);
 			auto& color = sprite.Color;
 
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite, static_cast<int>(static_cast<uint32_t>(entity)));
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
 		}
 
 		// Draw circles
@@ -274,7 +275,9 @@ namespace Teddy
 			for (auto entity : group)
 			{
 				auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, static_cast<int>(static_cast<uint32_t>(entity)));
+				Renderer2D::DrawCircle(transform.GetTransform(), 
+					circle.Color, circle.Thickness, circle.Fade, 
+					(int)entity);
 			}
 		}
 
@@ -284,7 +287,7 @@ namespace Teddy
 			for (auto entity : group)
 			{
 				auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
-				Renderer2D::DrawString(text.TextString, text.FontAsset, transform.GetTransform(), text.Color);
+				Renderer2D::DrawString(text, transform.GetTransform(), (int)entity);
 			}
 		}
 

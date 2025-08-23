@@ -482,15 +482,11 @@ namespace Teddy
 		DrawComponent<TextComponent>("Text", true, entity, [](auto& component)
 			{
 
-				auto& string = component.TextString;
-
-				char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
-				std::strncpy(buffer, string.c_str(), sizeof(buffer));
-
-				if (ImGui::InputText("##Text", buffer, sizeof(buffer)))
-				{
-					string = std::string(buffer);
+				static char textBuffer[1024 * 4];
+				memset(textBuffer, 0, sizeof(textBuffer));
+				strncpy(textBuffer, component.TextString.c_str(), sizeof(textBuffer) - 1);
+				if (ImGui::InputTextMultiline("Text", textBuffer, sizeof(textBuffer))) {
+					component.TextString = std::string(textBuffer);
 				}
 
 				// TODO : Font selection
