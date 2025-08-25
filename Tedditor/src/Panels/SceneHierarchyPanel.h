@@ -22,6 +22,9 @@ namespace Teddy
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 
+		template<typename T>
+		void AddToComponentTree(Entity& entity, bool& empty, std::string title);
+
 		void CalculateComponentTree();
 
 		bool DrawEntityNode(Entity entity);

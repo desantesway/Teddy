@@ -32,6 +32,16 @@ namespace Teddy
 		m_SelectionContext = {};
 	}
 
+	template<typename T>
+	void SceneHierarchyPanel::AddToComponentTree(Entity& entity, bool& empty, std::string title)
+	{
+		if (entity.HasComponent<T>())
+		{
+			m_ComponentToEntityTree[title].push_back(entity);
+			empty = false;
+		}
+	}
+
 	void SceneHierarchyPanel::CalculateComponentTree()
 	{
 		m_ComponentToEntityTree = {};
@@ -43,31 +53,13 @@ namespace Teddy
 
 			bool isEmpty = true;
 
-			// TODO: Add a simple template to check for component existence
-			if (entity.HasComponent<CameraComponent>())
-			{
-				m_ComponentToEntityTree["Cameras"].push_back(entity);
-				isEmpty = false;
-			}
-			if (entity.HasComponent<SpriteRendererComponent>())
-			{
-				m_ComponentToEntityTree["Sprites"].push_back(entity);
-				isEmpty = false;
-			}
-			if (entity.HasComponent<CircleRendererComponent>())
-			{
-				m_ComponentToEntityTree["Circles"].push_back(entity);
-				isEmpty = false;
-			}
-			if (entity.HasComponent<TextComponent>())
-			{
-				m_ComponentToEntityTree["Text"].push_back(entity);
-				isEmpty = false;
-			}
+			AddToComponentTree<CameraComponent>(entity, isEmpty, "Cameras");
+			AddToComponentTree<SpriteRendererComponent>(entity, isEmpty, "Sprites");
+			AddToComponentTree<CircleRendererComponent>(entity, isEmpty, "Circles");
+			AddToComponentTree<TextComponent>(entity, isEmpty, "Text");
+
 			if (isEmpty)
-			{
 				m_ComponentToEntityTree["Empty"].push_back(entity);
-			}
 		}
 	}
 
