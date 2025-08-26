@@ -12,6 +12,44 @@ foreach(target IN LISTS SDL3_TARGETS)
     set_target_properties(${target} PROPERTIES FOLDER "Dependencies/Window")
 endforeach()
 
+# optick
+include_directories(optick)
+
+set(OPTICK_SRC
+    optick/src/optick.config.h
+    optick/src/optick.h
+    optick/src/optick_capi.cpp
+    optick/src/optick_capi.h
+    optick/src/optick_common.h
+    optick/src/optick_core.cpp
+    optick/src/optick_core.freebsd.h
+    optick/src/optick_core.h
+    optick/src/optick_core.linux.h
+    optick/src/optick_core.macos.h
+    optick/src/optick_core.platform.h
+    optick/src/optick_core.win.h
+    optick/src/optick_gpu.cpp
+    optick/src/optick_gpu.d3d12.cpp
+    optick/src/optick_gpu.h
+    optick/src/optick_gpu.vulkan.cpp
+    optick/src/optick_memory.h
+    optick/src/optick_message.cpp
+    optick/src/optick_message.h
+    optick/src/optick_miniz.cpp
+    optick/src/optick_miniz.h
+    optick/src/optick_serialization.cpp
+    optick/src/optick_serialization.h
+    optick/src/optick_server.cpp
+    optick/src/optick_server.h
+)
+
+add_library(optick STATIC ${OPTICK_SRC})
+
+target_include_directories(optick PUBLIC optick/src)
+
+target_link_libraries(Teddy PUBLIC optick)
+set_target_properties(optick PROPERTIES FOLDER "Dependencies/Profiling")
+
 # freetype
 add_subdirectory(freetype)
 set_target_properties(freetype PROPERTIES FOLDER "Dependencies/Text")
@@ -356,14 +394,14 @@ if(Vulkan_FOUND)
         set(SPIRV_EXTRA_INCLUDE "${VULKAN_SDK}/Include")
     endif()
 
-    foreach(tgt IN ITEMS Teddy Sandbox Tedditor)
-        target_include_directories(${tgt} PRIVATE ${Vulkan_INCLUDE_DIRS} ${SPIRV_EXTRA_INCLUDE})
+    foreach(tgt IN ITEMS Teddy optick)
+        target_include_directories(${tgt} PUBLIC ${Vulkan_INCLUDE_DIRS} ${SPIRV_EXTRA_INCLUDE})
         # Core Vulkan + shaderc (shaderc_combined already pulls SPIRV-Tools internally)
-        target_link_libraries(${tgt} PRIVATE Vulkan::Vulkan Vulkan::shaderc_combined)
+        target_link_libraries(${tgt} PUBLIC Vulkan::Vulkan Vulkan::shaderc_combined)
         # Only link the extra libraries if they were found (TARGET exists)
         foreach(dep IN ITEMS SPIRV_Cross_Core SPIRV_Cross_GLSL SPIRV_Tools SPIRV_Tools_Opt VkLayer_utils)
             if(TARGET ${dep})
-                target_link_libraries(${tgt} PRIVATE ${dep})
+                target_link_libraries(${tgt} PUBLIC ${dep})
             endif()
         endforeach()
         target_compile_definitions(${tgt} PRIVATE TED_VULKAN_ENABLED)

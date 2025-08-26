@@ -7,13 +7,15 @@
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Renderer/MSDFData.h"
 
+#include "Teddy/Scene/SceneSerializer.h"
+#include "Teddy/Utils/PlatformUtils.h"
+
 #include <imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Teddy/Scene/SceneSerializer.h"
-#include "Teddy/Utils/PlatformUtils.h"
+#include <optick.h>
 
 namespace Teddy
 {
@@ -27,7 +29,7 @@ namespace Teddy
 
     void EditorLayer::OnAttach()
     {
-        TED_PROFILE_FUNCTION();
+        OPTICK_FRAME("MainThread");
 
         m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
         m_IconSimulate = Texture2D::Create("Resources/Icons/PlayButton.png");
