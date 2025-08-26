@@ -36,3 +36,6 @@
 [submodule "Teddy/vendor/freetype"]
 	path = Teddy/vendor/freetype
 	url = https://github.com/freetype/freetype.git
+[submodule "Teddy/vendor/optick"]
+	path = Teddy/vendor/optick
+	url = https://github.com/crankyted/optick.git
