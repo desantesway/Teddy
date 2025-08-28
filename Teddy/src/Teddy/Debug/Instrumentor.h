@@ -2,34 +2,12 @@
 
 #include "Teddy/Core/Log.h"
 
-#include <algorithm>
-#include <chrono>
-#include <fstream>
-#include <iomanip>
 #include <string>
-#include <thread>
-#include <mutex>
-#include <sstream>
 
-// TODO: Improve this
+#include <optick.h>
+
 namespace Teddy 
 {
-
-	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
-
-	struct ProfileResult
-	{
-		std::string Name;
-
-		FloatingPointMicroseconds Start;
-		std::chrono::microseconds ElapsedTime;
-		std::thread::id ThreadID;
-	};
-
-	struct InstrumentationSession
-	{
-		std::string Name;
-	};
 
 	class Instrumentor
 	{
@@ -37,72 +15,15 @@ namespace Teddy
 		Instrumentor(const Instrumentor&) = delete;
 		Instrumentor(Instrumentor&&) = delete;
 
-		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
+		void BeginSession()
 		{
-			std::lock_guard lock(m_Mutex);
-			if (m_CurrentSession)
-			{
-				// If there is already a current session, then close it before beginning new one.
-				// Subsequent profiling output meant for the original session will end up in the
-				// newly opened session instead.  That's better than having badly formatted
-				// profiling output.
-				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
-				{
-					TED_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
-				}
-				InternalEndSession();
-			}
-			m_OutputStream.open(filepath);
-
-			if (m_OutputStream.is_open())
-			{
-				m_CurrentSession = new InstrumentationSession({ name });
-				WriteHeader();
-			}
-			else
-			{
-				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
-				{
-					TED_CORE_ERROR("Instrumentor could not open results file '{0}'.", filepath);
-				}
-			}
+			OPTICK_START_CAPTURE();
 		}
 
-		void EndSession()
+		void EndSession(const std::string& filepath = "results.opt")
 		{
-			std::lock_guard lock(m_Mutex);
-			InternalEndSession();
-		}
-
-		void WriteProfile(const ProfileResult& result)
-		{
-			std::lock_guard lock(m_Mutex);
-			std::stringstream json;
-
-			json << std::setprecision(3) << std::fixed;
-			if (m_HeaderWrote) 
-			{
-				json << ",{";
-			}
-			else 
-			{
-				json << "{";
-				m_HeaderWrote = true;
-			}
-			json << "\"cat\":\"function\",";
-			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
-			json << "\"name\":\"" << result.Name << "\",";
-			json << "\"ph\":\"X\",";
-			json << "\"pid\":0,";
-			json << "\"tid\":" << result.ThreadID << ",";
-			json << "\"ts\":" << result.Start.count();
-			json << "}";
-
-			if (m_CurrentSession)
-			{
-				m_OutputStream << json.str();
-				m_OutputStream.flush();
-			}
+			OPTICK_STOP_CAPTURE();
+			OPTICK_SAVE_CAPTURE(filepath.c_str());
 		}
 
 		static Instrumentor& Get()
@@ -110,78 +31,10 @@ namespace Teddy
 			static Instrumentor instance;
 			return instance;
 		}
+
 	private:
-		Instrumentor()
-			: m_CurrentSession(nullptr), m_HeaderWrote(false)
-		{
-		}
-
-		~Instrumentor()
-		{
-			EndSession();
-		}
-
-		void WriteHeader()
-		{
-			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[";
-			m_OutputStream.flush();
-		}
-
-		void WriteFooter()
-		{
-			m_OutputStream << "]}";
-			m_OutputStream.flush();
-			m_HeaderWrote = false;
-		}
-
-		// Note: you must already own lock on m_Mutex before
-		// calling InternalEndSession()
-		void InternalEndSession()
-		{
-			if (m_CurrentSession)
-			{
-				WriteFooter();
-				m_OutputStream.close();
-				delete m_CurrentSession;
-				m_CurrentSession = nullptr;
-			}
-		}
-	private:
-		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
-		std::ofstream m_OutputStream;
-		bool m_HeaderWrote;
-	};
-
-	class InstrumentationTimer
-	{
-	public:
-		InstrumentationTimer(const char* name)
-			: m_Name(name), m_Stopped(false)
-		{
-			m_StartTimepoint = std::chrono::steady_clock::now();
-		}
-
-		~InstrumentationTimer()
-		{
-			if (!m_Stopped)
-				Stop();
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::steady_clock::now();
-			auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
-			auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
-
-			Instrumentor::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
-
-			m_Stopped = true;
-		}
-	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		bool m_Stopped;
+		Instrumentor() = default;
+		~Instrumentor() = default;
 	};
 
 	namespace InstrumentorUtils 
@@ -200,16 +53,26 @@ namespace Teddy
 
 			size_t srcIndex = 0;
 			size_t dstIndex = 0;
-			while (srcIndex < N)
+
+			while (srcIndex < N && dstIndex < N - 1) // Ensure we don't overflow the destination
 			{
 				size_t matchIndex = 0;
+				// Check for the substring we want to remove
 				while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
 					matchIndex++;
+
 				if (matchIndex == K - 1)
-					srcIndex += matchIndex;
-				result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+					srcIndex += matchIndex; // Skip the matched substring
+
+				// Copy and replace characters
+				if (srcIndex < N) {
+					result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+				}
 				srcIndex++;
 			}
+
+			result.Data[dstIndex] = '\0';
+
 			return result;
 		}
 	}
@@ -241,13 +104,14 @@ namespace Teddy
 		#define TED_FUNC_SIG "TED_FUNC_SIG unknown!"
 #endif
 
-	#define TED_PROFILE_BEGIN_SESSION(name, filepath) ::Teddy::Instrumentor::Get().BeginSession(name, filepath)
-	#define TED_PROFILE_END_SESSION() ::Teddy::Instrumentor::Get().EndSession()
-	#define TED_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Teddy::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-											   ::Teddy::InstrumentationTimer timer##line(fixedName##line.Data)
+	#define TED_PROFILE_BEGIN_SESSION() ::Teddy::Instrumentor::Get().BeginSession()
+	#define TED_PROFILE_END_SESSION(filepath) ::Teddy::Instrumentor::Get().EndSession(filepath)
+	#define TED_PROFILE_SCOPE_LINE2(name, line)  static constexpr auto fixedName##line = ::Teddy::InstrumentorUtils::CleanupOutputString(name, "__cdecl "); \
+												OPTICK_EVENT(fixedName##line.Data);
 	#define TED_PROFILE_SCOPE_LINE(name, line) TED_PROFILE_SCOPE_LINE2(name, line)
 	#define TED_PROFILE_SCOPE(name) TED_PROFILE_SCOPE_LINE(name, __LINE__)
 	#define TED_PROFILE_FUNCTION() TED_PROFILE_SCOPE(TED_FUNC_SIG)
+	#define TED_PROFILE_FRAME(name)  OPTICK_FRAME(name);
 #else
 	#define TED_PROFILE_BEGIN_SESSION(name, filepath)
 	#define TED_PROFILE_END_SESSION()

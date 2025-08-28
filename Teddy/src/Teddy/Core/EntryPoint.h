@@ -31,17 +31,17 @@ extern Teddy::Application* Teddy::CreateApplication(ApplicationCommandLineArgs a
 
 			Teddy::Log::Init();
 
-			TED_PROFILE_BEGIN_SESSION("Startup", "debug/TeddyProfile-Startup.json");
+			TED_PROFILE_BEGIN_SESSION();
 			auto app = Teddy::CreateApplication({ argc, argv });
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Startup.opt");
 
-			TED_PROFILE_BEGIN_SESSION("Runtime", "debug/TeddyProfile-Runtime.json");
+			TED_PROFILE_BEGIN_SESSION();
 			app->Run();
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Runtime.opt");
 
-			TED_PROFILE_BEGIN_SESSION("Shutdown", "debug/TeddyProfile-Shutdown.json");
+			TED_PROFILE_BEGIN_SESSION();
 			delete app;
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Shutdown.opt");
 
 			return 0;
 		}
@@ -52,17 +52,17 @@ extern Teddy::Application* Teddy::CreateApplication(ApplicationCommandLineArgs a
 
 			SDL_SetMainReady();
 
-			TED_PROFILE_BEGIN_SESSION("Startup", "debug/TeddyProfile-Startup.json");
+			TED_PROFILE_BEGIN_SESSION();
 			auto app = Teddy::CreateApplication({ argc, argv });
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Startup.opt");
 
-			TED_PROFILE_BEGIN_SESSION("Runtime", "debug/TeddyProfile-Runtime.json");
+			TED_PROFILE_BEGIN_SESSION();
 			app->Run();
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Runtime.opt");
 
-			TED_PROFILE_BEGIN_SESSION("Shutdown", "debug/TeddyProfile-Shutdown.json");
+			TED_PROFILE_BEGIN_SESSION();
 			delete app;
-			TED_PROFILE_END_SESSION();
+			TED_PROFILE_END_SESSION("debug/TeddyProfile-Shutdown.opt");
 
 			return 0;
 		}

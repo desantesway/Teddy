@@ -85,6 +85,7 @@ namespace Teddy
 	void Application::OnUpdate()
 	{
 		TED_PROFILE_FUNCTION();
+		TED_PROFILE_FRAME("MainLoop");
 
 		// put this inside of if, if you want to time go and not freeze
 		float time = Time::GetTime();
