@@ -32,6 +32,8 @@ namespace Teddy
 
 	std::string FileDialogs::OpenFile(const char* filter)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::IO);
+
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };
@@ -56,6 +58,8 @@ namespace Teddy
 
 	std::string FileDialogs::SaveFile(const char* filter)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::IO);
+
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };

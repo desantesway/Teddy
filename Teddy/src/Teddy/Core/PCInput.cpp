@@ -15,6 +15,8 @@ namespace Teddy
 
 	void Input::OnEvent(Event& e) 
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
+
 		EventDispatcher dispatcher(e);
 		
 		dispatcher.Dispatch<MidiKeyPressedEvent>(TED_BIND_EVENT_FN(Input::OnMidiKeyPressed));

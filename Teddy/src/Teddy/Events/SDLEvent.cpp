@@ -16,6 +16,8 @@ namespace Teddy
 	// TODO: Optimize this - i think it is being called to render way too often
 	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) 
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
+
 		static bool pendingExpose = false;
 
 		if (event->type == SDL_EVENT_WINDOW_RESIZED ) 
@@ -37,6 +39,8 @@ namespace Teddy
 	// TODO: Window minimize
 	void SDLWindow::SDLEvents() 
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
+
 		TED_PROFILE_FUNCTION();
 
         SDL_Event event;

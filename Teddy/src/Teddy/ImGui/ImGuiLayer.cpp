@@ -22,7 +22,7 @@ namespace Teddy
 
 	void ImGuiLayer::OnAttach() 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::UI);
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -61,7 +61,7 @@ namespace Teddy
 	
 	void ImGuiLayer::OnDetach() 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::UI);
 
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL3_Shutdown();
@@ -70,7 +70,7 @@ namespace Teddy
 
 	void ImGuiLayer::Begin() 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::UI);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL3_NewFrame();
@@ -79,8 +79,7 @@ namespace Teddy
 
 	void ImGuiLayer::End() 
 	{
-
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::UI);
 
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -104,7 +103,7 @@ namespace Teddy
 
 	void ImGuiLayer::OnEvent(Event& event) 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));

@@ -1,6 +1,8 @@
 #pragma once
 // MIDI note codes for Teddy
 
+#include <cstdint>
+
 namespace Teddy
 {
 	using MidiCode = uint16_t;

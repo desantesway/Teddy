@@ -40,6 +40,7 @@ namespace Teddy
 		const Ref<VertexArray>& vertexArray,
 		const glm::mat4& transform)
 	{
+		TED_PROFILE_FUNCTION();
 
 		shader->Bind();
 		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);

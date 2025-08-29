@@ -123,6 +123,7 @@ namespace Teddy
 
 	void Scene::OnEvent(Event& event)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 		m_Registry.view<NativeScriptComponent>().each([&](auto entity, auto& nsc)
 			{
 				// TODO: Move to Scene::OnScenePlay
@@ -138,6 +139,8 @@ namespace Teddy
 
 	void Scene::SimulatePhysics(Timestep ts)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Physics);
+
 		float timeStep;
 		if (ts > 1.0f)
 		{
@@ -173,7 +176,7 @@ namespace Teddy
 	// TODO: Reset scene if loaded while playing
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Scene);
 		
 		// Scripts
 		{
@@ -258,6 +261,8 @@ namespace Teddy
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Scene);
+
 		Renderer2D::BeginScene(camera);
 
 		// Draw sprites
@@ -318,6 +323,8 @@ namespace Teddy
 
 	void Scene::OnRuntimeStart()
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Scene);
+
 		b2WorldDef worldDef = b2DefaultWorldDef();
 		worldDef.gravity = b2Vec2(0.0f, -9.81f);
 		worldDef.restitutionThreshold = 0.5f;
@@ -394,6 +401,7 @@ namespace Teddy
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		TED_PROFILE_FUNCTION();
+
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{

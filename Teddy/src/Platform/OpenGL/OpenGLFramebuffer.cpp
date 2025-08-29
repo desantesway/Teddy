@@ -17,16 +17,22 @@ namespace Teddy
 
 		static void CreateTextures(bool multisampled, uint32_t* outID, uint32_t count)
 		{
+			TED_PROFILE_FUNCTION();
+
 			glCreateTextures(TextureTarget(multisampled), count, outID);
 		}
 
 		static void BindTexture(bool multisampled, uint32_t id)
 		{
+			TED_PROFILE_FUNCTION();
+
 			glBindTexture(TextureTarget(multisampled), id);
 		}
 
 		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
 		{
+			TED_PROFILE_FUNCTION();
+
 			bool multisampled = samples > 1;
 			if (multisampled)
 			{
@@ -48,6 +54,8 @@ namespace Teddy
 
 		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
+			TED_PROFILE_FUNCTION();
+
 			bool multisampled = samples > 1;
 			if (multisampled)
 			{
@@ -69,6 +77,8 @@ namespace Teddy
 
 		static bool IsDepthFormat(FramebufferTextureFormat format)
 		{
+			TED_PROFILE_FUNCTION();
+
 			switch (format)
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:  return true;
@@ -94,6 +104,8 @@ namespace Teddy
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{
+		TED_PROFILE_FUNCTION();
+
 		for (auto spec : m_Specification.Attachments.Attachments)
 		{
 			if (!Utils::IsDepthFormat(spec.TextureFormat))
@@ -216,6 +228,8 @@ namespace Teddy
 
 	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
+		TED_PROFILE_FUNCTION();
+
 		TED_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
 
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
@@ -227,6 +241,8 @@ namespace Teddy
 
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
+		TED_PROFILE_FUNCTION();
+
 		TED_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
 
 		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];

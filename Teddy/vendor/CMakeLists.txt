@@ -243,7 +243,7 @@ target_include_directories(msdf-atlas-gen PUBLIC
             msdf-atlas-gen/msdf-atlas-gen/ 
 )
 
-target_link_libraries(msdf-atlas-gen PUBLIC artery-font)
+target_link_libraries(msdf-atlas-gen PRIVATE artery-font)
 target_link_libraries(msdf-atlas-gen PUBLIC msdfgen)
 
 target_link_libraries(Teddy PUBLIC msdf-atlas-gen)

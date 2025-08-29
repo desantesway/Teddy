@@ -1,4 +1,4 @@
-#include "teddyPch.h"
+#include "TeddyPch.h"
 #include "Teddy/Scene/Components.h"
 #include "Teddy/Renderer/MSDFData.h"
 
@@ -6,6 +6,8 @@ namespace Teddy
 {
 	void TextComponent::CalculateTextQuad()
 	{
+        TED_PROFILE_CATEGORY("Text Quad", InstrumentorCategory::Visibility);
+
         const auto& fontGeometry = FontAsset->GetMSDFData()->FontGeometry;
         const auto& metrics = fontGeometry.getMetrics();
 

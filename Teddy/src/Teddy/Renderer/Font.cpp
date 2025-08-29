@@ -42,6 +42,8 @@ namespace Teddy
 	Font::Font(const std::filesystem::path& filepath)
 		: m_MSDFData(new MSDFData()), m_Path(filepath.string())
 	{
+        TED_PROFILE_CAT(InstrumentorCategory::IO);
+
         msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
 
 		TED_CORE_ASSERT(ft, "Failed to initialize FreeType");

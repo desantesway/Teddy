@@ -65,7 +65,7 @@ namespace Teddy
 
 	void Application::OnEvent(Event& e)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CATEGORY("Main App Events", InstrumentorCategory::Input);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(TED_BIND_EVENT_FN(Application::OnWindowClose)); // if the event is Window close do OnWindowClose()
@@ -85,7 +85,7 @@ namespace Teddy
 	void Application::OnUpdate()
 	{
 		TED_PROFILE_FUNCTION();
-		TED_PROFILE_FRAME("MainLoop");
+		TED_PROFILE_FRAME_SCOPE("MainLoop");
 
 		// put this inside of if, if you want to time go and not freeze
 		float time = Time::GetTime();

@@ -16,7 +16,7 @@ namespace Teddy
 
 	void MidiDriver::Init() 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		try 
 		{
@@ -41,7 +41,7 @@ namespace Teddy
 
 	void MidiDriver::InitIn(unsigned int port) 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		try 
 		{
@@ -56,7 +56,7 @@ namespace Teddy
 
 	void MidiDriver::InitOut(unsigned int port) 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		try 
 		{
@@ -142,7 +142,7 @@ namespace Teddy
 
 	void MidiDriver::OnUpdate() 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		if (!(*m_EventCallback) || !midiIn->isPortOpen()) return;
 		static std::vector<unsigned char> message;

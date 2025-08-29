@@ -124,7 +124,7 @@ namespace Teddy
 
 	void Renderer2D::Init()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		// Quad
 		s_Data.QuadVertexArray = VertexArray::Create();
@@ -235,14 +235,14 @@ namespace Teddy
 
 	void Renderer2D::Shutdown()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
@@ -252,7 +252,7 @@ namespace Teddy
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
@@ -262,14 +262,14 @@ namespace Teddy
 
 	void Renderer2D::EndScene()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		Flush();
 	}
 
 	void Renderer2D::StartBatch()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -288,7 +288,7 @@ namespace Teddy
 
 	void Renderer2D::Flush()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		if (s_Data.QuadIndexCount)
 		{
@@ -346,7 +346,7 @@ namespace Teddy
 	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
 		const float& texIndex, const float& tilingFactor, int entityID)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
@@ -369,6 +369,8 @@ namespace Teddy
 
 	void Renderer2D::DrawLine(const glm::vec3& p0, glm::vec3& p1, const glm::vec4& color, int entityID)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		s_Data.LineVertexBufferPtr->Position = p0;
 		s_Data.LineVertexBufferPtr->Color = color;
 		s_Data.LineVertexBufferPtr->EntityID = entityID;
@@ -384,6 +386,8 @@ namespace Teddy
 
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
@@ -398,6 +402,8 @@ namespace Teddy
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		glm::vec3 lineVertices[4];
 		for (size_t i = 0; i < 4; i++)
 			lineVertices[i] = transform * s_Data.QuadVertexPositions[i];
@@ -411,7 +417,7 @@ namespace Teddy
 
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		// TODO: implement for circles
 		// if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -441,7 +447,7 @@ namespace Teddy
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, 
 		const SpriteRendererComponent& sprite, float rotation, int entityID)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		glm::mat4 transform;
 
@@ -462,7 +468,7 @@ namespace Teddy
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		if (sprite.Texture != nullptr)
 		{
@@ -500,6 +506,8 @@ namespace Teddy
 
 	void Renderer2D::DrawString(const TextParams& textParams, Ref<Font> font, const glm::mat4& transform, int entityID)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
 		Ref<Texture2D> fontAtlas = font->GetAtlasTexture();

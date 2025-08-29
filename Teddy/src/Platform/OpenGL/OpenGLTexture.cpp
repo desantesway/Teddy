@@ -38,7 +38,7 @@ namespace Teddy
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)
 		: m_Specification(specification), m_Width(m_Specification.Width), m_Height(m_Specification.Height)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		m_InternalFormat = Utils::TeddyImageFormatToGLInternalFormat(m_Specification.Format);
 		m_DataFormat = Utils::TeddyImageFormatToGLDataFormat(m_Specification.Format);
@@ -56,7 +56,7 @@ namespace Teddy
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		int width, height, channels;
 
@@ -113,14 +113,14 @@ namespace Teddy
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size) 
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		TED_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
@@ -129,7 +129,7 @@ namespace Teddy
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		glBindTextureUnit(slot, m_RendererID);
 	}

@@ -19,14 +19,14 @@ namespace Teddy
 
 	SDLWindow::SDLWindow(const WindowProps& props)
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		Init(props);
 	}
 
 	SDLWindow::~SDLWindow()
 	{
-		TED_PROFILE_FUNCTION();
+		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		Shutdown();
 	}

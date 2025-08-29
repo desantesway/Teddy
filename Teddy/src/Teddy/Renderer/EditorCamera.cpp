@@ -19,12 +19,16 @@ namespace Teddy
 
 	void EditorCamera::UpdateProjection()
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
 		m_Projection = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
 	}
 
 	void EditorCamera::UpdateView()
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 		m_Position = CalculatePosition();
 
@@ -35,6 +39,8 @@ namespace Teddy
 
 	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
@@ -51,6 +57,7 @@ namespace Teddy
 
 	float EditorCamera::ZoomSpeed() const
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
 		float distance = m_Distance * 0.2f;
 		distance = std::max(distance, 0.0f);
 		float speed = distance * distance;
@@ -60,6 +67,8 @@ namespace Teddy
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
+
 		if (Input::IsKeyPressed(Key::LAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
@@ -79,12 +88,16 @@ namespace Teddy
 
 	void EditorCamera::OnEvent(Event& e)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Input);
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(TED_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
 	}
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		float delta = e.GetYOffset() * 0.1f;
 		MouseZoom(delta);
 		UpdateView();
@@ -93,6 +106,8 @@ namespace Teddy
 
 	void EditorCamera::MousePan(const glm::vec2& delta)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		auto [xSpeed, ySpeed] = PanSpeed();
 		m_FocalPoint += -GetRightDirection() * delta.x * xSpeed * m_Distance;
 		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
@@ -100,6 +115,8 @@ namespace Teddy
 
 	void EditorCamera::MouseRotate(const glm::vec2& delta)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 		m_Yaw += yawSign * delta.x * RotationSpeed();
 		m_Pitch += delta.y * RotationSpeed();
@@ -107,6 +124,8 @@ namespace Teddy
 
 	void EditorCamera::MouseZoom(float delta)
 	{
+		TED_PROFILE_CAT(InstrumentorCategory::Camera);
+
 		m_Distance -= delta * ZoomSpeed();
 		if (m_Distance < 1.0f)
 		{
