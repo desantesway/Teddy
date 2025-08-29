@@ -214,7 +214,7 @@ namespace Teddy
 	#define TED_PROFILE_END_SESSION()
 	#define TED_PROFILE_SCOPE(name)
 	#define TED_PROFILE_FUNCTION()
-	#define TED_PROFILE_FRAME(name)
+	#define TED_PROFILE_FRAME_SCOPE(name)
 	#define TED_PROFILE_FRAME()
 	#define TED_PROFILE_CATEGORY(name, cat)
 	#define TED_PROFILE_CAT(cat)

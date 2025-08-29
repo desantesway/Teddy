@@ -60,6 +60,17 @@ namespace Teddy
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
 
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    for (int y = 0; y < 50; y++)
+        //    {
+        //        auto entity = m_ActiveScene->CreateEntity("Entity " + std::to_string(i));
+        //        entity.AddComponent<SpriteRendererComponent>(glm::vec4((float)i / 20.0f, 0.5f, 0.5f, 1.0f));
+        //        entity.GetComponent<TransformComponent>().Translation.x = (float)i + 0.1 * i;
+        //        entity.GetComponent<TransformComponent>().Translation.y = (float)y + 0.1 * y;
+        //    }
+		//}
+
         Renderer2D::SetLineWidth(4.0f);
     }
 
