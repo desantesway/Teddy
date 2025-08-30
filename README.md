@@ -55,6 +55,6 @@ Physics                | Collider rendering          |                        | 
 Keyboard IO            | Batching                    |                        | Vulkan
 Mouse IO               | Perspective Camera          |                        | Compression
 Midi IO                | Orthographic Camera         |                        | Mip Mapping
-Scene editor           | Dynamic font rendering      |                        | Better profiler
+Scene editor           | Dynamic font rendering      |                        | GPU profiler
 Profiler               |                             |                        | 2D lights
 Stats                  |                             |                        | ...
