@@ -42,6 +42,16 @@ namespace Teddy
 			s_RendererAPI->SetLineWidth(width);
 		}
 
+		static void DisableDepth() 
+		{
+			s_RendererAPI->DisableDepth();
+		}
+
+		static void EnableDepth() 
+		{
+			s_RendererAPI->EnableDepth();
+		}
+
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

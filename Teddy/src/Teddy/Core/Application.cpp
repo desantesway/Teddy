@@ -87,7 +87,6 @@ namespace Teddy
 		TED_PROFILE_FUNCTION();
 		TED_PROFILE_FRAME_SCOPE("MainLoop");
 
-		// put this inside of if, if you want to time go and not freeze
 		float time = Time::GetTime();
 		Timestep timestep = time - m_LastFrameTime;
 		m_LastFrameTime = time;

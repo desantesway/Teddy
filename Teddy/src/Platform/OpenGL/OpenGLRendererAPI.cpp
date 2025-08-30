@@ -72,11 +72,24 @@ namespace Teddy
 	void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
+
+		DisableDepth();
 		glDrawArrays(GL_LINES, 0, vertexCount);
+		EnableDepth();
 	}
 
 	void OpenGLRendererAPI::SetLineWidth(float width)
 	{
 		glLineWidth(width);
+	}
+
+	void OpenGLRendererAPI::DisableDepth()
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRendererAPI::EnableDepth()
+	{
+		glEnable(GL_DEPTH_TEST);
 	}
 }

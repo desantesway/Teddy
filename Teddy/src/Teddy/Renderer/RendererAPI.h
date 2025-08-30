@@ -28,6 +28,9 @@ namespace Teddy
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void Clear() = 0;
 
+		virtual void DisableDepth() = 0;
+		virtual void EnableDepth() = 0;
+
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 

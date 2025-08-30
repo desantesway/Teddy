@@ -277,11 +277,11 @@ namespace Teddy
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
-		s_Data.LineVertexCount = 0;
-		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
-
 		s_Data.TextIndexCount = 0;
 		s_Data.TextVertexBufferPtr = s_Data.TextVertexBufferBase;
+
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
@@ -314,17 +314,6 @@ namespace Teddy
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.LineVertexCount)
-		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
-			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
-
-			s_Data.LineShader->Bind();
-			RenderCommand::SetLineWidth(s_Data.LineWidth);
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
-			s_Data.Stats.DrawCalls++;
-		}
-
 		if (s_Data.TextIndexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.TextVertexBufferPtr - (uint8_t*)s_Data.TextVertexBufferBase);
@@ -333,6 +322,17 @@ namespace Teddy
 			s_Data.FontAtlasTexture->Bind(0);
 			s_Data.TextShader->Bind();
 			RenderCommand::DrawIndexed(s_Data.TextVertexArray, s_Data.TextIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
+
+		if (s_Data.LineVertexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+			s_Data.LineShader->Bind();
+			RenderCommand::SetLineWidth(s_Data.LineWidth);
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 	}
