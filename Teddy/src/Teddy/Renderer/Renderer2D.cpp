@@ -62,7 +62,7 @@ namespace Teddy
 
 	struct Renderer2DData
 	{ 
-		static const uint32_t MaxQuads = 20000;
+		static const uint32_t MaxQuads = 5;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32; // TODO: Renderer capabilities
@@ -580,6 +580,9 @@ namespace Teddy
 
 		for (size_t i = 0; i < textParams.TextString.size(); i++)
 		{
+			if (s_Data.TextIndexCount >= Renderer2DData::MaxIndices)
+				NextBatch();
+
 			char character = textParams.TextString[i];
 
 			if (character == '\r')
