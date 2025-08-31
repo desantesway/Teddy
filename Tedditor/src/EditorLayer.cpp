@@ -83,7 +83,6 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
-
         if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
@@ -108,7 +107,6 @@ namespace Teddy
         m_Framebuffer->ClearAttachment(1, -1);
 
         {
-
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
             switch (m_SceneState)
@@ -154,6 +152,7 @@ namespace Teddy
 
             m_Framebuffer->Unbind();
         }
+
     }
 
     void EditorLayer::OnEvent(Event& event)

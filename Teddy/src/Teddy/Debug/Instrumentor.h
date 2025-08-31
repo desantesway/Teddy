@@ -103,6 +103,7 @@ namespace Teddy
 		template <size_t N, size_t K>
 		constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
 		{
+
 			ChangeResult<N> result = {};
 
 			size_t srcIndex = 0;
@@ -172,7 +173,7 @@ namespace Teddy
 
 }
 
-// TODO: Mem leak while stress testing in debug mode
+// DEBUG: Dont forget that mem will go up cuz of optick (it saves only after the program is done)
 #ifdef TED_DEBUG
 	#define TED_PROFILE 1
 #endif
