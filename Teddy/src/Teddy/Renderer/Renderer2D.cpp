@@ -62,10 +62,12 @@ namespace Teddy
 
 	struct Renderer2DData
 	{ 
-		static const uint32_t MaxQuads = 5;
+		static const uint32_t MaxQuads = 20000;
+		static const uint32_t MaxLines = 20000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
-		static const uint32_t MaxTextureSlots = 32; // TODO: Renderer capabilities
+		static const uint32_t MaxLineIndices = MaxLines * 2;
+		static const uint32_t MaxTextureSlots = 32; // TODO: See the maximum number of texture slots for the target platform
 
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
@@ -410,6 +412,9 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (s_Data.LineIndexCount >= Renderer2DData::MaxLineIndices)
+			NextBatch();
+
 		s_Data.LineVertexBufferPtr->Position = p0;
 		s_Data.LineVertexBufferPtr->Color = color;
 		s_Data.LineVertexBufferPtr->EntityID = entityID;
@@ -456,9 +461,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		// TODO: implement for circles
-		// if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-		// 	NextBatch();
+		if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
+			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -479,9 +483,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		// TODO: implement for circles
-		// if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-		// 	NextBatch();
+		if (s_Data.CircleLineIndexCount >= Renderer2DData::MaxIndices)
+			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{

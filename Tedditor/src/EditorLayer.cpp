@@ -60,6 +60,7 @@ namespace Teddy
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
 
+        // TODO: Mem leak while stress testing
         //for (int i = 0; i < 50; i++)
         //{
         //    for (int y = 0; y < 50; y++)
@@ -361,7 +362,6 @@ namespace Teddy
                 float sx = std::abs(tc.Scale.x);
                 float sy = std::abs(tc.Scale.y);
                 float maxScale = glm::max(sx, sy) * cc2d.Radius;
-                // Default is 0.5f and / 0.5f = * 2
                 glm::vec3 scale = glm::vec3(maxScale * 2, maxScale * 2, 1.0f);
 
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
