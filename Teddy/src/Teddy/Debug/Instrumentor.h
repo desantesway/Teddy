@@ -172,6 +172,7 @@ namespace Teddy
 
 }
 
+// TODO: Mem leak while stress testing in debug mode
 #ifdef TED_DEBUG
 	#define TED_PROFILE 1
 #endif
@@ -212,8 +213,8 @@ namespace Teddy
 	#define TED_PROFILE_TAGGED(name, tag) OPTICK_TAG(name, tag);
 	#define TED_PROFILE_TAG(tag) TED_PROFILE_TAGGED(TED_FUNC_SIG, tag);
 #else
-	#define TED_PROFILE_BEGIN_SESSION(name, filepath)
-	#define TED_PROFILE_END_SESSION()
+	#define TED_PROFILE_BEGIN_SESSION()
+	#define TED_PROFILE_END_SESSION(filepath)
 	#define TED_PROFILE_SCOPE(name)
 	#define TED_PROFILE_FUNCTION()
 	#define TED_PROFILE_FRAME_SCOPE(name)
