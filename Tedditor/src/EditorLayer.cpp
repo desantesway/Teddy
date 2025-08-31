@@ -369,10 +369,7 @@ namespace Teddy
                     * glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, 0.001f))
                     * glm::scale(glm::mat4(1.0f), scale);
 
-				// TODO: Do a DrawCircleLine where it disables depth testing so you can see the whole circle
-                //RenderCommand::DisableDepth();
-                Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth()/100);
-                //RenderCommand::EnableDepth();
+                Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth()/100);
             }
 
             auto viewBox = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();

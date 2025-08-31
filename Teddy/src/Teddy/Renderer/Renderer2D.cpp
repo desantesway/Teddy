@@ -76,6 +76,9 @@ namespace Teddy
 		Ref<VertexBuffer> CircleVertexBuffer;
 		Ref<Shader> CircleShader;
 
+		Ref<VertexArray> CircleLineVertexArray;
+		Ref<VertexBuffer> CircleLineVertexBuffer;
+
 		Ref<VertexArray> LineVertexArray;
 		Ref<VertexBuffer> LineVertexBuffer;
 		Ref<Shader> LineShader;
@@ -92,9 +95,13 @@ namespace Teddy
 		CircleVertex* CircleVertexBufferBase = nullptr;
 		CircleVertex* CircleVertexBufferPtr = nullptr;
 
-		uint32_t LineVertexCount = 0;
+		uint32_t LineIndexCount = 0;
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
+
+		uint32_t CircleLineIndexCount = 0;
+		CircleVertex* CircleLineVertexBufferBase = nullptr;
+		CircleVertex* CircleLineVertexBufferPtr = nullptr;
 
 		uint32_t TextIndexCount = 0;
 		TextVertex* TextVertexBufferBase = nullptr;
@@ -178,6 +185,23 @@ namespace Teddy
 		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
 		s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
 		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+
+		// Circle Line
+		s_Data.CircleLineVertexArray = VertexArray::Create();
+		s_Data.CircleLineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
+
+		s_Data.CircleLineVertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "a_WorldPosition" },
+			{ ShaderDataType::Float3, "a_LocalPosition" },
+			{ ShaderDataType::Float4, "a_Color"         },
+			{ ShaderDataType::Float,  "a_Thickness"     },
+			{ ShaderDataType::Float,  "a_Fade"          },
+			{ ShaderDataType::Int,    "a_EntityID"      }
+			});
+
+		s_Data.CircleLineVertexArray->AddVertexBuffer(s_Data.CircleLineVertexBuffer);
+		s_Data.CircleLineVertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		s_Data.CircleLineVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
 		// Line
 		s_Data.LineVertexArray = VertexArray::Create();
@@ -280,8 +304,11 @@ namespace Teddy
 		s_Data.TextIndexCount = 0;
 		s_Data.TextVertexBufferPtr = s_Data.TextVertexBufferBase;
 
-		s_Data.LineVertexCount = 0;
+		s_Data.LineIndexCount = 0;
 		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
+		s_Data.CircleLineIndexCount = 0;
+		s_Data.CircleLineVertexBufferPtr = s_Data.CircleLineVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
@@ -325,14 +352,26 @@ namespace Teddy
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.LineVertexCount)
+		if (s_Data.CircleLineIndexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleLineVertexBufferPtr - (uint8_t*)s_Data.CircleLineVertexBufferBase);
+			s_Data.CircleLineVertexBuffer->SetData(s_Data.CircleLineVertexBufferBase, dataSize);
+
+			s_Data.CircleShader->Bind();
+			RenderCommand::DisableDepth();
+			RenderCommand::DrawIndexed(s_Data.CircleLineVertexArray, s_Data.CircleLineIndexCount);
+			RenderCommand::EnableDepth();
+			s_Data.Stats.DrawCalls++;
+		}
+
+		if (s_Data.LineIndexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
 			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
 
 			s_Data.LineShader->Bind();
 			RenderCommand::SetLineWidth(s_Data.LineWidth);
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 	}
@@ -381,7 +420,7 @@ namespace Teddy
 		s_Data.LineVertexBufferPtr->EntityID = entityID;
 		s_Data.LineVertexBufferPtr++;
 
-		s_Data.LineVertexCount += 2;
+		s_Data.LineIndexCount += 2;
 	}
 
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
@@ -397,7 +436,6 @@ namespace Teddy
 		DrawLine(p1, p2, color, entityID);
 		DrawLine(p2, p3, color, entityID);
 		DrawLine(p3, p0, color, entityID);
-		DrawLine(p0, p2, color, entityID);
 	}
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
@@ -412,7 +450,6 @@ namespace Teddy
 		DrawLine(lineVertices[1], lineVertices[2], color, entityID);
 		DrawLine(lineVertices[2], lineVertices[3], color, entityID);
 		DrawLine(lineVertices[3], lineVertices[0], color, entityID);
-		DrawLine(lineVertices[0], lineVertices[2], color, entityID);
 	}
 
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)
@@ -434,6 +471,29 @@ namespace Teddy
 			s_Data.CircleVertexBufferPtr++;
 		}
 		s_Data.CircleIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer2D::DrawCircleLine(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)
+	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		// TODO: implement for circles
+		// if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		// 	NextBatch();
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			s_Data.CircleLineVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleLineVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleLineVertexBufferPtr->Color = color;
+			s_Data.CircleLineVertexBufferPtr->Thickness = thickness;
+			s_Data.CircleLineVertexBufferPtr->Fade = fade;
+			s_Data.CircleLineVertexBufferPtr->EntityID = entityID;
+			s_Data.CircleLineVertexBufferPtr++;
+		}
+		s_Data.CircleLineIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
 	}
