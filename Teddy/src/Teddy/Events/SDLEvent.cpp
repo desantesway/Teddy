@@ -13,25 +13,25 @@
 
 namespace Teddy 
 {
-	// TODO: Optimize this - i think it is being called to render way too often
+	// TODO: Optimize this - i think it is being called to render way too often // stop doing window watch and change renderer to a second thread
 	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) 
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Input);
 
 		static bool pendingExpose = false;
 
-		if (event->type == SDL_EVENT_WINDOW_RESIZED ) 
-		{
-			SDLWindow* window = static_cast<SDLWindow*>(data);
-			WindowResizeEvent e(event->window.data1, event->window.data2);
-			window->m_Data.EventCallback(e);
-		}
-		else if (event->type == SDL_EVENT_WINDOW_MOVED)
-		{
-			SDLWindow* window = static_cast<SDLWindow*>(data);
-			WindowMovedEvent e;
-			window->m_Data.EventCallback(e);
-		}
+		//if (event->type == SDL_EVENT_WINDOW_RESIZED ) 
+		//{
+		//	SDLWindow* window = static_cast<SDLWindow*>(data);
+		//	WindowResizeEvent e(event->window.data1, event->window.data2);
+		//	window->m_Data.EventCallback(e);
+		//}
+		//else if (event->type == SDL_EVENT_WINDOW_MOVED)
+		//{
+		//	SDLWindow* window = static_cast<SDLWindow*>(data);
+		//	WindowMovedEvent e;
+		//	window->m_Data.EventCallback(e);
+		//}
 
 		return true;
 	}
