@@ -146,7 +146,7 @@ namespace Teddy
 		m_Window->SetHeight(e.GetHeight());
 		Renderer::OnWindowResize(m_Window->GetWidth(), m_Window->GetHeight());
 
-		OnUpdate();
+		OnUpdate(); // TODO: correct?
 
 		m_Minimized = false;
 
@@ -155,7 +155,7 @@ namespace Teddy
 
 	bool Application::OnWindowMoved(WindowMovedEvent& e)
 	{
-		OnUpdate();
+		//OnUpdate(); ->  TODO: THIS CAUSES CRASH -> Multi viewport stops working
 		return true;
 	}
 }

@@ -31,8 +31,7 @@ namespace Teddy
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	      // Enable Multi-Viewport / Platform Windows
-		// TODO : Multi viewport stopped working(?)
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	      // Enable Multi-Viewport / Platform Window
 
 		io.Fonts->AddFontFromFileTTF(
 			"../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf", 18.0f);
@@ -96,9 +95,6 @@ namespace Teddy
 			ImGui::RenderPlatformWindowsDefault();
 			SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 		}
-
-		Application& app = Application::Get();
-		SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
 	}
 
 	void ImGuiLayer::OnEvent(Event& event) 
