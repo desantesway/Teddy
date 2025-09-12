@@ -5,9 +5,12 @@
 namespace Teddy
 {
 
+	// TODO: Merge with Texture.h and remove "Framebuffer"
 	enum class FramebufferTextureFilterFormat
 	{
-		Nearest = 0,
+		None = 0,
+
+		Nearest,
 		Linear,
 		NearestMipmapNearest,
 		LinearMipmapNearest,
@@ -17,7 +20,9 @@ namespace Teddy
 
 	enum class FramebufferTextureWrapFormat
 	{
-		Repeat = 0,
+		None = 0,
+
+		Repeat,
 		ClampToEdge,
 		ClampToBorder,
 		MirroredRepeat,
@@ -43,14 +48,14 @@ namespace Teddy
 	{
 		FramebufferTextureSpecification() = default;
 		FramebufferTextureSpecification(FramebufferTextureFormat format,
-			FramebufferTextureFilterFormat filter = FramebufferTextureFilterFormat::Linear,
-			FramebufferTextureWrapFormat wrap = FramebufferTextureWrapFormat::ClampToEdge)
+			FramebufferTextureFilterFormat filter,
+			FramebufferTextureWrapFormat wrap)
 			: TextureFormat(format), TextureFilterFormat(filter), TextureWrapFormat(wrap) {
 		}
 
 		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-		FramebufferTextureFilterFormat TextureFilterFormat = FramebufferTextureFilterFormat::Linear;
-		FramebufferTextureWrapFormat TextureWrapFormat = FramebufferTextureWrapFormat::ClampToEdge;
+		FramebufferTextureFilterFormat TextureFilterFormat = FramebufferTextureFilterFormat::None;
+		FramebufferTextureWrapFormat TextureWrapFormat = FramebufferTextureWrapFormat::None;
 	};
 
 	struct FramebufferAttachmentSpecification

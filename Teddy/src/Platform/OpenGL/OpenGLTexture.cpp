@@ -9,6 +9,7 @@ namespace Teddy
 
 	namespace Utils
 	{
+		// TODO: Do the same for wrap and filter
 		static GLenum TeddyImageFormatToGLDataFormat(ImageFormat format)
 		{
 			switch (format)

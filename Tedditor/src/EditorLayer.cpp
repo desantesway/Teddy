@@ -34,7 +34,11 @@ namespace Teddy
         m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
-        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+        fbSpec.Attachments = Teddy::FramebufferAttachmentSpecification({
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat),
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat),
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat)
+        });
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);
