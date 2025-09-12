@@ -1,41 +1,41 @@
 [submodule "Teddy/vendor/SDL"]
 	path = Teddy/vendor/SDL
-	url = https://github.com/libsdl-org/SDL.git
+	url = https://github.com/crankyted/SDL.git
 	branch = main
 [submodule "Teddy/vendor/ImGui"]
 	path = Teddy/vendor/ImGui
-	url = https://github.com/ocornut/imgui.git
+	url = https://github.com/crankyted/imgui.git
 	branch = docking
 [submodule "Teddy/vendor/GLM"]
 	path = Teddy/vendor/GLM
-	url = https://github.com/g-truc/glm.git
+	url = https://github.com/crankyted/glm.git
 	branch = master
 [submodule "Teddy/vendor/spdlog"]
 	path = Teddy/vendor/spdlog
-	url = https://github.com/gabime/spdlog.git
+	url = https://github.com/crankyted/spdlog.git
 	branch = v1.x
 [submodule "Teddy/vendor/rtmidi"]
 	path = Teddy/vendor/rtmidi
-	url = https://github.com/thestk/rtmidi.git
+	url = https://github.com/crankyted/rtmidi.git
 	branch = master
 [submodule "Teddy/vendor/entt"]
 	path = Teddy/vendor/entt
-	url = https://github.com/skypjack/entt.git
+	url = https://github.com/crankyted/entt.git
 	branch = master
 [submodule "Teddy/vendor/yaml-cpp"]
 	path = Teddy/vendor/yaml-cpp
-	url = https://github.com/jbeder/yaml-cpp.git
+	url = https://github.com/crankyted/yaml-cpp.git
 	branch = master
 [submodule "Teddy/vendor/box2d"]
 	path = Teddy/vendor/box2d
-	url = https://github.com/erincatto/box2d.git
+	url = https://github.com/crankyted/box2d.git
 	branch = main
 [submodule "Teddy/vendor/msdf-atlas-gen"]
 	path = Teddy/vendor/msdf-atlas-gen
-	url = https://github.com/Chlumsky/msdf-atlas-gen.git
+	url = https://github.com/crankyted/msdf-atlas-gen.git
 [submodule "Teddy/vendor/freetype"]
 	path = Teddy/vendor/freetype
-	url = https://github.com/freetype/freetype.git
+	url = https://github.com/crankyted/freetype.git
 [submodule "Teddy/vendor/optick"]
 	path = Teddy/vendor/optick
 	url = https://github.com/crankyted/optick.git

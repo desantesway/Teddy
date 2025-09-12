@@ -126,7 +126,7 @@ namespace Teddy
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 
-		void* RuntimeFixture = nullptr; // TODO: remove raw pointer
+		void* RuntimeFixture = nullptr;
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
@@ -142,7 +142,7 @@ namespace Teddy
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 
-		void* RuntimeFixture = nullptr; // TODO: remove raw pointer
+		void* RuntimeFixture = nullptr;
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
