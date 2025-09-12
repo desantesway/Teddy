@@ -1,6 +1,7 @@
 #include "TeddyPch.h"
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Renderer/MSDFData.h"
+#include "Teddy/Core/Application.h"
 
 #include <msdf-atlas-gen.h>
 #include <msdf-atlas-gen/FontGeometry.h>
@@ -24,7 +25,8 @@ namespace Teddy
 
         msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(width, height);
         generator.setAttributes(attributes);
-		generator.setThreadCount(8); // TODO: Change this to half of available cpu threads
+
+		generator.setThreadCount(std::max(1u, Application::Get().GetWindow().GetThreadCount() / 2));
         generator.generate(glyphs.data(), (int)glyphs.size());
         msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
 

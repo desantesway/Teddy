@@ -30,10 +30,12 @@ namespace Teddy
 		virtual void* GetNativeContext() const override { return m_Context->GetContext(); }
 
 		// Window attributes
-		void SetEventCallback(const EventCallbackFn& callback) override;
+		virtual void SetEventCallback(const EventCallbackFn& callback) override;
 
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
+		virtual void SetVSync(bool enabled) override;
+		virtual bool IsVSync() const override;
+
+		virtual unsigned int GetThreadCount() const override;
 
 		static bool EventWatcher(void* data, SDL_Event* event);
 	private:

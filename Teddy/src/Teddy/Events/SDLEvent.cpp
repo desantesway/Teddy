@@ -13,7 +13,7 @@
 
 namespace Teddy 
 {
-	// TODO: Optimize this - i think it is being called to render way too often // stop doing window watch and change renderer to a second thread
+	// TODO: stop doing window watch and change renderer to a second thread
 	bool SDLWindow::EventWatcher(void* data, SDL_Event* event) 
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Input);

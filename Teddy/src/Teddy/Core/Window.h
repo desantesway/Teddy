@@ -51,6 +51,8 @@ namespace Teddy
 		virtual void* GetNativeWindow() const = 0;
 		virtual void* GetNativeContext() const = 0;
 
+		virtual unsigned int GetThreadCount() const = 0;
+
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

@@ -6,6 +6,8 @@
 
 #include "Teddy/Renderer/GraphicsContext.h"
 
+#include <thread>
+
 namespace Teddy 
 {
 	
@@ -72,6 +74,8 @@ namespace Teddy
 		m_Context->Init(); 
 
 		SetVSync(true);
+
+		TED_CORE_INFO("Detected {} threads!", GetThreadCount());
 	}
 
 	void SDLWindow::Shutdown()
@@ -115,4 +119,8 @@ namespace Teddy
 		return m_Data.VSync;
 	}
 
+	unsigned int SDLWindow::GetThreadCount() const
+	{ 
+		return std::thread::hardware_concurrency();
+	}
 }
