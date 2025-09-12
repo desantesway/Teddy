@@ -41,4 +41,11 @@ namespace Teddy
 		}
 	}
 
+	void OpenGLWindow::VSync(bool enabled)
+	{
+		if (enabled)
+			SDL_GL_SetSwapInterval(1);
+		else
+			SDL_GL_SetSwapInterval(0);
+	}
 }

@@ -101,15 +101,11 @@ namespace Teddy
 		m_Context->SwapBuffers();
 	}
 
-	// TODO: API ABSTRACTION
     void SDLWindow::SetVSync(bool enabled)
     {
 		TED_PROFILE_FUNCTION();
 
-		if (enabled)
-			SDL_GL_SetSwapInterval(1);
-		else
-			SDL_GL_SetSwapInterval(0);
+		m_Window->VSync(enabled);
 
 		m_Data.VSync = enabled;
     }

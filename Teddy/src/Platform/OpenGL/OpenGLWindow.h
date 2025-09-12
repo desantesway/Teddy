@@ -17,6 +17,8 @@ namespace Teddy
 
 		virtual void Init() override;
 		virtual void Shutdown() override;
+
+		virtual void VSync(bool enabled) override;
 	private:
 		SDL_Window* m_Window;
 		const char* m_Title;
