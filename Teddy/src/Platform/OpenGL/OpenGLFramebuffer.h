@@ -29,7 +29,7 @@ namespace Teddy
 		uint32_t m_DepthAttachment = 0;
 
 		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecifications;
-		FramebufferTextureSpecification m_DepthAttachmentSpecification = FramebufferTextureFormat::None;
+		FramebufferTextureSpecification m_DepthAttachmentSpecification;
 
 		std::vector<uint32_t> m_ColorAttachments;
 		FramebufferSpecification m_Specification;

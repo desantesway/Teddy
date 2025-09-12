@@ -29,7 +29,9 @@ namespace Teddy
 			glBindTexture(TextureTarget(multisampled), id);
 		}
 
-		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, 
+			GLenum filter, GLenum wrap,
+			GLenum format, uint32_t width, uint32_t height, int index)
 		{
 			TED_PROFILE_FUNCTION();
 
@@ -42,17 +44,19 @@ namespace Teddy
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, wrap);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 			}
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
 		}
 
-		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, 
+			GLenum filter, GLenum wrap,
+			GLenum attachmentType, uint32_t width, uint32_t height)
 		{
 			TED_PROFILE_FUNCTION();
 
@@ -65,11 +69,11 @@ namespace Teddy
 			{
 				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, wrap);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 			}
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
@@ -99,6 +103,36 @@ namespace Teddy
 			return 0;
 		}
 
+		static GLenum TeddyFBTextureWrapFormatToGL(FramebufferTextureWrapFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureWrapFormat::Repeat:				return GL_REPEAT;
+			case FramebufferTextureWrapFormat::ClampToEdge:			return GL_CLAMP_TO_EDGE;
+			case FramebufferTextureWrapFormat::MirroredRepeat:		return GL_MIRRORED_REPEAT;
+			case FramebufferTextureWrapFormat::ClampToBorder:		return GL_CLAMP_TO_BORDER;
+			case FramebufferTextureWrapFormat::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
+			}
+
+			TED_CORE_ASSERT(false);
+			return 0;
+		}
+
+		static GLenum TeddyFBTextureFilterFormatToGL(FramebufferTextureFilterFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFilterFormat::Nearest:					return GL_NEAREST;
+			case FramebufferTextureFilterFormat::Linear	:					return GL_LINEAR;
+			case FramebufferTextureFilterFormat::NearestMipmapNearest:		return GL_NEAREST_MIPMAP_NEAREST;
+			case FramebufferTextureFilterFormat::LinearMipmapNearest:		return GL_LINEAR_MIPMAP_NEAREST;
+			case FramebufferTextureFilterFormat::NearestMipmapLinear:		return GL_NEAREST_MIPMAP_LINEAR;
+			case FramebufferTextureFilterFormat::LinearMipmapLinear:		return GL_LINEAR_MIPMAP_LINEAR;
+			}
+
+			TED_CORE_ASSERT(false);
+			return 0;
+		}
 	}
 
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
@@ -172,10 +206,16 @@ namespace Teddy
 				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
 				{
 				case FramebufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, 
+						Utils::TeddyFBTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
+						Utils::TeddyFBTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
+						GL_RGBA, m_Specification.Width, m_Specification.Height, i);
 					break;
 				case FramebufferTextureFormat::RED_INTEGER:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, 
+						Utils::TeddyFBTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
+						Utils::TeddyFBTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
+						GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 					break;
 				}
 			}
@@ -188,7 +228,10 @@ namespace Teddy
 			switch (m_DepthAttachmentSpecification.TextureFormat)
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
-				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, 
+					Utils::TeddyFBTextureFilterFormatToGL(m_DepthAttachmentSpecification.TextureFilterFormat),
+					Utils::TeddyFBTextureWrapFormatToGL(m_DepthAttachmentSpecification.TextureWrapFormat),
+					GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
 				break;
 			}
 		}

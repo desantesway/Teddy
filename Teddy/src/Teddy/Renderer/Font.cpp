@@ -52,8 +52,18 @@ namespace Teddy
 
 		std::string fileString = filepath.string();
 
-        // TODO Change to: loadFontData (it reads from a mem buffer)
-        if (msdfgen::FontHandle* font = loadFont(ft, fileString.c_str())) 
+        // TODO: Reads font file into memory, put this to the asset manager when developed
+        std::ifstream fontFile(fileString, std::ios::binary | std::ios::ate);
+        TED_CORE_ASSERT(fontFile.is_open(), "Failed to open font file");
+
+        std::streamsize fileSize = fontFile.tellg();
+        fontFile.seekg(0, std::ios::beg);
+
+        std::vector<uint8_t> fontBuffer(fileSize);
+        TED_CORE_ASSERT(fontFile.read(reinterpret_cast<char*>(fontBuffer.data()), fileSize), "Failed to read font file");
+
+        // Use loadFontData instead of loadFont
+        if (msdfgen::FontHandle* font = loadFontData(ft, fontBuffer.data(), static_cast<int>(fileSize)))
         {
 
             struct CharsetRange
