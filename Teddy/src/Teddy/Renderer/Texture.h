@@ -41,7 +41,7 @@ namespace Teddy
 	{
 	public:
 		static Ref<Texture2D> Create(const TextureSpecification& specification);
-		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const std::string& path, const TextureSpecification& specification = {});
 	};
 
 }

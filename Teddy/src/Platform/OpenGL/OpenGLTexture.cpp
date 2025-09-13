@@ -30,7 +30,7 @@ namespace Teddy
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const TextureSpecification& specification)
 		: m_Path(path)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
@@ -59,7 +59,6 @@ namespace Teddy
 				internalFormat = GL_RGBA8;
 				dataFormat = GL_RGBA;
 			}
-
 			else if (channels == 3)
 			{
 				internalFormat = GL_RGB8;
@@ -74,11 +73,15 @@ namespace Teddy
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			m_FilterFormat = Utils::TeddyTextureFilterFormatToGL(specification.Filter);
 
-			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, m_FilterFormat);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, m_FilterFormat);
+
+			m_WrapFormat = Utils::TeddyTextureWrapFormatToGL(specification.Wrap);
+
+			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, m_WrapFormat);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 

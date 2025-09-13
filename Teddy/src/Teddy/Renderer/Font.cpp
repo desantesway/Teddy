@@ -34,6 +34,8 @@ namespace Teddy
         spec.Width = bitmap.width;
         spec.Height = bitmap.height;
         spec.Format = TextureFormat::RGB8;
+		spec.Filter = TextureFilterFormat::LINEAR;
+		spec.Wrap = TextureWrapFormat::REPEAT;
         spec.GenerateMips = false;
 
         Ref<Texture2D> texture = Texture2D::Create(spec);
