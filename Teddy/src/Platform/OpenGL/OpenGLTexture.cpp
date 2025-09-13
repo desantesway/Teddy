@@ -7,42 +7,13 @@
 namespace Teddy 
 {
 
-	namespace Utils
-	{
-		// TODO: Do the same for wrap and filter
-		static GLenum TeddyImageFormatToGLDataFormat(ImageFormat format)
-		{
-			switch (format)
-			{
-			case ImageFormat::RGB8:  return GL_RGB;
-			case ImageFormat::RGBA8: return GL_RGBA;
-			}
-			TED_CORE_ASSERT(false);
-
-			return 0;
-		}
-
-		static GLenum TeddyImageFormatToGLInternalFormat(ImageFormat format)
-		{
-			switch (format)
-			{
-			case ImageFormat::RGB8:  return GL_RGB8;
-			case ImageFormat::RGBA8: return GL_RGBA8;
-			}
-
-			TED_CORE_ASSERT(false);
-
-			return 0;
-		}
-	}
-
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)
 		: m_Specification(specification), m_Width(m_Specification.Width), m_Height(m_Specification.Height)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
-		m_InternalFormat = Utils::TeddyImageFormatToGLInternalFormat(m_Specification.Format);
-		m_DataFormat = Utils::TeddyImageFormatToGLDataFormat(m_Specification.Format);
+		m_InternalFormat = Utils::TeddyTextureFormatToGLInternalFormat(m_Specification.Format);
+		m_DataFormat = Utils::TeddyTextureFormatToGLDataFormat(m_Specification.Format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);

@@ -154,6 +154,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Font.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/MSDFData.h
 
+    # Texture Formats
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/TextureFormats.h
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Scene <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

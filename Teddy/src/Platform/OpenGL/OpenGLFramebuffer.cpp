@@ -103,36 +103,6 @@ namespace Teddy
 			return 0;
 		}
 
-		static GLenum TeddyFBTextureWrapFormatToGL(FramebufferTextureWrapFormat format)
-		{
-			switch (format)
-			{
-			case FramebufferTextureWrapFormat::Repeat:				return GL_REPEAT;
-			case FramebufferTextureWrapFormat::ClampToEdge:			return GL_CLAMP_TO_EDGE;
-			case FramebufferTextureWrapFormat::MirroredRepeat:		return GL_MIRRORED_REPEAT;
-			case FramebufferTextureWrapFormat::ClampToBorder:		return GL_CLAMP_TO_BORDER;
-			case FramebufferTextureWrapFormat::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
-			}
-
-			TED_CORE_ASSERT(false);
-			return 0;
-		}
-
-		static GLenum TeddyFBTextureFilterFormatToGL(FramebufferTextureFilterFormat format)
-		{
-			switch (format)
-			{
-			case FramebufferTextureFilterFormat::Nearest:					return GL_NEAREST;
-			case FramebufferTextureFilterFormat::Linear	:					return GL_LINEAR;
-			case FramebufferTextureFilterFormat::NearestMipmapNearest:		return GL_NEAREST_MIPMAP_NEAREST;
-			case FramebufferTextureFilterFormat::LinearMipmapNearest:		return GL_LINEAR_MIPMAP_NEAREST;
-			case FramebufferTextureFilterFormat::NearestMipmapLinear:		return GL_NEAREST_MIPMAP_LINEAR;
-			case FramebufferTextureFilterFormat::LinearMipmapLinear:		return GL_LINEAR_MIPMAP_LINEAR;
-			}
-
-			TED_CORE_ASSERT(false);
-			return 0;
-		}
 	}
 
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
@@ -207,14 +177,14 @@ namespace Teddy
 				{
 				case FramebufferTextureFormat::RGBA8:
 					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, 
-						Utils::TeddyFBTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
-						Utils::TeddyFBTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
+						Utils::TeddyTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
+						Utils::TeddyTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
 						GL_RGBA, m_Specification.Width, m_Specification.Height, i);
 					break;
 				case FramebufferTextureFormat::RED_INTEGER:
 					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, 
-						Utils::TeddyFBTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
-						Utils::TeddyFBTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
+						Utils::TeddyTextureFilterFormatToGL(m_ColorAttachmentSpecifications[i].TextureFilterFormat),
+						Utils::TeddyTextureWrapFormatToGL(m_ColorAttachmentSpecifications[i].TextureWrapFormat),
 						GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 					break;
 				}
@@ -229,8 +199,8 @@ namespace Teddy
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, 
-					Utils::TeddyFBTextureFilterFormatToGL(m_DepthAttachmentSpecification.TextureFilterFormat),
-					Utils::TeddyFBTextureWrapFormatToGL(m_DepthAttachmentSpecification.TextureWrapFormat),
+					Utils::TeddyTextureFilterFormatToGL(m_DepthAttachmentSpecification.TextureFilterFormat),
+					Utils::TeddyTextureWrapFormatToGL(m_DepthAttachmentSpecification.TextureWrapFormat),
 					GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
 				break;
 			}

@@ -1,33 +1,10 @@
 #pragma once
 
 #include "Teddy/Core/Base.h"
+#include "Teddy/Renderer/TextureFormats.h"
 
 namespace Teddy
 {
-
-	// TODO: Merge with Texture.h and remove "Framebuffer"
-	enum class FramebufferTextureFilterFormat
-	{
-		None = 0,
-
-		Nearest,
-		Linear,
-		NearestMipmapNearest,
-		LinearMipmapNearest,
-		NearestMipmapLinear,
-		LinearMipmapLinear
-	};
-
-	enum class FramebufferTextureWrapFormat
-	{
-		None = 0,
-
-		Repeat,
-		ClampToEdge,
-		ClampToBorder,
-		MirroredRepeat,
-		MirrorClampToEdge
-	};
 
 	enum class FramebufferTextureFormat
 	{
@@ -48,14 +25,14 @@ namespace Teddy
 	{
 		FramebufferTextureSpecification() = default;
 		FramebufferTextureSpecification(FramebufferTextureFormat format,
-			FramebufferTextureFilterFormat filter,
-			FramebufferTextureWrapFormat wrap)
+			TextureFilterFormat filter,
+			TextureWrapFormat wrap)
 			: TextureFormat(format), TextureFilterFormat(filter), TextureWrapFormat(wrap) {
 		}
 
 		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-		FramebufferTextureFilterFormat TextureFilterFormat = FramebufferTextureFilterFormat::None;
-		FramebufferTextureWrapFormat TextureWrapFormat = FramebufferTextureWrapFormat::None;
+		TextureFilterFormat TextureFilterFormat =	TextureFilterFormat::None;
+		TextureWrapFormat TextureWrapFormat =		TextureWrapFormat::None;
 	};
 
 	struct FramebufferAttachmentSpecification

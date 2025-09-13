@@ -35,9 +35,9 @@ namespace Teddy
 
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = Teddy::FramebufferAttachmentSpecification({
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat),
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat),
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::FramebufferTextureFilterFormat::Linear, Teddy::FramebufferTextureWrapFormat::Repeat)
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
+            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
         });
         fbSpec.Width = 1280;
         fbSpec.Height = 720;

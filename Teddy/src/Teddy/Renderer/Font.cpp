@@ -33,7 +33,7 @@ namespace Teddy
         TextureSpecification spec;
         spec.Width = bitmap.width;
         spec.Height = bitmap.height;
-        spec.Format = ImageFormat::RGB8;
+        spec.Format = TextureFormat::RGB8;
         spec.GenerateMips = false;
 
         Ref<Texture2D> texture = Texture2D::Create(spec);

@@ -1,22 +1,15 @@
 #pragma once
 
+#include "Teddy/Renderer/TextureFormats.h"
+
 namespace Teddy 
 {
-
-	enum class ImageFormat
-	{
-		None = 0,
-		R8,
-		RGB8,
-		RGBA8,
-		RGBA32F
-	};
 
 	struct TextureSpecification
 	{
 		uint32_t Width = 1;
 		uint32_t Height = 1;
-		ImageFormat Format = ImageFormat::RGBA8;
+		TextureFormat Format = TextureFormat::RGBA8;
 		bool GenerateMips = true;
 	};
 
