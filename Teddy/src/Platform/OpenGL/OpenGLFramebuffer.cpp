@@ -1,6 +1,7 @@
 #include "TeddyPch.h"
 
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "Platform/OpenGL/OpenGLTextureFormats.h"
 
 #include <glad/glad.h>
 

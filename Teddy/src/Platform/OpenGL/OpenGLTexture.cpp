@@ -1,5 +1,6 @@
 #include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
+#include "Platform/OpenGL/OpenGLTextureFormats.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -18,11 +19,15 @@ namespace Teddy
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		m_FilterFormat = Utils::TeddyTextureFilterFormatToGL(m_Specification.Filter);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, m_FilterFormat);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, m_FilterFormat);
+
+		m_WrapFormat = Utils::TeddyTextureWrapFormatToGL(m_Specification.Wrap);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, m_WrapFormat);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
