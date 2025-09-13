@@ -51,8 +51,10 @@ namespace Teddy
 			float Kerning = 0.0f;
 			float LineSpacing = 0.0f;
 
-			glm::vec4 BackgroundColor{ 1.0f };
+			//glm::vec4 BackgroundColor{ 0.0f };
+
 			glm::vec4 OutlineColor{ 1.0f };
+			float OutlineWidth = 0.0f;
 		};
 
 		static void DrawString(const TextParams& textParams, Ref<Font> font, const glm::mat4& transform, int entityID = -1);
