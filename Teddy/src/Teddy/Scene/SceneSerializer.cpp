@@ -239,6 +239,9 @@ namespace Teddy
 			out << YAML::Key << "Kerning" << YAML::Value << textComponent.Kerning;
 			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
 
+			out << YAML::Key << "BackgroundColor" << YAML::Value << textComponent.BackgroundColor;
+			out << YAML::Key << "OutlineColor" << YAML::Value << textComponent.OutlineColor;
+
 			out << YAML::EndMap; // TextComponent
 		}
 
@@ -422,8 +425,12 @@ namespace Teddy
 						}
 
 						txc.Color = textComponent["Color"].as<glm::vec4>();
+						txc.BackgroundColor = textComponent["BackgroundColor"].as<glm::vec4>();
+						txc.OutlineColor = textComponent["OutlineColor"].as<glm::vec4>();
+
 						txc.Kerning = textComponent["Kerning"].as<float>();
 						txc.LineSpacing = textComponent["LineSpacing"].as<float>();
+
 						txc.CalculateTextQuad();
 					}
 

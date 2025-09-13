@@ -6,7 +6,8 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in int a_EntityID;
+layout(location = 4) in vec4 a_OutlineColor;
+layout(location = 5) in int a_EntityID;
 
 layout(std140, binding = 0) uniform Camera
 {
@@ -17,15 +18,17 @@ struct VertexOutput
 {
 	vec4 Color;
 	vec2 TexCoord;
+	vec4 OutlineColor;
 };
 
 layout (location = 0) out VertexOutput Output;
-layout (location = 2) out flat int v_EntityID;
+layout (location = 3) out flat int v_EntityID;
 
 void main()
 {
 	Output.Color = a_Color;
 	Output.TexCoord = a_TexCoord;
+	Output.OutlineColor = a_OutlineColor;
 	v_EntityID = a_EntityID;
 
 	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
@@ -41,10 +44,11 @@ struct VertexOutput
 {
 	vec4 Color;
 	vec2 TexCoord;
+	vec4 OutlineColor;
 };
 
 layout (location = 0) in VertexOutput Input;
-layout (location = 2) in flat int v_EntityID;
+layout (location = 3) in flat int v_EntityID;
 
 layout (binding = 0) uniform sampler2D u_FontAtlas;
 
@@ -70,8 +74,7 @@ void main()
 	if (opacity == 0.0)
 		discard;
 
-	vec4 bgColor = vec4(0.0);
-    o_Color = mix(bgColor, Input.Color, opacity);
+    o_Color = mix(Input.OutlineColor, Input.Color, opacity);
 	if (o_Color.a == 0.0)
 		discard;
 	

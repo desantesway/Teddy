@@ -129,6 +129,7 @@ namespace Teddy
 
 		if (m_SelectionContext)
 		{
+			// ?
 			DrawComponents(m_SelectionContext);
 		}
 
@@ -512,6 +513,10 @@ namespace Teddy
 
 				recalculate = recalculate || ImGui::DragFloat("Kerning", &component.Kerning, 0.01f, 0.0f, 10.0f);
 				recalculate = recalculate || ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.1f, 0.0f, 100.0f);
+
+				recalculate = recalculate || ImGui::ColorEdit4("Background Color", glm::value_ptr(component.BackgroundColor));
+
+				recalculate = recalculate || ImGui::ColorEdit4("Outline Color", glm::value_ptr(component.OutlineColor));
 
 				if (recalculate)
 					component.CalculateTextQuad();

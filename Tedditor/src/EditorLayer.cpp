@@ -151,7 +151,13 @@ namespace Teddy
             if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
             {
                 int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-                m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+                entt::entity handle = (entt::entity)pixelData;
+                if (pixelData == -1) {
+                    m_HoveredEntity = {};
+                }
+                else {
+                    m_HoveredEntity = Entity(handle, m_ActiveScene.get());
+                }
             }
 
             m_Framebuffer->Unbind();
@@ -421,7 +427,7 @@ namespace Teddy
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
-            else
+            else if(selectedEntity.HasComponent<TextComponent>())
             {
                 TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
                 Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
