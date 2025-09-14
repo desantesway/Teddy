@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 5694755239067389564
+  - Entity: 7512338336139933613
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -18,7 +18,7 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 3567420107879424427
+  - Entity: 12607170586683363571
     TagComponent:
       Tag: Red Square
     TransformComponent:
@@ -31,6 +31,6 @@ Entities:
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0
-      BackgroundColor: [0, 0, 0, 0.101960786]
-      OutlineColor: [0, 0, 0, 0.99607843]
-      OutlineThickness: 6.6
+      BackgroundColor: [0, 0, 0, 0]
+      OutlineColor: [0, 0, 0, 0.9529412]
+      OutlineThickness: 21.63

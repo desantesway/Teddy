@@ -517,7 +517,7 @@ namespace Teddy
 				recalculate = recalculate || ImGui::ColorEdit4("Background Color", glm::value_ptr(component.BackgroundColor));
 
 				recalculate = recalculate || ImGui::ColorEdit4("Outline Color", glm::value_ptr(component.OutlineColor));
-				recalculate = recalculate || ImGui::DragFloat("Outline Thickness", &component.OutlineThickness, 0.1f, 0.0f, 100.0f);
+				recalculate = recalculate || ImGui::DragFloat("Outline Thickness", &component.OutlineThickness, 0.01f, 0.0f, 50.0f);
 
 				if (recalculate)
 					component.CalculateTextQuad();
