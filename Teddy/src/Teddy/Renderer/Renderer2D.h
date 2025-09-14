@@ -58,7 +58,8 @@ namespace Teddy
 			glm::vec4 OutlineColor{ 0.0f };
 		};
 
-		static void DrawString(const TextParams& textParams, Ref<Font> font, const glm::mat4& transform, int entityID = -1);
+		static void DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
+			Ref<Font> font, const glm::mat4& transform, int entityID = -1);
 		static void DrawString(const TextComponent& component, const glm::mat4& transform, int entityID = -1);
 
 		static float GetLineWidth();

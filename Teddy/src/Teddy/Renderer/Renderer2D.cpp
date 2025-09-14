@@ -569,10 +569,18 @@ namespace Teddy
 	}
 
 	// TODO: Add Background to this and add outline entity
-	void Renderer2D::DrawString(const TextParams& textParams, Ref<Font> font, const glm::mat4& transform, int entityID)
+	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
+		Ref<Font> font, const glm::mat4& transform, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 		
+		glm::mat4 bgTransform = transform * textQuad.GetTransform();
+		bgTransform[3].z -= 0.01f;
+		if (textParams.BackgroundColor.a != 0)
+		{
+			DrawQuad(bgTransform, {textParams.BackgroundColor}, entityID);
+		}
+
 		const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
 		Ref<Texture2D> fontAtlas = font->GetAtlasTexture();
@@ -652,7 +660,6 @@ namespace Teddy
 			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
 			s_Data.TextVertexBufferPtr->Color = textParams.Color;
 			s_Data.TextVertexBufferPtr->TexCoord = texCoordMin;
-			//s_Data.TextVertexBufferPtr->BackgroundColor = textParams.BackgroundColor;
 			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextVertexBufferPtr->EntityID = entityID;
 			s_Data.TextVertexBufferPtr++;
@@ -660,7 +667,6 @@ namespace Teddy
 			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
 			s_Data.TextVertexBufferPtr->Color = textParams.Color;
 			s_Data.TextVertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
-			//s_Data.TextVertexBufferPtr->BackgroundColor = textParams.BackgroundColor;
 			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextVertexBufferPtr->EntityID = entityID;
 			s_Data.TextVertexBufferPtr++;
@@ -668,7 +674,6 @@ namespace Teddy
 			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax, 0.0f, 1.0f);
 			s_Data.TextVertexBufferPtr->Color = textParams.Color;
 			s_Data.TextVertexBufferPtr->TexCoord = texCoordMax;
-			//s_Data.TextVertexBufferPtr->BackgroundColor = textParams.BackgroundColor;
 			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextVertexBufferPtr->EntityID = entityID;
 			s_Data.TextVertexBufferPtr++;
@@ -693,15 +698,26 @@ namespace Teddy
 				x += fsScale * advance + textParams.Kerning;
 			}
 		}
+
 	}
 
 	void Renderer2D::DrawString(const TextComponent& component, const glm::mat4& transform, int entityID)
 	{
-		DrawString({ .TextString{component.TextString}, .Color{component.Color},
-			.Kerning{component.Kerning}, .LineSpacing{component.LineSpacing},
-			.BackgroundColor {component.BackgroundColor }, .OutlineColor{component.OutlineColor}
-	},
-			component.FontAsset, transform, entityID);
+		DrawString(
+			TextParams
+			{
+				component.TextString,
+				component.Color,
+				component.Kerning,
+				component.LineSpacing,
+				component.BackgroundColor,
+				component.OutlineColor
+			},
+			component.TextQuad,
+			component.FontAsset,
+			transform,
+			entityID
+		);
 	}
 
 	float Renderer2D::GetLineWidth()
