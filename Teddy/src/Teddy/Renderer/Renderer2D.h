@@ -41,8 +41,6 @@ namespace Teddy
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, 
 			const SpriteRendererComponent& sprite, float rotation = 0.0f, int entityID = -1);
 		static void DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID = -1);
-	
-		static void DrawQuadOutline(const glm::mat4& transform, glm::vec4& color, float thickness, int entityID = -1);
 
 		static void DrawLine(const glm::vec3& p0, glm::vec3& p1, const glm::vec4& color, int entityID = -1);
 		static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID = -1);
@@ -58,6 +56,7 @@ namespace Teddy
 			glm::vec4 BackgroundColor{ 0.0f };
 
 			glm::vec4 OutlineColor{ 0.0f };
+			float OutlineThickness = 0.0f;
 		};
 
 		static void DrawString(const TextParams& textParams, const TransformComponent& textQuad, 

@@ -230,12 +230,6 @@ namespace Teddy
 				auto& transform = std::get<0>(tuple);
 				auto& sprite = std::get<1>(tuple);
 
-				Entity ent{ entity, this };
-				if (ent.HasComponent<OutlineComponent>()) {
-					auto& outline = ent.GetComponent<OutlineComponent>();
-					Renderer2D::DrawQuadOutline(transform.GetTransform(), outline.Color, outline.Thickness, (int)entity);
-				}
-
 				Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
 			}
 
@@ -444,11 +438,6 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<OutlineComponent>(Entity entity, OutlineComponent& component)
 	{
 	}
 

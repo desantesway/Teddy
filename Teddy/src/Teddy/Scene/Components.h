@@ -159,6 +159,7 @@ namespace Teddy
 		glm::vec4 BackgroundColor{ 0.0f };
 
 		glm::vec4 OutlineColor{ 0.0f };
+		float OutlineThickness = 0.0f;
 
 		TransformComponent TextQuad;
 
@@ -170,14 +171,6 @@ namespace Teddy
 		void SetString(std::string string) { TextString = string; CalculateTextQuad();}
 	};
 
-	struct OutlineComponent
-	{
-		glm::vec4 Color{ 1.0f };
-		float Thickness = 1.0f;
-		OutlineComponent() = default;
-		OutlineComponent(const OutlineComponent&) = default;
-	};
-
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -187,5 +180,5 @@ namespace Teddy
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
-		TextComponent, OutlineComponent>;
+		TextComponent>;
 }

@@ -242,22 +242,9 @@ namespace Teddy
 			out << YAML::Key << "BackgroundColor" << YAML::Value << textComponent.BackgroundColor;
 
 			out << YAML::Key << "OutlineColor" << YAML::Value << textComponent.OutlineColor;
+			out << YAML::Key << "OutlineThickness" << YAML::Value << textComponent.OutlineThickness;
 
 			out << YAML::EndMap; // TextComponent
-		}
-
-		if (entity.HasComponent<OutlineComponent>())
-		{
-			out << YAML::Key << "OutlineComponent";
-			out << YAML::BeginMap;
-
-			auto& outlineComponent = entity.GetComponent<OutlineComponent>();
-
-			out << YAML::Key << "Color" << YAML::Value << outlineComponent.Color;
-
-			out << YAML::Key << "Thickness" << YAML::Value << outlineComponent.Thickness;
-
-			out << YAML::EndMap;
 		}
 
 		if (entity.HasComponent<Rigidbody2DComponent>())
@@ -442,22 +429,13 @@ namespace Teddy
 						txc.Color = textComponent["Color"].as<glm::vec4>();
 						txc.BackgroundColor = textComponent["BackgroundColor"].as<glm::vec4>();
 
-						txc.OutlineColor = textComponent["OutlineColor"].as<glm::vec4>();
-
 						txc.Kerning = textComponent["Kerning"].as<float>();
 						txc.LineSpacing = textComponent["LineSpacing"].as<float>();
 
+						txc.OutlineColor = textComponent["OutlineColor"].as<glm::vec4>();
+						txc.OutlineThickness = textComponent["OutlineThickness"].as<float>();
+
 						txc.CalculateTextQuad();
-					}
-
-					auto outlineComponent = entity["OutlineComponent"];
-
-					if (outlineComponent)
-					{
-						auto& oc = deserializedEntity.AddComponent<OutlineComponent>();
-
-						oc.Color = outlineComponent["Color"].as<glm::vec4>();
-						oc.Thickness = outlineComponent["Thickness"].as<float>();
 					}
 
 					auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

@@ -582,29 +582,6 @@ namespace Teddy
 		}
 	}
 
-	void Renderer2D::DrawQuadOutline(const glm::mat4& transform, glm::vec4& color, float thickness, int entityID)
-	{
-		//TED_PROFILE_CAT(InstrumentorCategory::Rendering);
-		//
-		//if (s_Data.QuadOutlineIndexCount >= Renderer2DData::MaxIndices) NextBatch();
-		//
-		//constexpr size_t quadVertexCount = 4;
-		//constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		//
-		//for (size_t i = 0; i < quadVertexCount; i++)
-		//{
-		//	s_Data.QuadOutlineVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-		//	s_Data.QuadOutlineVertexBufferPtr->Color = color;
-		//	s_Data.QuadOutlineVertexBufferPtr->Thickness = thickness;
-		//	s_Data.QuadOutlineVertexBufferPtr->EntityID = entityID;
-		//	s_Data.QuadOutlineVertexBufferPtr++;
-		//}
-		//
-		//s_Data.QuadOutlineIndexCount += 6;
-		//
-		//s_Data.Stats.QuadCount++;
-	}
-
 	// TODO: add outline component
 	// TODO: Rotation in the center
 	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 

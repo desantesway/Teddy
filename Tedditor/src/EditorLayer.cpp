@@ -61,8 +61,6 @@ namespace Teddy
         redSquare.AddComponent<TextComponent>();
 		redSquare.GetComponent<TextComponent>().SetString("Teddy Engine");
 
-        redSquare.AddComponent<OutlineComponent>();
-
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
 
@@ -364,7 +362,6 @@ namespace Teddy
             Renderer2D::BeginScene(m_EditorCamera);
         }
 
-        // TODO: outline physics
         if (m_ShowPhysicsColliders)
         {
             auto viewCircle = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
