@@ -327,6 +327,7 @@ namespace Teddy
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<TextComponent>("Text");
+			DisplayAddComponentEntry<OutlineComponent>("Outline");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
@@ -520,6 +521,12 @@ namespace Teddy
 
 				if (recalculate)
 					component.CalculateTextQuad();
+			});
+
+		DrawComponent<OutlineComponent>("Outline", true, entity, [](auto& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Thickness", &component.Thickness, 0.25f, 0.0f, 10.0f);
 			});
 	}
 }

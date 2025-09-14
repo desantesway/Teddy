@@ -246,6 +246,20 @@ namespace Teddy
 			out << YAML::EndMap; // TextComponent
 		}
 
+		if (entity.HasComponent<OutlineComponent>())
+		{
+			out << YAML::Key << "OutlineComponent";
+			out << YAML::BeginMap;
+
+			auto& outlineComponent = entity.GetComponent<OutlineComponent>();
+
+			out << YAML::Key << "Color" << YAML::Value << outlineComponent.Color;
+
+			out << YAML::Key << "Thickness" << YAML::Value << outlineComponent.Thickness;
+
+			out << YAML::EndMap;
+		}
+
 		if (entity.HasComponent<Rigidbody2DComponent>())
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
@@ -434,6 +448,16 @@ namespace Teddy
 						txc.LineSpacing = textComponent["LineSpacing"].as<float>();
 
 						txc.CalculateTextQuad();
+					}
+
+					auto outlineComponent = entity["OutlineComponent"];
+
+					if (outlineComponent)
+					{
+						auto& oc = deserializedEntity.AddComponent<OutlineComponent>();
+
+						oc.Color = outlineComponent["Color"].as<glm::vec4>();
+						oc.Thickness = outlineComponent["Thickness"].as<float>();
 					}
 
 					auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

@@ -60,6 +60,52 @@ namespace Teddy
 		int EntityID;
 	};
 
+	struct VertexResources
+	{
+		Ref<VertexArray> VertexArray;
+		Ref<VertexBuffer> VertexBuffer;
+	};
+
+	struct RenderResource : VertexResources
+	{
+		Ref<Shader> Shader;
+	};
+
+	struct QuadRenderResource : RenderResource
+	{
+		uint32_t IndexCount = 0;
+		QuadVertex* VertexBufferBase = nullptr;
+		QuadVertex* VertexBufferPtr = nullptr;
+	};
+
+	struct CircleRenderResource : RenderResource
+	{
+		uint32_t IndexCount = 0;
+		CircleVertex* VertexBufferBase = nullptr;
+		CircleVertex* VertexBufferPtr = nullptr;
+	};
+
+	struct TextRenderResource : RenderResource
+	{
+		uint32_t IndexCount = 0;
+		TextVertex* VertexBufferBase = nullptr;
+		TextVertex* VertexBufferPtr = nullptr;
+	};
+
+	struct LineRenderResource : RenderResource
+	{
+		uint32_t IndexCount = 0;
+		LineVertex* VertexBufferBase = nullptr;
+		LineVertex* VertexBufferPtr = nullptr;
+	};
+
+	struct CircleLineResource : VertexResources
+	{
+		uint32_t IndexCount = 0;
+		CircleVertex* VertexBufferBase = nullptr;
+		CircleVertex* VertexBufferPtr = nullptr;
+	};
+
 	struct Renderer2DData
 	{ 
 		static const uint32_t MaxQuads = 20000;
@@ -69,45 +115,13 @@ namespace Teddy
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 		static const uint32_t MaxTextureSlots = 32; // TODO: See the maximum number of texture slots for the target platform
 
-		Ref<VertexArray> QuadVertexArray;
-		Ref<VertexBuffer> QuadVertexBuffer;
-		Ref<Shader> QuadShader;
 		Ref<Texture2D> WhiteTexture;
 
-		Ref<VertexArray> CircleVertexArray;
-		Ref<VertexBuffer> CircleVertexBuffer;
-		Ref<Shader> CircleShader;
-
-		Ref<VertexArray> CircleLineVertexArray;
-		Ref<VertexBuffer> CircleLineVertexBuffer;
-
-		Ref<VertexArray> LineVertexArray;
-		Ref<VertexBuffer> LineVertexBuffer;
-		Ref<Shader> LineShader;
-
-		Ref<VertexArray> TextVertexArray;
-		Ref<VertexBuffer> TextVertexBuffer;
-		Ref<Shader> TextShader;
-
-		uint32_t QuadIndexCount = 0;
-		QuadVertex* QuadVertexBufferBase = nullptr;
-		QuadVertex* QuadVertexBufferPtr = nullptr;
-
-		uint32_t CircleIndexCount = 0;
-		CircleVertex* CircleVertexBufferBase = nullptr;
-		CircleVertex* CircleVertexBufferPtr = nullptr;
-
-		uint32_t LineIndexCount = 0;
-		LineVertex* LineVertexBufferBase = nullptr;
-		LineVertex* LineVertexBufferPtr = nullptr;
-
-		uint32_t CircleLineIndexCount = 0;
-		CircleVertex* CircleLineVertexBufferBase = nullptr;
-		CircleVertex* CircleLineVertexBufferPtr = nullptr;
-
-		uint32_t TextIndexCount = 0;
-		TextVertex* TextVertexBufferBase = nullptr;
-		TextVertex* TextVertexBufferPtr = nullptr;
+		QuadRenderResource QuadResources;
+		CircleRenderResource CircleResources;
+		LineRenderResource LineResources;
+		TextRenderResource TextResources;
+		CircleLineResource CircleLineResources;
 
 		float LineWidth = 2.0f;
 
@@ -136,10 +150,10 @@ namespace Teddy
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		// Quad
-		s_Data.QuadVertexArray = VertexArray::Create();
+		s_Data.QuadResources.VertexArray = VertexArray::Create();
 
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.QuadVertexBuffer->SetLayout({
+		s_Data.QuadResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+		s_Data.QuadResources.VertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
@@ -147,9 +161,9 @@ namespace Teddy
 			{ ShaderDataType::Float, "a_TilingFactor" },
 			{ ShaderDataType::Float, "a_EntityID" }
 			});
-		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
+		s_Data.QuadResources.VertexArray->AddVertexBuffer(s_Data.QuadResources.VertexBuffer);
 
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+		s_Data.QuadResources.VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
@@ -168,14 +182,14 @@ namespace Teddy
 		}
 
 		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
+		s_Data.QuadResources.VertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
 		// Circle
-		s_Data.CircleVertexArray = VertexArray::Create();
-		s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
+		s_Data.CircleResources.VertexArray = VertexArray::Create();
+		s_Data.CircleResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
 
-		s_Data.CircleVertexBuffer->SetLayout({
+		s_Data.CircleResources.VertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_WorldPosition" },
 			{ ShaderDataType::Float3, "a_LocalPosition" },
 			{ ShaderDataType::Float4, "a_Color"         },
@@ -184,15 +198,15 @@ namespace Teddy
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
 
-		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
-		s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+		s_Data.CircleResources.VertexArray->AddVertexBuffer(s_Data.CircleResources.VertexBuffer);
+		s_Data.CircleResources.VertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		s_Data.CircleResources.VertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
 		// Circle Line
-		s_Data.CircleLineVertexArray = VertexArray::Create();
-		s_Data.CircleLineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
+		s_Data.CircleLineResources.VertexArray = VertexArray::Create();
+		s_Data.CircleLineResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
 
-		s_Data.CircleLineVertexBuffer->SetLayout({
+		s_Data.CircleLineResources.VertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_WorldPosition" },
 			{ ShaderDataType::Float3, "a_LocalPosition" },
 			{ ShaderDataType::Float4, "a_Color"         },
@@ -201,29 +215,29 @@ namespace Teddy
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
 
-		s_Data.CircleLineVertexArray->AddVertexBuffer(s_Data.CircleLineVertexBuffer);
-		s_Data.CircleLineVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		s_Data.CircleLineVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+		s_Data.CircleLineResources.VertexArray->AddVertexBuffer(s_Data.CircleLineResources.VertexBuffer);
+		s_Data.CircleLineResources.VertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		s_Data.CircleLineResources.VertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
 		// Line
-		s_Data.LineVertexArray = VertexArray::Create();
-		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+		s_Data.LineResources.VertexArray = VertexArray::Create();
+		s_Data.LineResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
 
-		s_Data.LineVertexBuffer->SetLayout({
+		s_Data.LineResources.VertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position"		},
 			{ ShaderDataType::Float4, "a_Color"         },
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
 
-		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
-		s_Data.LineVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
+		s_Data.LineResources.VertexArray->AddVertexBuffer(s_Data.LineResources.VertexBuffer);
+		s_Data.LineResources.VertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		s_Data.LineResources.VertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
 		// Text
-		s_Data.TextVertexArray = VertexArray::Create();
+		s_Data.TextResources.VertexArray = VertexArray::Create();
 
-		s_Data.TextVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(TextVertex));
-		s_Data.TextVertexBuffer->SetLayout({
+		s_Data.TextResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(TextVertex));
+		s_Data.TextResources.VertexBuffer->SetLayout({
 			{ ShaderDataType::Float3,	"a_Position"		},
 			{ ShaderDataType::Float4,	"a_Color"			},
 			{ ShaderDataType::Float2,	"a_TexCoord"		},
@@ -231,9 +245,9 @@ namespace Teddy
 			{ ShaderDataType::Int,		"a_EntityID"		}
 			});
 
-		s_Data.TextVertexArray->AddVertexBuffer(s_Data.TextVertexBuffer);
-		s_Data.TextVertexArray->SetIndexBuffer(quadIB);
-		s_Data.TextVertexBufferBase = new TextVertex[s_Data.MaxVertices];
+		s_Data.TextResources.VertexArray->AddVertexBuffer(s_Data.TextResources.VertexBuffer);
+		s_Data.TextResources.VertexArray->SetIndexBuffer(quadIB);
+		s_Data.TextResources.VertexBufferBase = new TextVertex[s_Data.MaxVertices];
 
 		// White texture
 		s_Data.WhiteTexture = Texture2D::Create(TextureSpecification());
@@ -244,10 +258,10 @@ namespace Teddy
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.QuadShader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.CircleShader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl");
-		s_Data.LineShader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl");
-		s_Data.TextShader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl");
+		s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl");
+		s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl");
+		s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl");
+		s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl");
 
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -264,7 +278,7 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		delete[] s_Data.QuadVertexBufferBase;
+		delete[] s_Data.QuadResources.VertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -298,20 +312,20 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		s_Data.QuadResources.IndexCount = 0;
+		s_Data.QuadResources.VertexBufferPtr = s_Data.QuadResources.VertexBufferBase;
 
-		s_Data.CircleIndexCount = 0;
-		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+		s_Data.CircleResources.IndexCount = 0;
+		s_Data.CircleResources.VertexBufferPtr = s_Data.CircleResources.VertexBufferBase;
 
-		s_Data.TextIndexCount = 0;
-		s_Data.TextVertexBufferPtr = s_Data.TextVertexBufferBase;
+		s_Data.TextResources.IndexCount = 0;
+		s_Data.TextResources.VertexBufferPtr = s_Data.TextResources.VertexBufferBase;
 
-		s_Data.LineIndexCount = 0;
-		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+		s_Data.LineResources.IndexCount = 0;
+		s_Data.LineResources.VertexBufferPtr = s_Data.LineResources.VertexBufferBase;
 
-		s_Data.CircleLineIndexCount = 0;
-		s_Data.CircleLineVertexBufferPtr = s_Data.CircleLineVertexBufferBase;
+		s_Data.CircleLineResources.IndexCount = 0;
+		s_Data.CircleLineResources.VertexBufferPtr = s_Data.CircleLineResources.VertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
 	}
@@ -320,61 +334,61 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		if (s_Data.QuadIndexCount)
+		if (s_Data.QuadResources.IndexCount)
 		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadResources.VertexBufferPtr - (uint8_t*)s_Data.QuadResources.VertexBufferBase);
+			s_Data.QuadResources.VertexBuffer->SetData(s_Data.QuadResources.VertexBufferBase, dataSize);
 
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 				s_Data.TextureSlots[i]->Bind(i);
 
-			s_Data.QuadShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+			s_Data.QuadResources.Shader->Bind();
+			RenderCommand::DrawIndexed(s_Data.QuadResources.VertexArray, s_Data.QuadResources.IndexCount);
 
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.CircleIndexCount)
+		if (s_Data.CircleResources.IndexCount)
 		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase);
-			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleResources.VertexBufferPtr - (uint8_t*)s_Data.CircleResources.VertexBufferBase);
+			s_Data.CircleResources.VertexBuffer->SetData(s_Data.CircleResources.VertexBufferBase, dataSize);
 
-			s_Data.CircleShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			s_Data.CircleResources.Shader->Bind();
+			RenderCommand::DrawIndexed(s_Data.CircleResources.VertexArray, s_Data.CircleResources.IndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.TextIndexCount)
+		if (s_Data.TextResources.IndexCount)
 		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.TextVertexBufferPtr - (uint8_t*)s_Data.TextVertexBufferBase);
-			s_Data.TextVertexBuffer->SetData(s_Data.TextVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.TextResources.VertexBufferPtr - (uint8_t*)s_Data.TextResources.VertexBufferBase);
+			s_Data.TextResources.VertexBuffer->SetData(s_Data.TextResources.VertexBufferBase, dataSize);
 
 			s_Data.FontAtlasTexture->Bind(0);
-			s_Data.TextShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.TextVertexArray, s_Data.TextIndexCount);
+			s_Data.TextResources.Shader->Bind();
+			RenderCommand::DrawIndexed(s_Data.TextResources.VertexArray, s_Data.TextResources.IndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.CircleLineIndexCount)
+		if (s_Data.CircleLineResources.IndexCount)
 		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleLineVertexBufferPtr - (uint8_t*)s_Data.CircleLineVertexBufferBase);
-			s_Data.CircleLineVertexBuffer->SetData(s_Data.CircleLineVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleLineResources.VertexBufferPtr - (uint8_t*)s_Data.CircleLineResources.VertexBufferBase);
+			s_Data.CircleLineResources.VertexBuffer->SetData(s_Data.CircleLineResources.VertexBufferBase, dataSize);
 
-			s_Data.CircleShader->Bind();
+			s_Data.CircleResources.Shader->Bind();
 			RenderCommand::DisableDepth();
-			RenderCommand::DrawIndexed(s_Data.CircleLineVertexArray, s_Data.CircleLineIndexCount);
+			RenderCommand::DrawIndexed(s_Data.CircleLineResources.VertexArray, s_Data.CircleLineResources.IndexCount);
 			RenderCommand::EnableDepth();
 			s_Data.Stats.DrawCalls++;
 		}
 
-		if (s_Data.LineIndexCount)
+		if (s_Data.LineResources.IndexCount)
 		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
-			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineResources.VertexBufferPtr - (uint8_t*)s_Data.LineResources.VertexBufferBase);
+			s_Data.LineResources.VertexBuffer->SetData(s_Data.LineResources.VertexBufferBase, dataSize);
 
-			s_Data.LineShader->Bind();
+			s_Data.LineResources.Shader->Bind();
 			RenderCommand::SetLineWidth(s_Data.LineWidth);
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineIndexCount);
+			RenderCommand::DrawLines(s_Data.LineResources.VertexArray, s_Data.LineResources.IndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 	}
@@ -395,16 +409,16 @@ namespace Teddy
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr->EntityID = entityID;
-			s_Data.QuadVertexBufferPtr++;
+			s_Data.QuadResources.VertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			s_Data.QuadResources.VertexBufferPtr->Color = color;
+			s_Data.QuadResources.VertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadResources.VertexBufferPtr->TexIndex = texIndex;
+			s_Data.QuadResources.VertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.QuadResources.VertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_Data.QuadResources.IndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
 	}
@@ -413,20 +427,20 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		if (s_Data.LineIndexCount >= Renderer2DData::MaxLineIndices)
+		if (s_Data.LineResources.IndexCount >= Renderer2DData::MaxLineIndices)
 			NextBatch();
 
-		s_Data.LineVertexBufferPtr->Position = p0;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr->EntityID = entityID;
-		s_Data.LineVertexBufferPtr++;
+		s_Data.LineResources.VertexBufferPtr->Position = p0;
+		s_Data.LineResources.VertexBufferPtr->Color = color;
+		s_Data.LineResources.VertexBufferPtr->EntityID = entityID;
+		s_Data.LineResources.VertexBufferPtr++;
 
-		s_Data.LineVertexBufferPtr->Position = p1;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr->EntityID = entityID;
-		s_Data.LineVertexBufferPtr++;
+		s_Data.LineResources.VertexBufferPtr->Position = p1;
+		s_Data.LineResources.VertexBufferPtr->Color = color;
+		s_Data.LineResources.VertexBufferPtr->EntityID = entityID;
+		s_Data.LineResources.VertexBufferPtr++;
 
-		s_Data.LineIndexCount += 2;
+		s_Data.LineResources.IndexCount += 2;
 	}
 
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
@@ -462,20 +476,20 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
+		if (s_Data.CircleResources.IndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{
-			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
-			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
-			s_Data.CircleVertexBufferPtr->Color = color;
-			s_Data.CircleVertexBufferPtr->Thickness = thickness;
-			s_Data.CircleVertexBufferPtr->Fade = fade;
-			s_Data.CircleVertexBufferPtr->EntityID = entityID;
-			s_Data.CircleVertexBufferPtr++;
+			s_Data.CircleResources.VertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleResources.VertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleResources.VertexBufferPtr->Color = color;
+			s_Data.CircleResources.VertexBufferPtr->Thickness = thickness;
+			s_Data.CircleResources.VertexBufferPtr->Fade = fade;
+			s_Data.CircleResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.CircleResources.VertexBufferPtr++;
 		}
-		s_Data.CircleIndexCount += 6;
+		s_Data.CircleResources.IndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
 	}
@@ -484,20 +498,20 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		if (s_Data.CircleLineIndexCount >= Renderer2DData::MaxIndices)
+		if (s_Data.CircleLineResources.IndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{
-			s_Data.CircleLineVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
-			s_Data.CircleLineVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
-			s_Data.CircleLineVertexBufferPtr->Color = color;
-			s_Data.CircleLineVertexBufferPtr->Thickness = thickness;
-			s_Data.CircleLineVertexBufferPtr->Fade = fade;
-			s_Data.CircleLineVertexBufferPtr->EntityID = entityID;
-			s_Data.CircleLineVertexBufferPtr++;
+			s_Data.CircleLineResources.VertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleLineResources.VertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleLineResources.VertexBufferPtr->Color = color;
+			s_Data.CircleLineResources.VertexBufferPtr->Thickness = thickness;
+			s_Data.CircleLineResources.VertexBufferPtr->Fade = fade;
+			s_Data.CircleLineResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.CircleLineResources.VertexBufferPtr++;
 		}
-		s_Data.CircleLineIndexCount += 6;
+		s_Data.CircleLineResources.IndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
 	}
@@ -548,7 +562,7 @@ namespace Teddy
 
 			if (textureIndex == 0.0f)
 			{
-				if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) NextBatch();
+				if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices) NextBatch();
 
 				textureIndex = (float)s_Data.TextureSlotIndex;
 				s_Data.TextureSlots[s_Data.TextureSlotIndex] = sprite.Texture;
@@ -560,7 +574,7 @@ namespace Teddy
 		}
 		else
 		{
-			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) NextBatch();
+			if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices) NextBatch();
 
 			const float textureIndex = 0.0f;
 
@@ -568,7 +582,31 @@ namespace Teddy
 		}
 	}
 
-	// TODO: Add Background to this and add outline entity
+	void Renderer2D::DrawQuadOutline(const glm::mat4& transform, glm::vec4& color, float thickness, int entityID)
+	{
+		//TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+		//
+		//if (s_Data.QuadOutlineIndexCount >= Renderer2DData::MaxIndices) NextBatch();
+		//
+		//constexpr size_t quadVertexCount = 4;
+		//constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		//
+		//for (size_t i = 0; i < quadVertexCount; i++)
+		//{
+		//	s_Data.QuadOutlineVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+		//	s_Data.QuadOutlineVertexBufferPtr->Color = color;
+		//	s_Data.QuadOutlineVertexBufferPtr->Thickness = thickness;
+		//	s_Data.QuadOutlineVertexBufferPtr->EntityID = entityID;
+		//	s_Data.QuadOutlineVertexBufferPtr++;
+		//}
+		//
+		//s_Data.QuadOutlineIndexCount += 6;
+		//
+		//s_Data.Stats.QuadCount++;
+	}
+
+	// TODO: add outline component
+	// TODO: Rotation in the center
 	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
 		Ref<Font> font, const glm::mat4& transform, int entityID)
 	{
@@ -593,7 +631,7 @@ namespace Teddy
 
 		for (size_t i = 0; i < textParams.TextString.size(); i++)
 		{
-			if (s_Data.TextIndexCount >= Renderer2DData::MaxIndices)
+			if (s_Data.TextResources.IndexCount >= Renderer2DData::MaxIndices)
 				NextBatch();
 
 			char character = textParams.TextString[i];
@@ -657,36 +695,35 @@ namespace Teddy
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			// render
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = texCoordMin;
-			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMin;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
-			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = texCoordMax;
-			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMax, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMax;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
-			//s_Data.TextVertexBufferPtr->BackgroundColor = textParams.BackgroundColor;
-			s_Data.TextVertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextIndexCount += 6;
+			s_Data.TextResources.IndexCount += 6;
 			s_Data.Stats.QuadCount++;
 
 			if (i < textParams.TextString.size() - 1)
