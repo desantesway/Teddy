@@ -69,16 +69,23 @@ float median(float r, float g, float b) {
 
 void main()
 {
-	vec4 texColor = Input.Color * texture(u_FontAtlas, Input.TexCoord);
-
 	vec3 msd = texture(u_FontAtlas, Input.TexCoord).rgb;
     float sd = median(msd.r, msd.g, msd.b);
     float screenPxDistance = screenPxRange()*(sd - 0.5);
     float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-	if (opacity == 0.0)
-		discard;
 
-    o_Color = mix(Input.OutlineColor, Input.Color, opacity);
+	if(abs(screenPxDistance) < Input.OutlineWidth)
+	{
+		o_Color = Input.OutlineColor;
+	}
+	else
+	{
+		if (opacity == 0.0)
+			discard;
+
+		o_Color = mix(Input.OutlineColor, Input.Color, opacity);
+	}
+
 	if (o_Color.a == 0.0)
 		discard;
 	

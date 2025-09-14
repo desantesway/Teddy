@@ -9,6 +9,8 @@
 
 #include "Teddy/Renderer/Font.h"
 
+// TODO: Shader modification watcher
+
 namespace Teddy 
 {
 	struct RenderCamera {
@@ -54,7 +56,7 @@ namespace Teddy
 			//glm::vec4 BackgroundColor{ 0.0f };
 
 			glm::vec4 OutlineColor{ 1.0f };
-			float OutlineWidth = 0.0f;
+			float OutlineWidth = 1.0f;
 		};
 
 		static void DrawString(const TextParams& textParams, Ref<Font> font, const glm::mat4& transform, int entityID = -1);

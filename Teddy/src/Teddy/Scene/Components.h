@@ -159,7 +159,7 @@ namespace Teddy
 		//glm::vec4 BackgroundColor{ 0.0f };
 
 		glm::vec4 OutlineColor{ 1.0f };
-		float OutlineWidth = 0.0f;
+		float OutlineWidth = 1.0f;
 
 		TransformComponent TextQuad;
 
