@@ -61,50 +61,31 @@ namespace Teddy
 		int EntityID;
 	};
 
-	struct VertexResources
+	struct VertexResource
 	{
 		Ref<VertexArray> VertexArray;
 		Ref<VertexBuffer> VertexBuffer;
 	};
 
-	struct RenderResource : VertexResources
+	struct RenderResource : VertexResource
 	{
 		Ref<Shader> Shader;
 	};
 
-	struct QuadRenderResource : RenderResource
+	template<typename T>
+	struct BashRenderResource : RenderResource
 	{
 		uint32_t IndexCount = 0;
-		QuadVertex* VertexBufferBase = nullptr;
-		QuadVertex* VertexBufferPtr = nullptr;
+		T* VertexBufferBase = nullptr;
+		T* VertexBufferPtr = nullptr;
 	};
 
-	struct CircleRenderResource : RenderResource
+	template<typename T>
+	struct BashVertexResource : VertexResource
 	{
 		uint32_t IndexCount = 0;
-		CircleVertex* VertexBufferBase = nullptr;
-		CircleVertex* VertexBufferPtr = nullptr;
-	};
-
-	struct TextRenderResource : RenderResource
-	{
-		uint32_t IndexCount = 0;
-		TextVertex* VertexBufferBase = nullptr;
-		TextVertex* VertexBufferPtr = nullptr;
-	};
-
-	struct LineRenderResource : RenderResource
-	{
-		uint32_t IndexCount = 0;
-		LineVertex* VertexBufferBase = nullptr;
-		LineVertex* VertexBufferPtr = nullptr;
-	};
-
-	struct CircleLineResource : VertexResources
-	{
-		uint32_t IndexCount = 0;
-		CircleVertex* VertexBufferBase = nullptr;
-		CircleVertex* VertexBufferPtr = nullptr;
+		T* VertexBufferBase = nullptr;
+		T* VertexBufferPtr = nullptr;
 	};
 
 	struct Renderer2DData
@@ -118,11 +99,11 @@ namespace Teddy
 
 		Ref<Texture2D> WhiteTexture;
 
-		QuadRenderResource QuadResources;
-		CircleRenderResource CircleResources;
-		LineRenderResource LineResources;
-		TextRenderResource TextResources;
-		CircleLineResource CircleLineResources;
+		BashRenderResource<QuadVertex> QuadResources;
+		BashRenderResource<CircleVertex> CircleResources;
+		BashRenderResource<LineVertex> LineResources;
+		BashRenderResource<TextVertex> TextResources;
+		BashVertexResource<CircleVertex> CircleLineResources;
 
 		float LineWidth = 2.0f;
 
