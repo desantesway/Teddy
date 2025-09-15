@@ -10,7 +10,7 @@ namespace Teddy
 	class OpenGLShader : public Shader
 	{
 	public:
-		OpenGLShader(const std::string& filepath);
+		OpenGLShader(const std::string& filepath, const bool& forceBuild);
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~OpenGLShader();
 
@@ -41,8 +41,8 @@ namespace Teddy
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 		
-		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources);
-		void CompileOrGetOpenGLBinaries();
+		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources, const bool& forceBuild);
+		void CompileOrGetOpenGLBinaries(const bool& forceBuild);
 		void CreateProgram();
 		void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 	private:

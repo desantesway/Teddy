@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <string>
 #include <chrono>
 
@@ -14,13 +13,16 @@ namespace Teddy
 		public:
 			// TODO: This will communicate with AssetManager to reload shaders and get the shader filepaths 
 			// (not receiving them as an argument like it is now)
-			ShaderWatcher(const std::vector<std::string>& filepaths)
+			ShaderWatcher(const std::unordered_set<std::string>& filepaths)
 				: m_FilePaths(filepaths), m_LastChangedDate(std::time(nullptr))
-			{}
+			{
+				m_ShadersChanged.empty();
+			}
+
 			ShaderWatcher() = default;
 			~ShaderWatcher() = default;
 
-			void CheckOfflineChanges(std::time_t lastTimeChecked, std::time_t present);
+			bool CheckOfflineChanges(std::time_t& lastTimeChecked);
 
 			void StartWatching();
 			void StopWatching();
@@ -31,10 +33,10 @@ namespace Teddy
 			void SetHotReload(bool enabled);
 			bool IsHotReloading() const;
 
-			std::vector<std::string> GetFilesChanged(bool changesHandled);
+			std::unordered_set<std::string>& GetFilesChanged(bool changesHandled);
 		private:
-			std::vector<std::string> m_FilePaths;
-			std::vector<std::string> m_ShadersChanged;
+			std::unordered_set<std::string> m_FilePaths;
+			std::unordered_set<std::string> m_ShadersChanged;
 			std::time_t m_LastChangedDate = std::time(nullptr);
 			bool m_HotReload = true;
 		};

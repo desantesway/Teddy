@@ -13,6 +13,7 @@
 #include "Teddy/ImGui/ImGuiLayer.h"
 
 #include "Teddy/Core/Input.h"
+#include "Teddy/Utils/FileWatcher.h"
 
 #ifdef TED_DIST
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -84,7 +85,9 @@ namespace Teddy
 		float m_LastFrameTime = 0.0f;
 
 		Input m_Input;
+
 	private:
+		static Utils::FileWatcher m_FileWatcher;
 		static Application* s_Instance;
 		
 		#ifdef TED_DIST

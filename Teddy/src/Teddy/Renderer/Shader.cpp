@@ -6,12 +6,12 @@
 namespace Teddy 
 {
 
-	Ref<Shader> Shader::Create(const std::string& filepath)
+	Ref<Shader> Shader::Create(const std::string& filepath, const bool& forceBuild)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:    TED_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath);
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath, forceBuild);
 		}
 
 		TED_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -44,16 +44,20 @@ namespace Teddy
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
-		auto shader = Shader::Create(filepath);
-		Add(shader);
-		return shader;
+		//auto shader = Shader::Create(filepath);
+		//Add(shader);
+		//return shader;
+
+		return nullptr;
 	}
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 	{
-		auto shader = Shader::Create(filepath);
-		Add(name, shader);
-		return shader;
+		//auto shader = Shader::Create(filepath);
+		//Add(name, shader);
+		//return shader;
+
+		return nullptr;
 	}
 
 	Ref<Shader> ShaderLibrary::Get(const std::string& name)

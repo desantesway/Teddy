@@ -11,7 +11,7 @@ namespace Teddy
 	class Renderer 
 	{
 	public:
-		static void Init();
+		static void Init(const std::unordered_set<std::string>& shadersToRebuild);
 		static void Shutdown();
 
 		static void OnWindowResize(uint32_t width, uint32_t height);

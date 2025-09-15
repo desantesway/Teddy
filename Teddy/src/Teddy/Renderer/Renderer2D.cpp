@@ -99,11 +99,14 @@ namespace Teddy
 
 		Ref<Texture2D> WhiteTexture;
 
-		BashRenderResource<QuadVertex> QuadResources;
-		BashRenderResource<CircleVertex> CircleResources;
 		BashRenderResource<LineVertex> LineResources;
-		BashRenderResource<TextVertex> TextResources;
+
+		BashRenderResource<QuadVertex> QuadResources;
+
+		BashRenderResource<CircleVertex> CircleResources;
 		BashVertexResource<CircleVertex> CircleLineResources;
+
+		BashRenderResource<TextVertex> TextResources;
 
 		float LineWidth = 2.0f;
 
@@ -127,7 +130,7 @@ namespace Teddy
 
 	static Renderer2DData s_Data;
 
-	void Renderer2D::Init()
+	void Renderer2D::Init(const std::unordered_set<std::string>& shadersToRebuild)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
@@ -241,10 +244,25 @@ namespace Teddy
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl");
-		s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl");
-		s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl");
+		if (shadersToRebuild.size() > 0)
+		{
+			s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl",
+				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Quad.glsl"));
+			s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl",
+				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Circle.glsl"));
+			s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl",
+				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Line.glsl"));
+			s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl",
+				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Text.glsl"));
+		}
+		else
+		{
+			s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl", false);
+			s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl", false);
+			s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl", false);
+			s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl", false);
+		}
+		
 
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;

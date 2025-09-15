@@ -84,7 +84,7 @@ namespace Teddy
 		}
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::string& filepath, const bool& forceBuild)
 		: m_FilePath(filepath)
 	{
 		TED_PROFILE_FUNCTION();
@@ -96,8 +96,8 @@ namespace Teddy
 		
 		{
 			Timer timer;
-			CompileOrGetVulkanBinaries(shaderSources);
-			CompileOrGetOpenGLBinaries();
+			CompileOrGetVulkanBinaries(shaderSources, forceBuild);
+			CompileOrGetOpenGLBinaries(forceBuild);
 			CreateProgram();
 			TED_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
 		}
@@ -120,8 +120,8 @@ namespace Teddy
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
 
-		CompileOrGetVulkanBinaries(sources);
-		CompileOrGetOpenGLBinaries();
+		CompileOrGetVulkanBinaries(sources, false);
+		CompileOrGetOpenGLBinaries(false);
 		CreateProgram();
 	}
 
@@ -191,7 +191,7 @@ namespace Teddy
 		return shaderSources;
 	}
 
-	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
+	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources, const bool& forceBuild)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -214,7 +214,7 @@ namespace Teddy
 				Utils::GLShaderStageCachedVulkanFileExtension(stage));
 
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-			if (in.is_open())
+			if (in.is_open() && !forceBuild)
 			{
 				in.seekg(0, std::ios::end);
 				auto size = in.tellg();
@@ -257,7 +257,7 @@ namespace Teddy
 			Reflect(stage, data);
 	}
 
-	void OpenGLShader::CompileOrGetOpenGLBinaries()
+	void OpenGLShader::CompileOrGetOpenGLBinaries(const bool& forceBuild)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -280,7 +280,7 @@ namespace Teddy
 			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedOpenGLFileExtension(stage));
 
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-			if (in.is_open())
+			if (in.is_open() && !forceBuild)
 			{
 				TED_CORE_INFO(cachedPath.generic_string());
 				in.seekg(0, std::ios::end);

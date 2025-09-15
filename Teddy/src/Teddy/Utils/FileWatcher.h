@@ -2,7 +2,7 @@
 
 #include "Teddy/Utils/ShaderWatcher.h"
 
-#include <vector>
+#include <unordered_set>
 #include <string>
 
 namespace Teddy
@@ -14,10 +14,11 @@ namespace Teddy
 		{
 		public:
 			FileWatcher() = default;
-			FileWatcher(std::string& LastTimeCheckedFilepath);
+			FileWatcher(std::string LastTimeCheckedFilepath);
+			FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_set<std::string>& filepaths);
 			~FileWatcher() = default;
 
-			void CheckOfflineChanges();
+			bool CheckOfflineChanges();
 
 			void Run();
 
@@ -26,9 +27,9 @@ namespace Teddy
 
 			void CreateShaderWatching(const bool hotReload, const std::vector<std::string>& filepaths);
 			// makes m_ShadersChanged empty if changesHandled is true
-			std::vector<std::string> GetShadersChanged(bool changesHandled);
+			std::unordered_set<std::string> GetShadersChanged(bool changesHandled);
 		private:
-			std::string m_LastTimeCheckedFilepath;
+			const std::string m_LastTimeCheckedFilepath;
 
 			ShaderWatcher m_ShaderWatcher; // TODO: vector of file watchers (for different file types too)
 		};

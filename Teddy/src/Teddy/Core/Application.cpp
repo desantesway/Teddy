@@ -19,6 +19,13 @@ namespace Teddy
 {
 
 	Application* Application::s_Instance = nullptr;
+	Utils::FileWatcher Application::m_FileWatcher = Utils::FileWatcher("assets/tmp/filewatcher.tedwatch",
+		{	"../Teddy/assets/shaders/Renderer2D_Quad.glsl" ,
+			"../Teddy/assets/shaders/Renderer2D_Circle.glsl",
+			"../Teddy/assets/shaders/Renderer2D_Line.glsl",
+			"../Teddy/assets/shaders/Renderer2D_Text.glsl"
+		}
+	);
 
 	Application::Application(const ApplicationSpecification& specification)
 		: m_Specification(specification)
@@ -34,7 +41,9 @@ namespace Teddy
 		m_Window = Window::Create(WindowProps(m_Specification.Name));
 		m_Window->SetEventCallback(TED_BIND_EVENT_FN(Application::OnEvent));
 
-		Renderer::Init();
+		m_FileWatcher.CheckOfflineChanges();
+
+		Renderer::Init(m_FileWatcher.GetShadersChanged(true));
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
