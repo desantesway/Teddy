@@ -198,6 +198,14 @@ add_library(Teddy STATIC
     # Platform Utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/PlatformUtils.h
 
+    # File Watcher
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileWatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileWatcher.cpp
+
+    # Shader Watcher
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/ShaderWatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/ShaderWatcher.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> ImGui <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

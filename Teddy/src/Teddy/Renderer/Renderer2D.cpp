@@ -584,6 +584,7 @@ namespace Teddy
 		}
 	}
 	
+	// TODO: outline with freetype
 	// TODO: Rotation in the center + letter rotation
 	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
 		Ref<Font> font, const glm::mat4& transform, int entityID)
