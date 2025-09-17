@@ -26,17 +26,17 @@ namespace Teddy
 			void StopWatching();
 
 			// returns true if any shader changed
-			bool Update();
+			bool OnUpdate();
 
 			void SetHotReload(bool enabled);
 			bool IsHotReloading() const;
 
-			std::unordered_set<std::string>& GetFilesChanged(bool changesHandled);
+			std::unordered_set<std::string> GetFilesChanged(bool changesHandled);
 		private:
 			std::unordered_set<std::string> m_FilePaths;
 			std::unordered_set<std::string> m_ShadersChanged;
 			std::time_t m_LastChangedDate = std::time(nullptr);
-			bool m_HotReload = true;
+			bool m_HotReload = false;
 		};
 		
 	}

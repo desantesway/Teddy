@@ -120,7 +120,51 @@ namespace Teddy
 			fout << out.c_str();
 		}
 
-		//TODO: Create thread
+		void FileWatcher::Watch()
+		{
+			while (true)
+			{
+				bool updated = false;
+
+				YAML::Emitter out;
+				out << YAML::BeginMap;
+				out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
+
+				for (auto& [key, value] : m_FilesWatcher)
+				{
+					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
+
+					if (value.OnUpdate())
+					{
+						updated = true;
+
+						TED_CORE_INFO("Detected changes {}", (int)key);
+						value.GetFilesChanged(true);
+
+					}
+
+					out << YAML::Key << "LastTimeChecked" << YAML::Value
+						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+					out << YAML::EndMap;
+				}
+
+				out << YAML::EndMap;
+				out << YAML::EndMap;
+
+				if (updated)
+				{
+					std::ofstream fout(m_LastTimeCheckedFilepath);
+					fout << out.c_str();
+				}
+			}
+		}
+
+		void FileWatcher::StartWatching(FileGroupType type)
+		{
+			m_FilesWatcher[type].StartWatching();
+		}
+
 		void FileWatcher::StartWatching()
 		{
 			for (auto& [key, value] : m_FilesWatcher)
@@ -129,20 +173,21 @@ namespace Teddy
 			}
 		}
 
+		void FileWatcher::StopWatching(FileGroupType type)
+		{
+			m_FilesWatcher[type].StopWatching();
+		}
+
 		void FileWatcher::StopWatching()
 		{
+			// get thread and stop that thread
 			for (auto& [key, value] : m_FilesWatcher)
 			{
 				value.StopWatching();
 			}
 		}
 
-		void FileWatcher::CreateShaderWatching(FileGroupType type, const bool hotReload)
-		{
-			m_FilesWatcher[type].SetHotReload(hotReload);
-		}
-
-		std::unordered_set<std::string> FileWatcher::GetShadersChanged(FileGroupType type, bool changesHandled)
+		std::unordered_set<std::string> FileWatcher::GetFileGroupChanged(FileGroupType type, bool changesHandled)
 		{
 			return m_FilesWatcher[type].GetFilesChanged(changesHandled);
 		}

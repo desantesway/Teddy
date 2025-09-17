@@ -49,18 +49,24 @@ namespace Teddy
 		m_Window = Window::Create(WindowProps(m_Specification.Name));
 		m_Window->SetEventCallback(TED_BIND_EVENT_FN(Application::OnEvent));
 
+		// TODO: Change this to after been added the filepaths, add shaders to AsserManager and then init the filewatcher, shader create be something like 
+		// Shader::Create(filepath) -> AssetManager::Get(FileGroupType::Shader, ShaderType::Type)
 		m_FileWatcher.CheckOfflineChanges();
 
-		Renderer::Init( m_FileWatcher.GetShadersChanged(Utils::FileGroupType::Shader, true));
+		Renderer::Init(m_FileWatcher.GetFileGroupChanged(Utils::FileGroupType::Shader, true));
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		//m_FileWatcher.StartWatching();
+		//m_FileWatcher.Watch();
 	}
 
 	Application::~Application()
 	{
 		TED_PROFILE_FUNCTION();
 
+		//m_FileWatcher.StopWatching();
 		Renderer::Shutdown();
 	}
 

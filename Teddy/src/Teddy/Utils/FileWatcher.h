@@ -29,15 +29,15 @@ namespace Teddy
 
 			bool CheckOfflineChanges();
 
-			void Run();
+			void Watch();
 
 			void StartWatching();
 			void StopWatching();
-
-			void CreateShaderWatching(FileGroupType type, const bool hotReload);
+			void StartWatching(FileGroupType type);
+			void StopWatching(FileGroupType type);
 
 			// makes m_ShadersChanged empty if changesHandled is true
-			std::unordered_set<std::string> GetShadersChanged(FileGroupType type, bool changesHandled);
+			std::unordered_set<std::string> GetFileGroupChanged(FileGroupType type, bool changesHandled);
 		private:
 			const std::string m_LastTimeCheckedFilepath;
 
