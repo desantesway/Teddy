@@ -12,9 +12,9 @@ namespace Teddy
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_CurrentDirectory(g_AssetPath)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/Directory.png");
-		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/File.png");
-		m_TeddyIcon = Texture2D::Create("resources/icons/contentBrowser/Teddy.png");
+		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/directory.png");
+		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/file.png");
+		m_TeddyIcon = Texture2D::Create("resources/icons/contentBrowser/teddy.png");
 	}
 
 	Ref<Texture2D> ContentBrowserPanel::GetIcon(std::string file)

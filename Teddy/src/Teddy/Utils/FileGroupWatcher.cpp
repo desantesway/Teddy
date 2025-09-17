@@ -56,7 +56,6 @@ namespace Teddy
 			m_HotReload = false;
 		}
 
-		// returns true if any shader changed
 		bool FileGroupWatcher::OnUpdate()
 		{
 			bool changed = false;

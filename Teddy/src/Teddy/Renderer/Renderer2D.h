@@ -9,8 +9,6 @@
 
 #include "Teddy/Renderer/Font.h"
 
-// TODO: Shader modification watcher
-
 namespace Teddy 
 {
 	struct RenderCamera {

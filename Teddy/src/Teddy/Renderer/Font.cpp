@@ -43,6 +43,7 @@ namespace Teddy
         return texture;
     }
 
+	// TODO: Add font caching
 	Font::Font(const std::filesystem::path& filepath)
 		: m_MSDFData(new MSDFData()), m_Path(filepath.string())
 	{

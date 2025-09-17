@@ -30,7 +30,7 @@ namespace Teddy
         OPTICK_FRAME("MainThread");
 
         m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-        m_IconSimulate = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconSimulate = Texture2D::Create("Resources/Icons/Simulate.png");
         m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
@@ -472,7 +472,7 @@ namespace Teddy
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size));
 
         if (ImGui::ImageButton("Play", (ImTextureID)playIcon->GetRendererID(), 
-            ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+            ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
             ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
             if (m_SceneState == SceneState::Edit)
                 OnScenePlay();
@@ -483,7 +483,7 @@ namespace Teddy
 
         ImGui::SameLine();
         if (ImGui::ImageButton("Simulate", (ImTextureID)simulateIcon->GetRendererID(), 
-            ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
+            ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
             ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
             if (m_SceneState == SceneState::Edit)
                 OnSceneSimulate();

@@ -120,6 +120,7 @@ namespace Teddy
 			fout << out.c_str();
 		}
 
+		// TODO: Create a thread, implement Asset Manager first
 		void FileWatcher::Watch()
 		{
 			while (true)
@@ -140,7 +141,6 @@ namespace Teddy
 
 						TED_CORE_INFO("Detected changes {}", (int)key);
 						value.GetFilesChanged(true);
-
 					}
 
 					out << YAML::Key << "LastTimeChecked" << YAML::Value
