@@ -202,9 +202,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileWatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileWatcher.cpp
 
-    # Shader Watcher
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/ShaderWatcher.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/ShaderWatcher.cpp
+    # File Group Watcher
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.cpp
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> ImGui <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

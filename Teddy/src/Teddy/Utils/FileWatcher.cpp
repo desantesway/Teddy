@@ -11,10 +11,10 @@ namespace Teddy
 	{
 		namespace fs = std::filesystem;
 
-		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_set<std::string>& filepaths)
+		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups)
 			: m_LastTimeCheckedFilepath(LastTimeCheckedFilepath)
 		{
-			m_ShaderWatcher = ShaderWatcher(filepaths);
+			m_FilesWatcher = fileGroups;
 		}
 
 		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath)
@@ -42,10 +42,13 @@ namespace Teddy
 
 				out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
 
-				out << YAML::Key << "Shader" << YAML::Value << YAML::BeginMap;
-				out << YAML::Key << "LastTimeChecked" << YAML::Value 
-					<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-				out << YAML::EndMap;
+				for (auto& [key, _] : m_FilesWatcher)
+				{
+					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
+					out << YAML::Key << "LastTimeChecked" << YAML::Value 
+						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+					out << YAML::EndMap;
+				}
 
 				out << YAML::EndMap;
 
@@ -78,32 +81,36 @@ namespace Teddy
 			YAML::Node offWatchers = data["OfflineWatcher"];
 			if (offWatchers)
 			{
-				auto shader = offWatchers["Shader"];
 
-				out << YAML::Key << "Shader" << YAML::Value << YAML::BeginMap;
-
-				if (shader)
+				for (auto& [key, value] : m_FilesWatcher)
 				{
-					auto lastTimeChecked = shader["LastTimeChecked"].as<std::time_t>();
-					if (m_ShaderWatcher.CheckOfflineChanges(lastTimeChecked))
+
+					auto fileGroup = offWatchers[static_cast<int>(key)];
+
+					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
+
+					if (fileGroup)
 					{
-						out << YAML::Key << "LastTimeChecked" << YAML::Value 
+						auto lastTimeChecked = fileGroup["LastTimeChecked"].as<std::time_t>();
+						if (value.CheckOfflineChanges(lastTimeChecked))
+						{
+							out << YAML::Key << "LastTimeChecked" << YAML::Value 
+								<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+						}
+						else
+						{
+							out << YAML::Key << "LastTimeChecked" << YAML::Value << lastTimeChecked;
+						}
+					}
+					else 
+					{
+						out << YAML::Key << "LastTimeChecked" << YAML::Value
 							<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 					}
-					else
-					{
-						out << YAML::Key << "LastTimeChecked" << YAML::Value << lastTimeChecked;
-					}
-				}
-				else 
-				{
-					out << YAML::Key << "LastTimeChecked" << YAML::Value
-						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-				}
 
-				out << YAML::EndMap;
+					out << YAML::EndMap;
 
-				// another file
+				}
 			}
 
 			out << YAML::EndMap;
@@ -116,22 +123,28 @@ namespace Teddy
 		//TODO: Create thread
 		void FileWatcher::StartWatching()
 		{
-			m_ShaderWatcher.StartWatching();
+			for (auto& [key, value] : m_FilesWatcher)
+			{
+				value.StartWatching();
+			}
 		}
 
 		void FileWatcher::StopWatching()
 		{
-			m_ShaderWatcher.StopWatching();
+			for (auto& [key, value] : m_FilesWatcher)
+			{
+				value.StopWatching();
+			}
 		}
 
-		void FileWatcher::CreateShaderWatching(const bool hotReload, const std::vector<std::string>& filepaths)
+		void FileWatcher::CreateShaderWatching(FileGroupType type, const bool hotReload)
 		{
-			m_ShaderWatcher.SetHotReload(hotReload);
+			m_FilesWatcher[type].SetHotReload(hotReload);
 		}
 
-		std::unordered_set<std::string> FileWatcher::GetShadersChanged(bool changesHandled)
+		std::unordered_set<std::string> FileWatcher::GetShadersChanged(FileGroupType type, bool changesHandled)
 		{
-			return m_ShaderWatcher.GetFilesChanged(changesHandled);
+			return m_FilesWatcher[type].GetFilesChanged(changesHandled);
 		}
 	}
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Teddy/Utils/ShaderWatcher.h"
+#include "Teddy/Utils/FileGroupWatcher.h"
 
-#include <unordered_set>
+#include <unordered_map>
 #include <string>
 
 namespace Teddy
@@ -10,12 +10,21 @@ namespace Teddy
 	namespace Utils
 	{
 
+		enum class FileGroupType
+		{
+			None = 0,
+			Shader,
+
+			// keep texture last
+			Texture
+		};
+
 		class FileWatcher
 		{
 		public:
 			FileWatcher() = default;
 			FileWatcher(std::string LastTimeCheckedFilepath);
-			FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_set<std::string>& filepaths);
+			FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups);
 			~FileWatcher() = default;
 
 			bool CheckOfflineChanges();
@@ -25,13 +34,14 @@ namespace Teddy
 			void StartWatching();
 			void StopWatching();
 
-			void CreateShaderWatching(const bool hotReload, const std::vector<std::string>& filepaths);
+			void CreateShaderWatching(FileGroupType type, const bool hotReload);
+
 			// makes m_ShadersChanged empty if changesHandled is true
-			std::unordered_set<std::string> GetShadersChanged(bool changesHandled);
+			std::unordered_set<std::string> GetShadersChanged(FileGroupType type, bool changesHandled);
 		private:
 			const std::string m_LastTimeCheckedFilepath;
 
-			ShaderWatcher m_ShaderWatcher; // TODO: vector of file watchers (for different file types too)
+			std::unordered_map<FileGroupType, FileGroupWatcher> m_FilesWatcher;
 		};
 		
 	}

@@ -7,20 +7,18 @@ namespace Teddy
 {
 	namespace Utils
 	{
-		// TODO: This could be a subclass of a more generic FileWatcher class that watches any file type
-		class ShaderWatcher
+		class FileGroupWatcher
 		{
 		public:
 			// TODO: This will communicate with AssetManager to reload shaders and get the shader filepaths 
 			// (not receiving them as an argument like it is now)
-			ShaderWatcher(const std::unordered_set<std::string>& filepaths)
+			FileGroupWatcher(const std::unordered_set<std::string>& filepaths)
 				: m_FilePaths(filepaths), m_LastChangedDate(std::time(nullptr))
 			{
-				m_ShadersChanged.empty();
 			}
 
-			ShaderWatcher() = default;
-			~ShaderWatcher() = default;
+			FileGroupWatcher() = default;
+			~FileGroupWatcher() = default;
 
 			bool CheckOfflineChanges(std::time_t& lastTimeChecked);
 

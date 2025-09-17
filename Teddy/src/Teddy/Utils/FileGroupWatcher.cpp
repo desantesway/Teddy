@@ -1,4 +1,4 @@
-#include "Teddy/Utils/ShaderWatcher.h"
+#include "Teddy/Utils/FileGroupWatcher.h"
 
 #include "Teddy/Renderer/Renderer.h"
 
@@ -6,7 +6,7 @@ namespace Teddy
 {
 	namespace Utils
 	{
-		bool ShaderWatcher::CheckOfflineChanges(std::time_t& lastTimeChecked)
+		bool FileGroupWatcher::CheckOfflineChanges(std::time_t& lastTimeChecked)
 		{
 			bool changed = false;
 
@@ -30,33 +30,33 @@ namespace Teddy
 			return changed;
 		}
 
-		std::unordered_set<std::string>& ShaderWatcher::GetFilesChanged(bool changesHandled)
+		std::unordered_set<std::string>& FileGroupWatcher::GetFilesChanged(bool changesHandled)
 		{
 			return m_ShadersChanged;
 		}
 
-		void ShaderWatcher::StartWatching()
+		void FileGroupWatcher::StartWatching()
 		{
 
 		}
 
-		void ShaderWatcher::StopWatching()
+		void FileGroupWatcher::StopWatching()
 		{
 
 		}
 
 		// returns true if any shader changed
-		bool ShaderWatcher::Update()
+		bool FileGroupWatcher::Update()
 		{
 			return false;
 		}
 
-		void ShaderWatcher::SetHotReload(bool enabled)
+		void FileGroupWatcher::SetHotReload(bool enabled)
 		{
 			m_HotReload = enabled;
 		}
 
-		bool ShaderWatcher::IsHotReloading() const
+		bool FileGroupWatcher::IsHotReloading() const
 		{
 			return m_HotReload;
 		}

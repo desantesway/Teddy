@@ -12,6 +12,8 @@
 
 #include "Teddy/Utils/PlatformUtils.h"
 
+#include "Teddy/Utils/FileWatcher.h"
+
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
@@ -20,10 +22,16 @@ namespace Teddy
 
 	Application* Application::s_Instance = nullptr;
 	Utils::FileWatcher Application::m_FileWatcher = Utils::FileWatcher("assets/tmp/filewatcher.tedwatch",
-		{	"../Teddy/assets/shaders/Renderer2D_Quad.glsl" ,
-			"../Teddy/assets/shaders/Renderer2D_Circle.glsl",
-			"../Teddy/assets/shaders/Renderer2D_Line.glsl",
-			"../Teddy/assets/shaders/Renderer2D_Text.glsl"
+		std::unordered_map<Utils::FileGroupType, Utils::FileGroupWatcher>
+		{
+			{Utils::FileGroupType::Shader, Utils::FileGroupWatcher(
+				{
+					"../Teddy/assets/shaders/Renderer2D_Quad.glsl",
+					"../Teddy/assets/shaders/Renderer2D_Circle.glsl",
+					"../Teddy/assets/shaders/Renderer2D_Line.glsl",
+					"../Teddy/assets/shaders/Renderer2D_Text.glsl"
+				}
+			)}
 		}
 	);
 
@@ -43,7 +51,7 @@ namespace Teddy
 
 		m_FileWatcher.CheckOfflineChanges();
 
-		Renderer::Init(m_FileWatcher.GetShadersChanged(true));
+		Renderer::Init( m_FileWatcher.GetShadersChanged(Utils::FileGroupType::Shader, true));
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
