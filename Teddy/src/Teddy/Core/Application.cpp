@@ -49,7 +49,7 @@ namespace Teddy
 		m_Window = Window::Create(WindowProps(m_Specification.Name));
 		m_Window->SetEventCallback(TED_BIND_EVENT_FN(Application::OnEvent));
 
-		// TODO: Change this to after been added the filepaths, add shaders to AsserManager and then init the filewatcher, shader create be something like 
+		// TODO: Change this to after been added the filepaths, add shaders to AssetManager (instance) and then init the filewatcher, shader create be something like 
 		// Shader::Create(filepath) -> AssetManager::Get(FileGroupType::Shader, ShaderType::Type)
 		m_FileWatcher.CheckOfflineChanges();
 

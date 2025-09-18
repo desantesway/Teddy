@@ -62,6 +62,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/UUID.cpp
 
+    # Asset Manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/AssetManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/AssetManager.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Events <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

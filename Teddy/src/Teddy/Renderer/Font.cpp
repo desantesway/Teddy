@@ -43,7 +43,8 @@ namespace Teddy
         return texture;
     }
 
-	// TODO: Add font caching
+	// TODO: Add font caching, but msdf doesnt support loading from cache, and use this only in gameplay
+    // Freetype
 	Font::Font(const std::filesystem::path& filepath)
 		: m_MSDFData(new MSDFData()), m_Path(filepath.string())
 	{
