@@ -51,9 +51,9 @@ namespace Teddy
 
 		// TODO: Change this to after been added the filepaths, add shaders to AssetManager (instance) and then init the filewatcher, shader create be something like 
 		// Shader::Create(filepath) -> AssetManager::Get(FileGroupType::Shader, ShaderType::Type)
-		m_FileWatcher.CheckOfflineChanges();
+		//m_FileWatcher.CheckOfflineChanges();
 
-		Renderer::Init(m_FileWatcher.GetFileGroupChanged(Utils::FileGroupType::Shader, true));
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);

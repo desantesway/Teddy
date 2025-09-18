@@ -14,6 +14,7 @@
 
 #include "Teddy/Core/Input.h"
 #include "Teddy/Utils/FileWatcher.h"
+#include "Teddy/Core/AssetManager.h"
 
 #ifdef TED_DIST
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -85,7 +86,7 @@ namespace Teddy
 		float m_LastFrameTime = 0.0f;
 
 		Input m_Input;
-
+		AssetManager m_AssetManager;
 	private:
 		static Utils::FileWatcher m_FileWatcher;
 		static Application* s_Instance;

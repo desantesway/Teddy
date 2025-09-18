@@ -10,6 +10,7 @@ namespace Teddy
 	class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const std::string& name, const std::string& filepath, const bool& forceBuild);
 		OpenGLShader(const std::string& filepath, const bool& forceBuild);
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~OpenGLShader();
@@ -25,6 +26,7 @@ namespace Teddy
 		virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 
+		virtual const std::string& GetPath() const override { return m_FilePath; }
 		virtual const std::string& GetName() const override { return m_Name; }
 
 		void UploadUniformInt(const std::string& name, int value);

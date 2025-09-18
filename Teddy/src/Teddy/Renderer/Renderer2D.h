@@ -19,7 +19,7 @@ namespace Teddy
 	class Renderer2D 
 	{
 	public:
-		static void Init(const std::unordered_set<std::string>& shadersToRebuild);
+		static void Init();
 		static void Shutdown();
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);

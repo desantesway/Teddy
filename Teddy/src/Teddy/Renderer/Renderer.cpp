@@ -9,12 +9,12 @@ namespace Teddy
 
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
-	void Renderer::Init(const std::unordered_set<std::string>& shadersToRebuild)
+	void Renderer::Init()
 	{
 		TED_PROFILE_FUNCTION();
 
 		RenderCommand::Init();
-		Renderer2D::Init(shadersToRebuild);
+		Renderer2D::Init();
 	}
 
 	void Renderer::Shutdown()

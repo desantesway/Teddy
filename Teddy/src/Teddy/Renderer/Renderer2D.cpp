@@ -8,6 +8,7 @@
 #include "Teddy/Renderer/UniformBuffer.h"
 
 #include "Teddy/Renderer/MSDFData.h"
+#include "Teddy/Core/AssetManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -130,7 +131,7 @@ namespace Teddy
 
 	static Renderer2DData s_Data;
 
-	void Renderer2D::Init(const std::unordered_set<std::string>& shadersToRebuild)
+	void Renderer2D::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
@@ -244,25 +245,13 @@ namespace Teddy
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		if (shadersToRebuild.size() > 0)
-		{
-			s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl",
-				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Quad.glsl"));
-			s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl",
-				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Circle.glsl"));
-			s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl",
-				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Line.glsl"));
-			s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl",
-				shadersToRebuild.contains("../Teddy/assets/shaders/Renderer2D_Text.glsl"));
-		}
-		else
-		{
-			s_Data.QuadResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Quad.glsl", false);
-			s_Data.CircleResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Circle.glsl", false);
-			s_Data.LineResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Line.glsl", false);
-			s_Data.TextResources.Shader = Shader::Create("../Teddy/assets/shaders/Renderer2D_Text.glsl", false);
-		}
-		
+		// Adding shaders
+		auto& assets = AssetManager::Get();
+		assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
+		s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader");
+		s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl");
+		s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl");
+		s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl");
 
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;

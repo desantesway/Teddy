@@ -9,6 +9,7 @@ namespace Teddy
 {
 	namespace Utils
 	{
+		// TODO: implement with single file
 		namespace fs = std::filesystem;
 
 		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups)

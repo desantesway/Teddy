@@ -84,6 +84,25 @@ namespace Teddy
 		}
 	}
 
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath, const bool& forceBuild)
+		: m_FilePath(filepath), m_Name(name)
+	{
+		TED_PROFILE_FUNCTION();
+
+		Utils::CreateCacheDirectoryIfNeeded();
+
+		std::string shaderSrc = ReadFile(filepath);
+		auto shaderSources = PreProcess(shaderSrc);
+
+		{
+			Timer timer;
+			CompileOrGetVulkanBinaries(shaderSources, forceBuild);
+			CompileOrGetOpenGLBinaries(forceBuild);
+			CreateProgram();
+			TED_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
+		}
+	}
+
 	OpenGLShader::OpenGLShader(const std::string& filepath, const bool& forceBuild)
 		: m_FilePath(filepath)
 	{
