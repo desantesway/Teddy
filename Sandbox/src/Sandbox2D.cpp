@@ -23,7 +23,7 @@ void Sandbox2D::OnAttach()
 {
 	TED_PROFILE_FUNCTION();
 
-	m_BoardTexture = Teddy::Texture2D::Create("assets/textures/checkerboard.jpg");
+	m_BoardTexture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("checkerboard", "assets/textures/checkerboard.jpg");
 
 	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
 

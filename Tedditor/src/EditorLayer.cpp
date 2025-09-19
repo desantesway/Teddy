@@ -29,9 +29,11 @@ namespace Teddy
     {
         OPTICK_FRAME("MainThread");
 
-        m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-        m_IconSimulate = Texture2D::Create("Resources/Icons/Simulate.png");
-        m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		auto& assets = AssetManager::Get();
+
+        m_IconPlay = assets.Load<Texture2D>("PlayButton","Resources/Icons/PlayButton.png");
+        m_IconSimulate = assets.Load<Texture2D>("Simulate", "Resources/Icons/Simulate.png");
+        m_IconStop = assets.Load<Texture2D>("StopButton", "Resources/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = Teddy::FramebufferAttachmentSpecification({

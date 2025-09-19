@@ -397,7 +397,7 @@ namespace Teddy
 						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 
 						if (spriteRendererComponent["TexturePath"])
-							src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+							src.Texture = AssetManager::Get().Load<Texture2D>(spriteRendererComponent["TexturePath"].as<std::string>(), Boolean::True);
 
 						if (spriteRendererComponent["TilingFactor"])
 							src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();

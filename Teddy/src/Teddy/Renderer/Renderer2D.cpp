@@ -237,7 +237,7 @@ namespace Teddy
 		s_Data.TextResources.VertexBufferBase = new TextVertex[s_Data.MaxVertices];
 
 		// White texture
-		s_Data.WhiteTexture = Texture2D::Create(TextureSpecification());
+		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(TextureSpecification());
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 

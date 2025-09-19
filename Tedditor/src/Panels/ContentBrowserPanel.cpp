@@ -1,5 +1,6 @@
 #include "TeddyPch.h"
 #include "ContentBrowserPanel.h"
+#include "Teddy/Core/AssetManager.h"
 
 #include <imgui.h>
 
@@ -12,9 +13,11 @@ namespace Teddy
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_CurrentDirectory(g_AssetPath)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/directory.png");
-		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/file.png");
-		m_TeddyIcon = Texture2D::Create("resources/icons/contentBrowser/teddy.png");
+		auto& assets = AssetManager::Get();
+
+		m_DirectoryIcon = assets.Load<Texture2D>("directory", "resources/icons/contentBrowser/directory.png");
+		m_FileIcon = assets.Load<Texture2D>("file", "resources/icons/contentBrowser/file.png");
+		m_TeddyIcon = assets.Load<Texture2D>("teddy", "resources/icons/contentBrowser/teddy.png");
 	}
 
 	Ref<Texture2D> ContentBrowserPanel::GetIcon(std::string file)

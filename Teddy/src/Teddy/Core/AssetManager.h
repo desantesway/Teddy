@@ -11,7 +11,7 @@ namespace Teddy
 {
 	enum class Boolean { False, True };
 
-	// TODO: Being used counter, when 0 deload, if new scene is being loaded only deload after loaded
+	// TODO: Use used counter, when 0 deload, if new scene is being loaded only deload after loaded
 	class AssetManager
 	{
 	public:
@@ -20,14 +20,21 @@ namespace Teddy
 
 		static AssetManager& Get() { return *s_Instance; }
 
-		static void Init();
-		static void Shutdown();
+		template<typename T>
+		struct AssetGroup
+		{
+			std::unordered_map<std::string, Ref<T>> LoadedAssets;
+			std::unordered_map<Ref<std::string>, Ref<T>> AssetsDeloadBypass;
+		};
 
 		template<typename T>
 		Ref<T> Load(const std::string& name);
 
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::string& filepath);
+
+		template<typename T>
+		Ref<T> Load(const TextureSpecification& spec);
 
 		// enum class to avoid bool template specialization issues
 		template<typename T>
@@ -61,21 +68,20 @@ namespace Teddy
 		// Deload
 
 		template<typename T>
-		Ref<T> Get(const std::string& filepath, const std::unordered_map<std::string, Ref<T>>& map);
+		Ref<T> Get(const std::string& filepath, const AssetGroup<T>& map);
 
 		template<typename T>
-		bool Exists(const std::string& filepath, const std::unordered_map<std::string, Ref<T>>& map) const;
+		bool Exists(const std::string& filepath, const AssetGroup<T>& map) const;
 	private:
 		template<typename T>
-		Ref<T> Load(const std::string& name, const std::unordered_map<std::string, Ref<T>>& map);
+		Ref<T> Load(const std::string& name, const AssetGroup<T>& map);
 
 	private:
 		static Utils::FileWatcher m_FileWatcher;
 
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
-		std::unordered_map<std::string, Ref<Texture2D>> m_Textures2D;
-		std::unordered_map<std::string, Ref<Font>> m_Fonts;
-
+		AssetGroup<Shader> m_Shaders;
+		AssetGroup<Texture2D> m_Textures2D;
+		AssetGroup<Font> m_Fonts;
 
 	private:
 		static AssetManager* s_Instance;
