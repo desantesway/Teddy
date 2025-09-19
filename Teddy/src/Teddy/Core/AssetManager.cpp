@@ -52,6 +52,29 @@ namespace Teddy
 		}
 	}
 
+	template<>
+	Ref<Font> AssetManager::Load<Font>()
+	{
+		std::string name = "DefaultFont";
+		std::string filepath = "../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf";
+
+		if (Exists<Font>(name, m_Fonts))
+		{
+			Ref<Font> font = Get<Font>(name, m_Fonts);
+			if (font->GetPath() != filepath)
+			{
+				TED_CORE_ASSERT(false, "Font already exists with that name but different filepath");
+			}
+
+			return font;
+		}
+		else
+		{
+			//auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Font, filepath); //TODO: implement cache for fonts
+			return m_Fonts[name] = CreateRef<Font>(filepath);
+		}
+	}
+
 	template<typename T>
 	Ref<T> AssetManager::Get(const std::string& filepath, const std::unordered_map<std::string, Ref<T>>& map)
 	{

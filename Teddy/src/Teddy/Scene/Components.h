@@ -4,6 +4,7 @@
 #include "Teddy/Core/UUID.h"
 #include "Teddy/Renderer/Texture.h"
 #include "Teddy/Renderer/Font.h"
+#include "Teddy/Core/AssetManager.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -151,7 +152,7 @@ namespace Teddy
 	struct TextComponent
 	{
 		std::string TextString;
-		Ref<Font> FontAsset = Font::GetDefault();
+		Ref<Font> FontAsset = AssetManager::Get().Load<Font>();
 		glm::vec4 Color{ 1.0f };
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;

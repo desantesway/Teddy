@@ -10,14 +10,6 @@
 namespace Teddy
 {
 
-	enum class FileGroupType
-	{
-		None = 0,
-		Shader,
-		Texture2D,
-		Font
-	};
-
 	class AssetManager
 	{
 	public:
@@ -38,6 +30,9 @@ namespace Teddy
 
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::string& filepath);
+
+		template<typename T>
+		Ref<T> Load();
 
 		//Ref<Shader> LoadShader(const std::string& name, const std::string& filepath);
 		//Ref<Texture2D> LoadTexture2D(const std::string& filepath);

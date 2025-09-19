@@ -247,8 +247,8 @@ namespace Teddy
 
 		// Adding shaders
 		auto& assets = AssetManager::Get();
-		assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader");
+		
+		s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
 		s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl");
 		s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl");
 		s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl");

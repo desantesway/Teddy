@@ -7,6 +7,7 @@ namespace Teddy
 {
 	struct MSDFData;
 
+	// TODO: Implement name
 	class Font
 	{
 	public:

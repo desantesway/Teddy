@@ -14,9 +14,8 @@ namespace Teddy
 		{
 			None = 0,
 			Shader,
-
-			// keep texture last
-			Texture
+			Texture2D,
+			Font
 		};
 
 		class FileWatcher
