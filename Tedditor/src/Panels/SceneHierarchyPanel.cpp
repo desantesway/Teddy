@@ -497,8 +497,8 @@ namespace Teddy
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path fontPath = std::filesystem::path(g_AssetPath) / path;
 
-						static Ref<Font> font;
-						font = CreateRef<Font>(fontPath);
+						Ref<Font> font;
+						font = AssetManager::Get().Load<Font>(fontPath.string(), Boolean::True);
 
 						if (font)
 							component.FontAsset = font;

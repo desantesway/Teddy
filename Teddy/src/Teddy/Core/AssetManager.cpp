@@ -26,10 +26,10 @@ namespace Teddy
 		}
 	}
 
-	template<>
-	Ref<Shader> AssetManager::Load<Shader>(const std::string& name)
+	template<typename T>
+	Ref<T> AssetManager::Load(const std::string& name)
 	{
-		return Load<Shader>(name, m_Shaders);
+		return Load<T>(name, m_Shaders);
 	}
 
 	template<>
@@ -53,10 +53,8 @@ namespace Teddy
 	}
 
 	template<>
-	Ref<Font> AssetManager::Load<Font>()
+	Ref<Font> AssetManager::Load<Font>(const std::string& name, const std::string& filepath)
 	{
-		std::string name = "DefaultFont";
-		std::string filepath = "../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf";
 
 		if (Exists<Font>(name, m_Fonts))
 		{
@@ -71,8 +69,19 @@ namespace Teddy
 		else
 		{
 			//auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Font, filepath); //TODO: implement cache for fonts
-			return m_Fonts[name] = CreateRef<Font>(filepath);
+			Ref<Font> font = CreateRef<Font>(filepath);
+			m_Fonts[name] = font;
+			return font;
 		}
+	}
+
+	template<>
+	Ref<Font> AssetManager::Load<Font>()
+	{
+		std::string name = "DefaultFont";
+		std::string filepath = Font::GetDefaultPath();
+
+		return Load<Font>(name, filepath);
 	}
 
 	template<typename T>

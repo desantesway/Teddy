@@ -9,7 +9,9 @@
 
 namespace Teddy
 {
+	enum class Boolean { False, True };
 
+	// TODO: Being used counter, when 0 deload
 	class AssetManager
 	{
 	public:
@@ -21,15 +23,34 @@ namespace Teddy
 		static void Init();
 		static void Shutdown();
 
-		// Should be added before loading, because of filewatch
-		template<typename T>
-		void Add(const std::string& name, const std::string& path);
-
 		template<typename T>
 		Ref<T> Load(const std::string& name);
 
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::string& filepath);
+
+		// enum class to avoid bool template specialization issues
+		template<typename T>
+		Ref<T> Load(const std::string& filepath, Boolean genName)
+		{
+			std::string name = filepath;
+
+			std::filesystem::path fontPath = std::filesystem::path(Font::GetDefaultPath());
+			if (fontPath.string() == filepath)
+			{
+				name = "DefaultFont";
+			}
+			if (genName == Boolean::True)
+			{
+				auto lastSlash = filepath.find_last_of("/\\");
+				lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+				auto lastDot = filepath.rfind('.');
+				auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+				name = filepath.substr(lastSlash, count);
+			}
+
+			return Load<T>(name, filepath);
+		}
 
 		template<typename T>
 		Ref<T> Load();

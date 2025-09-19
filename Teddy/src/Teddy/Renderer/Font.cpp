@@ -140,11 +140,16 @@ namespace Teddy
         msdfgen::deinitializeFreetype(ft);
 	}
 
+    std::string const Font::GetDefaultPath()
+    {
+        return m_DefaultPath;
+    }
+
     Ref<Font> Font::GetDefault()
     {
         static Ref<Font> DefaultFont;
         if (!DefaultFont)
-            DefaultFont = CreateRef<Font>("../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf");
+            DefaultFont = CreateRef<Font>(m_DefaultPath);
 
         return DefaultFont;
     }
