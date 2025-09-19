@@ -20,6 +20,7 @@ namespace Teddy
 			FileGroupWatcher() = default;
 			~FileGroupWatcher() = default;
 
+			bool CheckOfflineChanges(std::time_t& lastTimeChecked, const std::string& filepath);
 			bool CheckOfflineChanges(std::time_t& lastTimeChecked);
 
 			void StartWatching();

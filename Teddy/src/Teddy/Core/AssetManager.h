@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Teddy/Core/Base.h>
+#include "Teddy/Utils/FileWatcher.h"
 
 #include "Teddy/Renderer/Shader.h"
 #include "Teddy/Renderer/Texture.h"
@@ -38,10 +39,6 @@ namespace Teddy
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::string& filepath);
 
-		Ref<Shader> LoadShader(const std::string& filepath);
-		Ref<Texture2D> LoadTexture(const std::string& filepath);
-		Font LoadFont(const std::string& filepath);
-
 		//Ref<Shader> LoadShader(const std::string& name, const std::string& filepath);
 		//Ref<Texture2D> LoadTexture2D(const std::string& filepath);
 
@@ -56,9 +53,13 @@ namespace Teddy
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::unordered_map<std::string, Ref<T>>& map);
 
+	private:
+		static Utils::FileWatcher m_FileWatcher;
+
 		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 		std::unordered_map<std::string, Ref<Texture2D>> m_Textures2D;
 		std::unordered_map<std::string, Ref<Font>> m_Fonts;
+
 
 	private:
 		static AssetManager* s_Instance;

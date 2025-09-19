@@ -27,6 +27,9 @@ namespace Teddy
 			FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups);
 			~FileWatcher() = default;
 
+			void CreateOfflineFile(std::string& filepath);
+
+			bool CheckOfflineChanges(const FileGroupType& type, const std::string& offFilepath);
 			bool CheckOfflineChanges();
 
 			void Watch();

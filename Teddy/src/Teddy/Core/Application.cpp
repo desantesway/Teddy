@@ -21,19 +21,6 @@ namespace Teddy
 {
 
 	Application* Application::s_Instance = nullptr;
-	Utils::FileWatcher Application::m_FileWatcher = Utils::FileWatcher("assets/tmp/filewatcher.tedwatch",
-		std::unordered_map<Utils::FileGroupType, Utils::FileGroupWatcher>
-		{
-			{Utils::FileGroupType::Shader, Utils::FileGroupWatcher(
-				{
-					"../Teddy/assets/shaders/Renderer2D_Quad.glsl",
-					"../Teddy/assets/shaders/Renderer2D_Circle.glsl",
-					"../Teddy/assets/shaders/Renderer2D_Line.glsl",
-					"../Teddy/assets/shaders/Renderer2D_Text.glsl"
-				}
-			)}
-		}
-	);
 
 	Application::Application(const ApplicationSpecification& specification)
 		: m_Specification(specification)

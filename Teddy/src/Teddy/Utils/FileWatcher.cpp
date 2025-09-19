@@ -23,11 +23,8 @@ namespace Teddy
 		{
 		}
 
-		bool FileWatcher::CheckOfflineChanges()
+		void FileWatcher::CreateOfflineFile(std::string& filepath)
 		{
-
-			std::string filepath = m_LastTimeCheckedFilepath;
-
 			if (!fs::exists(filepath)) {
 
 				fs::path path = filepath;
@@ -35,7 +32,6 @@ namespace Teddy
 				if (!fs::exists(parent) && !fs::create_directory(parent))
 				{
 					TED_CORE_ERROR("Failed to create directory for OfflineWatcher file '{0}'", parent.string());
-					return false;
 				}
 
 				YAML::Emitter out;
@@ -43,11 +39,9 @@ namespace Teddy
 
 				out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
 
-				for (auto& [key, _] : m_FilesWatcher)
+				for (auto& [key, value] : m_FilesWatcher)
 				{
 					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
-					out << YAML::Key << "LastTimeChecked" << YAML::Value 
-						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 					out << YAML::EndMap;
 				}
 
@@ -59,10 +53,118 @@ namespace Teddy
 				if (!fout.is_open())
 				{
 					TED_CORE_ERROR("Failed to create OfflineWatcher file '{0}'", filepath);
-					return false;
 				}
 				fout << out.c_str();
 			}
+		}
+
+		bool FileWatcher::CheckOfflineChanges(const FileGroupType& type, const std::string& offFilepath)
+		{
+
+			std::string filepath = m_LastTimeCheckedFilepath;
+
+			CreateOfflineFile(filepath);
+
+			YAML::Node data;
+			try
+			{
+				data = YAML::LoadFile(filepath);
+			}
+			catch (YAML::ParserException e)
+			{
+				TED_CORE_ERROR("Failed to load OfflineWatcher file '{0}'\n     {1}", filepath, e.what());
+				return false;
+			}
+
+			YAML::Emitter out;
+			out << YAML::BeginMap;
+			out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
+
+			bool fileChanged = false;
+			YAML::Node offWatchers = data["OfflineWatcher"];
+			if (offWatchers && offWatchers.IsMap())
+			{
+				bool typeFound = false;
+				for (auto it = offWatchers.begin(); it != offWatchers.end(); ++it)
+				{
+					int fileType = it->first.as<int>();          // the map key
+					//const YAML::Node& group = it->second.as<std::time_t>();      // the map value (node)
+
+					out << YAML::Key << fileType << YAML::Value << YAML::BeginMap;
+
+					auto fileGroup = offWatchers[fileType];
+
+					if (fileType == static_cast<int>(type))
+					{
+						typeFound = true;
+					}
+
+					if (fileGroup && fileGroup.IsMap())
+					{
+						bool pathFound = false;
+						for (auto fileOffline = fileGroup.begin(); fileOffline != fileGroup.end(); ++fileOffline)
+						{
+							std::string path = fileOffline->first.as<std::string>();
+							std::time_t lastTimeChecked = fileOffline->second.as<std::time_t>();
+							if (fileType == static_cast<int>(type) && path == offFilepath)
+							{
+								pathFound = true;
+								if (m_FilesWatcher[type].CheckOfflineChanges(lastTimeChecked, offFilepath))
+								{
+									fileChanged = true;
+									out << YAML::Key << path << YAML::Value
+										<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+								}
+								else
+								{
+									out << YAML::Key << path << YAML::Value << lastTimeChecked;
+								}
+							}
+							else
+							{
+								out << YAML::Key << path << YAML::Value << lastTimeChecked;
+							}
+						}
+
+						if (!pathFound)
+						{
+							out << YAML::Key << offFilepath << YAML::Value
+								<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+						}
+					}
+
+					out << YAML::EndMap;
+				}
+
+				if (!typeFound)
+				{
+					out << YAML::Key << static_cast<int>(type) << YAML::Value << YAML::BeginMap;
+					out << YAML::Key << offFilepath << YAML::Value
+						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+					out << YAML::EndMap;
+				}
+			}
+			else 
+			{
+				TED_CORE_ASSERT(false, "OfflineWatcher file is corrupted");
+			}
+
+			out << YAML::EndMap;
+			out << YAML::EndMap;
+
+			std::ofstream fout(filepath);
+			fout << out.c_str();
+
+			return fileChanged;
+		}
+
+		// Change
+		bool FileWatcher::CheckOfflineChanges()
+		{
+
+			std::string filepath = m_LastTimeCheckedFilepath;
+
+			CreateOfflineFile(filepath);
 
 			YAML::Node data;
 			try

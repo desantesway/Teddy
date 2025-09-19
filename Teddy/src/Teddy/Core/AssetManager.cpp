@@ -4,6 +4,8 @@ namespace Teddy
 {
 	AssetManager* AssetManager::s_Instance = nullptr;
 
+	Utils::FileWatcher AssetManager::m_FileWatcher = Utils::FileWatcher("assets/tmp/filewatcher.tedwatch");
+
 	AssetManager::AssetManager()
 	{
 		TED_CORE_ASSERT(!s_Instance, "Asset Manager already exists!");
@@ -45,24 +47,9 @@ namespace Teddy
 		}
 		else
 		{
-			auto forceBuild = false; // m_FileWatcher.(Utils::FileGroupType::Shader, filepath);
+			auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Shader, filepath);
 			return m_Shaders[name] = Shader::Create(name, filepath, forceBuild);
 		}
-	}
-
-	Ref<Shader> AssetManager::LoadShader(const std::string& filepath)
-	{
-		return Shader::Create(filepath, false);
-	}
-
-	Ref<Texture2D> AssetManager::LoadTexture(const std::string& filepath)
-	{
-		return Texture2D::Create(filepath);
-	}
-
-	Font AssetManager::LoadFont(const std::string& filepath)
-	{
-		return Font(filepath);
 	}
 
 	template<typename T>

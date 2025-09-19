@@ -88,7 +88,6 @@ namespace Teddy
 		Input m_Input;
 		AssetManager m_AssetManager;
 	private:
-		static Utils::FileWatcher m_FileWatcher;
 		static Application* s_Instance;
 		
 		#ifdef TED_DIST

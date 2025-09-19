@@ -6,6 +6,29 @@ namespace Teddy
 {
 	namespace Utils
 	{
+		bool FileGroupWatcher::CheckOfflineChanges(std::time_t& lastTimeChecked, const std::string& filepath)
+		{
+			bool changed = false;
+
+			auto ftime = std::filesystem::last_write_time(filepath);
+			auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+				ftime - std::filesystem::file_time_type::clock::now()
+				+ std::chrono::system_clock::now());
+			std::time_t cftime = std::chrono::system_clock::to_time_t(sctp);
+
+			if (cftime > lastTimeChecked)
+			{
+				if (!m_ShadersChanged.contains(filepath))
+				{
+					m_ShadersChanged.insert(filepath);
+					m_LastChangedDate = cftime;
+					changed = true;
+				}
+			}
+
+			return changed;
+		}
+
 		bool FileGroupWatcher::CheckOfflineChanges(std::time_t& lastTimeChecked)
 		{
 			bool changed = false;
