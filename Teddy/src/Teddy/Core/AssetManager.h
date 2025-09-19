@@ -11,7 +11,7 @@ namespace Teddy
 {
 	enum class Boolean { False, True };
 
-	// TODO: Being used counter, when 0 deload
+	// TODO: Being used counter, when 0 deload, if new scene is being loaded only deload after loaded
 	class AssetManager
 	{
 	public:

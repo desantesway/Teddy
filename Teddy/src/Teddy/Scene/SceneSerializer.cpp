@@ -420,10 +420,10 @@ namespace Teddy
 						txc.TextString = textComponent["TextString"].as<std::string>();
 
 						if (textComponent["FontAsset"])
-							txc.FontAsset = CreateRef<Font>(textComponent["FontAsset"].as<std::string>());
+							txc.FontAsset = AssetManager::Get().Load<Font>(textComponent["FontAsset"].as<std::string>(), Boolean::True);
 						else
 						{
-							txc.FontAsset = Font::GetDefault();
+							txc.FontAsset = AssetManager::Get().Load<Font>();
 						}
 
 						txc.Color = textComponent["Color"].as<glm::vec4>();
