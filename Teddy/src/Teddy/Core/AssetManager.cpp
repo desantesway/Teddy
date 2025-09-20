@@ -67,7 +67,7 @@ namespace Teddy
 	Ref<Font> AssetManager::Load<Font>(const std::string& name, const std::string& filepath)
 	{
 
-		if (false && Exists<Font>(name, m_Fonts))
+		if (Exists<Font>(name, m_Fonts))
 		{
 			Ref<Font> font = Get<Font>(name, m_Fonts);
 			if (font->GetPath() != filepath)

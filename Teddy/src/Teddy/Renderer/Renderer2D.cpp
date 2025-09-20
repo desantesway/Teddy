@@ -57,6 +57,7 @@ namespace Teddy
 
 		glm::vec4 OutlineColor;
 		float OutlineThickness;
+		float AtlasIndex;
 
 		// Editor-only
 		int EntityID;
@@ -97,6 +98,7 @@ namespace Teddy
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
 		static const uint32_t MaxTextureSlots = 32; // TODO: See the maximum number of texture slots for the target platform
+		static const uint32_t MaxFontSlots = 32;
 
 		Ref<Texture2D> WhiteTexture;
 
@@ -114,7 +116,8 @@ namespace Teddy
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
 
-		Ref<Texture2D> FontAtlasTexture;
+		std::array<Ref<Texture2D>, MaxFontSlots> FontAtlasSlots;
+		uint32_t FontAtlasSlotIndex = 0;
 
 		glm::vec4 QuadVertexPositions[4];
 
@@ -229,6 +232,7 @@ namespace Teddy
 			{ ShaderDataType::Float2,	"a_TexCoord"		},
 			{ ShaderDataType::Float4,	"a_OutlineColor"	},
 			{ ShaderDataType::Float,	"a_OutlineThickness"},
+			{ ShaderDataType::Float,	"a_AtlasIndex"		},
 			{ ShaderDataType::Int,		"a_EntityID"		}
 			});
 
@@ -240,10 +244,6 @@ namespace Teddy
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(whiteTextureData, TextureSpecification());
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
-		int32_t samplers[s_Data.MaxTextureSlots];
-		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
-			samplers[i] = i;
 
 		// Adding shaders
 		auto& assets = AssetManager::Get();
@@ -318,6 +318,7 @@ namespace Teddy
 		s_Data.CircleLineResources.VertexBufferPtr = s_Data.CircleLineResources.VertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
+		s_Data.FontAtlasSlotIndex = 0;
 	}
 
 	void Renderer2D::Flush()
@@ -353,7 +354,9 @@ namespace Teddy
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.TextResources.VertexBufferPtr - (uint8_t*)s_Data.TextResources.VertexBufferBase);
 			s_Data.TextResources.VertexBuffer->SetData(s_Data.TextResources.VertexBufferBase, dataSize);
 
-			s_Data.FontAtlasTexture->Bind(0);
+			for (uint32_t i = 0; i < s_Data.FontAtlasSlotIndex; i++)
+				s_Data.FontAtlasSlots[i]->Bind(i);
+
 			s_Data.TextResources.Shader->Bind();
 			RenderCommand::DrawIndexed(s_Data.TextResources.VertexArray, s_Data.TextResources.IndexCount);
 			s_Data.Stats.DrawCalls++;
@@ -593,8 +596,25 @@ namespace Teddy
 		const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
 		Ref<Texture2D> fontAtlas = font->GetAtlasTexture();
-		s_Data.FontAtlasTexture = fontAtlas;
 
+		float atlasIndex = 0.0f;
+		for (uint32_t i = 0; i < s_Data.FontAtlasSlotIndex; i++)
+		{
+			if (*s_Data.FontAtlasSlots[i] == *fontAtlas)
+			{
+				atlasIndex = (float)i;
+				break;
+			}
+		}
+
+		if (atlasIndex == 0.0f)
+		{
+
+			atlasIndex = (float)s_Data.FontAtlasSlotIndex;
+			s_Data.FontAtlasSlots[s_Data.FontAtlasSlotIndex] = fontAtlas;
+			s_Data.FontAtlasSlotIndex++;
+		}
+		
 		double x = 0.0;
 		double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
 		double y = 0.0;
@@ -603,7 +623,13 @@ namespace Teddy
 		for (size_t i = 0; i < textParams.TextString.size(); i++)
 		{
 			if (s_Data.TextResources.IndexCount >= Renderer2DData::MaxIndices)
+			{
 				NextBatch();
+
+				atlasIndex = (float)s_Data.FontAtlasSlotIndex;
+				s_Data.FontAtlasSlots[s_Data.FontAtlasSlotIndex] = fontAtlas;
+				s_Data.FontAtlasSlotIndex++;
+			}
 
 			char character = textParams.TextString[i];
 
@@ -665,11 +691,13 @@ namespace Teddy
 			texCoordMin *= glm::vec2(texelWidth, texelHeight);
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
+			// Add index + atlas array
 			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
 			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMin;
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
@@ -678,6 +706,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
@@ -686,6 +715,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMax;
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
@@ -694,6 +724,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
 			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 

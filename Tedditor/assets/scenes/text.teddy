@@ -1,14 +1,30 @@
 Scene: Untitled
 Entities:
-  - Entity: 6792762356930235198
+  - Entity: 14444078159955637898
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Translation: [-3.2, 1.4, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     TextComponent:
-      TextString: Teddy 2
+      TextString: yoo
+      FontAsset: assets\fonts\instrument-sans\ttf\InstrumentSansCondensed-SemiBoldItalic.ttf
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      BackgroundColor: [0, 0, 0, 0]
+      OutlineColor: [0, 0, 0, 0]
+      OutlineThickness: 0
+  - Entity: 11947672758544896687
+    TagComponent:
+      Tag: Red Square
+    TransformComponent:
+      Translation: [-1.7, -1.5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    TextComponent:
+      TextString: Teddy Engine
       FontAsset: assets\fonts\instrument-sans\ttf\InstrumentSans-Medium.ttf
       Color: [1, 1, 1, 1]
       Kerning: 0
@@ -34,16 +50,16 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 11947672758544896687
+  - Entity: 6792762356930235198
     TagComponent:
-      Tag: Red Square
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [-1.7, -1.5, 0]
+      Translation: [-3.2, 1.4, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     TextComponent:
-      TextString: Teddy Engine
-      FontAsset: assets\fonts\instrument-sans\ttf\InstrumentSans-Medium.ttf
+      TextString: Teddy 2
+      FontAsset: assets\fonts\instrument-sans\ttf\InstrumentSansCondensed-Medium.ttf
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0
