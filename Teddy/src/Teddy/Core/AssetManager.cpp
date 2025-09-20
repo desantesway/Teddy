@@ -51,7 +51,7 @@ namespace Teddy
 		{
 			auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Shader, filepath);
 			auto shader = Shader::Create(name, filepath, forceBuild);
-			m_Shaders.LoadedAssets[name] = shader;
+			m_Shaders.Loaded[name] = shader;
 			return shader;
 		}
 	}
@@ -77,11 +77,18 @@ namespace Teddy
 
 			return font;
 		}
+		else if (name == "DefaultFont")
+		{
+			if (m_DefaultFont) return m_DefaultFont;
+			auto font = CreateRef<Font>(filepath);
+			m_DefaultFont = font;
+			return font;
+		}
 		else
 		{
 			//auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Font, filepath); //TODO: implement cache for fonts
 			auto font = CreateRef<Font>(filepath);
-			m_Fonts.LoadedAssets[name] = font;
+			m_Fonts.Loaded[name] = font;
 			return font;
 		}
 	}
@@ -118,31 +125,133 @@ namespace Teddy
 		else
 		{
 			auto texture = Texture2D::Create(filepath);
-			m_Textures2D.LoadedAssets[name] = texture;
+			m_Textures2D.Loaded[name] = texture;
 			return texture;
 		}
 	}
 
-	// theres a bug(?) if a texture with spec isnt generated everytime, so im not registering to the assetmanager
-	// TODO: the issue is with shader, it only gets uploaded one font on batching, do something similar to texture slots
 	template<>
 	Ref<Texture2D> AssetManager::Load<Texture2D>(const int& pixels, const TextureSpecification& spec)
 	{
-		std::string name = "Texture2D_" + std::to_string(spec.Width) + "x" + std::to_string(spec.Height) + "x" + std::to_string(pixels)
-			+ "_" + std::to_string((int)spec.Format) + "_" + std::to_string((int)spec.Filter) + "_" + std::to_string((int)spec.Wrap) 
-			+ "-" + std::to_string(spec.GenerateMips);
+		//std::string name = "Texture2D_" + std::to_string(spec.Width) + "x" + std::to_string(spec.Height) + "x" + std::to_string(pixels)
+		//	+ "_" + std::to_string((int)spec.Format) + "_" + std::to_string((int)spec.Filter) + "_" + std::to_string((int)spec.Wrap) 
+		//	+ "-" + std::to_string(spec.GenerateMips);
+		//
+		//if (Exists<Texture2D>(name, m_Textures2D))
+		//{
+		//	Ref<Texture2D> texture = Get<Texture2D>(name, m_Textures2D);
+		//
+		//	return texture;
+		//}
+		//else
+		//{
+		auto texture = Texture2D::Create(spec);
+		//m_Textures2D.Loaded[name] = texture;
+		return texture;
+		//}
+	}
 
-		if (Exists<Texture2D>(name, m_Textures2D))
+	// Deload
+
+	// Shaders
+	template<>
+	void AssetManager::RemoveBypassDeloading<Shader>(const std::string& name)
+	{
+		RemoveBypassDeloading(name, m_Shaders);
+	}
+
+	template<>
+	void AssetManager::BypassDeloading<Shader>(const std::string& name)
+	{
+		BypassDeloading(name, m_Shaders);
+	}
+
+	// Fonts
+	template<>
+	void AssetManager::RemoveBypassDeloading<Font>(const std::string& name)
+	{
+		RemoveBypassDeloading(name, m_Fonts);
+	}
+
+	template<>
+	void AssetManager::BypassDeloading<Font>(const std::string& name)
+	{
+		BypassDeloading(name, m_Fonts);
+	}
+
+	// Texture2D
+	template<>
+	void AssetManager::RemoveBypassDeloading<Texture2D>(const std::string& name)
+	{
+		RemoveBypassDeloading(name, m_Textures2D);
+	}
+
+	template<>
+	void AssetManager::BypassDeloading<Texture2D>(const std::string& name)
+	{
+		BypassDeloading(name, m_Textures2D);
+	}
+
+	//
+	void AssetManager::RemoveExpiredAll()
+	{
+		AssetGroup<Shader> newShader;
+		for (auto& [name, shader] : m_Shaders.Loaded)
 		{
-			Ref<Texture2D> texture = Get<Texture2D>(name, m_Textures2D);
-
-			return texture;
+			if (!m_Shaders.Loaded[name].expired())
+				newShader.Loaded[name] = m_Shaders.Loaded[name];
 		}
-		else
+		m_Shaders = newShader;
+		AssetGroup<Texture2D> newTexture2D;
+		for (auto& [name, texture] : m_Textures2D.Loaded)
 		{
-			auto texture = Texture2D::Create(spec);
-			m_Textures2D.LoadedAssets[name] = texture;
-			return texture;
+			if (!m_Textures2D.Loaded[name].expired())
+				newTexture2D.Loaded[name] = m_Textures2D.Loaded[name];
+		}
+		m_Textures2D = newTexture2D;
+		AssetGroup<Font> newFont;
+		for (auto& [name, font] : m_Fonts.Loaded)
+		{
+			if (!m_Fonts.Loaded[name].expired())
+				newFont.Loaded[name] = m_Fonts.Loaded[name];
+		}
+		m_Fonts = newFont;
+	}
+
+	template<typename T>
+	void AssetManager::RemoveBypassDeloading(const std::string& name, AssetGroup<T>& map)
+	{ 
+		TED_CORE_ASSERT(Exists<T>(name, map.DeloadBypass), "file not found!");
+		map.DeloadBypass.erase(name);
+	}
+
+	void AssetManager::RemoveBypassAll()
+	{
+		if (m_Shaders.DeloadBypass.size() > 0) m_Shaders.DeloadBypass.clear();
+		if (m_Textures2D.DeloadBypass.size() > 0) m_Textures2D.DeloadBypass.clear();
+		if (m_Fonts.DeloadBypass.size() > 0) m_Fonts.DeloadBypass.clear();
+	}
+
+	template<typename T>
+	void AssetManager::BypassDeloading(const std::string& name, AssetGroup<T>& map)
+	{
+		if(Exists<T>(name, map))
+			map.DeloadBypass[name] = map.Loaded[name].lock();
+	}
+
+	void AssetManager::BypassAll()
+	{
+		for (auto& [name, shader] : m_Shaders.Loaded)
+		{
+			BypassDeloading<Shader>(name);
+		}
+		for (auto& [name, texture] : m_Textures2D.Loaded)
+		{
+			BypassDeloading<Texture2D>(name);
+		}
+		for (auto& [name, font] : m_Fonts.Loaded)
+		{
+			BypassDeloading<Font>(name);
 		}
 	}
 
@@ -150,18 +259,23 @@ namespace Teddy
 	Ref<T> AssetManager::Get(const std::string& filepath, const AssetGroup<T>& map)
 	{
 		TED_CORE_ASSERT(Exists<T>(filepath, map), "file not found!");
-		auto it = map.LoadedAssets.find(filepath);
-		TED_CORE_ASSERT(it != map.LoadedAssets.end(), "file not found!");
+		auto it = map.Loaded.find(filepath);
+		TED_CORE_ASSERT(it != map.Loaded.end(), "file not found!");
 		return it->second.lock();
 	}
 
-	// verify if asset is alive too
 	template<typename T>
 	bool AssetManager::Exists(const std::string& filepath, const AssetGroup<T>& map) const
 	{
-		bool alive = map.LoadedAssets.find(filepath) != map.LoadedAssets.end();
+		bool alive = map.Loaded.find(filepath) != map.Loaded.end();
 		if(alive)
-			alive = !map.LoadedAssets.at(filepath).expired();
+			alive = !map.Loaded.at(filepath).expired();
 		return alive;
+	}
+
+	template<typename T>
+	bool AssetManager::Exists(const std::string& filepath, const std::unordered_map<std::string, Ref<T>>& map) const
+	{
+		return map.find(filepath) != map.end();
 	}
 }

@@ -8,6 +8,8 @@ namespace Teddy
 	{
         TED_PROFILE_CATEGORY("Text Quad", InstrumentorCategory::Visibility);
 
+        if (!FontAsset || !FontAsset->GetMSDFData())
+			return;
         const auto& fontGeometry = FontAsset->GetMSDFData()->FontGeometry;
         const auto& metrics = fontGeometry.getMetrics();
 

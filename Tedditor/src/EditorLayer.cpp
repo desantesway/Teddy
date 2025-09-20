@@ -554,6 +554,20 @@ namespace Teddy
         return false;
     }
 
+    void RemoveSceneAssetBypass()
+    {
+        TED_PROFILE_FUNCTION();
+
+        AssetManager::Get().RemoveBypassAll();
+        AssetManager::Get().RemoveExpiredAll();
+    }
+
+    void SceneAssetBypass()
+    {
+        TED_PROFILE_FUNCTION();
+        AssetManager::Get().BypassAll();
+    }
+
     void EditorLayer::NewScene()
     {
         m_ActiveScene = CreateRef<Scene>();
@@ -586,18 +600,23 @@ namespace Teddy
             return;
         }
 
+        SceneAssetBypass();
         Ref<Scene> newScene = CreateRef<Scene>();
         SceneSerializer serializer(newScene);
 
         if (serializer.Deserialize(path.string()))
         {
+
             m_EditorScene = newScene;
             m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_SceneHierarchyPanel.SetContext(m_EditorScene);
 
             m_ActiveScene = m_EditorScene;
             m_EditorScenePath = path;
+
         }
+
+        RemoveSceneAssetBypass();
     }
 
     void EditorLayer::SaveScene()

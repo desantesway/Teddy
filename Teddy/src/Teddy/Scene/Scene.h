@@ -51,7 +51,7 @@ namespace Teddy
 	private:
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
-		b2WorldId m_PhysicsWorld;
+		b2WorldId m_PhysicsWorld = {0,0};
 
 		friend class Entity;
 		friend class SceneSerializer;

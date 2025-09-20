@@ -113,10 +113,10 @@ namespace Teddy
 
 		float LineWidth = 2.0f;
 
-		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
+		std::array<Weak<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
 
-		std::array<Ref<Texture2D>, MaxFontSlots> FontAtlasSlots;
+		std::array<Weak<Texture2D>, MaxFontSlots> FontAtlasSlots;
 		uint32_t FontAtlasSlotIndex = 0;
 
 		glm::vec4 QuadVertexPositions[4];
@@ -319,6 +319,11 @@ namespace Teddy
 
 		s_Data.TextureSlotIndex = 1;
 		s_Data.FontAtlasSlotIndex = 0;
+
+		//for (uint32_t i = 1; i < Renderer2DData::MaxTextureSlots; ++i)
+		//	s_Data.TextureSlots[i].reset();
+		//for (uint32_t i = 0; i < Renderer2DData::MaxFontSlots; ++i)
+		//	s_Data.FontAtlasSlots[i].reset();
 	}
 
 	void Renderer2D::Flush()
@@ -331,7 +336,7 @@ namespace Teddy
 			s_Data.QuadResources.VertexBuffer->SetData(s_Data.QuadResources.VertexBufferBase, dataSize);
 
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-				s_Data.TextureSlots[i]->Bind(i);
+				s_Data.TextureSlots[i].lock()->Bind(i);
 
 			s_Data.QuadResources.Shader->Bind();
 			RenderCommand::DrawIndexed(s_Data.QuadResources.VertexArray, s_Data.QuadResources.IndexCount);
@@ -355,7 +360,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBuffer->SetData(s_Data.TextResources.VertexBufferBase, dataSize);
 
 			for (uint32_t i = 0; i < s_Data.FontAtlasSlotIndex; i++)
-				s_Data.FontAtlasSlots[i]->Bind(i);
+				s_Data.FontAtlasSlots[i].lock()->Bind(i);
 
 			s_Data.TextResources.Shader->Bind();
 			RenderCommand::DrawIndexed(s_Data.TextResources.VertexArray, s_Data.TextResources.IndexCount);
@@ -546,7 +551,7 @@ namespace Teddy
 			float textureIndex = 0.0f;
 			for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 			{
-				if (*s_Data.TextureSlots[i] == *sprite.Texture)
+				if (*s_Data.TextureSlots[i].lock() == *sprite.Texture)
 				{
 					textureIndex = (float)i;
 					break;
@@ -600,7 +605,7 @@ namespace Teddy
 		float atlasIndex = 0.0f;
 		for (uint32_t i = 0; i < s_Data.FontAtlasSlotIndex; i++)
 		{
-			if (*s_Data.FontAtlasSlots[i] == *fontAtlas)
+			if (*s_Data.FontAtlasSlots[i].lock() == *fontAtlas)
 			{
 				atlasIndex = (float)i;
 				break;

@@ -11,7 +11,7 @@ namespace Teddy
 {
 	enum class Boolean { False, True };
 
-	// TODO: Use used counter, when 0 deload, if new scene is being loaded only deload after loaded
+	// TODO: if new scene is being loaded only deload after loaded
 	// TODO: Implement hot reloading of assets
 	class AssetManager
 	{
@@ -24,8 +24,8 @@ namespace Teddy
 		template<typename T>
 		struct AssetGroup
 		{
-			std::unordered_map<std::string, Weak<T>> LoadedAssets;
-			std::unordered_map<Ref<std::string>, Ref<T>> AssetsDeloadBypass; // if this map holds it, the item wont be deloaded (automatically by shared_ptr)
+			std::unordered_map<std::string, Weak<T>> Loaded;
+			std::unordered_map<std::string, Ref<T>> DeloadBypass; // if this map holds it, the item wont be deloaded (automatically by shared_ptr)
 		};
 
 		template<typename T>
@@ -67,12 +67,32 @@ namespace Teddy
 		//Ref<Texture2D> LoadTexture2D(const std::string& filepath);
 
 		// Deload
+		void RemoveExpiredAll();
+
+		void RemoveBypassAll();
+
+		template<typename T>
+		void RemoveBypassDeloading(const std::string& name);
+
+		template<typename T>
+		void RemoveBypassDeloading(const std::string& name, AssetGroup<T>& map);
+
+		void BypassAll();
+		
+		template<typename T>
+		void BypassDeloading(const std::string& name);
+
+		template<typename T>
+		void BypassDeloading(const std::string& name, AssetGroup<T>& map);
 
 		template<typename T>
 		Ref<T> Get(const std::string& filepath, const AssetGroup<T>& map);
 
 		template<typename T>
 		bool Exists(const std::string& filepath, const AssetGroup<T>& map) const;
+
+		template<typename T>
+		bool Exists(const std::string& filepath, const std::unordered_map<std::string, Ref<T>>& map) const;
 	private:
 		template<typename T>
 		Ref<T> Load(const std::string& name, const AssetGroup<T>& map);
@@ -83,6 +103,7 @@ namespace Teddy
 		AssetGroup<Shader> m_Shaders;
 		AssetGroup<Texture2D> m_Textures2D;
 		AssetGroup<Font> m_Fonts;
+		Ref<Font> m_DefaultFont = nullptr;
 
 	private:
 		static AssetManager* s_Instance;

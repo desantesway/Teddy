@@ -33,6 +33,9 @@ namespace Teddy
 	Scene::~Scene()
 	{
 		TED_PROFILE_FUNCTION();
+
+		m_Registry.clear();
+		m_PhysicsWorld = { 0, 0 };
 	}
 
 	template<typename... Component>
