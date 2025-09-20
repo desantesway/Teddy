@@ -3,6 +3,7 @@
 #include "Teddy/Core/Base.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/MidiDriver.h"
+#include "Teddy/Core/Timestep.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>	
@@ -11,6 +12,14 @@
 
 namespace Teddy 
 {
+
+	struct WindowStats
+	{
+		float FPS = 0;
+		std::vector<float> FrameTimes = { 0.0f };
+
+		WindowStats() = default;
+	};
 
 	struct WindowProps
 	{
@@ -34,7 +43,7 @@ namespace Teddy
 		
 		virtual ~Window() = default;
 
-		virtual void OnUpdate() = 0;
+		virtual void OnUpdate(Timestep ts) = 0;
 		virtual void SDLEvents() = 0;
 
 		virtual uint32_t GetWidth() const = 0;
@@ -53,6 +62,13 @@ namespace Teddy
 
 		virtual unsigned int GetThreadCount() const = 0;
 
+		WindowStats GetStats() { return m_Stats; }
+
+		virtual void CalculateFPS(Timestep ts) = 0;
+
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
+
+	protected:
+		WindowStats m_Stats;
 	};
 }

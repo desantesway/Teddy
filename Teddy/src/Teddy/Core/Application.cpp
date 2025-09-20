@@ -123,7 +123,7 @@ namespace Teddy
 		
 		}
 
-		m_Window->OnUpdate();
+		m_Window->OnUpdate(timestep);
 	}
 
 	void Application::Run() 

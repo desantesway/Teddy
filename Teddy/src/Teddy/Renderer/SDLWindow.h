@@ -17,7 +17,7 @@ namespace Teddy
 		SDLWindow(const WindowProps& props);
 		virtual ~SDLWindow();
 
-		void OnUpdate() override;
+		void OnUpdate(Timestep ts) override;
 		virtual void SDLEvents() override;
 
 		unsigned int GetWidth() const override { return m_Data.Width; }
@@ -36,6 +36,8 @@ namespace Teddy
 		virtual bool IsVSync() const override;
 
 		virtual unsigned int GetThreadCount() const override;
+
+		virtual void CalculateFPS(Timestep ts) override;
 
 		static bool EventWatcher(void* data, SDL_Event* event);
 	private:

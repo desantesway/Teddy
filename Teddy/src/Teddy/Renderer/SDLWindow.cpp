@@ -95,9 +95,32 @@ namespace Teddy
 
 	}
 
-	void SDLWindow::OnUpdate()
+	void SDLWindow::CalculateFPS(Timestep ts)
+	{
+		static double timer = 0.0;
+		timer += ts;
+
+		float fps = (ts > 0.0f) ? (1.0f / ts) : 0.0f;
+		m_Stats.FrameTimes.push_back(fps);
+
+		if (m_Stats.FrameTimes.size() > 5)
+			m_Stats.FrameTimes.erase(m_Stats.FrameTimes.begin());
+
+		if (timer > 0.5)
+		{
+			timer = 0.0;
+			m_Stats.FPS = 0;
+			for (float time : m_Stats.FrameTimes)
+				m_Stats.FPS += time;
+			m_Stats.FPS = m_Stats.FPS / m_Stats.FrameTimes.size();
+		}
+	}
+
+	void SDLWindow::OnUpdate(Timestep ts)
 	{
 		TED_PROFILE_FUNCTION();
+
+		CalculateFPS(ts);
 
 		m_Data.MidiDriver.OnUpdate();
 		SDLEvents();
