@@ -197,41 +197,45 @@ namespace Teddy
 		// TODO: Create a thread, implement Asset Manager first
 		void FileWatcher::Watch()
 		{
-			while (true)
+			bool disabled = true;
+			//while (true)
+			//{
+			bool updated = false;
+			disabled = false;
+
+			YAML::Emitter out;
+			out << YAML::BeginMap;
+			out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
+
+			for (auto& [key, value] : m_FilesWatcher)
 			{
-				bool updated = false;
+				disabled = disabled || value.IsHotReloading();
 
-				YAML::Emitter out;
-				out << YAML::BeginMap;
-				out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
+				out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
 
-				for (auto& [key, value] : m_FilesWatcher)
+				if (value.OnUpdate())
 				{
-					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
+					updated = true;
 
-					if (value.OnUpdate())
-					{
-						updated = true;
-
-						TED_CORE_INFO("Detected changes {}", (int)key);
-						value.GetFilesChanged(true);
-					}
-
-					out << YAML::Key << "LastTimeChecked" << YAML::Value
-						<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-
-					out << YAML::EndMap;
+					TED_CORE_INFO("Detected changes {}", (int)key);
+					value.GetFilesChanged(false);
 				}
 
-				out << YAML::EndMap;
-				out << YAML::EndMap;
+				out << YAML::Key << "LastTimeChecked" << YAML::Value
+					<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-				if (updated)
-				{
-					std::ofstream fout(m_LastTimeCheckedFilepath);
-					fout << out.c_str();
-				}
+				out << YAML::EndMap;
 			}
+
+			out << YAML::EndMap;
+			out << YAML::EndMap;
+
+			if (updated)
+			{
+				std::ofstream fout(m_LastTimeCheckedFilepath);
+				fout << out.c_str();
+			}
+			//}
 		}
 
 		void FileWatcher::StartWatching(FileGroupType type)

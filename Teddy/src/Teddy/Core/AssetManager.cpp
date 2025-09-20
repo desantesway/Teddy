@@ -12,6 +12,11 @@ namespace Teddy
 		s_Instance = this;
 	}
 
+	void AssetManager::OnUpdate()
+	{
+		m_FileWatcher.Watch(); // TODO: Comment this, this should be in another thread
+	}
+
 	template<typename T>
 	Ref<T> AssetManager::Load(const std::string& name, const AssetGroup<T>& map)
 	{
@@ -57,7 +62,6 @@ namespace Teddy
 	{ 
 		if (m_Shaders.Loaded[name].expired())
 		{
-			m_FileWatcher.Remove(Utils::FileGroupType::Shader, m_Shaders.Loaded[name].lock()->GetPath());
 			m_Shaders.Loaded.erase(name);
 		}
 	}
@@ -86,6 +90,28 @@ namespace Teddy
 			m_FileWatcher.Add(Utils::FileGroupType::Shader, filepath);
 			auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Shader, filepath);
 			auto shader = Shader::Create(name, filepath, forceBuild);
+			m_Shaders.Loaded[name] = shader;
+			return shader;
+		}
+	}
+
+	template<>
+	Ref<Shader> AssetManager::Load<Shader>(const std::string& name, const std::string& filepath, bool hotReload)
+	{
+		if (Exists<Shader>(name, m_Shaders))
+		{
+			Ref<Shader> shader = Get<Shader>(name, m_Shaders);
+			if (shader->GetPath() != filepath)
+			{
+				TED_CORE_ASSERT(false, "Shader already exists with that name but different filepath");
+			}
+
+			return shader;
+		}
+		else
+		{
+			m_FileWatcher.Add(Utils::FileGroupType::Shader, filepath);
+			auto shader = Shader::Create(name, filepath, hotReload);
 			m_Shaders.Loaded[name] = shader;
 			return shader;
 		}

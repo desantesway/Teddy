@@ -299,25 +299,25 @@ namespace Teddy
 				{
 					s_Data.QuadResources.Shader = nullptr;
 					assets.RemoveExpired<Shader>("Quad Shader");
-					s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
+					s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl", true);
 				}
 				else if (key == s_Data.CircleResources.Shader->GetPath())
 				{
 					s_Data.CircleResources.Shader = nullptr;
 					assets.RemoveExpired<Shader>("Circle Shader");
-					s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl");
+					s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl", true);
 				}
 				else if (key == s_Data.LineResources.Shader->GetPath())
 				{
 					s_Data.LineResources.Shader = nullptr;
 					assets.RemoveExpired<Shader>("Line Shader");
-					s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl");
+					s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl", true);
 				}
 				else if (key == s_Data.TextResources.Shader->GetPath())
 				{
 					s_Data.TextResources.Shader = nullptr;
 					assets.RemoveExpired<Shader>("Text Shader");
-					s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl");
+					s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl", true);
 				}
 			}
 

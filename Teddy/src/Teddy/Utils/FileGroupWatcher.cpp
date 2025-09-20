@@ -87,20 +87,27 @@ namespace Teddy
 			{
 				for (const auto& filepath : m_FilePaths)
 				{
-					auto ftime = std::filesystem::last_write_time(filepath);
-					auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-						ftime - std::filesystem::file_time_type::clock::now()
-						+ std::chrono::system_clock::now());
-					std::time_t cftime = std::chrono::system_clock::to_time_t(sctp);
-
-					if (cftime > m_LastChangedDate)
+					try
 					{
-						if (!m_FilesChanged.contains(filepath))
+						auto ftime = std::filesystem::last_write_time(filepath);
+						auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+							ftime - std::filesystem::file_time_type::clock::now()
+							+ std::chrono::system_clock::now());
+						std::time_t cftime = std::chrono::system_clock::to_time_t(sctp);
+
+						if (cftime > m_LastChangedDate)
 						{
-							m_FilesChanged.insert(filepath);
-							m_LastChangedDate = cftime;
-							changed = true;
+							if (!m_FilesChanged.contains(filepath))
+							{
+								m_FilesChanged.insert(filepath);
+								m_LastChangedDate = cftime;
+								changed = true;
+							}
 						}
+					}
+					catch (const std::filesystem::filesystem_error& e)
+					{
+						TED_CORE_WARN("FileGroupWatcher: Failed to query last_write_time for '{0}': {1}", filepath, e.what());
 					}
 				}
 			}

@@ -103,6 +103,8 @@ namespace Teddy
 
 		if (!m_Minimized)
 		{
+			AssetManager::Get().OnUpdate();
+
 			{
 				TED_PROFILE_SCOPE("LayerStack OnUpdate");
 

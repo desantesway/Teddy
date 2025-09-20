@@ -17,7 +17,7 @@ namespace Teddy
 	{
 	public:
 		AssetManager();
-		~AssetManager() = default;
+		~AssetManager() { m_FileWatcher.StopWatching(); }
 
 		static AssetManager& Get() { return *s_Instance; }
 
@@ -28,6 +28,8 @@ namespace Teddy
 			std::unordered_map<std::string, Ref<T>> DeloadBypass; // if this map holds it, the item wont be deloaded (automatically by shared_ptr)
 		};
 
+		void OnUpdate();
+
 		template<typename T>
 		std::unordered_set<std::string> AssetsToReload(bool changesHandled);
 
@@ -36,6 +38,9 @@ namespace Teddy
 
 		template<typename T>
 		Ref<T> Load(const std::string& name);
+
+		template<typename T>
+		Ref<T> Load(const std::string& name, const std::string& filepath, bool hotReload);
 
 		template<typename T>
 		Ref<T> Load(const std::string& name, const std::string& filepath);
