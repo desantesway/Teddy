@@ -26,13 +26,14 @@ namespace Teddy
 		}
 	}
 
-	template<typename T>
-	Ref<T> AssetManager::Load(const std::string& name)
-	{
-		return Load<T>(name, m_Shaders);
-	}
 
 	// Shaders
+	template<>
+	Ref<Shader> AssetManager::Load<Shader>(const std::string& name)
+	{
+		return Load<Shader>(name, m_Shaders);
+	}
+
 	template<>
 	Ref<Shader> AssetManager::Load<Shader>(const std::string& name, const std::string& filepath)
 	{
@@ -49,16 +50,24 @@ namespace Teddy
 		else
 		{
 			auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Shader, filepath);
-			return m_Shaders.LoadedAssets[name] = Shader::Create(name, filepath, forceBuild);
+			auto shader = Shader::Create(name, filepath, forceBuild);
+			m_Shaders.LoadedAssets[name] = shader;
+			return shader;
 		}
 	}
 
 	// Fonts
 	template<>
+	Ref<Font> AssetManager::Load<Font>(const std::string& name)
+	{
+		return Load<Font>(name, m_Fonts);
+	}
+
+	template<>
 	Ref<Font> AssetManager::Load<Font>(const std::string& name, const std::string& filepath)
 	{
 
-		if (Exists<Font>(name, m_Fonts))
+		if (false && Exists<Font>(name, m_Fonts))
 		{
 			Ref<Font> font = Get<Font>(name, m_Fonts);
 			if (font->GetPath() != filepath)
@@ -71,7 +80,9 @@ namespace Teddy
 		else
 		{
 			//auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Font, filepath); //TODO: implement cache for fonts
-			return m_Fonts.LoadedAssets[name] = CreateRef<Font>(filepath);
+			auto font = CreateRef<Font>(filepath);
+			m_Fonts.LoadedAssets[name] = font;
+			return font;
 		}
 	}
 
@@ -85,6 +96,12 @@ namespace Teddy
 	}
 
 	// Texture2D
+	template<>
+	Ref<Texture2D> AssetManager::Load<Texture2D>(const std::string& name)
+	{
+		return Load<Texture2D>(name, m_Textures2D);
+	}
+
 	template<>
 	Ref<Texture2D> AssetManager::Load<Texture2D>(const std::string& name, const std::string& filepath)
 	{
@@ -100,14 +117,18 @@ namespace Teddy
 		}
 		else
 		{
-			return m_Textures2D.LoadedAssets[name] = Texture2D::Create(filepath);
+			auto texture = Texture2D::Create(filepath);
+			m_Textures2D.LoadedAssets[name] = texture;
+			return texture;
 		}
 	}
 
+	// theres a bug(?) if a texture with spec isnt generated everytime, so im not registering to the assetmanager
+	// TODO: the issue is with shader, it only gets uploaded one font on batching, do something similar to texture slots
 	template<>
-	Ref<Texture2D> AssetManager::Load<Texture2D>(const TextureSpecification& spec)
+	Ref<Texture2D> AssetManager::Load<Texture2D>(const int& pixels, const TextureSpecification& spec)
 	{
-		std::string name = "Texture2D_" + std::to_string(spec.Width) + "x" + std::to_string(spec.Height) 
+		std::string name = "Texture2D_" + std::to_string(spec.Width) + "x" + std::to_string(spec.Height) + "x" + std::to_string(pixels)
 			+ "_" + std::to_string((int)spec.Format) + "_" + std::to_string((int)spec.Filter) + "_" + std::to_string((int)spec.Wrap) 
 			+ "-" + std::to_string(spec.GenerateMips);
 
@@ -119,7 +140,9 @@ namespace Teddy
 		}
 		else
 		{
-			return m_Textures2D.LoadedAssets[name] = Texture2D::Create(spec);
+			auto texture = Texture2D::Create(spec);
+			m_Textures2D.LoadedAssets[name] = texture;
+			return texture;
 		}
 	}
 
@@ -129,12 +152,16 @@ namespace Teddy
 		TED_CORE_ASSERT(Exists<T>(filepath, map), "file not found!");
 		auto it = map.LoadedAssets.find(filepath);
 		TED_CORE_ASSERT(it != map.LoadedAssets.end(), "file not found!");
-		return it->second;
+		return it->second.lock();
 	}
 
+	// verify if asset is alive too
 	template<typename T>
 	bool AssetManager::Exists(const std::string& filepath, const AssetGroup<T>& map) const
 	{
-		return map.LoadedAssets.find(filepath) != map.LoadedAssets.end();
+		bool alive = map.LoadedAssets.find(filepath) != map.LoadedAssets.end();
+		if(alive)
+			alive = !map.LoadedAssets.at(filepath).expired();
+		return alive;
 	}
 }

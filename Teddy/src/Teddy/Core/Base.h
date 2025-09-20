@@ -46,6 +46,8 @@ namespace Teddy
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 
+	template<typename T>
+	using Weak = std::weak_ptr<T>;
 }
 
 #include "Teddy/Core/Log.h"

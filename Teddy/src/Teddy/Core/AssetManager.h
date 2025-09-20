@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Teddy/Core/Base.h>
+#include "Teddy/Core/Base.h"
 #include "Teddy/Utils/FileWatcher.h"
 
 #include "Teddy/Renderer/Shader.h"
@@ -12,6 +12,7 @@ namespace Teddy
 	enum class Boolean { False, True };
 
 	// TODO: Use used counter, when 0 deload, if new scene is being loaded only deload after loaded
+	// TODO: Implement hot reloading of assets
 	class AssetManager
 	{
 	public:
@@ -23,8 +24,8 @@ namespace Teddy
 		template<typename T>
 		struct AssetGroup
 		{
-			std::unordered_map<std::string, Ref<T>> LoadedAssets;
-			std::unordered_map<Ref<std::string>, Ref<T>> AssetsDeloadBypass;
+			std::unordered_map<std::string, Weak<T>> LoadedAssets;
+			std::unordered_map<Ref<std::string>, Ref<T>> AssetsDeloadBypass; // if this map holds it, the item wont be deloaded (automatically by shared_ptr)
 		};
 
 		template<typename T>
@@ -34,7 +35,7 @@ namespace Teddy
 		Ref<T> Load(const std::string& name, const std::string& filepath);
 
 		template<typename T>
-		Ref<T> Load(const TextureSpecification& spec);
+		Ref<T> Load(const int& pixels, const TextureSpecification& spec);
 
 		// enum class to avoid bool template specialization issues
 		template<typename T>
