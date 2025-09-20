@@ -9,7 +9,6 @@ namespace Teddy
 {
 	namespace Utils
 	{
-		// TODO: implement with single file
 		namespace fs = std::filesystem;
 
 		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups)
@@ -21,6 +20,44 @@ namespace Teddy
 		FileWatcher::FileWatcher(std::string LastTimeCheckedFilepath)
 			: m_LastTimeCheckedFilepath(LastTimeCheckedFilepath)
 		{
+		}
+		
+		bool& FileWatcher::IsHotReloading(FileGroupType type)
+		{
+			if (m_FilesWatcher.find(type) == m_FilesWatcher.end())
+			{
+				m_FilesWatcher[type] = FileGroupWatcher();
+				static bool shaderHotReloading = false;
+				return shaderHotReloading;
+			}
+			else
+			{
+				return m_FilesWatcher.at(type).IsHotReloading();
+			}
+		}
+
+		void FileWatcher::Remove(FileGroupType type, const std::string& filepath)
+		{
+			if (m_FilesWatcher.find(type) == m_FilesWatcher.end())
+			{
+				TED_CORE_ASSERT(false, "FileGroupType not found");
+			}
+			else
+			{
+				m_FilesWatcher.at(type).Remove(filepath);
+			}
+		}
+
+		void FileWatcher::Add(FileGroupType type, const std::string& filepath)
+		{
+			if (m_FilesWatcher.find(type) == m_FilesWatcher.end())
+			{
+				m_FilesWatcher[type] = FileGroupWatcher(filepath);
+			}
+			else 
+			{
+				m_FilesWatcher.at(type).Add(filepath);
+			}
 		}
 
 		void FileWatcher::CreateOfflineFile(std::string& filepath)
@@ -87,8 +124,7 @@ namespace Teddy
 				bool typeFound = false;
 				for (auto it = offWatchers.begin(); it != offWatchers.end(); ++it)
 				{
-					int fileType = it->first.as<int>();          // the map key
-					//const YAML::Node& group = it->second.as<std::time_t>();      // the map value (node)
+					int fileType = it->first.as<int>();
 
 					out << YAML::Key << fileType << YAML::Value << YAML::BeginMap;
 
@@ -158,71 +194,6 @@ namespace Teddy
 			return fileChanged;
 		}
 
-		// Change
-		bool FileWatcher::CheckOfflineChanges()
-		{
-
-			std::string filepath = m_LastTimeCheckedFilepath;
-
-			CreateOfflineFile(filepath);
-
-			YAML::Node data;
-			try
-			{
-				data = YAML::LoadFile(filepath);
-			}
-			catch (YAML::ParserException e)
-			{
-				TED_CORE_ERROR("Failed to load OfflineWatcher file '{0}'\n     {1}", filepath, e.what());
-				return false;
-			}
-
-			YAML::Emitter out;
-			out << YAML::BeginMap;
-			out << YAML::Key << "OfflineWatcher" << YAML::Value << YAML::BeginMap;
-
-			YAML::Node offWatchers = data["OfflineWatcher"];
-			if (offWatchers)
-			{
-
-				for (auto& [key, value] : m_FilesWatcher)
-				{
-
-					auto fileGroup = offWatchers[static_cast<int>(key)];
-
-					out << YAML::Key << static_cast<int>(key) << YAML::Value << YAML::BeginMap;
-
-					if (fileGroup)
-					{
-						auto lastTimeChecked = fileGroup["LastTimeChecked"].as<std::time_t>();
-						if (value.CheckOfflineChanges(lastTimeChecked))
-						{
-							out << YAML::Key << "LastTimeChecked" << YAML::Value 
-								<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-						}
-						else
-						{
-							out << YAML::Key << "LastTimeChecked" << YAML::Value << lastTimeChecked;
-						}
-					}
-					else 
-					{
-						out << YAML::Key << "LastTimeChecked" << YAML::Value
-							<< std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-					}
-
-					out << YAML::EndMap;
-
-				}
-			}
-
-			out << YAML::EndMap;
-			out << YAML::EndMap;
-
-			std::ofstream fout(filepath);
-			fout << out.c_str();
-		}
-
 		// TODO: Create a thread, implement Asset Manager first
 		void FileWatcher::Watch()
 		{
@@ -290,7 +261,7 @@ namespace Teddy
 			}
 		}
 
-		std::unordered_set<std::string> FileWatcher::GetFileGroupChanged(FileGroupType type, bool changesHandled)
+		std::unordered_set<std::string> FileWatcher::AssetsToReload(FileGroupType type, bool changesHandled)
 		{
 			return m_FilesWatcher[type].GetFilesChanged(changesHandled);
 		}

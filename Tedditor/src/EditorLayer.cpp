@@ -297,6 +297,10 @@ namespace Teddy
 
         ImGui::Begin("Settings");
         ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		auto& assets = AssetManager::Get();
+        ImGui::Checkbox("Shader hot reloading (in progress)", &assets.IsHotReloading<Shader>());
+        ImGui::Checkbox("Texture2D hot reloading (not implemented)", &assets.IsHotReloading<Texture2D>());
+        ImGui::Checkbox("Font hot reloading (not implemented)", &assets.IsHotReloading<Font>());
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});

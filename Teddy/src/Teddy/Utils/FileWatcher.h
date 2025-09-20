@@ -26,10 +26,14 @@ namespace Teddy
 			FileWatcher(std::string LastTimeCheckedFilepath, const std::unordered_map<FileGroupType, FileGroupWatcher>& fileGroups);
 			~FileWatcher() = default;
 
+			bool& IsHotReloading(FileGroupType type);
+
 			void CreateOfflineFile(std::string& filepath);
 
 			bool CheckOfflineChanges(const FileGroupType& type, const std::string& offFilepath);
-			bool CheckOfflineChanges();
+
+			void Add(FileGroupType type, const std::string& filepath);
+			void Remove(FileGroupType type, const std::string& filepath);
 
 			void Watch();
 
@@ -38,8 +42,7 @@ namespace Teddy
 			void StartWatching(FileGroupType type);
 			void StopWatching(FileGroupType type);
 
-			// makes m_ShadersChanged empty if changesHandled is true
-			std::unordered_set<std::string> GetFileGroupChanged(FileGroupType type, bool changesHandled);
+			std::unordered_set<std::string> AssetsToReload(FileGroupType type, bool changesHandled);
 		private:
 			const std::string m_LastTimeCheckedFilepath;
 

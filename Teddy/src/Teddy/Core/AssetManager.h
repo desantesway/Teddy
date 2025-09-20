@@ -29,6 +29,12 @@ namespace Teddy
 		};
 
 		template<typename T>
+		std::unordered_set<std::string> AssetsToReload(bool changesHandled);
+
+		template<typename T>
+		bool& IsHotReloading();
+
+		template<typename T>
 		Ref<T> Load(const std::string& name);
 
 		template<typename T>
@@ -67,6 +73,12 @@ namespace Teddy
 		//Ref<Texture2D> LoadTexture2D(const std::string& filepath);
 
 		// Deload
+		template<typename T>
+		void RemoveExpired(const std::string& name, AssetGroup<T>& map);
+
+		template<typename T>
+		void RemoveExpired(const std::string& name);
+
 		void RemoveExpiredAll();
 
 		void RemoveBypassAll();

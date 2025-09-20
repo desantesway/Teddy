@@ -18,9 +18,9 @@ namespace Teddy
 
 			if (cftime > lastTimeChecked)
 			{
-				if (!m_ShadersChanged.contains(filepath))
+				if (!m_FilesChanged.contains(filepath))
 				{
-					m_ShadersChanged.insert(filepath);
+					m_FilesChanged.insert(filepath);
 					m_LastChangedDate = cftime;
 					changed = true;
 				}
@@ -43,9 +43,9 @@ namespace Teddy
 
 				if (cftime > lastTimeChecked)
 				{
-					if (!m_ShadersChanged.contains(filepath))
+					if (!m_FilesChanged.contains(filepath))
 					{
-						m_ShadersChanged.insert(filepath);
+						m_FilesChanged.insert(filepath);
 						m_LastChangedDate = cftime;
 						changed = true;
 					}
@@ -60,12 +60,12 @@ namespace Teddy
 		{
 			if (changesHandled)
 			{
-				std::unordered_set<std::string> result = std::move(m_ShadersChanged);
-				m_ShadersChanged.clear();
+				std::unordered_set<std::string> result = std::move(m_FilesChanged);
+				m_FilesChanged.clear();
 				return result;
 			}
 
-			return m_ShadersChanged;
+			return m_FilesChanged;
 		}
 
 		void FileGroupWatcher::StartWatching()
@@ -95,9 +95,9 @@ namespace Teddy
 
 					if (cftime > m_LastChangedDate)
 					{
-						if (!m_ShadersChanged.contains(filepath))
+						if (!m_FilesChanged.contains(filepath))
 						{
-							m_ShadersChanged.insert(filepath);
+							m_FilesChanged.insert(filepath);
 							m_LastChangedDate = cftime;
 							changed = true;
 						}
@@ -113,7 +113,7 @@ namespace Teddy
 			m_HotReload = enabled;
 		}
 
-		bool FileGroupWatcher::IsHotReloading() const
+		bool& FileGroupWatcher::IsHotReloading()
 		{
 			return m_HotReload;
 		}

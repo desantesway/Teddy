@@ -26,8 +26,42 @@ namespace Teddy
 		}
 	}
 
+	template<>
+	std::unordered_set<std::string> AssetManager::AssetsToReload<Shader>(bool changesHandled) { return m_FileWatcher.AssetsToReload(Utils::FileGroupType::Shader, changesHandled); }
+
+	template<>
+	std::unordered_set<std::string> AssetManager::AssetsToReload<Texture2D>(bool changesHandled) { return m_FileWatcher.AssetsToReload(Utils::FileGroupType::Texture2D, changesHandled); }
+
+	template<>
+	std::unordered_set<std::string> AssetManager::AssetsToReload<Font>(bool changesHandled) { return m_FileWatcher.AssetsToReload(Utils::FileGroupType::Font, changesHandled); }
+
+	template<>
+	bool& AssetManager::IsHotReloading<Shader>() { return m_FileWatcher.IsHotReloading(Utils::FileGroupType::Shader); }
+
+	template<>
+	bool& AssetManager::IsHotReloading<Font>() { return m_FileWatcher.IsHotReloading(Utils::FileGroupType::Font); }
+
+	template<>
+	bool& AssetManager::IsHotReloading<Texture2D>() { return m_FileWatcher.IsHotReloading(Utils::FileGroupType::Texture2D); }
+
+	template<typename T>
+	void AssetManager::RemoveExpired(const std::string& name, AssetGroup<T>& map)
+	{
+		if (auto it = map.Loaded.find(name); it != map.Loaded.end() && it->second.expired())
+			map.Loaded.erase(it);
+	}
 
 	// Shaders
+	template<>
+	void AssetManager::RemoveExpired<Shader>(const std::string& name) 
+	{ 
+		if (m_Shaders.Loaded[name].expired())
+		{
+			m_FileWatcher.Remove(Utils::FileGroupType::Shader, m_Shaders.Loaded[name].lock()->GetPath());
+			m_Shaders.Loaded.erase(name);
+		}
+	}
+
 	template<>
 	Ref<Shader> AssetManager::Load<Shader>(const std::string& name)
 	{
@@ -49,6 +83,7 @@ namespace Teddy
 		}
 		else
 		{
+			m_FileWatcher.Add(Utils::FileGroupType::Shader, filepath);
 			auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Shader, filepath);
 			auto shader = Shader::Create(name, filepath, forceBuild);
 			m_Shaders.Loaded[name] = shader;
@@ -57,6 +92,12 @@ namespace Teddy
 	}
 
 	// Fonts
+	template<>
+	void AssetManager::RemoveExpired<Font>(const std::string& name) 
+	{ 
+		RemoveExpired<Font>(name, m_Fonts); 
+	}
+
 	template<>
 	Ref<Font> AssetManager::Load<Font>(const std::string& name)
 	{
@@ -103,6 +144,9 @@ namespace Teddy
 	}
 
 	// Texture2D
+	template<>
+	void AssetManager::RemoveExpired<Texture2D>(const std::string& name) { RemoveExpired<Texture2D>(name, m_Textures2D); }
+
 	template<>
 	Ref<Texture2D> AssetManager::Load<Texture2D>(const std::string& name)
 	{
@@ -200,6 +244,10 @@ namespace Teddy
 		{
 			if (!m_Shaders.Loaded[name].expired())
 				newShader.Loaded[name] = m_Shaders.Loaded[name];
+			else
+			{
+				m_FileWatcher.Remove(Utils::FileGroupType::Shader, shader.lock()->GetPath());
+			}
 		}
 		m_Shaders = newShader;
 		AssetGroup<Texture2D> newTexture2D;
