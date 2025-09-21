@@ -10,6 +10,7 @@
 #include "Teddy/Renderer/MSDFData.h"
 #include "Teddy/Core/AssetManager.h"
 
+#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 // TODO: For 3D implement instancing instead of batching
@@ -97,26 +98,24 @@ namespace Teddy
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxLineIndices = MaxLines * 2;
-		static const uint32_t MaxTextureSlots = 32; // TODO: See the maximum number of texture slots for the target platform
-		static const uint32_t MaxFontSlots = 32;
+		static const uint32_t MaxTextureSlots = 32;
+
+		uint32_t TextureSlotsCapacity = 0;
 
 		Ref<Texture2D> WhiteTexture;
 
 		BashRenderResource<LineVertex> LineResources;
-
 		BashRenderResource<QuadVertex> QuadResources;
-
 		BashRenderResource<CircleVertex> CircleResources;
-		BashVertexResource<CircleVertex> CircleLineResources;
-
 		BashRenderResource<TextVertex> TextResources;
+		BashVertexResource<CircleVertex> CircleLineResources;
 
 		float LineWidth = 2.0f;
 
 		std::array<Weak<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
 
-		std::array<Weak<Texture2D>, MaxFontSlots> FontAtlasSlots;
+		std::array<Weak<Texture2D>, MaxTextureSlots> FontAtlasSlots;
 		uint32_t FontAtlasSlotIndex = 0;
 
 		glm::vec4 QuadVertexPositions[4];
@@ -137,7 +136,6 @@ namespace Teddy
 	void Renderer2D::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
-
 		// Quad
 		s_Data.QuadResources.VertexArray = VertexArray::Create();
 
@@ -244,6 +242,10 @@ namespace Teddy
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(whiteTextureData, TextureSpecification());
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
+		GLint maxFragmentUnits = 0;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragmentUnits);
+		s_Data.TextureSlotsCapacity = std::min<uint32_t>((uint32_t)maxFragmentUnits, Renderer2DData::MaxTextureSlots);
 
 		// Adding shaders
 		auto& assets = AssetManager::Get();
@@ -595,7 +597,8 @@ namespace Teddy
 
 			if (textureIndex == 0.0f)
 			{
-				if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices) NextBatch();
+				if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices || 
+					s_Data.TextureSlotIndex + s_Data.FontAtlasSlotIndex >= s_Data.TextureSlotsCapacity) NextBatch();
 
 				textureIndex = (float)s_Data.TextureSlotIndex;
 				s_Data.TextureSlots[s_Data.TextureSlotIndex] = sprite.Texture;
@@ -649,6 +652,8 @@ namespace Teddy
 
 		if (atlasIndex == 0.0f)
 		{
+			if (s_Data.TextResources.IndexCount >= Renderer2DData::MaxIndices ||
+				s_Data.TextureSlotIndex + s_Data.FontAtlasSlotIndex >= s_Data.TextureSlotsCapacity) NextBatch();
 
 			atlasIndex = (float)s_Data.FontAtlasSlotIndex;
 			s_Data.FontAtlasSlots[s_Data.FontAtlasSlotIndex] = fontAtlas;

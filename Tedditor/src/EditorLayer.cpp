@@ -171,9 +171,11 @@ namespace Teddy
     {
         if (!(m_ViewportFocused)) return;
 
-		m_ActiveScene->OnEvent(event);  
-
-        if (m_SceneState == SceneState::Edit)
+        if (m_SceneState == SceneState::Play)
+        {
+            m_ActiveScene->OnEvent(event);
+        }
+        else if (m_SceneState == SceneState::Edit)
         {
             m_EditorCamera.OnEvent(event);
         }

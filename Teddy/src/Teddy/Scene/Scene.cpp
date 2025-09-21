@@ -129,7 +129,6 @@ namespace Teddy
 		TED_PROFILE_CAT(InstrumentorCategory::Input);
 		m_Registry.view<NativeScriptComponent>().each([&](auto entity, auto& nsc)
 			{
-				// TODO: Move to Scene::OnScenePlay
 				if (!nsc.Instance)
 				{
 					nsc.Instance = nsc.InstantiateScript();
@@ -183,7 +182,6 @@ namespace Teddy
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
-					// TODO: Move to Scene::OnScenePlay
 					if (!nsc.Instance)
 					{
 						nsc.Instance = nsc.InstantiateScript();

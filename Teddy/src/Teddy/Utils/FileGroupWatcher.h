@@ -10,8 +10,6 @@ namespace Teddy
 		class FileGroupWatcher
 		{
 		public:
-			// TODO: This will communicate with AssetManager to reload shaders and get the shader filepaths 
-			// (not receiving them as an argument like it is now)
 			FileGroupWatcher(const std::string& filepath)
 				: m_LastChangedDate(std::time(nullptr))
 			{
