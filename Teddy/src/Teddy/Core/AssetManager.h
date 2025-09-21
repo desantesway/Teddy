@@ -11,8 +11,6 @@ namespace Teddy
 {
 	enum class Boolean { False, True };
 
-	// TODO: if new scene is being loaded only deload after loaded
-	// TODO: Implement hot reloading of assets
 	class AssetManager
 	{
 	public:

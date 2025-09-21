@@ -194,7 +194,7 @@ namespace Teddy
 			return fileChanged;
 		}
 
-		// TODO: Create a thread, implement Asset Manager first
+		// threading doenst make sense here, this will only be used in debug mode
 		void FileWatcher::Watch()
 		{
 			bool disabled = true;

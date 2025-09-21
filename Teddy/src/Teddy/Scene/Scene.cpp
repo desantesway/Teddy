@@ -144,20 +144,19 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Physics);
 
-		float timeStep;
-		if (ts > 1.0f)
-		{
-			timeStep = 1.0f / 60.0f;
-		}
-		else
-		{
-			timeStep = ts;
-		}
+		constexpr float fixedTimeStep = 1.0f / 60.0f;
+		constexpr int subStepCount = 4;
+		static float accumulator = 0.0f;
 
-		int subStepCount = 4;
+		float frameDelta = ts.GetSeconds();
 
-		// TODO/DEBUG: Timeset probably should be fixed, not variable
-		b2World_Step(m_PhysicsWorld, timeStep, subStepCount);
+		accumulator += frameDelta;
+
+		while (accumulator >= fixedTimeStep)
+		{
+			b2World_Step(m_PhysicsWorld, fixedTimeStep, subStepCount);
+			accumulator -= fixedTimeStep;
+		}
 
 		auto view = m_Registry.view<Rigidbody2DComponent>();
 		for (auto e : view)
@@ -176,7 +175,6 @@ namespace Teddy
 		}
 	}
 
-	// TODO: Reset scene if loaded while playing
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);

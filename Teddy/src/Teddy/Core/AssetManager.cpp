@@ -14,7 +14,7 @@ namespace Teddy
 
 	void AssetManager::OnUpdate()
 	{
-		m_FileWatcher.Watch(); // TODO: Comment this, this should be in the constructor and stop on the destructor
+		m_FileWatcher.Watch();
 	}
 
 	template<typename T>
