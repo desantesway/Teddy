@@ -55,6 +55,7 @@ namespace Teddy
 			Entity m_SecondCamera;
 
 			Entity m_HoveredEntity;
+			int m_GizmoType = -1;
 			bool m_ShowPhysicsColliders = true;
 
 			bool m_PrimaryCamera = true;

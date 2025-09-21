@@ -6,7 +6,7 @@
 #include "Teddy/Renderer/Shader.h"
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Renderer/MSDFData.h"
-
+#include "Teddy/Math/Math.h"
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
 
@@ -147,23 +147,26 @@ namespace Teddy
                 OnOverlayRender();
             }
 
-            auto [mx, my] = ImGui::GetMousePos();
-            mx -= m_ViewportBounds[0].x;
-            my -= m_ViewportBounds[0].y;
-            glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-            my = viewportSize.y - my;
-            int mouseX = (int)mx;
-            int mouseY = (int)my;
-
-            if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+            if (!ImGuizmo::IsOver())
             {
-                int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-                entt::entity handle = (entt::entity)pixelData;
-                if (pixelData == -1) {
-                    m_HoveredEntity = {};
-                }
-                else {
-                    m_HoveredEntity = Entity(handle, m_ActiveScene.get());
+                auto [mx, my] = ImGui::GetMousePos();
+                mx -= m_ViewportBounds[0].x;
+                my -= m_ViewportBounds[0].y;
+                glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+                my = viewportSize.y - my;
+                int mouseX = (int)mx;
+                int mouseY = (int)my;
+
+                if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+                {
+                    int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+                    entt::entity handle = (entt::entity)pixelData;
+                    if (pixelData == -1) {
+                        m_HoveredEntity = {};
+                    }
+                    else {
+                        m_HoveredEntity = Entity(handle, m_ActiveScene.get());
+                    }
                 }
             }
 
@@ -174,8 +177,6 @@ namespace Teddy
 
     void EditorLayer::OnEvent(Event& event)
     {
-        if (!(m_ViewportFocused)) return;
-
         if (m_SceneState == SceneState::Play)
         {
             m_ActiveScene->OnEvent(event);
@@ -286,8 +287,6 @@ namespace Teddy
             ImGui::EndMenuBar();
         }
 
-
-
         ImGui::Begin("Stats");
 
         auto stats = Renderer2D::GetStats();
@@ -327,14 +326,9 @@ namespace Teddy
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
 
-        ImGuiLayer* layer = Application::Get().GetImGuiLayer();
-        if (!ImGui::IsAnyItemActive())
-            layer->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-        else
-            layer->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportHovered);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
         ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(),
@@ -348,6 +342,61 @@ namespace Teddy
                 OpenScene(std::filesystem::path(g_AssetPath) / path);
             } 
             ImGui::EndDragDropTarget();
+        }
+
+		// Gizmos
+        if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+        {
+            Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+            if (selectedEntity && m_GizmoType != -1)
+            {
+                ImGuizmo::SetOrthographic(false);
+                ImGuizmo::SetDrawlist();
+
+                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, 
+                    m_ViewportBounds[1].x - m_ViewportBounds[0].x, 
+                    m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+                // Editor camera
+                const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+                glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+                // Entity transform
+                auto& tc = selectedEntity.GetComponent<TransformComponent>();
+                glm::mat4 transform = tc.GetTransform();
+
+                // Snapping
+                bool snap = Input::IsKeyPressed(Key::LCtrl);
+                float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+                // Snap to 45 degrees for rotation
+                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                    snapValue = 45.0f;
+
+                float snapValues[3] = { snapValue, snapValue, snapValue };
+
+                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                    (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                    nullptr, snap ? snapValues : nullptr);
+
+                if (ImGuizmo::IsUsing())
+                {
+                    glm::vec3 translation, rotation, scale;
+                    Math::DecomposeTransform(transform, translation, rotation, scale);
+
+                    glm::vec3 deltaRotation = rotation - tc.Rotation;
+
+                    if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE) {
+                        tc.Translation = translation;
+                    }
+                    else if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) {
+                        tc.Rotation += rotation;
+                    }
+                    else if (m_GizmoType == ImGuizmo::OPERATION::SCALE) {
+                        tc.Scale = scale;
+                    }
+
+                }
+            }
         }
 
         ImGui::End();
@@ -554,6 +603,45 @@ namespace Teddy
             {
                 if (control)
                     OnDuplicateEntity();
+            }
+
+            // Gizmos
+            case Key::Q:
+            {
+                if (!ImGuizmo::IsUsing())
+                    m_GizmoType = -1;
+                break;
+            }
+            case Key::W:
+            {
+                if (!ImGuizmo::IsUsing())
+                    m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+                break;
+            }
+            case Key::E:
+            {
+                if (!ImGuizmo::IsUsing())
+                    m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+                break;
+            }
+            case Key::R:
+            {
+                if (!ImGuizmo::IsUsing())
+                    m_GizmoType = ImGuizmo::OPERATION::SCALE;
+                break;
+            }
+            case Key::Delete:
+            {
+                if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+                {
+                    Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+                    if (selectedEntity)
+                    {
+                        m_SceneHierarchyPanel.SetSelectedEntity({});
+                        m_ActiveScene->DestroyEntity(selectedEntity);
+                    }
+                }
+                break;
             }
         }
         return false;
