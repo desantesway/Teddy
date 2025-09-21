@@ -174,6 +174,36 @@ namespace Teddy
 		}
 	}
 
+	void Scene::AlwaysOnUpdate()
+	{
+		auto view = m_Registry.view<SpriteRendererComponent>();
+		auto& assets = AssetManager::Get();
+		for (auto entity : view)
+		{
+			auto& sprite = view.get<SpriteRendererComponent>(entity);
+
+			if (sprite.Texture && assets.IsHotReloading<Texture2D>())
+			{
+				// TODO just return bool given a path
+				// TODO optimize by checking only once per texture path
+				// TODO mayber the same for shaders
+				std::unordered_set<std::string> textureSet = assets.AssetsToReload<Texture2D>(true);
+
+				for (auto& key : textureSet)
+				{
+					if (key == sprite.Texture->GetPath())
+					{
+						sprite.Texture = nullptr;
+						assets.RemoveExpired<Texture2D>(key, Boolean::True);
+						sprite.Texture = assets.Load<Texture2D>(key, Boolean::True, true);
+					}
+
+				}
+
+			}
+		}
+	}
+
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);

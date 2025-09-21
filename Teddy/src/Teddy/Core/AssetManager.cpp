@@ -100,11 +100,8 @@ namespace Teddy
 	{
 		if (Exists<Shader>(name, m_Shaders))
 		{
+			TED_CORE_ASSERT(false, "Shader with that name still exists (remove it first before hotReloading!)");
 			Ref<Shader> shader = Get<Shader>(name, m_Shaders);
-			if (shader->GetPath() != filepath)
-			{
-				TED_CORE_ASSERT(false, "Shader already exists with that name but different filepath");
-			}
 
 			return shader;
 		}
@@ -161,6 +158,33 @@ namespace Teddy
 	}
 
 	template<>
+	Ref<Font> AssetManager::Load<Font>(const std::string& name, const std::string& filepath, bool hotReload)
+	{
+		if (Exists<Font>(name, m_Fonts))
+		{
+			TED_CORE_ASSERT(false, "Font with that name still exists (remove it first before hotReloading!)");
+			Ref<Font> font = Get<Font>(name, m_Fonts);
+
+			return font;
+		}
+		else if (name == "DefaultFont")
+		{
+			if (m_DefaultFont) return m_DefaultFont;
+			auto font = CreateRef<Font>(filepath);
+			m_DefaultFont = font;
+			return font;
+		}
+		else
+		{
+			m_FileWatcher.Add(Utils::FileGroupType::Font, filepath);
+			//auto forceBuild = m_FileWatcher.CheckOfflineChanges(Utils::FileGroupType::Font, filepath); //TODO: implement cache for fonts
+			auto font = CreateRef<Font>(filepath);
+			m_Fonts.Loaded[name] = font;
+			return font;
+		}
+	}
+
+	template<>
 	Ref<Font> AssetManager::Load<Font>()
 	{
 		std::string name = "DefaultFont";
@@ -170,6 +194,7 @@ namespace Teddy
 	}
 
 	// Texture2D
+
 	template<>
 	void AssetManager::RemoveExpired<Texture2D>(const std::string& name) { RemoveExpired<Texture2D>(name, m_Textures2D); }
 
@@ -194,6 +219,26 @@ namespace Teddy
 		}
 		else
 		{
+			m_FileWatcher.Add(Utils::FileGroupType::Texture2D, filepath);
+			auto texture = Texture2D::Create(filepath);
+			m_Textures2D.Loaded[name] = texture;
+			return texture;
+		}
+	}
+
+	template<>
+	Ref<Texture2D> AssetManager::Load<Texture2D>(const std::string& name, const std::string& filepath, bool hotReload)
+	{
+		if (Exists<Texture2D>(name, m_Textures2D))
+		{
+			TED_CORE_ASSERT(false, "Texture2D with that name still exists (remove it first before hotReloading!)");
+			Ref<Texture2D> texture = Get<Texture2D>(name, m_Textures2D);
+
+			return texture;
+		}
+		else
+		{
+			m_FileWatcher.Add(Utils::FileGroupType::Texture2D, filepath);
 			auto texture = Texture2D::Create(filepath);
 			m_Textures2D.Loaded[name] = texture;
 			return texture;

@@ -119,17 +119,20 @@ namespace Teddy
             {
                 case SceneState::Edit:
                 {
+                    m_ActiveScene->AlwaysOnUpdate();
                     m_EditorCamera.OnUpdate(ts);
                     m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
                     break;
                 }
                 case SceneState::Play:
                 {
+                    m_ActiveScene->AlwaysOnUpdate();
                     m_ActiveScene->OnUpdateRuntime(ts);
                     break;
                 }
                 case SceneState::Simulate:
                 {
+                    m_ActiveScene->AlwaysOnUpdate();
                     m_EditorCamera.OnUpdate(ts);
                     m_ActiveScene->SimulatePhysics(ts);
                     m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
@@ -306,8 +309,7 @@ namespace Teddy
         ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
 		auto& assets = AssetManager::Get();
         ImGui::Checkbox("Shader hot reloading", &assets.IsHotReloading<Shader>());
-        ImGui::Checkbox("Texture2D hot reloading (not implemented)", &assets.IsHotReloading<Texture2D>());
-        ImGui::Checkbox("Font hot reloading (not implemented)", &assets.IsHotReloading<Font>());
+        ImGui::Checkbox("Texture2D hot reloading", &assets.IsHotReloading<Texture2D>());
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});

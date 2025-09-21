@@ -81,6 +81,7 @@ namespace Teddy
 		uint32_t IndexCount = 0;
 		T* VertexBufferBase = nullptr;
 		T* VertexBufferPtr = nullptr;
+		std::string Name = "";
 	};
 
 	template<typename T>
@@ -89,6 +90,7 @@ namespace Teddy
 		uint32_t IndexCount = 0;
 		T* VertexBufferBase = nullptr;
 		T* VertexBufferPtr = nullptr;
+		std::string Name = "";
 	};
 
 	struct Renderer2DData
@@ -250,10 +252,14 @@ namespace Teddy
 		// Adding shaders
 		auto& assets = AssetManager::Get();
 		
-		s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl");
-		s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl");
-		s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl");
+		s_Data.QuadResources.Name = "Quad Resources";
+		s_Data.QuadResources.Shader = assets.Load<Shader>(s_Data.QuadResources.Name, "../Teddy/assets/shaders/Renderer2D_Quad.glsl");
+		s_Data.CircleResources.Name = "Circle Shader";
+		s_Data.CircleResources.Shader = assets.Load<Shader>(s_Data.CircleResources.Name, "../Teddy/assets/shaders/Renderer2D_Circle.glsl");
+		s_Data.LineResources.Name = "Line Shader";
+		s_Data.LineResources.Shader = assets.Load<Shader>(s_Data.LineResources.Name, "../Teddy/assets/shaders/Renderer2D_Line.glsl");
+		s_Data.TextResources.Name = "Text Shader";
+		s_Data.TextResources.Shader = assets.Load<Shader>(s_Data.TextResources.Name, "../Teddy/assets/shaders/Renderer2D_Text.glsl");
 
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -293,33 +299,33 @@ namespace Teddy
 		auto& assets = AssetManager::Get();
 		if (assets.IsHotReloading<Shader>())
 		{
-			std::unordered_set<std::string> shaderMap = assets.AssetsToReload<Shader>(true);
+			std::unordered_set<std::string> shaderSet = assets.AssetsToReload<Shader>(true);
 
-			for (auto& key : shaderMap)
+			for (auto& key : shaderSet)
 			{
 				if (key == s_Data.QuadResources.Shader->GetPath())
 				{
 					s_Data.QuadResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>("Quad Shader");
-					s_Data.QuadResources.Shader = assets.Load<Shader>("Quad Shader", "../Teddy/assets/shaders/Renderer2D_Quad.glsl", true);
+					assets.RemoveExpired<Shader>(s_Data.QuadResources.Name);
+					s_Data.QuadResources.Shader = assets.Load<Shader>(s_Data.QuadResources.Name, "../Teddy/assets/shaders/Renderer2D_Quad.glsl", true);
 				}
 				else if (key == s_Data.CircleResources.Shader->GetPath())
 				{
 					s_Data.CircleResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>("Circle Shader");
-					s_Data.CircleResources.Shader = assets.Load<Shader>("Circle Shader", "../Teddy/assets/shaders/Renderer2D_Circle.glsl", true);
+					assets.RemoveExpired<Shader>(s_Data.CircleResources.Name);
+					s_Data.CircleResources.Shader = assets.Load<Shader>(s_Data.CircleResources.Name, "../Teddy/assets/shaders/Renderer2D_Circle.glsl", true);
 				}
 				else if (key == s_Data.LineResources.Shader->GetPath())
 				{
 					s_Data.LineResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>("Line Shader");
-					s_Data.LineResources.Shader = assets.Load<Shader>("Line Shader", "../Teddy/assets/shaders/Renderer2D_Line.glsl", true);
+					assets.RemoveExpired<Shader>(s_Data.LineResources.Name);
+					s_Data.LineResources.Shader = assets.Load<Shader>(s_Data.LineResources.Name, "../Teddy/assets/shaders/Renderer2D_Line.glsl", true);
 				}
 				else if (key == s_Data.TextResources.Shader->GetPath())
 				{
 					s_Data.TextResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>("Text Shader");
-					s_Data.TextResources.Shader = assets.Load<Shader>("Text Shader", "../Teddy/assets/shaders/Renderer2D_Text.glsl", true);
+					assets.RemoveExpired<Shader>(s_Data.TextResources.Name);
+					s_Data.TextResources.Shader = assets.Load<Shader>(s_Data.TextResources.Name, "../Teddy/assets/shaders/Renderer2D_Text.glsl", true);
 				}
 			}
 
@@ -357,6 +363,7 @@ namespace Teddy
 		s_Data.TextureSlotIndex = 1;
 		s_Data.FontAtlasSlotIndex = 0;
 
+		// DEBUG: Uncomment this if for some reason you change from weak to ref
 		//for (uint32_t i = 1; i < Renderer2DData::MaxTextureSlots; ++i)
 		//	s_Data.TextureSlots[i].reset();
 		//for (uint32_t i = 0; i < Renderer2DData::MaxFontSlots; ++i)

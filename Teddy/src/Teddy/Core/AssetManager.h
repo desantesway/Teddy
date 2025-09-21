@@ -48,7 +48,7 @@ namespace Teddy
 
 		// enum class to avoid bool template specialization issues
 		template<typename T>
-		Ref<T> Load(const std::string& filepath, Boolean genName)
+		Ref<T> Load(const std::string& filepath, Boolean genName, bool hotReload = false)
 		{
 			std::string name = filepath;
 
@@ -66,7 +66,10 @@ namespace Teddy
 				name = filepath.substr(lastSlash, count);
 			}
 
-			return Load<T>(name, filepath);
+			if(hotReload)
+				return Load<T>(name, filepath, hotReload);
+			else
+				return Load<T>(name, filepath);
 		}
 
 		template<typename T>
@@ -81,6 +84,20 @@ namespace Teddy
 
 		template<typename T>
 		void RemoveExpired(const std::string& name);
+
+		template<typename T>
+		void RemoveExpired(const std::string& filepath, Boolean genName)
+		{
+			std::string name = filepath;
+			if (genName == Boolean::True)
+			{
+				auto lastSlash = filepath.find_last_of("/\\");
+				auto lastDot = filepath.find_last_of('.');
+				auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+				name = filepath.substr(lastSlash, count);
+			}
+			RemoveExpired<T>(name);
+		}
 
 		void RemoveExpiredAll();
 

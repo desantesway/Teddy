@@ -30,45 +30,6 @@ namespace Teddy
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 	}
 
-	void OpenGLTexture2D::GenerateColoredMipMap()
-	{
-		int levels = 1 + (int)std::floor(std::log2(std::max(m_Width, m_Height)));
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, levels, m_InternalFormat, m_Width, m_Height);
-
-		for (int level = 1; level < levels; ++level)
-		{
-			int mipWidth = std::max(1, (int)(m_Width >> level));
-			int mipHeight = std::max(1, (int)(m_Height >> level));
-
-			std::vector<unsigned char> mipData(mipWidth * mipHeight * 4);
-
-			glm::u8vec4 color;
-			switch (level % 6)
-			{
-			case 0: color = { 255,   0,   0, 255 }; break; 
-			case 1: color = { 0, 255,   0, 255 }; break; 
-			case 2: color = { 0,   0, 255, 255 }; break; 
-			case 3: color = { 255, 255,   0, 255 }; break; 
-			case 4: color = { 255,   0, 255, 255 }; break; 
-			case 5: color = { 0, 255, 255, 255 }; break; 
-			}
-
-			for (int i = 0; i < mipWidth * mipHeight; i++)
-			{
-				mipData[i * 4 + 0] = color.r;
-				mipData[i * 4 + 1] = color.g;
-				mipData[i * 4 + 2] = color.b;
-				mipData[i * 4 + 3] = color.a;
-			}
-
-			// Upload mip level
-			glTextureSubImage2D(m_RendererID, level, 0, 0, mipWidth, mipHeight,
-				GL_RGBA, GL_UNSIGNED_BYTE, mipData.data());
-		}
-	}
-
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const TextureSpecification& specification)
 		: m_Path(path)
 	{
@@ -140,6 +101,45 @@ namespace Teddy
 		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
 		glDeleteTextures(1, &m_RendererID);
+	}
+
+	void OpenGLTexture2D::GenerateColoredMipMap()
+	{
+		int levels = 1 + (int)std::floor(std::log2(std::max(m_Width, m_Height)));
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, levels, m_InternalFormat, m_Width, m_Height);
+
+		for (int level = 1; level < levels; ++level)
+		{
+			int mipWidth = std::max(1, (int)(m_Width >> level));
+			int mipHeight = std::max(1, (int)(m_Height >> level));
+
+			std::vector<unsigned char> mipData(mipWidth * mipHeight * 4);
+
+			glm::u8vec4 color;
+			switch (level % 6)
+			{
+			case 0: color = { 255,   0,   0, 255 }; break; 
+			case 1: color = { 0, 255,   0, 255 }; break; 
+			case 2: color = { 0,   0, 255, 255 }; break; 
+			case 3: color = { 255, 255,   0, 255 }; break; 
+			case 4: color = { 255,   0, 255, 255 }; break; 
+			case 5: color = { 0, 255, 255, 255 }; break; 
+			}
+
+			for (int i = 0; i < mipWidth * mipHeight; i++)
+			{
+				mipData[i * 4 + 0] = color.r;
+				mipData[i * 4 + 1] = color.g;
+				mipData[i * 4 + 2] = color.b;
+				mipData[i * 4 + 3] = color.a;
+			}
+
+			// Upload mip level
+			glTextureSubImage2D(m_RendererID, level, 0, 0, mipWidth, mipHeight,
+				GL_RGBA, GL_UNSIGNED_BYTE, mipData.data());
+		}
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size) 

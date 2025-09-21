@@ -38,9 +38,13 @@ namespace Teddy
 
 		std::string m_Path;
 		bool m_IsLoaded = false;
-		uint32_t m_Width, m_Height;
-		uint32_t m_RendererID;
-		GLenum m_InternalFormat, m_DataFormat, m_FilterFormat, m_WrapFormat, m_MinFilterFormat = 0;
+		uint32_t m_Width = 0, m_Height = 0;
+		uint32_t m_RendererID = 0;
+		GLenum m_InternalFormat = 0,
+			m_DataFormat = 0,
+			m_FilterFormat = 0,
+			m_WrapFormat = 0,
+			m_MinFilterFormat = 0;
 	};
 
 }

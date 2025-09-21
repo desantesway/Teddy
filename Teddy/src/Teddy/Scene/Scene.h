@@ -30,6 +30,7 @@ namespace Teddy
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		void AlwaysOnUpdate();
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 
