@@ -31,6 +31,8 @@ namespace Teddy
 		{
 			return m_RendererID == other.GetRendererID();
 		}
+
+		void GenerateColoredMipMap();
 	private:
 		TextureSpecification m_Specification;
 
@@ -38,7 +40,7 @@ namespace Teddy
 		bool m_IsLoaded = false;
 		uint32_t m_Width, m_Height;
 		uint32_t m_RendererID;
-		GLenum m_InternalFormat, m_DataFormat, m_FilterFormat, m_WrapFormat;
+		GLenum m_InternalFormat, m_DataFormat, m_FilterFormat, m_WrapFormat, m_MinFilterFormat = 0;
 	};
 
 }

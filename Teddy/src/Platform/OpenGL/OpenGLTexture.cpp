@@ -30,6 +30,45 @@ namespace Teddy
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 	}
 
+	void OpenGLTexture2D::GenerateColoredMipMap()
+	{
+		int levels = 1 + (int)std::floor(std::log2(std::max(m_Width, m_Height)));
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, levels, m_InternalFormat, m_Width, m_Height);
+
+		for (int level = 1; level < levels; ++level)
+		{
+			int mipWidth = std::max(1, (int)(m_Width >> level));
+			int mipHeight = std::max(1, (int)(m_Height >> level));
+
+			std::vector<unsigned char> mipData(mipWidth * mipHeight * 4);
+
+			glm::u8vec4 color;
+			switch (level % 6)
+			{
+			case 0: color = { 255,   0,   0, 255 }; break; 
+			case 1: color = { 0, 255,   0, 255 }; break; 
+			case 2: color = { 0,   0, 255, 255 }; break; 
+			case 3: color = { 255, 255,   0, 255 }; break; 
+			case 4: color = { 255,   0, 255, 255 }; break; 
+			case 5: color = { 0, 255, 255, 255 }; break; 
+			}
+
+			for (int i = 0; i < mipWidth * mipHeight; i++)
+			{
+				mipData[i * 4 + 0] = color.r;
+				mipData[i * 4 + 1] = color.g;
+				mipData[i * 4 + 2] = color.b;
+				mipData[i * 4 + 3] = color.a;
+			}
+
+			// Upload mip level
+			glTextureSubImage2D(m_RendererID, level, 0, 0, mipWidth, mipHeight,
+				GL_RGBA, GL_UNSIGNED_BYTE, mipData.data());
+		}
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const TextureSpecification& specification)
 		: m_Path(path)
 	{
@@ -37,7 +76,7 @@ namespace Teddy
 
 		int width, height, channels;
 
-		stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(true);
 		stbi_uc* data = nullptr;
 
 		{
@@ -74,8 +113,9 @@ namespace Teddy
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
 			m_FilterFormat = Utils::TeddyTextureFilterFormatToGL(specification.Filter);
+			m_MinFilterFormat = Utils::TeddyTextureFilterFormatToGL(specification.MinFilter);
 
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, m_FilterFormat);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, m_MinFilterFormat);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, m_FilterFormat);
 
 			m_WrapFormat = Utils::TeddyTextureWrapFormatToGL(specification.Wrap);
@@ -84,11 +124,15 @@ namespace Teddy
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, m_WrapFormat);
 
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			
+			// Enable this for colored mip map
+			if (false)
+				GenerateColoredMipMap();
+			else
+				glGenerateMipmap(GL_TEXTURE_2D);
 
 			stbi_image_free(data);
 		}
-
-
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -111,6 +155,7 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
+		glActiveTexture(GL_TEXTURE0);
 		glBindTextureUnit(slot, m_RendererID);
 	}
 

@@ -27,6 +27,7 @@ namespace Teddy
 		{
 			TED_PROFILE_FUNCTION();
 
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(TextureTarget(multisampled), id);
 		}
 

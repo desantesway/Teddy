@@ -33,5 +33,5 @@ namespace Teddy
 		RGBA8,
 		RGBA32F
 	};
-
+	
 }

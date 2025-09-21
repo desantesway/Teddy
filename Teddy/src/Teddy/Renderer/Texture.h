@@ -11,6 +11,7 @@ namespace Teddy
 		uint32_t Height = 1;
 		TextureFormat Format = TextureFormat::RGBA8;
 		TextureWrapFormat Wrap = TextureWrapFormat::REPEAT;
+		TextureFilterFormat MinFilter = TextureFilterFormat::LINEAR_MIPMAP_LINEAR;
 		TextureFilterFormat Filter = TextureFilterFormat::LINEAR;
 		bool GenerateMips = true;
 	};
