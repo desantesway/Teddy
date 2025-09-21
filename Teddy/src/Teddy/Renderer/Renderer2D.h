@@ -16,6 +16,9 @@ namespace Teddy
 		glm::mat4 Projection;
 	};
 
+	template<typename T>
+	struct BashRenderResource;
+
 	class Renderer2D 
 	{
 	public:
@@ -43,6 +46,9 @@ namespace Teddy
 		static void DrawLine(const glm::vec3& p0, glm::vec3& p1, const glm::vec4& color, int entityID = -1);
 		static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID = -1);
 		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+
+		template<typename T>
+		static void ReloadShader(BashRenderResource<T>& resource);
 
 		struct TextParams
 		{

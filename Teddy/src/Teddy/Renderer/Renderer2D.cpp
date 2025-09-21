@@ -289,6 +289,21 @@ namespace Teddy
 		StartBatch();
 	}
 
+	template<typename T>
+	void Renderer2D::ReloadShader(BashRenderResource<T>& resource)
+	{
+		auto& assets = AssetManager::Get();
+
+		std::string shaderPath = assets.AssetNeedsToReload<Shader>(resource.Shader->GetPath(), true);
+
+		if (shaderPath != "")
+		{
+			resource.Shader = nullptr;
+			assets.RemoveExpired<Shader>(resource.Name);
+			resource.Shader = assets.Load<Shader>(resource.Name, shaderPath, true);
+		}
+	}
+
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
@@ -296,39 +311,12 @@ namespace Teddy
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-		auto& assets = AssetManager::Get();
-		if (assets.IsHotReloading<Shader>())
+		if (AssetManager::Get().IsHotReloading<Shader>())
 		{
-			std::unordered_set<std::string> shaderSet = assets.AssetsToReload<Shader>(true);
-
-			for (auto& key : shaderSet)
-			{
-				if (key == s_Data.QuadResources.Shader->GetPath())
-				{
-					s_Data.QuadResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>(s_Data.QuadResources.Name);
-					s_Data.QuadResources.Shader = assets.Load<Shader>(s_Data.QuadResources.Name, "../Teddy/assets/shaders/Renderer2D_Quad.glsl", true);
-				}
-				else if (key == s_Data.CircleResources.Shader->GetPath())
-				{
-					s_Data.CircleResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>(s_Data.CircleResources.Name);
-					s_Data.CircleResources.Shader = assets.Load<Shader>(s_Data.CircleResources.Name, "../Teddy/assets/shaders/Renderer2D_Circle.glsl", true);
-				}
-				else if (key == s_Data.LineResources.Shader->GetPath())
-				{
-					s_Data.LineResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>(s_Data.LineResources.Name);
-					s_Data.LineResources.Shader = assets.Load<Shader>(s_Data.LineResources.Name, "../Teddy/assets/shaders/Renderer2D_Line.glsl", true);
-				}
-				else if (key == s_Data.TextResources.Shader->GetPath())
-				{
-					s_Data.TextResources.Shader = nullptr;
-					assets.RemoveExpired<Shader>(s_Data.TextResources.Name);
-					s_Data.TextResources.Shader = assets.Load<Shader>(s_Data.TextResources.Name, "../Teddy/assets/shaders/Renderer2D_Text.glsl", true);
-				}
-			}
-
+			ReloadShader<QuadVertex>(s_Data.QuadResources);
+			ReloadShader<CircleVertex>(s_Data.CircleResources);
+			ReloadShader<LineVertex>(s_Data.LineResources);
+			ReloadShader<TextVertex>(s_Data.TextResources);
 		}
 
 		StartBatch();

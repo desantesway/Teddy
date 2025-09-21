@@ -32,6 +32,18 @@ namespace Teddy
 	}
 
 	template<>
+	std::string AssetManager::AssetNeedsToReload<Shader>(const std::string& filepath, bool changesHandled)
+	{ return m_FileWatcher.AssetNeedsToReload(Utils::FileGroupType::Shader, filepath, changesHandled); }
+
+	template<>
+	std::string AssetManager::AssetNeedsToReload<Texture2D>(const std::string& filepath, bool changesHandled)
+	{ return m_FileWatcher.AssetNeedsToReload(Utils::FileGroupType::Texture2D, filepath, changesHandled); }
+
+	template<>
+	std::string AssetManager::AssetNeedsToReload<Font>(const std::string& filepath, bool changesHandled)
+	{ return m_FileWatcher.AssetNeedsToReload(Utils::FileGroupType::Font, filepath, changesHandled); }
+
+	template<>
 	std::unordered_set<std::string> AssetManager::AssetsToReload<Shader>(bool changesHandled) { return m_FileWatcher.AssetsToReload(Utils::FileGroupType::Shader, changesHandled); }
 
 	template<>

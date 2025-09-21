@@ -32,6 +32,9 @@ namespace Teddy
 		std::unordered_set<std::string> AssetsToReload(bool changesHandled);
 
 		template<typename T>
+		std::string AssetNeedsToReload(const std::string& filepath, bool changesHandled);
+
+		template<typename T>
 		bool& IsHotReloading();
 
 		template<typename T>

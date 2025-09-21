@@ -68,6 +68,20 @@ namespace Teddy
 			return m_FilesChanged;
 		}
 
+		std::string FileGroupWatcher::AssetNeedsToReload(const std::string& filepath, bool changesHandled)
+		{
+			if (m_FilesChanged.contains(filepath))
+			{
+				if (changesHandled)
+				{
+					m_FilesChanged.erase(filepath);
+				}
+
+				return filepath;
+			}
+			return "";
+		}
+
 		void FileGroupWatcher::StartWatching()
 		{
 			m_HotReload = true;

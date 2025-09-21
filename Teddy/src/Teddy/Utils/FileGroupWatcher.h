@@ -34,6 +34,7 @@ namespace Teddy
 			bool& IsHotReloading();
 
 			std::unordered_set<std::string> GetFilesChanged(bool changesHandled);
+			std::string AssetNeedsToReload(const std::string& filepath, bool changesHandled);
 		private:
 			std::unordered_set<std::string> m_FilePaths;
 			std::unordered_set<std::string> m_FilesChanged;

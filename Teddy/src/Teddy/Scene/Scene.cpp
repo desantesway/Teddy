@@ -184,20 +184,13 @@ namespace Teddy
 
 			if (sprite.Texture && assets.IsHotReloading<Texture2D>())
 			{
-				// TODO just return bool given a path
-				// TODO optimize by checking only once per texture path
-				// TODO mayber the same for shaders
-				std::unordered_set<std::string> textureSet = assets.AssetsToReload<Texture2D>(true);
+				std::string texturePath = assets.AssetNeedsToReload<Texture2D>(sprite.Texture->GetPath(), true);
 
-				for (auto& key : textureSet)
+				if (texturePath != "")
 				{
-					if (key == sprite.Texture->GetPath())
-					{
-						sprite.Texture = nullptr;
-						assets.RemoveExpired<Texture2D>(key, Boolean::True);
-						sprite.Texture = assets.Load<Texture2D>(key, Boolean::True, true);
-					}
-
+					sprite.Texture = nullptr;
+					assets.RemoveExpired<Texture2D>(texturePath, Boolean::True);
+					sprite.Texture = assets.Load<Texture2D>(texturePath, Boolean::True, true);
 				}
 
 			}

@@ -43,6 +43,7 @@ namespace Teddy
 			void StopWatching(FileGroupType type);
 
 			std::unordered_set<std::string> AssetsToReload(FileGroupType type, bool changesHandled);
+			std::string AssetNeedsToReload(FileGroupType type, const std::string& filepath, bool changesHandled);
 		private:
 			const std::string m_LastTimeCheckedFilepath;
 

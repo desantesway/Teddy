@@ -269,5 +269,10 @@ namespace Teddy
 		{
 			return m_FilesWatcher[type].GetFilesChanged(changesHandled);
 		}
+
+		std::string FileWatcher::AssetNeedsToReload(FileGroupType type, const std::string& filepath, bool changesHandled)
+		{
+			return m_FilesWatcher[type].AssetNeedsToReload(filepath, changesHandled);
+		}
 	}
 }
