@@ -39,3 +39,6 @@
 [submodule "Teddy/vendor/optick"]
 	path = Teddy/vendor/optick
 	url = https://github.com/crankyted/optick.git
+[submodule "Teddy/vendor/ImGuizmo"]
+	path = Teddy/vendor/ImGuizmo
+	url = https://github.com/crankyted/ImGuizmo.git

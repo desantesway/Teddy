@@ -11,6 +11,7 @@
 #include "Teddy/Utils/PlatformUtils.h"
 
 #include <imgui.h>
+#include <ImGuizmo.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,6 +19,7 @@
 namespace Teddy
 {
 
+    // TODO: Build this above Sandbox2D
     extern const std::filesystem::path g_AssetPath;
 
     EditorLayer::EditorLayer()
