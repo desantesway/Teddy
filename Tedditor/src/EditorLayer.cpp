@@ -455,6 +455,7 @@ namespace Teddy
                         * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                         * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
                         * glm::scale(glm::mat4(1.0f), scale)
+                        //* ent.GetComponent<TransformComponent>().GetTransform() // Collisions are only 2D
                         * ent.GetComponent<TextComponent>().TextQuad.GetTransform();
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
@@ -486,11 +487,12 @@ namespace Teddy
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
                     * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                     * glm::scale(glm::mat4(1.0f), scale)
+                    * selectedEntity.GetComponent<TransformComponent>().GetTransform()
                     * selectedEntity.GetComponent<TextComponent>().TextQuad.GetTransform();
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
-            else if(selectedEntity.HasComponent<TextComponent>())
+            else if(selectedEntity.HasComponent<SpriteRendererComponent>())
             {
                 TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
                 Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
