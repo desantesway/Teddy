@@ -10,6 +10,20 @@ namespace Teddy
 		RecalculateProjection();
 	}
 
+	void SceneCamera::GetWidthAndHeight(float& width, float& height) const
+	{
+		if (m_ProjectionType == ProjectionType::Perspective)
+		{
+			height = 2.0f * tan(m_PerspectiveFOV * 0.5f);
+			width = height * m_AspectRatio;
+		}
+		else
+		{
+			width = m_OrthographicSize * m_AspectRatio;
+			height = m_OrthographicSize;
+		}
+	}
+
 	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
 	{
 		m_ProjectionType = ProjectionType::Perspective;

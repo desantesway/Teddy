@@ -18,8 +18,6 @@
 
 namespace Teddy
 {
-
-    // TODO: Build this above Sandbox2D
     extern const std::filesystem::path g_AssetPath;
 
     EditorLayer::EditorLayer()
@@ -43,8 +41,8 @@ namespace Teddy
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
         });
-        fbSpec.Width = 1280;
-        fbSpec.Height = 720;
+        fbSpec.Width = 1920;
+        fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
         NewScene();
@@ -61,9 +59,10 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-        auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-        redSquare.AddComponent<TextComponent>();
-		redSquare.GetComponent<TextComponent>().SetString("Teddy Engine");
+        auto bg = m_ActiveScene->CreateEntity("Background");
+        auto& sprite = bg.AddComponent<SpriteRendererComponent>();
+        sprite.IsBackground = true;
+		sprite.Texture = assets.Load<Texture2D>("Checkerboard", "assets/textures/checkerboard.jpg");
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
@@ -461,7 +460,7 @@ namespace Teddy
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
-                else
+                else 
                 {
                     glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 

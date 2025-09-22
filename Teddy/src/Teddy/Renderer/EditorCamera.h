@@ -16,6 +16,8 @@ namespace Teddy
 		EditorCamera() = default;
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
+		virtual void GetWidthAndHeight(float& width, float& height) const override;
+
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
@@ -50,6 +52,8 @@ namespace Teddy
 		std::pair<float, float> PanSpeed() const;
 		float RotationSpeed() const;
 		float ZoomSpeed() const;
+
+		ProjectionType GetProjectionType() const override { return ProjectionType::Perspective; }
 	private:
 		float m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;
 
