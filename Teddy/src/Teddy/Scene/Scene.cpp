@@ -237,10 +237,13 @@ namespace Teddy
 					cameraTransform = transform.GetTransform();
 					float width, height;
 					activeCamera->GetWidthAndHeight(width, height);
-					backgroundTransform = glm::scale(glm::mat4(1.0f), glm::vec3(width * transform.Scale.x, height * transform.Scale.y, 1.0f));
+					backgroundTransform = glm::translate(glm::mat4(1.0f), glm::vec3(transform.Translation.x, transform.Translation.y, 0.0f));
+					backgroundTransform = glm::rotate(backgroundTransform, transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+					backgroundTransform = glm::scale(backgroundTransform, glm::vec3(width * transform.Scale.x, height * transform.Scale.y, 1.0f));
 					if (activeCamera->GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 					{
-						backgroundTransform = glm::scale(backgroundTransform, glm::vec3(transform.Translation.z, transform.Translation.z, 1.0f));
+						backgroundTransform = glm::scale(backgroundTransform, 
+							glm::vec3(transform.Translation.z / transform.Scale.z, transform.Translation.z / transform.Scale.z, 1.0f));
 					}
 					break;
 				}
@@ -262,7 +265,7 @@ namespace Teddy
 
 				if (sprite.IsBackground)
 				{
-					Renderer2D::DrawQuad(transform.GetTransform() * backgroundTransform, sprite, (int)entity);
+					Renderer2D::DrawQuad(backgroundTransform * transform.GetTransform(), sprite, (int)entity);
 				}
 				else 
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);

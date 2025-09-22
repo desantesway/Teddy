@@ -215,6 +215,9 @@ namespace Teddy
 			out << YAML::BeginMap; // SpriteRendererComponent
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+
+			out << YAML::Key << "Background" << YAML::Value << spriteRendererComponent.IsBackground;
+
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 
 			if (spriteRendererComponent.Texture)
@@ -394,6 +397,11 @@ namespace Teddy
 					if (spriteRendererComponent)
 					{
 						auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+						if (spriteRendererComponent["Background"])
+							src.IsBackground = spriteRendererComponent["Background"].as<bool>();
+						else
+							src.IsBackground = false;
+						
 						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 
 						if (spriteRendererComponent["TexturePath"])
