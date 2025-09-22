@@ -250,6 +250,15 @@ namespace Teddy
 		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+		// Gizmos
+		auto& gizmoStyle = ImGuizmo::GetStyle();
+		gizmoStyle.TranslationLineThickness = 6.0f; 
+		gizmoStyle.TranslationLineArrowSize = 10.0f;
+		gizmoStyle.ScaleLineThickness = 6.0f;     
+		gizmoStyle.ScaleLineCircleSize = 10.0f;
+		gizmoStyle.RotationLineThickness = 6.0f;      
+		gizmoStyle.RotationOuterLineThickness = 6.0f;   
 	}
 
 	uint32_t ImGuiLayer::GetActiveWidgetID() const

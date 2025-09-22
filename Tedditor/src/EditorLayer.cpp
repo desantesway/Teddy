@@ -344,6 +344,7 @@ namespace Teddy
             ImGui::EndDragDropTarget();
         }
 
+        // TODO: Implement anchor point
 		// Gizmos
         if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
         {
@@ -647,9 +648,8 @@ namespace Teddy
     {
         if (e.GetMouseButton() == Mouse::Left)
         {
-            // Prevent selection if interacting with gizmo
             if (m_ViewportHovered && !Input::IsKeyPressed(Key::LAlt) &&
-                !ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
+                !ImGuizmo::IsOver())
             {
                 m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
             }
