@@ -60,6 +60,7 @@ namespace Teddy
 		glm::vec4 Color{ 1.0f };
 		Ref<Texture2D> Texture;
 		float TilingFactor = 1.0f;
+		bool IsBackground = false;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;

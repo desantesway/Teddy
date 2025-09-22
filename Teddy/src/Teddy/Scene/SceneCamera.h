@@ -7,10 +7,10 @@ namespace Teddy
 	class SceneCamera : public Camera
 	{
 	public:
-		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
-	public:
 		SceneCamera();
 		virtual ~SceneCamera() = default;
+
+		virtual void GetWidthAndHeight(float& width, float& height) const override;
 
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);
 		void SetOrthographic(float size, float nearClip, float farClip);
@@ -30,7 +30,7 @@ namespace Teddy
 		void SetOrthographicNearClip(float nearClip) { m_OrthographicNear = nearClip; RecalculateProjection(); }
 		float GetOrthographicFarClip() const { return m_OrthographicFar; }
 		void SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; RecalculateProjection(); }
-		ProjectionType GetProjectionType() const { return m_ProjectionType; }
+		ProjectionType GetProjectionType() const override { return m_ProjectionType; }
 		void SetProjectionType(ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
 
 	private:

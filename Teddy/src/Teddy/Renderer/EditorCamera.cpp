@@ -17,6 +17,10 @@ namespace Teddy
 		UpdateView();
 	}
 
+	void EditorCamera::GetWidthAndHeight(float& width, float& height) const
+	{
+	}
+
 	void EditorCamera::UpdateProjection()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Camera);

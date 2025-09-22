@@ -1,0 +1,43 @@
+Scene: Untitled
+Entities:
+  - Entity: 15519324272735267783
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0.5]
+      Rotation: [-1.9083867, 0.5446947, -2.6918812]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [0.22412448, 0.3166023, 0.079456165, 1]
+      Thickness: 1
+      Fade: 0.005
+  - Entity: 11977189516602013736
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [2.7, -0.6, 13.3]
+      Rotation: [0, 0, 0]
+      Scale: [1.3, 0.6, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 11526400934971272477
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Background: true
+      Color: [1, 1, 1, 1]
+      TexturePath: assets/textures/checkerboard.jpg
+      TilingFactor: 1

@@ -405,6 +405,7 @@ namespace Teddy
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", true, entity, [](auto& component)
 			{
+				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
 				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
