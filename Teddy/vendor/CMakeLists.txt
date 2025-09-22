@@ -415,17 +415,8 @@ endif()
 include_directories(ImGuizmo)
 
 set(IMGUIZMO_SRC
-    ImGuizmo/GraphEditor.cpp
-    ImGuizmo/GraphEditor.h
-    ImGuizmo/ImCurveEdit.cpp
-    ImGuizmo/ImCurveEdit.h
-	ImGuizmo/ImGradient.cpp
-	ImGuizmo/ImGradient.h
     ImGuizmo/ImGuizmo.cpp
 	ImGuizmo/ImGuizmo.h
-	ImGuizmo/ImSequencer.cpp
-	ImGuizmo/ImSequencer.h
-	ImGuizmo/ImZoomSlider.h
 )
 add_library(imguizmo STATIC ${IMGUIZMO_SRC})
 target_include_directories(imguizmo PUBLIC ImGuizmo ImGuizmo/)
