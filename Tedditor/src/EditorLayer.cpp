@@ -650,8 +650,12 @@ namespace Teddy
     {
         if (e.GetMouseButton() == Mouse::Left)
         {
-            if (m_ViewportHovered && !Input::IsKeyPressed(Key::LAlt))
+            // Prevent selection if interacting with gizmo
+            if (m_ViewportHovered && !Input::IsKeyPressed(Key::LAlt) &&
+                !ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
+            {
                 m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+            }
         }
         return false;
     }
