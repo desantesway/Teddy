@@ -484,10 +484,7 @@ namespace Teddy
                 TransformComponent tc = selectedEntity.GetComponent<TransformComponent>();
                 glm::vec3 scale = tc.Scale;
 
-                glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-                    * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                    * glm::scale(glm::mat4(1.0f), scale)
-                    * selectedEntity.GetComponent<TransformComponent>().GetTransform()
+                glm::mat4 transform = selectedEntity.GetComponent<TransformComponent>().GetTransform()
                     * selectedEntity.GetComponent<TextComponent>().TextQuad.GetTransform();
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
