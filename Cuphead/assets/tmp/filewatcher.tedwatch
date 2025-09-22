@@ -1,0 +1,6 @@
+OfflineWatcher:
+  1:
+    ../Teddy/assets/shaders/Renderer2D_Quad.glsl: 1758550635
+    ../Teddy/assets/shaders/Renderer2D_Circle.glsl: 1758550637
+    ../Teddy/assets/shaders/Renderer2D_Line.glsl: 1758550639
+    ../Teddy/assets/shaders/Renderer2D_Text.glsl: 1758550640

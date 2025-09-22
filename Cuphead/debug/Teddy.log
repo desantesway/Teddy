@@ -1,0 +1,60 @@
+[15:17:15] [info] TEDDY: Creating window Cuphead Remake (1920, 1080)
+[15:17:15] [error] TEDDY: MidiInWinMM::openPort: error creating Windows MM MIDI input port.
+[15:17:15] [info] TEDDY: OpenGL Info:
+[15:17:15] [info] TEDDY:   Vendor: NVIDIA Corporation
+[15:17:15] [info] TEDDY:   Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
+[15:17:15] [info] TEDDY:   Version: 4.6.0 NVIDIA 581.08
+[15:17:15] [info] TEDDY: Detected 12 threads!
+[15:17:16] [trace] TEDDY: OpenGLShader::Reflect - GL_VERTEX_SHADER ../Teddy/assets/shaders/Renderer2D_Quad.glsl
+[15:17:16] [trace] TEDDY:     1 uniform buffers
+[15:17:16] [trace] TEDDY:     0 resources
+[15:17:16] [trace] TEDDY: Uniform buffers:
+[15:17:16] [trace] TEDDY:   _46_48
+[15:17:16] [trace] TEDDY:     Size = 64
+[15:17:16] [trace] TEDDY:     Binding = 0
+[15:17:16] [trace] TEDDY:     Members = 1
+[15:17:16] [trace] TEDDY: OpenGLShader::Reflect - GL_FRAGMENT_SHADER ../Teddy/assets/shaders/Renderer2D_Quad.glsl
+[15:17:16] [trace] TEDDY:     0 uniform buffers
+[15:17:16] [trace] TEDDY:     1 resources
+[15:17:16] [trace] TEDDY: Uniform buffers:
+[15:17:17] [warning] TEDDY: Shader creation took 1966.4995 ms
+[15:17:18] [trace] TEDDY: OpenGLShader::Reflect - GL_VERTEX_SHADER ../Teddy/assets/shaders/Renderer2D_Circle.glsl
+[15:17:18] [trace] TEDDY:     1 uniform buffers
+[15:17:18] [trace] TEDDY:     0 resources
+[15:17:18] [trace] TEDDY: Uniform buffers:
+[15:17:18] [trace] TEDDY:   _47_49
+[15:17:18] [trace] TEDDY:     Size = 64
+[15:17:18] [trace] TEDDY:     Binding = 0
+[15:17:18] [trace] TEDDY:     Members = 1
+[15:17:18] [trace] TEDDY: OpenGLShader::Reflect - GL_FRAGMENT_SHADER ../Teddy/assets/shaders/Renderer2D_Circle.glsl
+[15:17:18] [trace] TEDDY:     0 uniform buffers
+[15:17:18] [trace] TEDDY:     0 resources
+[15:17:18] [trace] TEDDY: Uniform buffers:
+[15:17:19] [warning] TEDDY: Shader creation took 1569.4111 ms
+[15:17:19] [trace] TEDDY: OpenGLShader::Reflect - GL_VERTEX_SHADER ../Teddy/assets/shaders/Renderer2D_Line.glsl
+[15:17:19] [trace] TEDDY:     1 uniform buffers
+[15:17:19] [trace] TEDDY:     0 resources
+[15:17:19] [trace] TEDDY: Uniform buffers:
+[15:17:19] [trace] TEDDY:   _30_32
+[15:17:19] [trace] TEDDY:     Size = 64
+[15:17:19] [trace] TEDDY:     Binding = 0
+[15:17:19] [trace] TEDDY:     Members = 1
+[15:17:19] [trace] TEDDY: OpenGLShader::Reflect - GL_FRAGMENT_SHADER ../Teddy/assets/shaders/Renderer2D_Line.glsl
+[15:17:19] [trace] TEDDY:     0 uniform buffers
+[15:17:19] [trace] TEDDY:     0 resources
+[15:17:19] [trace] TEDDY: Uniform buffers:
+[15:17:20] [warning] TEDDY: Shader creation took 1348.8094 ms
+[15:17:21] [trace] TEDDY: OpenGLShader::Reflect - GL_VERTEX_SHADER ../Teddy/assets/shaders/Renderer2D_Text.glsl
+[15:17:21] [trace] TEDDY:     1 uniform buffers
+[15:17:21] [trace] TEDDY:     0 resources
+[15:17:21] [trace] TEDDY: Uniform buffers:
+[15:17:21] [trace] TEDDY:   _50_52
+[15:17:21] [trace] TEDDY:     Size = 64
+[15:17:21] [trace] TEDDY:     Binding = 0
+[15:17:21] [trace] TEDDY:     Members = 1
+[15:17:21] [trace] TEDDY: OpenGLShader::Reflect - GL_FRAGMENT_SHADER ../Teddy/assets/shaders/Renderer2D_Text.glsl
+[15:17:21] [trace] TEDDY:     0 uniform buffers
+[15:17:21] [trace] TEDDY:     1 resources
+[15:17:21] [trace] TEDDY: Uniform buffers:
+[15:17:22] [warning] TEDDY: Shader creation took 1499.8153 ms
+[15:17:28] [info] TEDDY: Terminating SDL
