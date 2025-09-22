@@ -10,8 +10,11 @@ VS-build/
 
 # Temporary files
 SandBox/debug/
-Tedditor/debug/
 SandBox/assets/cache/
+SandBox/assets/tmp/
+Tedditor/debug/
 Tedditor/assets/cache/
 Tedditor/assets/tmp/
-SandBox/assets/tmp/
+Cuphead/debug/
+Cuphead/assets/cache/
+Cuphead/assets/tmp/

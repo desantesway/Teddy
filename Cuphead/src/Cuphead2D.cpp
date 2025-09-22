@@ -26,15 +26,14 @@ void Cuphead2D::OnAttach()
 	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
 
     auto camEntt = m_ActiveScene->CreateEntity("Camera");
-	camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 10.0f };
+	camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
     auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
     cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
 	cam.Camera.SetViewportSize(1920, 1080);
 
 	auto background = m_ActiveScene->CreateEntity("Red Square");
-    background.GetComponent<Teddy::TransformComponent>().Scale = { 19.2f, 10.8f, 0.0f };
     auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
-	sprite.Color = glm::vec4(1.0f);
+	sprite.IsBackground = true;
     sprite.Texture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("Background", "assets/Textures/SpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
 
     m_ActiveScene->OnRuntimeStart();
