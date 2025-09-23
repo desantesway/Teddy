@@ -97,7 +97,7 @@ namespace Teddy
 
             m_Framebuffer->Bind();
 
-            RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
+            //RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
             RenderCommand::Clear();
         }
 
