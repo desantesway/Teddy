@@ -430,31 +430,43 @@ namespace Teddy
 	}
 
 	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
+		const float& texIndex, const float& tilingFactor, 
+		const SpriteAtlasComponent& atlas, const float& atlasWidth, const float& atlasHeight,
+		int entityID)
+	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		constexpr size_t quadVertexCount = 4;
+		glm::vec2 textureCoords[] = {
+			{ (atlas.x * atlas.spriteWidth) / atlasWidth,	(atlas.y * atlas.spriteHeight) / atlasHeight },
+			{ ((atlas.x + 1) * atlas.spriteWidth) / atlasWidth,	(atlas.y * atlas.spriteHeight) / atlasHeight },
+			{ ((atlas.x + 1) * atlas.spriteWidth) / atlasWidth,	((atlas.y + 1) * atlas.spriteHeight) / atlasHeight },
+			{ (atlas.x * atlas.spriteWidth) / atlasWidth,	((atlas.y + 1) * atlas.spriteHeight) / atlasHeight }
+		};
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+			s_Data.QuadResources.VertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			s_Data.QuadResources.VertexBufferPtr->Color = color;
+			s_Data.QuadResources.VertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadResources.VertexBufferPtr->TexIndex = texIndex;
+			s_Data.QuadResources.VertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadResources.VertexBufferPtr->EntityID = entityID;
+			s_Data.QuadResources.VertexBufferPtr++;
+		}
+
+		s_Data.QuadResources.IndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
 		const float& texIndex, const float& tilingFactor, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		static float x = 0, y = 2;
-		if (x > 1)
-		{
-			x = 0;
-			y--;
-		}
-		if(y < 0)
-			y = 2;
-			
-		constexpr float atlasWidth = 2048.0f, atlasHeight = 2048.0f;
-		constexpr float spriteWidth = 1024.0f, spriteHeight = 574.0f;
-
 		constexpr size_t quadVertexCount = 4;
-		glm::vec2 textureCoords[] = { 
-			{ (x *		spriteWidth)/atlasWidth,	(y *		spriteHeight) / atlasHeight },
-			{ ((x+1) *	spriteWidth)/atlasWidth,	(y *		spriteHeight) / atlasHeight }, 
-			{ ((x+1) *	spriteWidth)/atlasWidth,	((y+1) *	spriteHeight) / atlasHeight }, 
-			{ (x *		spriteWidth)/atlasWidth,	((y+1) *	spriteHeight) / atlasHeight } 
-		};
-
-		x++;
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
@@ -597,6 +609,16 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		SpriteAtlasComponent atlas{0, 0, (float)sprite.Texture->GetWidth(), (float)sprite.Texture->GetHeight() };
+
+		DrawQuad(transform, sprite, atlas, entityID);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, 
+		const SpriteAtlasComponent& atlas, int entityID)
+	{
+		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		if (sprite.Texture != nullptr)
 		{
 			float textureIndex = 0.0f;
@@ -611,7 +633,7 @@ namespace Teddy
 
 			if (textureIndex == 0.0f)
 			{
-				if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices || 
+				if (s_Data.QuadResources.IndexCount >= Renderer2DData::MaxIndices ||
 					s_Data.TextureSlotIndex + s_Data.FontAtlasSlotIndex >= s_Data.TextureSlotsCapacity) NextBatch();
 
 				textureIndex = (float)s_Data.TextureSlotIndex;
@@ -619,7 +641,10 @@ namespace Teddy
 				s_Data.TextureSlotIndex++;
 			}
 
-			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, entityID);
+			const float width = (float)sprite.Texture->GetWidth();
+			const float height = (float)sprite.Texture->GetHeight();
+			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, 
+				atlas, width, height, entityID);
 
 		}
 		else

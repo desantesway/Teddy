@@ -264,12 +264,19 @@ namespace Teddy
 				auto& transform = std::get<0>(tuple);
 				auto& sprite = std::get<1>(tuple);
 
+				glm::mat4 transformMatrix = transform.GetTransform();
 				if (sprite.IsBackground)
+					transformMatrix *= backgroundTransform;
+
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
 				{
-					Renderer2D::DrawQuad(backgroundTransform * transform.GetTransform(), sprite, (int)entity);
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+					Renderer2D::DrawQuad(transformMatrix, sprite, atlas, (int)entity);
 				}
-				else 
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+				else
+					Renderer2D::DrawQuad(transformMatrix, sprite, (int)entity);
 			}
 
 			// Draw circles
@@ -313,7 +320,15 @@ namespace Teddy
 			auto& sprite = std::get<1>(tuple);
 			auto& color = sprite.Color;
 
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+			Entity ent{ entity, this };
+			if (ent.HasComponent<SpriteAtlasComponent>())
+			{
+				auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+			}
+			else
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
 		}
 
 		// Draw circles
@@ -477,6 +492,16 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAtlasComponent>(Entity entity, SpriteAtlasComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAnimationComponent>(Entity entity, SpriteAnimationComponent& component)
 	{
 	}
 

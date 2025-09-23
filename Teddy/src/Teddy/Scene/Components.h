@@ -68,6 +68,40 @@ namespace Teddy
 			: Color(color) {}
 	};
 
+	// TODO: Atlas generator
+	struct SpriteAtlasComponent
+	{
+		int x = 0; // for animations, x increases then y increases automatically
+		int y = 0;
+		int spriteWidth = 0;
+		int spriteHeight = 0;
+
+		SpriteAtlasComponent() = default;
+		SpriteAtlasComponent(const SpriteAtlasComponent&) = default;
+		SpriteAtlasComponent(const float& xI, const float& yI, const float& width, const float& height)
+			: x(xI), y(yI), spriteWidth(width), spriteHeight(height) 
+		{
+		}
+	};
+
+	struct SpriteAnimationComponent
+	{
+		glm::vec4 Color{ 1.0f };
+		std::vector<Ref<Texture2D>> Texture;
+		float TilingFactor = 1.0f;
+		bool IsBackground = false;
+
+		int textureIndex = 0;
+		std::vector<int> playableIndicies; // for putting multiple animations in one component (up, left, right, etc)
+		float frameTime = 0.1f;
+		float initialFrameTime = 0.1f;
+		bool loop = true;
+		bool pingPong = false;
+
+		SpriteAnimationComponent() = default;
+		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
+	};
+
 	struct CircleRendererComponent
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -179,8 +213,8 @@ namespace Teddy
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, NativeScriptComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
+		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
 		TextComponent>;
 }
