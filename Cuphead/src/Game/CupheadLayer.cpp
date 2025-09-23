@@ -1,4 +1,4 @@
-#include "Cuphead2D.h"
+#include "CupheadLayer.h"
 
 #include <chrono>
 
@@ -13,13 +13,13 @@
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
 
-Cuphead2D::Cuphead2D()
+CupheadLayer::CupheadLayer()
 	: Layer("Main Layer")
 {
 
 }
 
-void Cuphead2D::OnAttach()
+void CupheadLayer::OnAttach()
 {
 	TED_PROFILE_FUNCTION();
 
@@ -39,16 +39,14 @@ void Cuphead2D::OnAttach()
     m_ActiveScene->OnRuntimeStart();
 }
 
-void Cuphead2D::OnDetach()
+void CupheadLayer::OnDetach()
 {
 	TED_PROFILE_FUNCTION();
 }
 
-void Cuphead2D::OnUpdate(Teddy::Timestep ts)
+void CupheadLayer::OnUpdate(Teddy::Timestep ts)
 {
 	TED_PROFILE_FUNCTION();
-
-	m_EditorCamera.OnUpdate(ts);
 
 	Teddy::Renderer2D::ResetStats();
 
@@ -63,34 +61,16 @@ void Cuphead2D::OnUpdate(Teddy::Timestep ts)
         TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
         m_ActiveScene->AlwaysOnUpdate();
-        
         m_ActiveScene->OnUpdateRuntime(ts);
     }
 }
 
-void Cuphead2D::OnEvent(Teddy::Event& event)
+void CupheadLayer::OnEvent(Teddy::Event& event)
 {
     m_ActiveScene->OnEvent(event);
 }
 
-void Cuphead2D::OnImGuiRender()
+void CupheadLayer::OnImGuiRender()
 {
 	TED_PROFILE_FUNCTION();
-
-    ImGui::Begin("Stats");
-
-    auto stats = Teddy::Renderer2D::GetStats();
-    ImGui::Text("Renderer2D Stats:");
-    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-    ImGui::Text("Quads: %d", stats.QuadCount);
-    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-    ImGui::End();
-
-    ImGui::Begin("Colors");
-
-    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-	ImGui::End();
 }

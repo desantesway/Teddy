@@ -11,9 +11,20 @@ endif()
 set_property(TARGET Cuphead PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Cuphead")
 
 target_sources(Cuphead PRIVATE    
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/CupheadApp.cpp
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Cuphead2D.h
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Cuphead2D.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadApp.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadLayer.cpp
+
+                                    # Editor
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/TedditorApp.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.cpp
+
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Panels/SceneHierarchyPanel.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Panels/SceneHierarchyPanel.cpp
+
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Panels/ContentBrowserPanel.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Panels/ContentBrowserPanel.cpp
 )
 
 target_include_directories(Cuphead PUBLIC

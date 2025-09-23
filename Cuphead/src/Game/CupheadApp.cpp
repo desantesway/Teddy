@@ -5,7 +5,8 @@
 #include "Teddy/Core/EntryPoint.h"
 // ------------------------------------------
 
-#include "Cuphead2D.h"
+#include "CupheadLayer.h"
+#include "../Editor/EditorLayer.h"
 
 class Cuphead : public Teddy::Application
 {
@@ -13,7 +14,11 @@ public:
 	Cuphead(const Teddy::ApplicationSpecification& specification)
 		: Teddy::Application(specification)
 	{
-		PushLayer(new Cuphead2D());
+#ifdef TED_DEBUG
+		PushLayer(new Teddy::EditorLayer());
+#else
+		PushLayer(new CupheadLayer());
+#endif
 	}
 	~Cuphead()
 	{
