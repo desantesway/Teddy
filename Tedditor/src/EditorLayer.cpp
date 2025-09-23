@@ -61,8 +61,7 @@ namespace Teddy
 
         auto bg = m_ActiveScene->CreateEntity("Background");
         auto& sprite = bg.AddComponent<SpriteRendererComponent>();
-        sprite.IsBackground = true;
-		sprite.Texture = assets.Load<Texture2D>("Checkerboard", "assets/textures/checkerboard.jpg");
+		sprite.Texture = assets.Load<Texture2D>("Checkerboard", "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png");
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();

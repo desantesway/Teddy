@@ -351,7 +351,7 @@ namespace Teddy
 		s_Data.TextureSlotIndex = 1;
 		s_Data.FontAtlasSlotIndex = 0;
 
-		// DEBUG: Uncomment this if for some reason you change from weak to ref
+		// DEBUG: Uncomment this if for some reason you change from weak to ref s_Data.TextureSlots/s_Data.FontAtlasSlots
 		//for (uint32_t i = 1; i < Renderer2DData::MaxTextureSlots; ++i)
 		//	s_Data.TextureSlots[i].reset();
 		//for (uint32_t i = 0; i < Renderer2DData::MaxFontSlots; ++i)
@@ -434,8 +434,27 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		static float x = 0, y = 2;
+		if (x > 1)
+		{
+			x = 0;
+			y--;
+		}
+		if(y < 0)
+			y = 2;
+			
+		constexpr float atlasWidth = 2048.0f, atlasHeight = 2048.0f;
+		constexpr float spriteWidth = 1024.0f, spriteHeight = 574.0f;
+
 		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		glm::vec2 textureCoords[] = { 
+			{ (x *		spriteWidth)/atlasWidth,	(y *		spriteHeight) / atlasHeight },
+			{ ((x+1) *	spriteWidth)/atlasWidth,	(y *		spriteHeight) / atlasHeight }, 
+			{ ((x+1) *	spriteWidth)/atlasWidth,	((y+1) *	spriteHeight) / atlasHeight }, 
+			{ (x *		spriteWidth)/atlasWidth,	((y+1) *	spriteHeight) / atlasHeight } 
+		};
+
+		x++;
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{

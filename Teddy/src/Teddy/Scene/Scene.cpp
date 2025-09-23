@@ -238,6 +238,7 @@ namespace Teddy
 					float width, height;
 					activeCamera->GetWidthAndHeight(width, height);
 					backgroundTransform = glm::translate(glm::mat4(1.0f), glm::vec3(transform.Translation.x, transform.Translation.y, 0.0f));
+					// see the math behind this in a paper
 					backgroundTransform = glm::rotate(backgroundTransform, transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 					backgroundTransform = glm::scale(backgroundTransform, glm::vec3(width * transform.Scale.x, height * transform.Scale.y, 1.0f));
 					if (activeCamera->GetProjectionType() == SceneCamera::ProjectionType::Perspective)
