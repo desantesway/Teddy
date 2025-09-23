@@ -31,10 +31,14 @@ void CupheadLayer::OnAttach()
     cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
 	cam.Camera.SetViewportSize(1920, 1080);
 
-	auto background = m_ActiveScene->CreateEntity("Red Square");
+	auto background = m_ActiveScene->CreateEntity("Background");
     auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
 	sprite.IsBackground = true;
-    sprite.Texture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("Background", "assets/Textures/SpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
+    sprite.Texture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("Background", "assets/Textures/cuttedSpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
+
+    auto cupheadAnimation = m_ActiveScene->CreateEntity("Animation Title");
+    //auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteRendererComponent>();
+    //spriteAnimation.Texture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("Cuphead Title Animation", "assets/Textures/cuttedSpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
 
     m_ActiveScene->OnRuntimeStart();
 }
