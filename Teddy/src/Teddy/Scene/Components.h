@@ -58,8 +58,8 @@ namespace Teddy
 	// TODO: Atlas generator
 	struct SpriteAtlasComponent
 	{
-		int X = 0; // for animations, x increases then y increases automatically
-		int Y = 0;
+		int X = -1; // for animations, x increases then y increases automatically
+		int Y = -1;
 		int SpriteWidth = 0;
 		int SpriteHeight = 0;
 
@@ -81,12 +81,13 @@ namespace Teddy
 		int TextureIndex = 0;
 		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
 		float Timer = 0.0f;
-		float FrameTime = 0.5f;
-		float InitialFrameTime = FrameTime;
+		float FrameTime = 0.1f;
+		float InitialFrameTime = 0.5f;
 		float FinalFrameTime = FrameTime;
 		bool Loop = true;
 		bool PingPong = false;
 		bool Pause = false;
+		bool Reverse = false;
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;

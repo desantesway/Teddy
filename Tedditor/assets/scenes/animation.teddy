@@ -1,0 +1,49 @@
+Scene: Untitled
+Entities:
+  - Entity: 793720084391176710
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 15628697891417102168
+    TagComponent:
+      Tag: Animation
+    TransformComponent:
+      Translation: [0, -0.5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [7.9, 4.8, 1]
+    SpriteAtlasComponent:
+      X: 0
+      Y: 1
+      SpriteWidth: 1024
+      SpriteHeight: 574
+    SpriteAnimationComponent:
+      Background: false
+      Color: [1, 1, 1, 1]
+      TexturePaths:
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas1.png
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas2.png
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas3.png
+      TilingFactor: 1
+      TextureIndex: 1
+      PlayableIndicies:
+        []
+      FrameTime: 0.075
+      InitialFrameTime: 0.15
+      FinalFrameTime: 0.15
+      Loop: true
+      PingPong: true
+      Pause: false
