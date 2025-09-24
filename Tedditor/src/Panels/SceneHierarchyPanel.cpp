@@ -513,6 +513,7 @@ namespace Teddy
 				ImGui::DragFloat("Final Frame Time", &component.FinalFrameTime, 0.01f, 0.0f, 10.0f);
 				ImGui::Checkbox("Loop", &component.Loop);
 				ImGui::Checkbox("Ping Pong", &component.PingPong);
+				ImGui::Checkbox("Pause", &component.Pause);
 
 				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
 					[](auto&component, auto& secndComponent)

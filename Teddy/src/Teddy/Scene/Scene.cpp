@@ -306,6 +306,30 @@ namespace Teddy
 		}
 	}
 
+	void FowardAnimation(Timestep ts, SpriteAnimationComponent& animation)
+	{
+		if (!animation.Pause)
+		{
+			animation.Timer += ts;// this should be on component, cuz if theres multiple animations, they will share the same time
+			if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
+			{
+				animation.TextureIndex++;
+				animation.Timer = 0;
+			}
+			else if (animation.TextureIndex == 0 && animation.InitialFrameTime < animation.Timer)
+			{
+				animation.TextureIndex++;
+				animation.Timer = 0;
+			}
+			else if(animation.TextureIndex >= animation.Textures.size() -1 && animation.FinalFrameTime < animation.Timer)
+			{
+				if(animation.Loop)
+					animation.TextureIndex = 0;
+				animation.Timer = 0;
+			}
+		}
+	}
+
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);
@@ -344,15 +368,20 @@ namespace Teddy
 				auto& sprite = std::get<1>(tuple);
 				auto& color = sprite.Color;
 				
+				
+
 				Entity ent{ entity, this };
 				if (ent.HasComponent<SpriteAtlasComponent>())
 				{
 					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
-				
+					//FowardAtlasAnimation(ts, sprite, atlas);
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
 				}
 				else
+				{
+					FowardAnimation(ts, sprite);
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+				}
 			}
 		}
 

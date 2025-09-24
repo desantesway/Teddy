@@ -272,6 +272,7 @@ namespace Teddy
 			out << YAML::Key << "FinalFrameTime" << YAML::Value << spriteAnimationComponent.FinalFrameTime;
 			out << YAML::Key << "Loop" << YAML::Value << spriteAnimationComponent.Loop;
 			out << YAML::Key << "PingPong" << YAML::Value << spriteAnimationComponent.PingPong;
+			out << YAML::Key << "Pause" << YAML::Value << spriteAnimationComponent.Pause;
 
 			out << YAML::EndMap;
 		}
@@ -504,6 +505,7 @@ namespace Teddy
 						sanc.FinalFrameTime = spriteAnimationComponent["FinalFrameTime"].as<float>();
 						sanc.Loop = spriteAnimationComponent["Loop"].as<bool>();
 						sanc.PingPong = spriteAnimationComponent["PingPong"].as<bool>();
+						sanc.Pause = spriteAnimationComponent["Pause"].as<bool>();
 					}
 
 					auto circleRendererComponent = entity["CircleRendererComponent"];

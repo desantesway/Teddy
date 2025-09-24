@@ -61,7 +61,7 @@ namespace Teddy
 
         auto bg = m_ActiveScene->CreateEntity("Animation");
         auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
-        auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1024, 574);
+        //auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1024, 574);
         spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png", 
             "assets/textures/CupAndMugMan_Title_Animation_Atlas2.png",
             "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png" 

@@ -80,11 +80,13 @@ namespace Teddy
 
 		int TextureIndex = 0;
 		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
-		float FrameTime = 0.1f;
+		float Timer = 0.0f;
+		float FrameTime = 0.5f;
 		float InitialFrameTime = FrameTime;
 		float FinalFrameTime = FrameTime;
 		bool Loop = true;
 		bool PingPong = false;
+		bool Pause = false;
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
