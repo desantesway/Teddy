@@ -1,0 +1,37 @@
+Scene: Untitled
+Entities:
+  - Entity: 4900222525195608995
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 859464556929671569
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Background: false
+      Color: [1, 1, 1, 1]
+      TexturePath: assets/textures/CupAndMugMan_Title_Animation_Atlas1.png
+      TilingFactor: 1
+    SpriteAtlasComponent:
+      X: 0
+      Y: 2
+      SpriteWidth: 1024
+      SpriteHeight: 574

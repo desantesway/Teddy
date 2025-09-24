@@ -438,10 +438,10 @@ namespace Teddy
 
 		constexpr size_t quadVertexCount = 4;
 		glm::vec2 textureCoords[] = {
-			{ (atlas.x * atlas.spriteWidth) / atlasWidth,	(atlas.y * atlas.spriteHeight) / atlasHeight },
-			{ ((atlas.x + 1) * atlas.spriteWidth) / atlasWidth,	(atlas.y * atlas.spriteHeight) / atlasHeight },
-			{ ((atlas.x + 1) * atlas.spriteWidth) / atlasWidth,	((atlas.y + 1) * atlas.spriteHeight) / atlasHeight },
-			{ (atlas.x * atlas.spriteWidth) / atlasWidth,	((atlas.y + 1) * atlas.spriteHeight) / atlasHeight }
+			{ (atlas.X * atlas.SpriteWidth) / atlasWidth,		(atlas.Y * atlas.SpriteHeight) / atlasHeight },
+			{ ((atlas.X + 1) * atlas.SpriteWidth) / atlasWidth,	(atlas.Y * atlas.SpriteHeight) / atlasHeight },
+			{ ((atlas.X + 1) * atlas.SpriteWidth) / atlasWidth,	((atlas.Y + 1) * atlas.SpriteHeight) / atlasHeight },
+			{ (atlas.X * atlas.SpriteWidth) / atlasWidth,		((atlas.Y + 1) * atlas.SpriteHeight) / atlasHeight }
 		};
 
 		for (size_t i = 0; i < quadVertexCount; i++)
@@ -609,7 +609,11 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		SpriteAtlasComponent atlas{0, 0, (float)sprite.Texture->GetWidth(), (float)sprite.Texture->GetHeight() };
+		SpriteAtlasComponent atlas;
+		if (sprite.Texture)
+			atlas = {0, 0, (float)sprite.Texture->GetWidth(), (float)sprite.Texture->GetHeight() };
+		else 
+			atlas = { 0, 0, 1, 1 };
 
 		DrawQuad(transform, sprite, atlas, entityID);
 	}
@@ -641,8 +645,14 @@ namespace Teddy
 				s_Data.TextureSlotIndex++;
 			}
 
-			const float width = (float)sprite.Texture->GetWidth();
-			const float height = (float)sprite.Texture->GetHeight();
+			float width = 1;
+			float height = 1;
+			if (sprite.Texture)
+			{
+				width = (float)sprite.Texture->GetWidth();
+				height = (float)sprite.Texture->GetHeight();
+			}				
+			
 			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, 
 				atlas, width, height, entityID);
 

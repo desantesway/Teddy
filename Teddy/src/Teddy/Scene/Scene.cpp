@@ -174,6 +174,7 @@ namespace Teddy
 		}
 	}
 
+	// TODO: Animations
 	void Scene::AlwaysOnUpdate()
 	{
 		auto view = m_Registry.view<SpriteRendererComponent>();

@@ -5,6 +5,7 @@
 
 #include "Teddy/Scene/Components.h"
 #include <cstring>
+#include <algorithm>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -312,7 +313,7 @@ namespace Teddy
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawSecondComponent(const std::string& name, bool canDelete, Entity entity, int width, int height, UIFunction uiFunction)
+	static void DrawSecondComponent(const std::string& name, bool canDelete, Entity entity, auto& scndComponent, UIFunction uiFunction)
 	{
 		if (entity.HasComponent<T>())
 		{
@@ -320,7 +321,7 @@ namespace Teddy
 
 			if (DrawComponentPart<T>(component, name, canDelete, entity))
 			{
-				uiFunction(width, height, component);
+				uiFunction(component, scndComponent);
 				ImGui::TreePop();
 			}
 		}
@@ -468,13 +469,16 @@ namespace Teddy
 
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 
-				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component.Texture->GetWidth(), component.Texture->GetHeight(),
-					[](int w, int h, auto& component)
+				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
+					[](auto& component, auto& secndComponent)
 					{
-						ImGui::DragInt("X position", &component.x, 0.05f, 0.0f, (w / component.spriteWidth) - 1);
-						ImGui::DragInt("Y position", &component.y, 0.05f, 0.0f, (h / component.spriteHeight) - 1);
-						ImGui::DragInt("Sprite Width", &component.spriteWidth, 1.0f, 0.0f, w);
-						ImGui::DragInt("Sprite Height", &component.spriteHeight, 1.0f, 0.0f, h);
+						int w = secndComponent.Texture->GetWidth();
+						int h = secndComponent.Texture->GetHeight();
+
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
+						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 					});
 			});
 
@@ -503,20 +507,28 @@ namespace Teddy
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 
 				// TODO: component.playableIndicies
-				ImGui::DragInt("Texture Index", &component.textureIndex, 1, 0, component.Texture.size() - 1);
-				ImGui::DragFloat("Frame Time", &component.frameTime, 0.01f, 0.0f, 10.0f);
-				ImGui::DragFloat("Initial Frame Time", &component.initialFrameTime, 0.01f, 0.0f, 10.0f);
-				ImGui::Checkbox("Loop", &component.loop);
-				ImGui::Checkbox("Ping Pong", &component.pingPong);
+				ImGui::DragInt("Texture Index", &component.TextureIndex, 1, 0, component.Textures.size() - 1);
+				ImGui::DragFloat("Frame Time", &component.FrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Initial Frame Time", &component.InitialFrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Final Frame Time", &component.FinalFrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::Checkbox("Loop", &component.Loop);
+				ImGui::Checkbox("Ping Pong", &component.PingPong);
 
-				// TODO: do a for loop?
-				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component.Texture[0]->GetWidth(), component.Texture[0]->GetHeight(),
-					[](int w, int h, auto& component)
+				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
+					[](auto&component, auto& secndComponent)
 					{
-						ImGui::DragInt("X position", &component.x, 0.05f, 0.0f, (w / component.spriteWidth) - 1);
-						ImGui::DragInt("Y position", &component.y, 0.05f, 0.0f, (h / component.spriteHeight) - 1);
-						ImGui::DragInt("Sprite Width", &component.spriteWidth, 1.0f, 0.0f, w);
-						ImGui::DragInt("Sprite Height", &component.spriteHeight, 1.0f, 0.0f, h);
+						int w = 0;
+						int h = 0;
+						for (int i = 0; i < secndComponent.Textures.size(); i++)
+						{
+							w = std::max(w, static_cast<int>(secndComponent.Textures[i]->GetWidth()));
+							h = std::max(h, static_cast<int>(secndComponent.Textures[i]->GetHeight()));
+						}
+
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
+						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 					});
 			});
 

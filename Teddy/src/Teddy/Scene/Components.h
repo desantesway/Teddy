@@ -71,15 +71,15 @@ namespace Teddy
 	// TODO: Atlas generator
 	struct SpriteAtlasComponent
 	{
-		int x = 0; // for animations, x increases then y increases automatically
-		int y = 0;
-		int spriteWidth = 0;
-		int spriteHeight = 0;
+		int X = 0; // for animations, x increases then y increases automatically
+		int Y = 0;
+		int SpriteWidth = 0;
+		int SpriteHeight = 0;
 
 		SpriteAtlasComponent() = default;
 		SpriteAtlasComponent(const SpriteAtlasComponent&) = default;
 		SpriteAtlasComponent(const float& xI, const float& yI, const float& width, const float& height)
-			: x(xI), y(yI), spriteWidth(width), spriteHeight(height) 
+			: X(xI), Y(yI), SpriteWidth(width), SpriteHeight(height) 
 		{
 		}
 	};
@@ -87,16 +87,17 @@ namespace Teddy
 	struct SpriteAnimationComponent
 	{
 		glm::vec4 Color{ 1.0f };
-		std::vector<Ref<Texture2D>> Texture;
+		std::vector<Ref<Texture2D>> Textures;
 		float TilingFactor = 1.0f;
 		bool IsBackground = false;
 
-		int textureIndex = 0;
-		std::vector<int> playableIndicies; // for putting multiple animations in one component (up, left, right, etc)
-		float frameTime = 0.1f;
-		float initialFrameTime = 0.1f;
-		bool loop = true;
-		bool pingPong = false;
+		int TextureIndex = 0;
+		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
+		float FrameTime = 0.1f;
+		float InitialFrameTime = FrameTime;
+		float FinalFrameTime = FrameTime;
+		bool Loop = true;
+		bool PingPong = false;
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;

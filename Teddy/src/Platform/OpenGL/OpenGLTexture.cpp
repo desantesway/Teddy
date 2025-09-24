@@ -13,6 +13,9 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Streaming);
 
+		m_Width = specification.Width;
+		m_Height = specification.Height;
+
 		m_InternalFormat = Utils::TeddyTextureFormatToGLInternalFormat(m_Specification.Format);
 		m_DataFormat = Utils::TeddyTextureFormatToGLDataFormat(m_Specification.Format);
 
