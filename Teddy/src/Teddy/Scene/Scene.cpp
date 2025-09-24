@@ -174,6 +174,137 @@ namespace Teddy
 		}
 	}
 
+	void ProgressAtlas(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+	{
+		int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
+		int maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+		if (animation.Reverse)
+		{
+			atlas.X--;
+			if (atlas.X < 0)
+			{
+				atlas.X = maxX - 1;
+				atlas.Y++;
+				if (atlas.Y > maxY - 1)
+				{
+					atlas.Y = 0;
+					animation.TextureIndex--;
+				}
+			}
+		}
+		else
+		{
+			atlas.X++;
+			if (atlas.X > maxX - 1)
+			{
+				atlas.X = 0;
+				atlas.Y--;
+				if (atlas.Y < 0)
+				{
+					atlas.Y = maxY - 1;
+					animation.TextureIndex++;
+				}
+			}
+		}
+	}
+
+	// TODO: PlayableIndicies implementation
+	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+	{
+		if (animation.Pause)
+			return;
+
+		int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+		animation.Timer += ts;
+
+		bool atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
+		bool atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
+
+		if (atFirstFrame) {
+			if (animation.Timer >= animation.InitialFrameTime) {
+				if (animation.PingPong && animation.Reverse) {
+					animation.Reverse = false;
+				}
+				else {
+					ProgressAtlas(animation, atlas);
+				}
+				animation.Timer = 0;
+			}
+			return;
+		}
+		else if (atLastFrame) {
+			if (animation.Timer >= animation.FinalFrameTime) {
+				if (animation.Loop) {
+					if (animation.PingPong) {
+						animation.Reverse = true;
+						ProgressAtlas(animation, atlas);
+					}
+					else {
+						animation.TextureIndex = 0;
+					}
+				}
+				animation.Timer = 0;
+			}
+			return;
+		}
+		else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
+			ProgressAtlas(animation, atlas);
+			animation.Timer = 0;
+		}
+		if (animation.TextureIndex < 0) animation.TextureIndex = 0;
+	}
+
+	// TODO: pingpong not working properly
+	void FowardAnimation(Timestep ts, SpriteAnimationComponent& animation)
+	{
+		if (!animation.Pause)
+		{
+			animation.Timer += ts;// this should be on component, cuz if theres multiple animations, they will share the same time
+
+			bool atFirstFrame = animation.TextureIndex <= 0;
+			bool atLastFrame = animation.TextureIndex >= animation.Textures.size() - 1;
+
+			if (atFirstFrame)
+			{
+				if (animation.InitialFrameTime < animation.Timer)
+				{
+					if (animation.PingPong && animation.Reverse)
+						animation.Reverse = false;
+					animation.TextureIndex++;
+					animation.Timer = 0;
+				}
+			}
+			else if (atLastFrame)
+			{
+				if (animation.FinalFrameTime < animation.Timer)
+				{
+					if (animation.Loop)
+					{
+						if (animation.PingPong)
+						{
+							animation.Reverse = true;
+							animation.TextureIndex--;
+						}
+						else
+							animation.TextureIndex = 0;
+					}
+					animation.Timer = 0;
+				}
+			}
+			if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
+			{
+				if (animation.PingPong && animation.Reverse)
+				{
+					animation.TextureIndex--;
+				}
+				else
+					animation.TextureIndex++;
+				animation.Timer = 0;
+			}
+			if (animation.TextureIndex < 0) animation.TextureIndex = 0;
+		}
+	}
+
 	void Scene::AlwaysOnUpdate()
 	{
 		auto view = m_Registry.view<SpriteRendererComponent>();
@@ -257,26 +388,123 @@ namespace Teddy
 			Renderer2D::BeginScene(*activeCamera, cameraTransform);
 
 			// Draw sprites
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group) 
-			{
-				auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				auto& transform = std::get<0>(tuple);
-				auto& sprite = std::get<1>(tuple);
-
-				glm::mat4 transformMatrix = transform.GetTransform();
-				if (sprite.IsBackground)
-					transformMatrix *= backgroundTransform;
-
-				Entity ent{ entity, this };
-				if (ent.HasComponent<SpriteAtlasComponent>())
+			{ // TODO Organize this, maybe send it to the Renderer2D
+				auto spriteGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
+				for (auto entity : spriteGroup)
 				{
-					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+					auto tuple = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+					auto& transform = std::get<0>(tuple);
+					auto& sprite = std::get<1>(tuple);
 
-					Renderer2D::DrawQuad(transformMatrix, sprite, atlas, (int)entity);
+					
+
+					Entity ent{ entity, this };
+					if (ent.HasComponent<SpriteAtlasComponent>())
+					{
+						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+						if (sprite.OriginalAspectRatio)
+						{
+							float ratio = transform.Scale.x / transform.Scale.y;
+							float expectedRatio;
+							expectedRatio = (float)atlas.SpriteWidth / (float)atlas.SpriteHeight;
+
+							if (ratio != expectedRatio)
+							{
+								transform.Scale.x = transform.Scale.y * expectedRatio;
+							}
+						}
+
+						glm::mat4 transformMatrix = transform.GetTransform();
+
+						if (sprite.IsBackground)
+							transformMatrix *= backgroundTransform;
+
+						Renderer2D::DrawQuad(transformMatrix, sprite, atlas, (int)entity);
+					}
+					else
+					{
+						if (sprite.OriginalAspectRatio)
+						{
+							float ratio = transform.Scale.x / transform.Scale.y;
+							float expectedRatio;
+							if (sprite.Texture)
+								expectedRatio = (float)sprite.Texture->GetWidth() / (float)sprite.Texture->GetHeight();
+							else
+								expectedRatio = 1;
+
+							if (ratio != expectedRatio)
+							{
+								transform.Scale.x = transform.Scale.y * expectedRatio;
+							}
+						}
+
+						glm::mat4 transformMatrix = transform.GetTransform();
+
+						if (sprite.IsBackground)
+							transformMatrix *= backgroundTransform;
+
+						Renderer2D::DrawQuad(transformMatrix, sprite, (int)entity);
+					}
 				}
-				else
-					Renderer2D::DrawQuad(transformMatrix, sprite, (int)entity);
+			}
+
+			// Draw animations
+			{
+				auto animationGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
+				for (auto entity : animationGroup)
+				{
+					auto tuple = animationGroup.get<TransformComponent, SpriteAnimationComponent>(entity);
+					auto& transform = std::get<0>(tuple);
+					auto& animation = std::get<1>(tuple);
+
+					Entity ent{ entity, this };
+					if (ent.HasComponent<SpriteAtlasComponent>())
+					{
+						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+						FowardAtlasAnimation(ts, animation, atlas);
+
+						if (animation.OriginalAspectRatio)
+						{
+							float ratio = transform.Scale.x / transform.Scale.y;
+							float expectedRatio = (float)atlas.SpriteWidth / (float)atlas.SpriteHeight;
+
+							if (ratio != expectedRatio)
+							{
+								transform.Scale.x = transform.Scale.y * expectedRatio;
+							}
+						}
+
+						glm ::mat4 transformMatrix = transform.GetTransform();
+
+						if (animation.IsBackground)
+							transformMatrix *= backgroundTransform;
+
+						Renderer2D::DrawQuad(transformMatrix, animation, atlas, (int)entity);
+					}
+					else
+					{
+						FowardAnimation(ts, animation);
+
+						if (animation.OriginalAspectRatio)
+						{
+							float ratio = transform.Scale.x / transform.Scale.y;
+							float expectedRatio = (float)animation.Textures[animation.TextureIndex]->GetWidth() / (float)animation.Textures[animation.TextureIndex]->GetHeight();
+
+							if (ratio != expectedRatio)
+							{
+								transform.Scale.x = transform.Scale.y * expectedRatio;
+							}
+						}
+
+						glm::mat4 transformMatrix = transform.GetTransform();
+
+						if (animation.IsBackground)
+							transformMatrix *= backgroundTransform;
+
+						Renderer2D::DrawQuad(transformMatrix, animation, (int)entity);
+					}
+				}
 			}
 
 			// Draw circles
@@ -305,136 +533,6 @@ namespace Teddy
 		}
 	}
 
-	void ProgressAtlas(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
-	{
-		int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
-		int maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
-		if (animation.Reverse)
-		{
-			atlas.X--;
-			if (atlas.X < 0)
-			{
-				atlas.X = maxX -1 ;
-				atlas.Y++;
-				if (atlas.Y > maxY-1)
-				{
-					atlas.Y = 0;
-					animation.TextureIndex--;
-				}
-			}
-		}
-		else
-		{
-			atlas.X++;
-			if (atlas.X > maxX - 1)
-			{
-				atlas.X = 0;
-				atlas.Y--;
-				if (atlas.Y < 0)
-				{
-					atlas.Y = maxY-1;
-					animation.TextureIndex++;
-				}
-			}
-		}
-	}
-
-	// TODO: PlayableIndicies implementation
-	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
-	{
-		if (animation.Pause)
-			return;
-
-		int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
-		animation.Timer += ts;
-
-		bool atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
-		bool atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
-
-		if (atFirstFrame) {
-			if (animation.Timer >= animation.InitialFrameTime) {
-				if (animation.PingPong && animation.Reverse) {
-					animation.Reverse = false;
-				}
-				else {
-					ProgressAtlas(animation, atlas);
-				}
-				animation.Timer = 0;
-			}
-			return;
-		}
-		else if (atLastFrame) {
-			if (animation.Timer >= animation.FinalFrameTime) {
-				if (animation.Loop) {
-					if (animation.PingPong) {
-						animation.Reverse = true;
-						ProgressAtlas(animation, atlas);
-					}
-					else {
-						animation.TextureIndex = 0;
-					}
-				}
-				animation.Timer = 0;
-			}
-			return;
-		}
-		else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
-			ProgressAtlas(animation, atlas);
-			animation.Timer = 0;
-		}
-		if (animation.TextureIndex < 0) animation.TextureIndex = 0;
-	}
-
-	void FowardAnimation(Timestep ts, SpriteAnimationComponent& animation)
-	{
-		if (!animation.Pause)
-		{	
-			animation.Timer += ts;// this should be on component, cuz if theres multiple animations, they will share the same time
-			
-			bool atFirstFrame = animation.TextureIndex <= 0;
-			bool atLastFrame = animation.TextureIndex >= animation.Textures.size() - 1;
-
-			if (atFirstFrame)
-			{
-				if (animation.InitialFrameTime < animation.Timer)
-				{
-					if (animation.PingPong && animation.Reverse)
-						animation.Reverse = false;
-					animation.TextureIndex++;
-					animation.Timer = 0;
-				}
-			}
-			else if(atLastFrame)
-			{
-				if (animation.FinalFrameTime < animation.Timer)
-				{
-					if (animation.Loop)
-					{
-						if (animation.PingPong)
-						{
-							animation.Reverse = true;
-							animation.TextureIndex--;
-						}
-						else
-							animation.TextureIndex = 0;
-					}
-					animation.Timer = 0;
-				}
-			}
-			if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
-			{
-				if (animation.PingPong && animation.Reverse)
-				{
-					animation.TextureIndex--;
-				}
-				else
-					animation.TextureIndex++;
-				animation.Timer = 0;
-			}
-			if (animation.TextureIndex < 0) animation.TextureIndex = 0;
-		}
-	}
-
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);
@@ -450,15 +548,50 @@ namespace Teddy
 				auto& transform = std::get<0>(tuple);
 				auto& sprite = std::get<1>(tuple);
 
+				glm::mat4 transformMatrix = transform.GetTransform();
+				
 				Entity ent{ entity, this };
 				if (ent.HasComponent<SpriteAtlasComponent>())
 				{
 					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+					if (sprite.OriginalAspectRatio)
+					{
+						float ratio = transform.Scale.x / transform.Scale.y;
+						float expectedRatio;
+						expectedRatio = (float)atlas.SpriteWidth / (float)atlas.SpriteHeight;
+
+						if (ratio != expectedRatio)
+						{
+							transform.Scale.x = transform.Scale.y * expectedRatio;
+						}
+					}
+
+					glm::mat4 transformMatrix = transform.GetTransform();
+
+					Renderer2D::DrawQuad(transformMatrix, sprite, atlas, (int)entity);
 				}
 				else
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+				{
+					if (sprite.OriginalAspectRatio)
+					{
+						float ratio = transform.Scale.x / transform.Scale.y;
+						float expectedRatio;
+						if (sprite.Texture)
+							expectedRatio = (float)sprite.Texture->GetWidth() / (float)sprite.Texture->GetHeight();
+						else
+							expectedRatio = 1;
+
+						if (ratio != expectedRatio)
+						{
+							transform.Scale.x = transform.Scale.y * expectedRatio;
+						}
+					}
+
+					glm::mat4 transformMatrix = transform.GetTransform();
+
+					Renderer2D::DrawQuad(transformMatrix, sprite, (int)entity);
+				}
 			}
 		}
 
@@ -476,12 +609,40 @@ namespace Teddy
 				{
 					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 					FowardAtlasAnimation(ts, animation, atlas);
-					Renderer2D::DrawQuad(transform.GetTransform(), animation, atlas, (int)entity);
+
+					if (animation.OriginalAspectRatio)
+					{
+						float ratio = transform.Scale.x / transform.Scale.y;
+						float expectedRatio = (float)atlas.SpriteWidth / (float)atlas.SpriteHeight;
+
+						if (ratio != expectedRatio)
+						{
+							transform.Scale.x = transform.Scale.y * expectedRatio;
+						}
+					}
+
+					glm::mat4 transformMatrix = transform.GetTransform();
+
+					Renderer2D::DrawQuad(transformMatrix, animation, atlas, (int)entity);
 				}
 				else
 				{
 					FowardAnimation(ts, animation);
-					Renderer2D::DrawQuad(transform.GetTransform(), animation, (int)entity);
+
+					if (animation.OriginalAspectRatio)
+					{
+						float ratio = transform.Scale.x / transform.Scale.y;
+						float expectedRatio = (float)animation.Textures[animation.TextureIndex]->GetWidth() / (float)animation.Textures[animation.TextureIndex]->GetHeight();
+
+						if (ratio != expectedRatio)
+						{
+							transform.Scale.x = transform.Scale.y * expectedRatio;
+						}
+					}
+
+					glm::mat4 transformMatrix = transform.GetTransform();
+
+					Renderer2D::DrawQuad(transformMatrix, animation, (int)entity);
 				}
 			}
 		}

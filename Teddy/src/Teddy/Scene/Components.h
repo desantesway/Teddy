@@ -77,6 +77,7 @@ namespace Teddy
 		std::vector<Ref<Texture2D>> Textures;
 		float TilingFactor = 1.0f;
 		bool IsBackground = false;
+		bool OriginalAspectRatio = true;
 
 		int TextureIndex = 0;
 		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
@@ -99,6 +100,7 @@ namespace Teddy
 		Ref<Texture2D> Texture;
 		float TilingFactor = 1.0f;
 		bool IsBackground = false;
+		bool OriginalAspectRatio = true;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -106,7 +108,8 @@ namespace Teddy
 			: Color(color) {
 		}
 		SpriteRendererComponent(SpriteAnimationComponent& animation)
-			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), TilingFactor(animation.TilingFactor)
+			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), 
+			TilingFactor(animation.TilingFactor), OriginalAspectRatio(animation.OriginalAspectRatio)
 		{ }
 	};
 

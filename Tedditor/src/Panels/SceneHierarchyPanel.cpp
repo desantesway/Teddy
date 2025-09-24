@@ -472,6 +472,7 @@ namespace Teddy
 
 		DrawComponentWithEntity<SpriteRendererComponent>("Sprite Renderer", true, entity, [](Entity ent, auto& component)
 			{
+				ImGui::Checkbox("Original Aspect Ratio", &component.OriginalAspectRatio);
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
@@ -497,11 +498,17 @@ namespace Teddy
 				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
 					[](auto& component, auto& secndComponent)
 					{
-						int w = secndComponent.Texture->GetWidth();
-						int h = secndComponent.Texture->GetHeight();
+						int w=0;
+						int h=0;
+						if (secndComponent.Texture)
+						{
+							int w = secndComponent.Texture->GetWidth();
+							int h = secndComponent.Texture->GetHeight();
+						}
+						
 
-						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
-						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 					});
@@ -509,6 +516,7 @@ namespace Teddy
 
 		DrawComponentWithEntity<SpriteAnimationComponent>("Sprite Animation", true, entity, [](Entity ent, auto& component)
 			{
+				ImGui::Checkbox("Original Aspect Ratio", &component.OriginalAspectRatio);
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
