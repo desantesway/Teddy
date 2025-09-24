@@ -65,7 +65,7 @@ namespace Teddy
         spriteAnimation.PingPong = true;
         spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png", 
             "assets/textures/CupAndMugMan_Title_Animation_Atlas2.png",
-            "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png" 
+            "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png"
             });
 
         auto cam = m_ActiveScene->CreateEntity("Camera");

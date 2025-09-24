@@ -146,6 +146,7 @@ namespace Teddy
 		void EndSession(const std::string& filepath = "results.opt")
 		{
 			OPTICK_STOP_CAPTURE();
+			OPTICK_FRAME("Final frame");
 			OPTICK_SAVE_CAPTURE(filepath.c_str());
 		}
 

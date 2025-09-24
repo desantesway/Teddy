@@ -174,7 +174,6 @@ namespace Teddy
 		}
 	}
 
-	// TODO: Animations
 	void Scene::AlwaysOnUpdate()
 	{
 		auto view = m_Registry.view<SpriteRendererComponent>();
@@ -340,6 +339,7 @@ namespace Teddy
 		}
 	}
 
+	// TODO: PlayableIndicies implementation
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
 	{
 		if (animation.Pause)
