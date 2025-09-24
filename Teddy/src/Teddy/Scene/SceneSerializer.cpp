@@ -227,6 +227,56 @@ namespace Teddy
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<SpriteAtlasComponent>())
+		{
+			out << YAML::Key << "SpriteAtlasComponent";
+			out << YAML::BeginMap;
+
+			auto& spriteAtlasComponent = entity.GetComponent<SpriteAtlasComponent>();
+
+			out << YAML::Key << "X" << YAML::Value << spriteAtlasComponent.X;
+			out << YAML::Key << "Y" << YAML::Value << spriteAtlasComponent.Y;
+			out << YAML::Key << "SpriteWidth" << YAML::Value << spriteAtlasComponent.SpriteWidth;
+			out << YAML::Key << "SpriteHeight" << YAML::Value << spriteAtlasComponent.SpriteHeight;
+
+			out << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<SpriteAnimationComponent>())
+		{
+			out << YAML::Key << "SpriteAnimationComponent";
+			out << YAML::BeginMap;
+
+			auto& spriteAnimationComponent = entity.GetComponent<SpriteAnimationComponent>();
+
+			// Sprites
+			out << YAML::Key << "Background" << YAML::Value << spriteAnimationComponent.IsBackground;
+
+			out << YAML::Key << "Color" << YAML::Value << spriteAnimationComponent.Color;
+
+			if (spriteAnimationComponent.Textures.size() > 0)
+			{
+				std::vector<std::string> texturePaths;
+				for (auto& tex : spriteAnimationComponent.Textures)
+					texturePaths.push_back(tex->GetPath());
+				out << YAML::Key << "TexturePaths" << YAML::Value << texturePaths;
+			}
+
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteAnimationComponent.TilingFactor;
+
+			// Animation
+			out << YAML::Key << "TextureIndex" << YAML::Value << spriteAnimationComponent.TextureIndex;
+			out << YAML::Key << "PlayableIndicies" << YAML::Value << spriteAnimationComponent.PlayableIndicies;
+			out << YAML::Key << "FrameTime" << YAML::Value << spriteAnimationComponent.FrameTime;
+			out << YAML::Key << "InitialFrameTime" << YAML::Value << spriteAnimationComponent.InitialFrameTime;
+			out << YAML::Key << "FinalFrameTime" << YAML::Value << spriteAnimationComponent.FinalFrameTime;
+			out << YAML::Key << "Loop" << YAML::Value << spriteAnimationComponent.Loop;
+			out << YAML::Key << "PingPong" << YAML::Value << spriteAnimationComponent.PingPong;
+			out << YAML::Key << "Pause" << YAML::Value << spriteAnimationComponent.Pause;
+
+			out << YAML::EndMap;
+		}
+
 		if (entity.HasComponent<TextComponent>())
 		{
 			out << YAML::Key << "TextComponent";
@@ -409,6 +459,53 @@ namespace Teddy
 
 						if (spriteRendererComponent["TilingFactor"])
 							src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+					}
+
+					auto spriteAtlasComponent = entity["SpriteAtlasComponent"];
+					if (spriteAtlasComponent)
+					{
+						int X = 0;
+						int Y = 0;
+						int SpriteWidth = 0;
+						int SpriteHeight = 0;
+
+						auto& sac = deserializedEntity.AddComponent<SpriteAtlasComponent>();
+						
+						sac.X = spriteAtlasComponent["X"].as<int>();
+						sac.Y = spriteAtlasComponent["Y"].as<int>();
+						sac.SpriteWidth = spriteAtlasComponent["SpriteWidth"].as<int>();
+						sac.SpriteHeight = spriteAtlasComponent["SpriteHeight"].as<int>();
+						
+					}
+
+					auto spriteAnimationComponent = entity["SpriteAnimationComponent"];
+					if (spriteAnimationComponent)
+					{
+						auto& sanc = deserializedEntity.AddComponent<SpriteAnimationComponent>();
+
+						// Sprites
+						if (spriteAnimationComponent["Background"])
+							sanc.IsBackground = spriteAnimationComponent["Background"].as<bool>();
+						else
+							sanc.IsBackground = false;
+
+						sanc.Color = spriteAnimationComponent["Color"].as<glm::vec4>();
+
+						if (spriteAnimationComponent["TexturePaths"])
+							for (auto& texPath : spriteAnimationComponent["TexturePaths"].as<std::vector<std::string>>())
+								sanc.Textures.push_back(AssetManager::Get().Load<Texture2D>(texPath, Boolean::True));
+
+						sanc.TilingFactor = spriteAnimationComponent["TilingFactor"].as<float>();
+
+						// Animations
+						sanc.TextureIndex = spriteAnimationComponent["TextureIndex"].as<int>();
+						sanc.PlayableIndicies = spriteAnimationComponent["PlayableIndicies"].as<std::vector<int>>();
+						sanc.FrameTime = spriteAnimationComponent["FrameTime"].as<float>();
+						sanc.InitialFrameTime = spriteAnimationComponent["InitialFrameTime"].as<float>();
+						sanc.FinalFrameTime = spriteAnimationComponent["FinalFrameTime"].as<float>();
+						sanc.Loop = spriteAnimationComponent["Loop"].as<bool>();
+						sanc.PingPong = spriteAnimationComponent["PingPong"].as<bool>();
+						sanc.Pause = spriteAnimationComponent["Pause"].as<bool>();
 					}
 
 					auto circleRendererComponent = entity["CircleRendererComponent"];

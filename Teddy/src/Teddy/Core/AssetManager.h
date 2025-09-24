@@ -38,6 +38,9 @@ namespace Teddy
 		bool& IsHotReloading();
 
 		template<typename T>
+		std::vector<Ref<T>> LoadMultiple(const std::vector<std::string>& filepaths);
+
+		template<typename T>
 		Ref<T> Load(const std::string& name);
 
 		template<typename T>

@@ -55,6 +55,44 @@ namespace Teddy
 		}
 	};
 
+	// TODO: Atlas generator
+	struct SpriteAtlasComponent
+	{
+		int X = -1; // for animations, x increases then y increases automatically
+		int Y = -1;
+		int SpriteWidth = 0;
+		int SpriteHeight = 0;
+
+		SpriteAtlasComponent() = default;
+		SpriteAtlasComponent(const SpriteAtlasComponent&) = default;
+		SpriteAtlasComponent(const float& xI, const float& yI, const float& width, const float& height)
+			: X(xI), Y(yI), SpriteWidth(width), SpriteHeight(height) 
+		{
+		}
+	};
+
+	struct SpriteAnimationComponent
+	{
+		glm::vec4 Color{ 1.0f };
+		std::vector<Ref<Texture2D>> Textures;
+		float TilingFactor = 1.0f;
+		bool IsBackground = false;
+
+		int TextureIndex = 0;
+		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
+		float Timer = 0.0f;
+		float FrameTime = 0.1f;
+		float InitialFrameTime = 0.5f;
+		float FinalFrameTime = FrameTime;
+		bool Loop = true;
+		bool PingPong = false;
+		bool Pause = false;
+		bool Reverse = false;
+
+		SpriteAnimationComponent() = default;
+		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
+	};
+
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color{ 1.0f };
@@ -65,7 +103,11 @@ namespace Teddy
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
-			: Color(color) {}
+			: Color(color) {
+		}
+		SpriteRendererComponent(SpriteAnimationComponent& animation)
+			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), TilingFactor(animation.TilingFactor)
+		{ }
 	};
 
 	struct CircleRendererComponent
@@ -179,8 +221,8 @@ namespace Teddy
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, NativeScriptComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
+		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
 		TextComponent>;
 }

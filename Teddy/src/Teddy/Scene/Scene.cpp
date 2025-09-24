@@ -238,6 +238,7 @@ namespace Teddy
 					float width, height;
 					activeCamera->GetWidthAndHeight(width, height);
 					backgroundTransform = glm::translate(glm::mat4(1.0f), glm::vec3(transform.Translation.x, transform.Translation.y, 0.0f));
+					// see the math behind this in a paper
 					backgroundTransform = glm::rotate(backgroundTransform, transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 					backgroundTransform = glm::scale(backgroundTransform, glm::vec3(width * transform.Scale.x, height * transform.Scale.y, 1.0f));
 					if (activeCamera->GetProjectionType() == SceneCamera::ProjectionType::Perspective)
@@ -263,12 +264,19 @@ namespace Teddy
 				auto& transform = std::get<0>(tuple);
 				auto& sprite = std::get<1>(tuple);
 
+				glm::mat4 transformMatrix = transform.GetTransform();
 				if (sprite.IsBackground)
+					transformMatrix *= backgroundTransform;
+
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
 				{
-					Renderer2D::DrawQuad(backgroundTransform * transform.GetTransform(), sprite, (int)entity);
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+					Renderer2D::DrawQuad(transformMatrix, sprite, atlas, (int)entity);
 				}
-				else 
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+				else
+					Renderer2D::DrawQuad(transformMatrix, sprite, (int)entity);
 			}
 
 			// Draw circles
@@ -297,6 +305,136 @@ namespace Teddy
 		}
 	}
 
+	void ProgressAtlas(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+	{
+		int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
+		int maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+		if (animation.Reverse)
+		{
+			atlas.X--;
+			if (atlas.X < 0)
+			{
+				atlas.X = maxX -1 ;
+				atlas.Y++;
+				if (atlas.Y > maxY-1)
+				{
+					atlas.Y = 0;
+					animation.TextureIndex--;
+				}
+			}
+		}
+		else
+		{
+			atlas.X++;
+			if (atlas.X > maxX - 1)
+			{
+				atlas.X = 0;
+				atlas.Y--;
+				if (atlas.Y < 0)
+				{
+					atlas.Y = maxY-1;
+					animation.TextureIndex++;
+				}
+			}
+		}
+	}
+
+	// TODO: PlayableIndicies implementation
+	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+	{
+		if (animation.Pause)
+			return;
+
+		int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+		animation.Timer += ts;
+
+		bool atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
+		bool atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
+
+		if (atFirstFrame) {
+			if (animation.Timer >= animation.InitialFrameTime) {
+				if (animation.PingPong && animation.Reverse) {
+					animation.Reverse = false;
+				}
+				else {
+					ProgressAtlas(animation, atlas);
+				}
+				animation.Timer = 0;
+			}
+			return;
+		}
+		else if (atLastFrame) {
+			if (animation.Timer >= animation.FinalFrameTime) {
+				if (animation.Loop) {
+					if (animation.PingPong) {
+						animation.Reverse = true;
+						ProgressAtlas(animation, atlas);
+					}
+					else {
+						animation.TextureIndex = 0;
+					}
+				}
+				animation.Timer = 0;
+			}
+			return;
+		}
+		else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
+			ProgressAtlas(animation, atlas);
+			animation.Timer = 0;
+		}
+		if (animation.TextureIndex < 0) animation.TextureIndex = 0;
+	}
+
+	void FowardAnimation(Timestep ts, SpriteAnimationComponent& animation)
+	{
+		if (!animation.Pause)
+		{	
+			animation.Timer += ts;// this should be on component, cuz if theres multiple animations, they will share the same time
+			
+			bool atFirstFrame = animation.TextureIndex <= 0;
+			bool atLastFrame = animation.TextureIndex >= animation.Textures.size() - 1;
+
+			if (atFirstFrame)
+			{
+				if (animation.InitialFrameTime < animation.Timer)
+				{
+					if (animation.PingPong && animation.Reverse)
+						animation.Reverse = false;
+					animation.TextureIndex++;
+					animation.Timer = 0;
+				}
+			}
+			else if(atLastFrame)
+			{
+				if (animation.FinalFrameTime < animation.Timer)
+				{
+					if (animation.Loop)
+					{
+						if (animation.PingPong)
+						{
+							animation.Reverse = true;
+							animation.TextureIndex--;
+						}
+						else
+							animation.TextureIndex = 0;
+					}
+					animation.Timer = 0;
+				}
+			}
+			if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
+			{
+				if (animation.PingPong && animation.Reverse)
+				{
+					animation.TextureIndex--;
+				}
+				else
+					animation.TextureIndex++;
+				animation.Timer = 0;
+			}
+			if (animation.TextureIndex < 0) animation.TextureIndex = 0;
+		}
+	}
+
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);
@@ -304,23 +442,56 @@ namespace Teddy
 		Renderer2D::BeginScene(camera);
 
 		// Draw sprites
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
 		{
-			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			auto& transform = std::get<0>(tuple);
-			auto& sprite = std::get<1>(tuple);
-			auto& color = sprite.Color;
+			auto spriteGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
+			for (auto entity : spriteGroup)
+			{
+				auto tuple = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto& transform = std::get<0>(tuple);
+				auto& sprite = std::get<1>(tuple);
 
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
+				{
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+				}
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
+		// Draw Animations
+		{
+			auto animationGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
+			for (auto entity : animationGroup)
+			{
+				auto tuple = animationGroup.get<TransformComponent, SpriteAnimationComponent>(entity);
+				auto& transform = std::get<0>(tuple);
+				auto& animation = std::get<1>(tuple);
+
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
+				{
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+					FowardAtlasAnimation(ts, animation, atlas);
+					Renderer2D::DrawQuad(transform.GetTransform(), animation, atlas, (int)entity);
+				}
+				else
+				{
+					FowardAnimation(ts, animation);
+					Renderer2D::DrawQuad(transform.GetTransform(), animation, (int)entity);
+				}
+			}
 		}
 
 		// Draw circles
 		{
-			auto group = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
-			for (auto entity : group)
+			auto circleGroup = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
+			for (auto entity : circleGroup)
 			{
-				auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+				auto [transform, circle] = circleGroup.get<TransformComponent, CircleRendererComponent>(entity);
 				Renderer2D::DrawCircle(transform.GetTransform(), 
 					circle.Color, circle.Thickness, circle.Fade, 
 					(int)entity);
@@ -329,10 +500,10 @@ namespace Teddy
 
 		// Draw strings
 		{
-			auto group = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
-			for (auto entity : group)
+			auto textGroup = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
+			for (auto entity : textGroup)
 			{
-				auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
+				auto [transform, text] = textGroup.get<TransformComponent, TextComponent>(entity);
 				Renderer2D::DrawString(text, transform.GetTransform(), (int)entity);
 			}
 		}
@@ -476,6 +647,16 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAtlasComponent>(Entity entity, SpriteAtlasComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAnimationComponent>(Entity entity, SpriteAnimationComponent& component)
 	{
 	}
 

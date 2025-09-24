@@ -5,6 +5,7 @@
 
 #include "Teddy/Scene/Components.h"
 #include <cstring>
+#include <algorithm>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -55,6 +56,8 @@ namespace Teddy
 
 			AddToComponentTree<CameraComponent>(entity, isEmpty, "Cameras");
 			AddToComponentTree<SpriteRendererComponent>(entity, isEmpty, "Sprites");
+			AddToComponentTree<SpriteAtlasComponent>(entity, isEmpty, "Sprites with atlas");
+			AddToComponentTree<SpriteAnimationComponent>(entity, isEmpty, "Sprites with animations");
 			AddToComponentTree<CircleRendererComponent>(entity, isEmpty, "Circles");
 			AddToComponentTree<TextComponent>(entity, isEmpty, "Text");
 
@@ -237,54 +240,89 @@ namespace Teddy
 		ImGui::PopID();
 	}
 
-	template<typename T, typename UIFuntion>
-	static void DrawComponent(const std::string& name, bool canDelete, Entity entity, UIFuntion uiFunction)
+	template<typename T>
+	bool DrawComponentPart(auto& component, const std::string& name, bool canDelete, Entity ent)
+	{
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
+
+		ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+		float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImGui::Separator();
+
+		bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+
+		ImGui::PopStyleVar();
+
+		ImGui::SameLine(contentRegionAvail.x - lineHeight * 0.5f);
+		if (ImGui::Button(("+##" + name).c_str(), ImVec2{ lineHeight, lineHeight }))
+		{
+			ImGui::OpenPopup((name + "Settings").c_str());
+		}
+
+		if (canDelete)
+		{
+			bool removeComponent = false;
+
+			if (ImGui::BeginPopup((name + "Settings").c_str()))
+			{
+				if (ImGui::MenuItem("Remove component"))
+					removeComponent = true;
+				ImGui::EndPopup();
+			}
+
+			if (removeComponent)
+				ent.RemoveComponent<T>();
+		}
+
+		return open;
+	}
+
+	template<typename T, typename UIFunction>
+	static void DrawComponent(const std::string& name, bool canDelete, Entity entity, UIFunction uiFunction)
 	{
 		if (entity.HasComponent<T>())
 		{
-			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | 
-				ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth
-				| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
-			ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
-
 			auto& component = entity.GetComponent<T>();
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-			float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-			ImGui::Separator();
 
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine(contentRegionAvail.x - lineHeight * 0.5f);
-			if (ImGui::Button(("+##" + name).c_str(), ImVec2{ lineHeight, lineHeight }))
-			{
-				ImGui::OpenPopup((name + "Settings").c_str());
-			}
-
-			if (canDelete)
-			{
-
-				bool removeComponent = false;
-
-				if (ImGui::BeginPopup((name + "Settings").c_str()))
-				{
-					if (ImGui::MenuItem("Remove component"))
-						removeComponent = true;
-					ImGui::EndPopup();
-				}
-
-				if (removeComponent)
-					entity.RemoveComponent<T>();
-			}
-
-			if (open)
+			if (DrawComponentPart<T>(component, name, canDelete, entity))
 			{
 				uiFunction(component);
 				ImGui::TreePop();
 			}
+		}
+	}
 
-			
+	template<typename T, typename UIFunction>
+	static void DrawComponentWithEntity(const std::string& name, bool canDelete, Entity entity, UIFunction uiFunction)
+	{
+		if (entity.HasComponent<T>())
+		{
+			auto& component = entity.GetComponent<T>();
+
+			if (DrawComponentPart<T>(component, name, canDelete, entity))
+			{
+				uiFunction(entity, component);
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	template<typename T, typename UIFunction>
+	static void DrawSecondComponent(const std::string& name, bool canDelete, Entity entity, auto& scndComponent, UIFunction uiFunction)
+	{
+		if (entity.HasComponent<T>())
+		{
+			auto& component = entity.GetComponent<T>();
+
+			if (DrawComponentPart<T>(component, name, canDelete, entity))
+			{
+				uiFunction(component, scndComponent);
+				ImGui::TreePop();
+			}
 		}
 	}
 
@@ -298,6 +336,33 @@ namespace Teddy
 				ImGui::CloseCurrentPopup();
 			}
 		}
+	}
+
+	std::vector<int> ParseIndicesString(const int size, const std::string& str, bool& valid) {
+		std::vector<int> result;
+		valid = true;
+		std::stringstream ss(str);
+		std::string token;
+		while (std::getline(ss, token, ',')) {
+			token.erase(0, token.find_first_not_of(" \t\n\r"));
+			token.erase(token.find_last_not_of(" \t\n\r") + 1);
+			if (token.empty()) continue;
+			try {
+				int value = std::stoi(token);
+				if(value <= size-1 && value >= 0)
+					result.push_back(value);
+				else
+				{
+					valid = false;
+					break;
+				}
+			}
+			catch (...) {
+				valid = false;
+				break;
+			}
+		}
+		return result;
 	}
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
@@ -325,6 +390,8 @@ namespace Teddy
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+			DisplayAddComponentEntry<SpriteAtlasComponent>("Sprite Atlas");
+			DisplayAddComponentEntry<SpriteAnimationComponent>("Sprite Animation");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<TextComponent>("Text");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
@@ -403,7 +470,7 @@ namespace Teddy
 				}
 			});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", true, entity, [](auto& component)
+		DrawComponentWithEntity<SpriteRendererComponent>("Sprite Renderer", true, entity, [](Entity ent, auto& component)
 			{
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
@@ -426,8 +493,102 @@ namespace Teddy
 				}
 
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+
+				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
+					[](auto& component, auto& secndComponent)
+					{
+						int w = secndComponent.Texture->GetWidth();
+						int h = secndComponent.Texture->GetHeight();
+
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
+						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
+					});
 			});
 
+		DrawComponentWithEntity<SpriteAnimationComponent>("Sprite Animation", true, entity, [](Entity ent, auto& component)
+			{
+				ImGui::Checkbox("Background", &component.IsBackground);
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				int texturesPerRow = 3;
+
+				for (int i = 0; i < component.Textures.size(); i++)
+				{
+					ImGui::Button(("Texture#" + std::to_string(i)).c_str(), ImVec2(100.0f, 0.0f));
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEXTURE_CONTENT_BROWSER_ITEM"))
+						{
+							const wchar_t* path = (const wchar_t*)payload->Data;
+							std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+							Ref<Texture2D> texture = AssetManager::Get().Load<Texture2D>(texturePath.string(), Boolean::True);
+							if (texture->IsLoaded())
+								component.Textures[i] = texture;
+							else
+								TED_WARN("Could not load texture {0}", texturePath.filename().string());
+						}
+						ImGui::EndDragDropTarget();
+					}
+					if (i < component.Textures.size()-1 && (((i % texturesPerRow) != 1)))
+						ImGui::SameLine();
+				}
+
+				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+
+				std::string indicies = "";
+				for (const int& index : component.PlayableIndicies)
+				{
+					indicies += std::to_string(index) + ", ";
+				}
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				std::strncpy(buffer, indicies.c_str(), sizeof(buffer));
+				if (ImGui::InputText("Playable Indicies", buffer, sizeof(buffer)))
+				{
+					indicies = std::string(buffer);
+					bool validIndices = true;
+					auto parsed = ParseIndicesString(component.Textures.size(), indicies, validIndices);
+					if (validIndices) {
+						component.PlayableIndicies = parsed;
+					}
+					else {
+						ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid indices input!");
+					}
+				}
+
+				ImGui::DragInt("Texture Index", &component.TextureIndex, 1, 0, component.Textures.size() - 1);
+				ImGui::DragFloat("Frame Time", &component.FrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Initial Frame Time", &component.InitialFrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Final Frame Time", &component.FinalFrameTime, 0.01f, 0.0f, 10.0f);
+				ImGui::Checkbox("Loop", &component.Loop);
+				if (ImGui::Checkbox("Ping Pong", &component.PingPong))
+				{
+					component.Reverse = false;
+				}
+				ImGui::Checkbox("Pause", &component.Pause);
+
+				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
+					[](auto&component, auto& secndComponent)
+					{
+						int w = 0;
+						int h = 0;
+						for (int i = 0; i < secndComponent.Textures.size(); i++)
+						{
+							w = std::max(w, static_cast<int>(secndComponent.Textures[i]->GetWidth()));
+							h = std::max(h, static_cast<int>(secndComponent.Textures[i]->GetHeight()));
+						}
+
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
+						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
+					});
+			});
+
+		
 		DrawComponent<CircleRendererComponent>("Circle Renderer", true, entity, [](auto& component)
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));

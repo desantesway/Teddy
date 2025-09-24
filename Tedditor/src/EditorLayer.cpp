@@ -59,24 +59,17 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-        auto bg = m_ActiveScene->CreateEntity("Background");
-        auto& sprite = bg.AddComponent<SpriteRendererComponent>();
-        sprite.IsBackground = true;
-		sprite.Texture = assets.Load<Texture2D>("Checkerboard", "assets/textures/checkerboard.jpg");
+        auto bg = m_ActiveScene->CreateEntity("Animation");
+        auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
+        auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1024, 574);
+        spriteAnimation.PingPong = true;
+        spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png", 
+            "assets/textures/CupAndMugMan_Title_Animation_Atlas2.png",
+            "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png"
+            });
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
-
-        //for (int i = 0; i < 50; i++)
-        //{
-        //    for (int y = 0; y < 50; y++)
-        //    {
-        //        auto entity = m_ActiveScene->CreateEntity("Entity " + std::to_string(i) + "x" + std::to_string(y));
-        //        entity.AddComponent<SpriteRendererComponent>(glm::vec4((float)i / 20.0f, (float)y /20.0f, 0.5f, 1.0f));
-        //        entity.GetComponent<TransformComponent>().Translation.x = (float)i + 0.1 * i;
-        //        entity.GetComponent<TransformComponent>().Translation.y = (float)y + 0.1 * y;
-        //    }
-		//}
 
         Renderer2D::SetLineWidth(4.0f);
     }
