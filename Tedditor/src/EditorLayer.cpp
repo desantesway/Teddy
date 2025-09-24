@@ -59,10 +59,13 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-        auto bg = m_ActiveScene->CreateEntity("Background");
-        auto& sprite = bg.AddComponent<SpriteRendererComponent>();
+        auto bg = m_ActiveScene->CreateEntity("Animation");
+        auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
         auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1024, 574);
-		sprite.Texture = assets.Load<Texture2D>("CupAndMugMan", "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png");
+        spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png", 
+            "assets/textures/CupAndMugMan_Title_Animation_Atlas2.png",
+            "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png" 
+            });
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();

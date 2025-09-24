@@ -239,6 +239,25 @@ namespace Teddy
 	}
 
 	template<>
+	std::vector<Ref<Texture2D>> AssetManager::LoadMultiple<Texture2D>(const std::vector<std::string>& filepaths)
+	{
+		std::vector<Ref<Texture2D>> textures;
+		for (const auto& filepath : filepaths)
+		{
+			std::string name = filepath;
+			auto lastSlash = filepath.find_last_of("/\\");
+			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+			auto lastDot = filepath.rfind('.');
+			auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+			name = filepath.substr(lastSlash, count);
+
+			textures.push_back(Load<Texture2D>(name, filepath));
+		}
+
+		return textures;
+	}
+
+	template<>
 	Ref<Texture2D> AssetManager::Load<Texture2D>(const std::string& name, const std::string& filepath, bool hotReload)
 	{
 		if (Exists<Texture2D>(name, m_Textures2D))

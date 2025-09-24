@@ -313,31 +313,55 @@ namespace Teddy
 		Renderer2D::BeginScene(camera);
 
 		// Draw sprites
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
 		{
-			auto tuple = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			auto& transform = std::get<0>(tuple);
-			auto& sprite = std::get<1>(tuple);
-			auto& color = sprite.Color;
-
-			Entity ent{ entity, this };
-			if (ent.HasComponent<SpriteAtlasComponent>())
+			auto spriteGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
+			for (auto entity : spriteGroup)
 			{
-				auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+				auto tuple = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto& transform = std::get<0>(tuple);
+				auto& sprite = std::get<1>(tuple);
+				auto& color = sprite.Color;
 
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
+				{
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+				}
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
 			}
-			else
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+		}
+
+		// Draw Animations
+		{
+			auto animationGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
+			for (auto entity : animationGroup)
+			{
+				auto tuple = animationGroup.get<TransformComponent, SpriteAnimationComponent>(entity);
+				auto& transform = std::get<0>(tuple);
+				auto& sprite = std::get<1>(tuple);
+				auto& color = sprite.Color;
+				
+				Entity ent{ entity, this };
+				if (ent.HasComponent<SpriteAtlasComponent>())
+				{
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+				
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, atlas, (int)entity);
+				}
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite, (int)entity);
+			}
 		}
 
 		// Draw circles
 		{
-			auto group = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
-			for (auto entity : group)
+			auto circleGroup = m_Registry.group<>(entt::get<TransformComponent, CircleRendererComponent>);
+			for (auto entity : circleGroup)
 			{
-				auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+				auto [transform, circle] = circleGroup.get<TransformComponent, CircleRendererComponent>(entity);
 				Renderer2D::DrawCircle(transform.GetTransform(), 
 					circle.Color, circle.Thickness, circle.Fade, 
 					(int)entity);
@@ -346,10 +370,10 @@ namespace Teddy
 
 		// Draw strings
 		{
-			auto group = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
-			for (auto entity : group)
+			auto textGroup = m_Registry.group<>(entt::get<TransformComponent, TextComponent>);
+			for (auto entity : textGroup)
 			{
-				auto [transform, text] = group.get<TransformComponent, TextComponent>(entity);
+				auto [transform, text] = textGroup.get<TransformComponent, TextComponent>(entity);
 				Renderer2D::DrawString(text, transform.GetTransform(), (int)entity);
 			}
 		}

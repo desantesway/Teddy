@@ -55,19 +55,6 @@ namespace Teddy
 		}
 	};
 
-	struct SpriteRendererComponent
-	{
-		glm::vec4 Color{ 1.0f };
-		Ref<Texture2D> Texture;
-		float TilingFactor = 1.0f;
-		bool IsBackground = false;
-
-		SpriteRendererComponent() = default;
-		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
-			: Color(color) {}
-	};
-
 	// TODO: Atlas generator
 	struct SpriteAtlasComponent
 	{
@@ -101,6 +88,23 @@ namespace Teddy
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
+	};
+
+	struct SpriteRendererComponent
+	{
+		glm::vec4 Color{ 1.0f };
+		Ref<Texture2D> Texture;
+		float TilingFactor = 1.0f;
+		bool IsBackground = false;
+
+		SpriteRendererComponent() = default;
+		SpriteRendererComponent(const SpriteRendererComponent&) = default;
+		SpriteRendererComponent(const glm::vec4& color)
+			: Color(color) {
+		}
+		SpriteRendererComponent(SpriteAnimationComponent& animation)
+			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), TilingFactor(animation.TilingFactor)
+		{ }
 	};
 
 	struct CircleRendererComponent
