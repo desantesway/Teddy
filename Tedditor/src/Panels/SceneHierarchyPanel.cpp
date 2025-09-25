@@ -506,8 +506,7 @@ namespace Teddy
 							int h = secndComponent.Texture->GetHeight();
 						}
 						
-
-						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)) - 1);
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)  ) - 1);
 						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
@@ -521,7 +520,6 @@ namespace Teddy
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
 				int texturesPerRow = 3;
-
 				for (int i = 0; i < component.Textures.size(); i++)
 				{
 					ImGui::Button(("Texture#" + std::to_string(i)).c_str(), ImVec2(100.0f, 0.0f));
@@ -541,6 +539,59 @@ namespace Teddy
 					}
 					if (i < component.Textures.size()-1 && (((i % texturesPerRow) != 1)))
 						ImGui::SameLine();
+				}
+				
+				ImGui::Button("Add Texture", ImVec2(100.0f, 0.0f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEXTURE_CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+						Ref<Texture2D> texture = AssetManager::Get().Load<Texture2D>(texturePath.string(), Boolean::True);
+						if (texture->IsLoaded())
+							component.Textures.push_back(texture);
+						else
+							TED_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SameLine();
+				static bool openInputPopup = false;
+				static char buf[256] = { 0 };
+
+				if (ImGui::Button("Remove Texture")) {
+					openInputPopup = true;
+					ImGui::OpenPopup("RemoveTexturePopup");
+				}
+
+				if (openInputPopup) {
+					ImGui::SetNextWindowSize(ImVec2(300, 0));
+					if (ImGui::BeginPopupModal("RemoveTexturePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+						ImGui::Text("Enter texture indices to remove:");
+						ImGui::Separator();
+						ImGui::SetKeyboardFocusHere();
+						if (ImGui::InputText("##indices", buf, sizeof(buf), ImGuiInputTextFlags_EnterReturnsTrue)) {
+							bool validIndices = true;
+							auto parsed = ParseIndicesString(component.Textures.size(), std::string(buf), validIndices);
+							if (validIndices) {
+								int toRemove = parsed[0];
+								component.Textures.erase(component.Textures.begin() + toRemove);
+								component.TextureIndex = 0;
+							}
+							else {
+								ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid indices input!");
+							}
+							openInputPopup = false;
+							ImGui::CloseCurrentPopup();
+						}
+						if (ImGui::Button("Cancel")) {
+							openInputPopup = false;
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::EndPopup();
+					}
 				}
 
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
@@ -589,8 +640,8 @@ namespace Teddy
 							h = std::max(h, static_cast<int>(secndComponent.Textures[i]->GetHeight()));
 						}
 
-						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / component.SpriteWidth) - 1);
-						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / component.SpriteHeight) - 1);
+						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)) - 1);
+						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 					});
