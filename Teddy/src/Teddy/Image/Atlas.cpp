@@ -1,0 +1,151 @@
+#include "Teddy/Image/Atlas.h"
+
+#include "TeddyPch.h"
+#include "Teddy/Utils/PlatformUtils.h"
+
+#include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+namespace Teddy::Atlas
+{
+    void Generate(const std::vector<std::string>& filepaths,
+        int maxWidth, int maxHeight, int toleration,
+        const std::string& outputPrefix)
+    {
+        if (filepaths.empty())
+            TED_CORE_ERROR("No files provided");
+
+        toleration = std::clamp(toleration, 0, 100);
+
+        int refW, refH, channels;
+        {
+            unsigned char* data = stbi_load(filepaths[0].c_str(), &refW, &refH, &channels, 4);
+            if (!data)
+                TED_CORE_ERROR("Failed to load {}", filepaths[0]);
+            stbi_image_free(data);
+        }
+
+        for (size_t i = 1; i < filepaths.size(); i++) {
+            int w, h, ch;
+            unsigned char* data = stbi_load(filepaths[i].c_str(), &w, &h, &ch, 4);
+            if (!data)
+                TED_CORE_ERROR("Failed to load {}", filepaths[i]);
+            stbi_image_free(data);
+
+            if (w != refW || h != refH)
+                TED_CORE_ASSERT(false, "All images must have the same resolution");
+        }
+
+        float shrinkFactor = 1.0f - (toleration / 100.0f);
+        int spriteW = static_cast<int>(std::floor(refW * shrinkFactor));
+        int spriteH = static_cast<int>(std::floor(refH * shrinkFactor));
+
+        int padding = 1;
+        int paddingW = spriteW + 2 * padding;
+        int paddingH = spriteH + 2 * padding;
+        int cols = maxWidth / paddingW;
+        int rows = maxHeight / paddingH;
+        int capacity = cols * rows;
+
+        if (capacity < 1)
+        {
+            TED_CORE_ERROR("Sprites are too large to fit even one per atlas (either increase tolerance or decrease sprite resolution)");
+            return;
+        }
+
+        size_t total = filepaths.size();
+        size_t processed = 0;
+        int atlasIndex = 0;
+
+        std::string atlasPath = FileDialogs::SaveFile("*.*\0");
+        if (atlasPath.empty())
+        {
+            TED_CORE_ERROR("Path doesn't exist!");
+            return;
+        }
+
+        while (processed < total) {
+            size_t remaining = total - processed;
+            size_t count = std::min(static_cast<size_t>(capacity), remaining);
+
+            int atlasW = maxWidth;
+            int atlasH = maxHeight;
+
+            if (count == 1) {
+                atlasW = paddingW;
+                atlasH = paddingH;
+            }
+
+            std::vector<unsigned char> buffer(atlasW * atlasH * 4, 0);
+
+            for (size_t i = 0; i < count; i++) {
+                size_t index = processed + i;
+
+                int col = i % cols;
+                int row = i / cols;
+                int flippedRow = (rows - 1) - row;
+
+                int entryX = col * paddingW + padding;
+                int entryY = flippedRow * paddingH + padding;
+                int entryW = spriteW;
+                int entryH = spriteH;
+
+                int w, h, ch;
+                unsigned char* src = stbi_load(filepaths[index].c_str(), &w, &h, &ch, 4);
+                if (!src)
+                    TED_CORE_ERROR("Failed to load {}", filepaths[index]);
+
+                if (count != 1) {
+                    for (int y = 0; y < spriteH; y++) {
+                        for (int x = 0; x < spriteW; x++) {
+                            int srcX = static_cast<int>((x / (float)spriteW) * w);
+                            int srcY = static_cast<int>((y / (float)spriteH) * h);
+                            unsigned char* srcPixel = &src[(srcY * w + srcX) * 4];
+                            unsigned char* dstPixel = &buffer[((entryY + y) * atlasW + (entryX + x)) * 4];
+                            dstPixel[0] = srcPixel[0];
+                            dstPixel[1] = srcPixel[1];
+                            dstPixel[2] = srcPixel[2];
+                            dstPixel[3] = srcPixel[3];
+                        }
+                    }
+                }
+                else {
+                    for (int y = 0; y < spriteH; y++) {
+                        for (int x = 0; x < spriteW; x++) {
+                            int srcX = static_cast<int>((x / (float)spriteW) * w);
+                            int srcY = static_cast<int>((y / (float)spriteH) * h);
+                            unsigned char* srcPixel = &src[(srcY * w + srcX) * 4];
+                            unsigned char* dstPixel = &buffer[(y * atlasW + x) * 4];
+                            dstPixel[0] = srcPixel[0];
+                            dstPixel[1] = srcPixel[1];
+                            dstPixel[2] = srcPixel[2];
+                            dstPixel[3] = srcPixel[3];
+                        }
+                    }
+                }
+
+                stbi_image_free(src);
+            }
+
+            for (int y = 0; y < atlasH / 2; y++) {
+                int oppY = atlasH - 1 - y;
+                for (int x = 0; x < atlasW * 4; x++) {
+                    std::swap(buffer[y * atlasW * 4 + x], buffer[oppY * atlasW * 4 + x]);
+                }
+            }
+
+            std::string filename = atlasPath + outputPrefix + "_" + std::to_string(paddingW) + "x"
+                + std::to_string(paddingH) + "_" + std::to_string(atlasW) + "x" + std::to_string(atlasH)
+                + "_" + std::to_string(atlasIndex) + ".png";
+            if (!stbi_write_png(filename.c_str(), atlasW, atlasH, 4, buffer.data(), atlasW * 4))
+                TED_CORE_ERROR("Failed to save {}", filename);
+            else
+                TED_CORE_INFO("Saved atlas to: {}", filename);
+
+            processed += count;
+            atlasIndex++;
+        }
+    }
+
+}

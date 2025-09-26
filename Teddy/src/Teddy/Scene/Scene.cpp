@@ -207,8 +207,9 @@ namespace Teddy
 				atlas.Y--;
 				if (atlas.Y < 0)
 				{
-					atlas.Y = maxY - 1;
 					animation.TextureIndex++;
+					maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+					atlas.Y = maxY - 1;
 					if(animation.PlayableIndicies.size() > 0)
 					{ 
 						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
@@ -220,7 +221,6 @@ namespace Teddy
 		}
 	}
 
-	// TODO: PlayableIndicies implementation
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
 	{
 		if (!animation.Pause)
