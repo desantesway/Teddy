@@ -41,12 +41,14 @@ namespace Teddy
 		static void SetQuad(const glm::mat4& transform, const glm::vec4& color,
 			const float& texIndex, const float& tilingFactor, int entityID = -1);
 
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, 
-			const SpriteRendererComponent& sprite, float rotation = 0.0f, int entityID = -1);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, 
-			const SpriteRendererComponent& sprite, float rotation = 0.0f, int entityID = -1);
-		static void DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID = -1);
-		static void DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, 
+		static void DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, 
+			const Camera& camera, const TransformComponent& cameraTransform,
+			int entityID = -1);
+		static void DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, 
+			const Camera& camera, const TransformComponent& cameraTransform,
+			const SpriteAtlasComponent& atlas, int entityID = -1);
+		static void DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, int entityID = -1);
+		static void DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite,
 			const SpriteAtlasComponent& atlas, int entityID = -1);
 
 		static void DrawLine(const glm::vec3& p0, glm::vec3& p1, const glm::vec4& color, int entityID = -1);
@@ -70,8 +72,8 @@ namespace Teddy
 		};
 
 		static void DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
-			Ref<Font> font, const glm::mat4& transform, int entityID = -1);
-		static void DrawString(const TextComponent& component, const glm::mat4& transform, int entityID = -1);
+			Ref<Font> font, const TransformComponent& transform, int entityID = -1);
+		static void DrawString(const TextComponent& component, TransformComponent& transform, int entityID = -1);
 
 		static float GetLineWidth();
 		static void SetLineWidth(float width);

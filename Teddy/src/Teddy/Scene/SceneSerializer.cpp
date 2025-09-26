@@ -216,6 +216,7 @@ namespace Teddy
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 
+			out << YAML::Key << "OriginalAspectRatio" << YAML::Value << spriteRendererComponent.OriginalAspectRatio;
 			out << YAML::Key << "Background" << YAML::Value << spriteRendererComponent.IsBackground;
 
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
@@ -250,6 +251,7 @@ namespace Teddy
 			auto& spriteAnimationComponent = entity.GetComponent<SpriteAnimationComponent>();
 
 			// Sprites
+			out << YAML::Key << "OriginalAspectRatio" << YAML::Value << spriteAnimationComponent.OriginalAspectRatio;
 			out << YAML::Key << "Background" << YAML::Value << spriteAnimationComponent.IsBackground;
 
 			out << YAML::Key << "Color" << YAML::Value << spriteAnimationComponent.Color;
@@ -447,6 +449,12 @@ namespace Teddy
 					if (spriteRendererComponent)
 					{
 						auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+						
+						if (spriteRendererComponent["OriginalAspectRatio"])
+							src.OriginalAspectRatio = spriteRendererComponent["OriginalAspectRatio"].as<bool>();
+						else
+							src.OriginalAspectRatio = false;
+
 						if (spriteRendererComponent["Background"])
 							src.IsBackground = spriteRendererComponent["Background"].as<bool>();
 						else
@@ -484,6 +492,11 @@ namespace Teddy
 						auto& sanc = deserializedEntity.AddComponent<SpriteAnimationComponent>();
 
 						// Sprites
+						if (spriteRendererComponent["OriginalAspectRatio"])
+							sanc.OriginalAspectRatio = spriteRendererComponent["OriginalAspectRatio"].as<bool>();
+						else
+							sanc.OriginalAspectRatio = false;
+
 						if (spriteAnimationComponent["Background"])
 							sanc.IsBackground = spriteAnimationComponent["Background"].as<bool>();
 						else

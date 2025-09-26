@@ -9,6 +9,7 @@
 #include "Teddy/Math/Math.h"
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
+#include "Teddy/Image/Atlas.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -61,11 +62,11 @@ namespace Teddy
 
         auto bg = m_ActiveScene->CreateEntity("Animation");
         auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
-        auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1024, 574);
+        auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1013, 552);
         spriteAnimation.PingPong = true;
-        spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_Title_Animation_Atlas1.png", 
-            "assets/textures/CupAndMugMan_Title_Animation_Atlas2.png",
-            "assets/textures/CupAndMugMan_Title_Animation_Atlas3.png"
+        spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_1013x552_2048x2048_0.png", 
+            "assets/textures/CupAndMugMan_1013x552_2048x2048_1.png",
+            "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
             });
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
@@ -256,6 +257,9 @@ namespace Teddy
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
+                if (ImGui::MenuItem("Generate Atlas", "Ctrl+Shift+A"))
+                    GenerateAtlas();
+
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
             }
@@ -379,7 +383,6 @@ namespace Teddy
                         glm::value_ptr(scale));
 
                     glm::vec3 deltaRotation = glm::radians(rotation) - tc.Rotation;
-                    glm::vec3 print = glm::radians(deltaRotation);
 
                     if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE) { tc.Translation = translation; }
                     else if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { tc.Rotation += deltaRotation; }
@@ -482,7 +485,7 @@ namespace Teddy
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
-            else if(selectedEntity.HasComponent<SpriteRendererComponent>())
+            else if(selectedEntity.HasComponent<SpriteRendererComponent>() || selectedEntity.HasComponent<SpriteAnimationComponent>())
             {
                 TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
                 Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
@@ -565,6 +568,12 @@ namespace Teddy
 
         switch (e.GetKeyCode())
         {
+            case Key::A:
+            {
+                if (control && shift)
+                    GenerateAtlas();
+                break;
+			}
             case Key::N:
             {
                 if (control)
@@ -661,6 +670,29 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
         AssetManager::Get().BypassAll();
+    }
+
+    void EditorLayer::GenerateAtlas()
+    {
+        std::vector<std::string> filepaths = FileDialogs::OpenFiles(
+            "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
+        );
+        GenerateAtlas(filepaths);
+    }
+
+    void EditorLayer::GenerateAtlas(const std::vector<std::string>& filepaths)
+    {
+        for (std::string file : filepaths)
+        {
+            if (!std::filesystem::exists(file))
+            {
+                TED_CORE_WARN("File does not exist: {0}", file);
+                return;
+			}
+        }
+
+        if(filepaths.size() > 0)
+		    Atlas::Generate(filepaths, 2048, 2048, 10, "");
     }
 
     void EditorLayer::NewScene()

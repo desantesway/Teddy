@@ -90,7 +90,7 @@ namespace Teddy
 		if (Exists<Shader>(name, m_Shaders))
 		{
 			Ref<Shader> shader = Get<Shader>(name, m_Shaders);
-			if (shader->GetPath() != filepath)
+			if (std::filesystem::path(shader->GetPath()) != std::filesystem::path(filepath))
 			{
 				TED_CORE_ASSERT(false, "Shader already exists with that name but different filepath");
 			}
@@ -146,7 +146,7 @@ namespace Teddy
 		if (Exists<Font>(name, m_Fonts))
 		{
 			Ref<Font> font = Get<Font>(name, m_Fonts);
-			if (font->GetPath() != filepath)
+			if (std::filesystem::path(font->GetPath()) != std::filesystem::path(filepath))
 			{
 				TED_CORE_ASSERT(false, "Font already exists with that name but different filepath");
 			}
@@ -222,7 +222,7 @@ namespace Teddy
 		if (Exists<Texture2D>(name, m_Textures2D))
 		{
 			Ref<Texture2D> texture = Get<Texture2D>(name, m_Textures2D);
-			if (texture->GetPath() != filepath)
+			if (std::filesystem::path(texture->GetPath()) != std::filesystem::path(filepath))
 			{
 				TED_CORE_ASSERT(false, "Texture2D already exists with that name but different filepath");
 			}

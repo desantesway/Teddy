@@ -12,6 +12,8 @@
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // TODO: For 3D implement instancing instead of batching
 namespace Teddy 
@@ -577,54 +579,76 @@ namespace Teddy
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, 
-		const SpriteRendererComponent& sprite, float rotation, int entityID)
+	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite,
+		const Camera& camera, const TransformComponent& cameraTransform, int entityID)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, sprite, rotation, entityID);
-	}
+		SpriteAtlasComponent atlas;
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, 
-		const SpriteRendererComponent& sprite, float rotation, int entityID)
-	{
-		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
-
-		glm::mat4 transform;
-
-		if (rotation)
+		if (sprite.Texture)
 		{
-			transform = glm::translate(glm::mat4(1.0f), position)
-				* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
-				* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+			atlas = { 0, 0, (float)sprite.Texture->GetWidth(), (float)sprite.Texture->GetHeight() };
 		}
 		else
-		{
-			transform = glm::translate(glm::mat4(1.0f), position)
-				* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		}
+			atlas = { 0, 0, 1, 1 };
 
-		DrawQuad(transform, sprite, entityID);
+		DrawQuad(transform, sprite, camera, cameraTransform, atlas, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, int entityID)
+	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, 
+		const Camera& camera, const TransformComponent& cameraTransform,
+		const SpriteAtlasComponent& atlas, int entityID)
+	{
+		TransformComponent newTransform = transform;
+		if (sprite.IsBackground)
+		{
+			float width, height;
+			camera.GetWidthAndHeight(width, height);
+			newTransform.Translation += glm::vec3(cameraTransform.Translation.x, cameraTransform.Translation.y, cameraTransform.Translation.z-1);
+			newTransform.Scale *= glm::vec3(width * cameraTransform.Scale.x, height * cameraTransform.Scale.y, 1.0f);
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+			{
+				//backgroundTransform = glm::scale(backgroundTransform,
+				//	glm::vec3(transform.Translation.z / transform.Scale.z, transform.Translation.z / transform.Scale.z, 1.0f));
+			}
+		}
+
+		DrawQuad(newTransform, sprite, atlas, entityID);
+	}
+
+	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		SpriteAtlasComponent atlas;
+
 		if (sprite.Texture)
+		{
 			atlas = {0, 0, (float)sprite.Texture->GetWidth(), (float)sprite.Texture->GetHeight() };
+		}
 		else 
 			atlas = { 0, 0, 1, 1 };
 
 		DrawQuad(transform, sprite, atlas, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const SpriteRendererComponent& sprite, 
+	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite,
 		const SpriteAtlasComponent& atlas, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
-		if (sprite.Texture != nullptr)
+		if (sprite.Texture)
 		{
+			if (sprite.OriginalAspectRatio)
+			{
+				float expectedRatio = (float)atlas.SpriteWidth / (float)atlas.SpriteHeight;
+				float ratio = (float)transform.Scale.x / (float)transform.Scale.y;
+
+				if (ratio != expectedRatio)
+				{
+					transform.Scale.x = transform.Scale.y * expectedRatio;
+				}
+			}
+
 			float textureIndex = 0.0f;
 			for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 			{
@@ -653,7 +677,7 @@ namespace Teddy
 				height = (float)sprite.Texture->GetHeight();
 			}				
 			
-			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, 
+			SetQuad(transform.GetTransform(), sprite.Color, textureIndex, sprite.TilingFactor,
 				atlas, width, height, entityID);
 
 		}
@@ -663,22 +687,24 @@ namespace Teddy
 
 			const float textureIndex = 0.0f;
 
-			SetQuad(transform, sprite.Color, textureIndex, sprite.TilingFactor, entityID);
+			SetQuad(transform.GetTransform(), sprite.Color, textureIndex, sprite.TilingFactor, entityID);
 		}
 	}
 	
 	// TODO: outline with freetype
 	// TODO: Rotation in the center + letter rotation
 	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
-		Ref<Font> font, const glm::mat4& transform, int entityID)
+		Ref<Font> font, const TransformComponent& transform, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 		
-		glm::mat4 bgTransform = transform * textQuad.GetTransform();
-		bgTransform[3].z -= 0.01f;
 		if (textParams.BackgroundColor.a != 0)
-		{
-			DrawQuad(bgTransform, {textParams.BackgroundColor}, entityID);
+		{ // TODO: Fix this
+			TransformComponent bgQuad{transform};
+			bgQuad.Translation += textQuad.Translation - glm::vec3(0.0f, 0.0f, 0.01f);
+			bgQuad.Rotation += textQuad.Rotation;
+			bgQuad.Scale *= textQuad.Scale;
+			DrawQuad(bgQuad, {textParams.BackgroundColor}, entityID);
 		}
 
 		glm::mat4 scale = glm::mat4(1.0f);
@@ -713,6 +739,8 @@ namespace Teddy
 		double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
 		double y = 0.0;
 		const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
+
+		const glm::mat4& textTransform = transform.GetTransform();
 
 		for (size_t i = 0; i < textParams.TextString.size(); i++)
 		{
@@ -786,7 +814,7 @@ namespace Teddy
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			// Add index + atlas array
-			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMin, 0.0f, 1.0f);
 			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMin;
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
@@ -795,7 +823,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
 			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
@@ -804,7 +832,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMax, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMax, 0.0f, 1.0f);
 			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMax;
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
@@ -813,7 +841,7 @@ namespace Teddy
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
-			s_Data.TextResources.VertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
 			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
 			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
@@ -837,7 +865,7 @@ namespace Teddy
 
 	}
 
-	void Renderer2D::DrawString(const TextComponent& component, const glm::mat4& transform, int entityID)
+	void Renderer2D::DrawString(const TextComponent& component, TransformComponent& transform, int entityID)
 	{
 		DrawString(
 			TextParams

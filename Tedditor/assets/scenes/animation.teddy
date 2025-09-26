@@ -1,6 +1,54 @@
 Scene: Untitled
 Entities:
-  - Entity: 793720084391176710
+  - Entity: 354782836143641148
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, -1.4, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1.7839721, 1, 1]
+    SpriteRendererComponent:
+      OriginalAspectRatio: true
+      Background: false
+      Color: [1, 1, 1, 1]
+      TexturePath: assets/textures/CupAndMugMan_Title_Animation_Atlas2.png
+      TilingFactor: 1
+    SpriteAtlasComponent:
+      X: 1
+      Y: 2
+      SpriteWidth: 1024
+      SpriteHeight: 574
+  - Entity: 17871835911757699221
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 1.4, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1.7839721, 1, 1]
+    SpriteAtlasComponent:
+      X: 0
+      Y: 2
+      SpriteWidth: 1024
+      SpriteHeight: 574
+    SpriteAnimationComponent:
+      OriginalAspectRatio: true
+      Background: false
+      Color: [1, 1, 1, 1]
+      TexturePaths:
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas1.png
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas2.png
+        - assets/textures/CupAndMugMan_Title_Animation_Atlas3.png
+      TilingFactor: 1
+      TextureIndex: 0
+      PlayableIndicies:
+        []
+      FrameTime: 0.1
+      InitialFrameTime: 0.5
+      FinalFrameTime: 0.1
+      Loop: true
+      PingPong: true
+      Pause: false
+  - Entity: 11763870095192325313
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -18,19 +66,20 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 15628697891417102168
+  - Entity: 8386241579892873615
     TagComponent:
       Tag: Animation
     TransformComponent:
-      Translation: [0, -0.5, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [7.9, 4.8, 1]
+      Scale: [1.7839721, 1, 1]
     SpriteAtlasComponent:
       X: 0
-      Y: 1
+      Y: 2
       SpriteWidth: 1024
       SpriteHeight: 574
     SpriteAnimationComponent:
+      OriginalAspectRatio: true
       Background: false
       Color: [1, 1, 1, 1]
       TexturePaths:
@@ -38,12 +87,12 @@ Entities:
         - assets/textures/CupAndMugMan_Title_Animation_Atlas2.png
         - assets/textures/CupAndMugMan_Title_Animation_Atlas3.png
       TilingFactor: 1
-      TextureIndex: 1
+      TextureIndex: 0
       PlayableIndicies:
         []
-      FrameTime: 0.075
-      InitialFrameTime: 0.15
-      FinalFrameTime: 0.15
+      FrameTime: 0.1
+      InitialFrameTime: 0.5
+      FinalFrameTime: 0.1
       Loop: true
       PingPong: true
       Pause: false
