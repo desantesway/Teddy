@@ -379,7 +379,6 @@ namespace Teddy
                         glm::value_ptr(scale));
 
                     glm::vec3 deltaRotation = glm::radians(rotation) - tc.Rotation;
-                    glm::vec3 print = glm::radians(deltaRotation);
 
                     if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE) { tc.Translation = translation; }
                     else if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { tc.Rotation += deltaRotation; }

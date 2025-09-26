@@ -109,7 +109,8 @@ namespace Teddy
 		}
 		SpriteRendererComponent(SpriteAnimationComponent& animation)
 			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), 
-			TilingFactor(animation.TilingFactor), OriginalAspectRatio(animation.OriginalAspectRatio), IsBackground(animation.IsBackground)
+			TilingFactor(animation.TilingFactor), OriginalAspectRatio(animation.OriginalAspectRatio), 
+			IsBackground(animation.IsBackground)
 		{ }
 	};
 

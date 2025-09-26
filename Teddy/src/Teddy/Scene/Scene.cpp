@@ -189,6 +189,12 @@ namespace Teddy
 				{
 					atlas.Y = 0;
 					animation.TextureIndex--;
+					if(animation.PlayableIndicies.size() > 0)
+					{
+						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+							== animation.PlayableIndicies.end() && animation.TextureIndex >= animation.PlayableIndicies[0])
+							animation.TextureIndex--;
+					}
 				}
 			}
 		}
@@ -203,6 +209,12 @@ namespace Teddy
 				{
 					atlas.Y = maxY - 1;
 					animation.TextureIndex++;
+					if(animation.PlayableIndicies.size() > 0)
+					{ 
+						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+							== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
+							animation.TextureIndex++;
+					}
 				}
 			}
 		}
@@ -211,58 +223,84 @@ namespace Teddy
 	// TODO: PlayableIndicies implementation
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
 	{
-		if (animation.Pause)
-			return;
+		if (!animation.Pause)
+		{
+			int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
 
-		int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
-		animation.Timer += ts;
+			int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
+			animation.Timer += ts;
 
-		bool atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
-		bool atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
-
-		if (atFirstFrame) {
-			if (animation.Timer >= animation.InitialFrameTime) {
-				if (animation.PingPong && animation.Reverse) {
-					animation.Reverse = false;
-				}
-				else {
-					ProgressAtlas(animation, atlas);
-				}
-				animation.Timer = 0;
+			bool atFirstFrame;
+			bool atLastFrame;
+			if(animation.PlayableIndicies.size() > 0)
+			{
+				atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= animation.PlayableIndicies[0]);
+				atLastFrame = (atlas.X == maxX - 1 && atlas.Y == 0 && animation.TextureIndex >= animation.PlayableIndicies.back());
 			}
-			return;
-		}
-		else if (atLastFrame) {
-			if (animation.Timer >= animation.FinalFrameTime) {
-				if (animation.Loop) {
-					if (animation.PingPong) {
-						animation.Reverse = true;
-						ProgressAtlas(animation, atlas);
+			else
+			{
+				atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
+				atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
+			}
+
+			if (atFirstFrame) {
+				if (animation.Timer >= animation.InitialFrameTime) {
+					if (animation.PingPong && animation.Reverse) {
+						animation.Reverse = false;
 					}
 					else {
-						animation.TextureIndex = 0;
+						ProgressAtlas(animation, atlas);
 					}
+					animation.Timer = 0;
 				}
+			}
+			else if (atLastFrame) {
+				if (animation.Timer >= animation.FinalFrameTime) {
+					if (animation.Loop) {
+						if (animation.PingPong) {
+							animation.Reverse = true;
+							ProgressAtlas(animation, atlas);
+						}
+						else {
+							animation.TextureIndex = 0;
+						}
+					}
+					animation.Timer = 0;
+				}
+			}
+			else if (animation.TextureIndex <= animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
+				ProgressAtlas(animation, atlas);
 				animation.Timer = 0;
 			}
-			return;
 		}
-		else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
-			ProgressAtlas(animation, atlas);
-			animation.Timer = 0;
+
+		if (animation.TextureIndex < 0 || animation.TextureIndex >= animation.Textures.size())
+		{
+			if (animation.PlayableIndicies.size() > 0)
+				animation.TextureIndex = animation.PlayableIndicies[0];
+			else
+				animation.TextureIndex = 0;
 		}
-		if (animation.TextureIndex < 0 || animation.TextureIndex >= animation.Textures.size()) animation.TextureIndex = 0;
 	}
 
-	// TODO: pingpong not working properly
 	void FowardAnimation(Timestep ts, SpriteAnimationComponent& animation)
 	{
 		if (!animation.Pause)
 		{
-			animation.Timer += ts;// this should be on component, cuz if theres multiple animations, they will share the same time
+			animation.Timer += ts;
 
-			bool atFirstFrame = animation.TextureIndex <= 0;
-			bool atLastFrame = animation.TextureIndex >= animation.Textures.size() - 1;
+			bool atFirstFrame;
+			bool atLastFrame;
+			if (animation.PlayableIndicies.size() > 0)
+			{
+				atFirstFrame = animation.TextureIndex <= animation.PlayableIndicies[0];
+				atLastFrame = animation.TextureIndex >= animation.PlayableIndicies.back();
+			}
+			else
+			{
+				atFirstFrame = animation.TextureIndex <= 0;
+				atLastFrame = animation.TextureIndex >= animation.Textures.size() - 1;
+			}
 
 			if (atFirstFrame)
 			{
@@ -271,6 +309,12 @@ namespace Teddy
 					if (animation.PingPong && animation.Reverse)
 						animation.Reverse = false;
 					animation.TextureIndex++;
+					if (animation.PlayableIndicies.size() > 0)
+					{
+						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+							== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
+							animation.TextureIndex++;
+					}
 					animation.Timer = 0;
 				}
 			}
@@ -284,6 +328,12 @@ namespace Teddy
 						{
 							animation.Reverse = true;
 							animation.TextureIndex--;
+							if (animation.PlayableIndicies.size() > 0)
+							{
+								while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+									== animation.PlayableIndicies.end() && animation.TextureIndex >= animation.PlayableIndicies[0])
+									animation.TextureIndex--;
+							}
 						}
 						else
 							animation.TextureIndex = 0;
@@ -291,18 +341,38 @@ namespace Teddy
 					animation.Timer = 0;
 				}
 			}
-			if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
+			else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
 			{
 				if (animation.PingPong && animation.Reverse)
 				{
 					animation.TextureIndex--;
+					if (animation.PlayableIndicies.size() > 0)
+					{
+						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+							== animation.PlayableIndicies.end() && animation.TextureIndex >= animation.PlayableIndicies[0])
+							animation.TextureIndex--;
+					}
 				}
 				else
+				{
 					animation.TextureIndex++;
+					if (animation.PlayableIndicies.size() > 0)
+					{
+						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+							== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
+							animation.TextureIndex++;
+					}
+				}
 				animation.Timer = 0;
 			}
 		}
-		if (animation.TextureIndex < 0 || animation.TextureIndex >= animation.Textures.size()) animation.TextureIndex = 0;
+		if (animation.TextureIndex < 0 || animation.TextureIndex >= animation.Textures.size())
+		{
+			if(animation.PlayableIndicies.size() > 0)
+				animation.TextureIndex = animation.PlayableIndicies[0];
+			else
+				animation.TextureIndex = 0;
+		}
 	}
 
 	void Scene::AlwaysOnUpdate()
