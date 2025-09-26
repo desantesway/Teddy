@@ -45,10 +45,12 @@ namespace Teddy
 
 		if (s_SDLWindowCount == 0)
 		{
-			m_Data.MidiDriver.Init();
-
-			m_Data.MidiDriver.InitIn(0);
-			m_Data.MidiDriver.InitOut(2);
+			if (m_Data.EnableMidi) // Change this to a definition
+			{
+				m_Data.MidiDriver.Init();
+				m_Data.MidiDriver.InitIn(0);
+				m_Data.MidiDriver.InitOut(2);
+			}
 
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
 			int success = 0;
@@ -122,7 +124,11 @@ namespace Teddy
 
 		CalculateFPS(ts);
 
-		m_Data.MidiDriver.OnUpdate();
+		if (m_Data.EnableMidi)
+		{
+			m_Data.MidiDriver.OnUpdate();
+		}
+
 		SDLEvents();
 
 		m_Context->SwapBuffers();

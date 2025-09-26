@@ -56,6 +56,7 @@ namespace Teddy
 
 			EventCallbackFn EventCallback;
 			MidiDriver MidiDriver;
+			bool EnableMidi = false;
 		};
 
 		WindowData m_Data;
