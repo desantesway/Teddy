@@ -2,7 +2,9 @@
 
 #include "Teddy/Core/Base.h"
 #include "Teddy/Events/Event.h"
+#ifdef TED_ENABLE_MIDI
 #include "Teddy/Events/MidiDriver.h"
+#endif
 #include "Teddy/Core/Timestep.h"
 
 #include <SDL3/SDL.h>

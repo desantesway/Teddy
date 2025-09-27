@@ -55,7 +55,9 @@ namespace Teddy
 			bool VSync;
 
 			EventCallbackFn EventCallback;
+#ifdef TED_ENABLE_MIDI
 			MidiDriver MidiDriver;
+#endif
 		};
 
 		WindowData m_Data;
