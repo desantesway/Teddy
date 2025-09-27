@@ -32,6 +32,9 @@ namespace Teddy
 		void SaveScene();
 		void SaveSceneAs();
 
+		void GenerateAtlas();
+		void GenerateAtlas(const std::vector<std::string>& filepaths);
+
 		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
 		void OnOverlayRender();

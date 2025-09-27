@@ -9,6 +9,7 @@
 #include "Teddy/Math/Math.h"
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
+#include "Teddy/Image/Atlas.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -43,7 +44,7 @@ namespace Teddy
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
         });
-        fbSpec.Width = 1920;
+		fbSpec.Width = 1920; // TODO: Force 16:9 aspect ratio
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
@@ -97,7 +98,7 @@ namespace Teddy
 
             m_Framebuffer->Bind();
 
-            //RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
+            RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
             RenderCommand::Clear();
         }
 
@@ -254,6 +255,9 @@ namespace Teddy
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
+                if (ImGui::MenuItem("Generate Atlas", "Ctrl+Shift+A"))
+                    GenerateAtlas();
+
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
             }
@@ -298,12 +302,12 @@ namespace Teddy
 
         ImGui::Begin("Settings");
         ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
-		auto& assets = AssetManager::Get();
+        auto& assets = AssetManager::Get();
         ImGui::Checkbox("Shader hot reloading", &assets.IsHotReloading<Shader>());
         ImGui::Checkbox("Texture2D hot reloading", &assets.IsHotReloading<Texture2D>());
         ImGui::End();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
         ImGui::Begin("ViewPort");
 
@@ -330,12 +334,12 @@ namespace Teddy
             {
                 const wchar_t* path = (const wchar_t*)payload->Data;
                 OpenScene(std::filesystem::path(g_AssetPath) / path);
-            } 
+            }
             ImGui::EndDragDropTarget();
         }
 
         // TODO: Implement anchor point
-		// Gizmos
+        // Gizmos
         if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
         {
             Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -344,8 +348,8 @@ namespace Teddy
                 ImGuizmo::SetOrthographic(false);
                 ImGuizmo::SetDrawlist();
 
-                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, 
-                    m_ViewportBounds[1].x - m_ViewportBounds[0].x, 
+                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+                    m_ViewportBounds[1].x - m_ViewportBounds[0].x,
                     m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
                 // Editor camera
@@ -372,12 +376,11 @@ namespace Teddy
                     glm::vec3 translation, rotation, scale;
                     ImGuizmo::DecomposeMatrixToComponents(
                         glm::value_ptr(transform),
-                        glm::value_ptr(translation), 
-                        glm::value_ptr(rotation), 
+                        glm::value_ptr(translation),
+                        glm::value_ptr(rotation),
                         glm::value_ptr(scale));
 
                     glm::vec3 deltaRotation = glm::radians(rotation) - tc.Rotation;
-                    glm::vec3 print = glm::radians(deltaRotation);
 
                     if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE) { tc.Translation = translation; }
                     else if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { tc.Rotation += deltaRotation; }
@@ -406,12 +409,12 @@ namespace Teddy
             {
                 Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
             }
-            else 
+            else
             {
                 Renderer2D::BeginScene(m_EditorCamera);
             }
         }
-        else 
+        else
         {
             Renderer2D::BeginScene(m_EditorCamera);
         }
@@ -431,13 +434,13 @@ namespace Teddy
                     * glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, 0.001f))
                     * glm::scale(glm::mat4(1.0f), scale);
 
-                Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth()/100);
+                Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth() / 100);
             }
 
             auto viewBox = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
             for (auto [entity, tc, bc2d] : viewBox.each())
             {
-				Entity ent = Entity{ entity, m_ActiveScene.get() };
+                Entity ent = Entity{ entity, m_ActiveScene.get() };
                 if (ent.HasComponent<TextComponent>())
                 {
                     glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
@@ -451,7 +454,7 @@ namespace Teddy
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
-                else 
+                else
                 {
                     glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
@@ -462,7 +465,7 @@ namespace Teddy
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
-                
+
 
             }
         }
@@ -480,14 +483,14 @@ namespace Teddy
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
-            else if(selectedEntity.HasComponent<SpriteRendererComponent>())
+            else if (selectedEntity.HasComponent<SpriteRendererComponent>() || selectedEntity.HasComponent<SpriteAnimationComponent>())
             {
                 TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
                 Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
             }
         }
 
-		Renderer2D::EndScene();
+        Renderer2D::EndScene();
     }
 
     void EditorLayer::UI_Toolbar()
@@ -510,21 +513,21 @@ namespace Teddy
         {
         case SceneState::Edit:
             playIcon = m_IconPlay;
-			simulateIcon = m_IconSimulate;
-			break;
+            simulateIcon = m_IconSimulate;
+            break;
         case SceneState::Play:
             playIcon = m_IconStop;
             simulateIcon = m_IconSimulate;
-			break;
-		case SceneState::Simulate:
+            break;
+        case SceneState::Simulate:
             playIcon = m_IconPlay;
             simulateIcon = m_IconStop;
-			break;
+            break;
         }
 
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size));
 
-        if (ImGui::ImageButton("Play", (ImTextureID)playIcon->GetRendererID(), 
+        if (ImGui::ImageButton("Play", (ImTextureID)playIcon->GetRendererID(),
             ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
             ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
             if (m_SceneState == SceneState::Edit)
@@ -535,8 +538,8 @@ namespace Teddy
         }
 
         ImGui::SameLine();
-        if (ImGui::ImageButton("Simulate", (ImTextureID)simulateIcon->GetRendererID(), 
-            ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
+        if (ImGui::ImageButton("Simulate", (ImTextureID)simulateIcon->GetRendererID(),
+            ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
             ImVec4(1.0f, 1.0f, 1.0f, 1.0f))) {
             if (m_SceneState == SceneState::Edit)
                 OnSceneSimulate();
@@ -563,74 +566,79 @@ namespace Teddy
 
         switch (e.GetKeyCode())
         {
-            case Key::N:
+        case Key::A:
+        {
+            if (control && shift)
+                GenerateAtlas();
+            break;
+        }
+        case Key::N:
+        {
+            if (control)
+                NewScene();
+            break;
+        }
+        case Key::O:
+        {
+            if (control)
+                OpenScene();
+            break;
+        }
+        case Key::S:
+        {
+            if (control)
             {
-                if (control)
-                    NewScene();
-                break;
+                if (shift)
+                    SaveSceneAs();
+                else
+                    SaveScene();
             }
-            case Key::O:
-            {
-                if (control)
-                    OpenScene();
-                break;
-            }
-            case Key::S:
-            {
-                if (control)
-                {
-                    if (shift)
-                        SaveSceneAs();
-                    else
-                        SaveScene();
-                }
-                break;
-            }
-            case Key::D:
-            {
-                if (control)
-                    OnDuplicateEntity();
-                break;
-            }
+            break;
+        }
+        case Key::D:
+        {
+            if (control)
+                OnDuplicateEntity();
+        }
 
-            // Gizmos
-            case Key::Q:
+        // Gizmos
+        case Key::Q:
+        {
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = -1;
+            break;
+        }
+        case Key::W:
+        {
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        }
+        case Key::E:
+        {
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+            break;
+        }
+        case Key::R:
+        {
+            if (!ImGuizmo::IsUsing())
+                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+            break;
+        }
+        case Key::Delete:
+        {
+            if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
             {
-                if (!ImGuizmo::IsUsing())
-                    m_GizmoType = -1;
-                break;
-            }
-            case Key::W:
-            {
-                if (!ImGuizmo::IsUsing())
-                    m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-                break;
-            }
-            case Key::E:
-            {
-                if (!ImGuizmo::IsUsing())
-                    m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-                break;
-            }
-            case Key::R:
-            {
-                if (!ImGuizmo::IsUsing())
-                    m_GizmoType = ImGuizmo::OPERATION::SCALE;
-                break;
-            }
-            case Key::Delete:
-            {
-                if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+                Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+                if (selectedEntity)
                 {
-                    Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-                    if (selectedEntity)
-                    {
-                        m_SceneHierarchyPanel.SetSelectedEntity({});
-                        m_ActiveScene->DestroyEntity(selectedEntity);
-                    }
+                    m_SceneHierarchyPanel.SetSelectedEntity({});
+                    m_ActiveScene->DestroyEntity(selectedEntity);
                 }
-                break;
             }
+            break;
+        }
         }
         return false;
     }
@@ -660,6 +668,29 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
         AssetManager::Get().BypassAll();
+    }
+
+    void EditorLayer::GenerateAtlas()
+    {
+        std::vector<std::string> filepaths = FileDialogs::OpenFiles(
+            "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
+        );
+        GenerateAtlas(filepaths);
+    }
+
+    void EditorLayer::GenerateAtlas(const std::vector<std::string>& filepaths)
+    {
+        for (std::string file : filepaths)
+        {
+            if (!std::filesystem::exists(file))
+            {
+                TED_CORE_WARN("File does not exist: {0}", file);
+                return;
+            }
+        }
+
+        if (filepaths.size() > 0)
+            Atlas::Generate(filepaths, 2048, 2048, 10, "");
     }
 
     void EditorLayer::NewScene()
@@ -740,7 +771,7 @@ namespace Teddy
     void EditorLayer::OnScenePlay()
     {
         m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnRuntimeStart();
+        m_ActiveScene->OnRuntimeStart();
         m_SceneState = SceneState::Play;
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -763,7 +794,7 @@ namespace Teddy
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
-    
+
     void EditorLayer::OnDuplicateEntity()
     {
         if (m_SceneState != SceneState::Edit)

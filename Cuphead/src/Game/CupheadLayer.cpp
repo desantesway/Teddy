@@ -32,11 +32,19 @@ void CupheadLayer::OnAttach()
 	cam.Camera.SetViewportSize(1920, 1080);
 
     auto cupheadAnimation = m_ActiveScene->CreateEntity("Animation Title");
-    auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteRendererComponent>();
-    spriteAnimation.Texture = Teddy::AssetManager::Get().Load<Teddy::Texture2D>("Cuphead Title Animation", "assets/Textures/CupAndMugMan_Title_Animation_Atlas1.png");
+    cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 1013, 552);
+    auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>();
+    spriteAnimation.PingPong = true;
+    spriteAnimation.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>(
+        {
+            "assets/textures/CupAndMugMan_1013x552_2048x2048_0.png",
+            "assets/textures/CupAndMugMan_1013x552_2048x2048_1.png",
+            "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
+        });
     auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
-    animationTransform.Translation = glm::vec3(0, 0, 1.0f);
-    //animationTransform.Scale = glm::vec3(16.1f, 7.5f, 1.0f);
+    animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
+    animationTransform.Scale = glm::vec3(0.0f, 0.75f, 1.0f);
+    spriteAnimation.IsBackground = true;
 
 	auto background = m_ActiveScene->CreateEntity("Background");
     auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
