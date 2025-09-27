@@ -40,6 +40,7 @@ target_link_libraries(Cuphead PRIVATE Teddy)
 set_target_properties(Teddy PROPERTIES FOLDER "Engine")
 set_target_properties(Cuphead PROPERTIES FOLDER "Engine/Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Engine/Game")
-set_target_properties(Tedditor PROPERTIES FOLDER "Engine/Game")
+set_target_properties(Tedditor PROPERTIES FOLDER "Engine/Editor")
+set_target_properties(TedditorLib PROPERTIES FOLDER "Engine/Editor")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

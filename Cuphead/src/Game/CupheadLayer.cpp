@@ -33,6 +33,26 @@ void CupheadLayer::OnAttach()
 
 	auto& assets = Teddy::AssetManager::Get();
 
+    // Transition Quad
+    auto transitionQuadAnimation = m_ActiveScene->CreateEntity("Title Transition Quad");
+    m_TransitionQuad = Teddy::CreateRef<Teddy::Entity>(transitionQuadAnimation);
+    auto& transitionQuad = m_TransitionQuad->AddComponent<Teddy::SpriteRendererComponent>();
+    transitionQuad.Color = glm::vec4(0.0f);
+    transitionQuad.IsBackground = true;
+    auto& transitionQuadTransform = transitionQuadAnimation.GetComponent<Teddy::TransformComponent>();
+    transitionQuadTransform.Translation = glm::vec3(0.0f, 0.0f, 6.0f);
+    m_ActiveScene->OnRuntimeStart();
+
+    // Transition Circle
+    auto transitionAnimation = m_ActiveScene->CreateEntity("Title Transition");
+    m_TransitionCircle = Teddy::CreateRef<Teddy::Entity>(transitionAnimation);
+    auto& transitionCircle = m_TransitionCircle->AddComponent<Teddy::CircleRendererComponent>();
+    transitionCircle.Color = glm::vec4(0.0f);
+    transitionCircle.Thickness = 0.0f;
+    auto& transitionTransform = transitionAnimation.GetComponent<Teddy::TransformComponent>();
+    transitionTransform.Scale = glm::vec3(7.0f, 7.0f, 1.0f);
+    transitionTransform.Translation = glm::vec3(0.0f, 0.0f, 5.0f);
+
 	// Cuphead Animation
     auto cupheadAnimation = m_ActiveScene->CreateEntity("Animation Title");
     cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 1013, 552);
@@ -48,25 +68,55 @@ void CupheadLayer::OnAttach()
     animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
     animationTransform.Scale = glm::vec3(0.0f, 0.75f, 1.0f);
     spriteAnimation.IsBackground = true;
-    
+
     // Text
-	auto textEntity = m_ActiveScene->CreateEntity("Title text");
+    auto textEntity = m_ActiveScene->CreateEntity("Title text");
     auto& text = textEntity.AddComponent<Teddy::TextComponent>();
     text.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True );
     text.SetString("Press Any Button");
     text.Color = glm::vec4(233.0f/255.0f, 193.0f /255.0f, 80.0f /255.0f, 1.0f);
     text.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
-    auto& textTransform = textEntity.GetComponent<Teddy::TransformComponent>();
-    textTransform.Scale *= 0.41;
-    textTransform.Translation += glm::vec3(0.0f, -2.60f, 1.5f);
+
+    class TitleText : public Teddy::ScriptableEntity
+    {
+    public:
+        void OnCreate()
+        {
+            auto& textTransform = GetComponent<Teddy::TransformComponent>();
+            textTransform.Scale *= 0.41;
+            textTransform.Translation += glm::vec3(0.0f, -2.60f, 1.5f);
+        }
+
+        void OnDestroy()
+        {
+        }
+
+        void OnUpdate(Teddy::Timestep ts)
+        {
+			static float timer = 0.0f;
+			timer += ts;
+
+            auto& text = GetComponent<Teddy::TextComponent>();
+            if (text.Color.a == 0 && timer > 1)
+            {
+                timer = 0.0f;
+                text.Color.a = 1;
+            }
+            else if (text.Color.a != 0 && timer > 1)
+            {
+                timer = 0.0f;
+                text.Color.a = 0;
+            }
+        }
+    };
+
+    textEntity.AddComponent<Teddy::NativeScriptComponent>().Bind<TitleText>();
 
 	// Background
 	auto background = m_ActiveScene->CreateEntity("Background");
     auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
 	sprite.IsBackground = true;
     sprite.Texture = assets.Load<Teddy::Texture2D>("Background", "assets/Textures/cuttedSpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
-
-    m_ActiveScene->OnRuntimeStart();
 }
 
 void CupheadLayer::OnDetach()
@@ -88,6 +138,15 @@ void CupheadLayer::OnUpdate(Teddy::Timestep ts)
     }
 
     {
+        TED_PROFILE_SCOPE("Scene Entities Prep");
+
+        if (m_LoadMainMenu)
+            LoadMainMenu(ts);
+        else if (m_ProceedToMainMenu)
+            StartTransition(ts);
+    }
+
+    {
         TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
         m_ActiveScene->AlwaysOnUpdate();
@@ -95,9 +154,41 @@ void CupheadLayer::OnUpdate(Teddy::Timestep ts)
     }
 }
 
+void CupheadLayer::LoadMainMenu(Teddy::Timestep ts)
+{
+    // Load new scene with another black square at 100%
+}
+
+void CupheadLayer::StartTransition(Teddy::Timestep ts)
+{
+	auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+    auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+    if (transitionCircle.Thickness >= 1 && transitionQuad.Color.a >= 1.0f)
+		m_LoadMainMenu = true;
+    if (!m_Transitioning)
+    {
+		m_Transitioning = true;
+        transitionCircle.Color.a = 1.0f;
+    }
+
+	transitionQuad.Color.a += 2.5f * ts;
+    transitionCircle.Thickness += 2.0f * ts; 
+    
+}
+
+bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)
+{
+	m_ProceedToMainMenu = true;
+
+    return true;
+}
+
 void CupheadLayer::OnEvent(Teddy::Event& event)
 {
     m_ActiveScene->OnEvent(event);
+
+    Teddy::EventDispatcher dispatcher(event);
+    dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
 }
 
 void CupheadLayer::OnImGuiRender()
