@@ -33,6 +33,7 @@ add_subdirectory(Teddy/vendor)
 # Engine linking
 target_link_libraries(Sandbox PRIVATE Teddy)
 target_link_libraries(Tedditor PRIVATE Teddy)
+target_link_libraries(TedditorLib PRIVATE Teddy)
 target_link_libraries(Cuphead PRIVATE Teddy)
 
 # VS folders

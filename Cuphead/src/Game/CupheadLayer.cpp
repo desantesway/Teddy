@@ -51,14 +51,14 @@ void CupheadLayer::OnAttach()
     
     // Text
 	auto textEntity = m_ActiveScene->CreateEntity("Title text");
-    auto& text = textEntity.AddComponent<Teddy::TextComponent>();//, //Teddy::TextAlignment::Center);
+    auto& text = textEntity.AddComponent<Teddy::TextComponent>();
     text.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True );
     text.SetString("Press Any Button");
     text.Color = glm::vec4(233.0f/255.0f, 193.0f /255.0f, 80.0f /255.0f, 1.0f);
-    //text.TextAlignment = Teddy::TextAlignment::Center;
+    text.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
     auto& textTransform = textEntity.GetComponent<Teddy::TransformComponent>();
-    textTransform.Scale *= 0.4;
-    textTransform.Translation += glm::vec3(0.0f, -2.70f, 1.5f);
+    textTransform.Scale *= 0.41;
+    textTransform.Translation += glm::vec3(0.0f, -2.60f, 1.5f);
 
 	// Background
 	auto background = m_ActiveScene->CreateEntity("Background");

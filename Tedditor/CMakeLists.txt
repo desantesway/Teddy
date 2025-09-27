@@ -46,3 +46,12 @@ if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS_DIST "${CMAKE_EXE_LINKER_FLAGS_DIST}")
     set(CMAKE_SHARED_LINKER_FLAGS_DIST "${CMAKE_SHARED_LINKER_FLAGS_DIST}")
 endif()
+
+add_library(TedditorLib STATIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/SceneHierarchyPanel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/SceneHierarchyPanel.cpp
+                                    
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/ContentBrowserPanel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Panels/ContentBrowserPanel.cpp
+    )
+target_include_directories(TedditorLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/)
