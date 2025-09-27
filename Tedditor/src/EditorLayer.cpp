@@ -60,6 +60,11 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
+        auto square = m_ActiveScene->CreateEntity("black");
+        auto& sprite = square.AddComponent<SpriteRendererComponent>();
+        sprite.Color = { 0.0f, 0.0f, 0.0f, 0.5f };
+        square.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.1f };
+
         auto bg = m_ActiveScene->CreateEntity("Animation");
         auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
         auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1013, 552);
@@ -68,11 +73,6 @@ namespace Teddy
             "assets/textures/CupAndMugMan_1013x552_2048x2048_1.png",
             "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
             });
-
-		auto text = m_ActiveScene->CreateEntity("Text");
-		auto& textComponent = text.AddComponent<TextComponent>();
-		textComponent.SetString("Teddy Engine");
-		textComponent.TextAlignment = TextComponent::AlignmentType::Center;
 
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();

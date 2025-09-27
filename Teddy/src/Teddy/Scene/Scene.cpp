@@ -396,6 +396,7 @@ namespace Teddy
 
 			}
 		}
+		// TODO: Animations hot reload
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts)
@@ -445,54 +446,53 @@ namespace Teddy
 		{
 			Renderer2D::BeginScene(*activeCamera, cameraTransform.GetTransform());
 
-			// Draw sprites
-			{
-				auto spriteGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
-				for (auto entity : spriteGroup)
-				{
-					auto tuple = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
-					auto& transform = std::get<0>(tuple);
-					auto& sprite = std::get<1>(tuple);
+			// iterate through all TransformComponent and do if (HasComponent) then sort z with entt default sort
+			//DEBUG/TODO: Think of a way to make Animation and renderer in the same entt group, and then force sort by z order with m_Registry.sort<TransformComponent>(); 
+			std::vector<std::tuple<entt::entity, float, bool>> sortedEntities; 
 
-					Entity ent{ entity, this };
-					if (ent.HasComponent<SpriteAtlasComponent>())
-					{
-						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
-						Renderer2D::DrawQuad(transform, sprite, *activeCamera, cameraTransform, atlas, (int)entity);
-					}
-					else
-					{
-						Renderer2D::DrawQuad(transform, sprite, *activeCamera, cameraTransform, (int)entity);
-					}
-				}
+			auto spriteView = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
+			for (auto entity : spriteView) {
+				auto& transform = spriteView.get<TransformComponent>(entity);
+				sortedEntities.emplace_back(entity, transform.Translation.z, false);
 			}
 
-			// Draw animations
-			{
-				auto animationGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
-				for (auto entity : animationGroup)
-				{
-					auto tuple = animationGroup.get<TransformComponent, SpriteAnimationComponent>(entity);
-					auto& transform = std::get<0>(tuple);
-					auto& animation = std::get<1>(tuple);
+			auto animView = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
+			for (auto entity : animView) {
+				auto& transform = animView.get<TransformComponent>(entity);
+				sortedEntities.emplace_back(entity, transform.Translation.z, true);
+			}
 
-					Entity ent{ entity, this };
-					if (ent.HasComponent<SpriteAtlasComponent>())
-					{
-						if (animation.Textures.size())
-						{
+			std::sort(sortedEntities.begin(), sortedEntities.end(),
+				[](const auto& a, const auto& b) { return std::get<1>(a) < std::get<1>(b); });
+
+			for (const auto& [entity, z, isAnimation] : sortedEntities) {
+				Entity ent{ entity, this };
+				auto& transform = ent.GetComponent<TransformComponent>();
+
+				if (isAnimation) { // Draw animations
+					auto& animation = ent.GetComponent<SpriteAnimationComponent>();
+					if (ent.HasComponent<SpriteAtlasComponent>()) {
+						if (animation.Textures.size()) {
 							auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 							FowardAtlasAnimation(ts, animation, atlas);
 							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
 						}
 					}
-					else
-					{
-						if (animation.Textures.size())
-						{
+					else {
+						if (animation.Textures.size()) {
 							FowardAnimation(ts, animation);
 							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
 						}
+					}
+				}
+				else { // Draw sprites
+					auto& sprite = ent.GetComponent<SpriteRendererComponent>();
+					if (ent.HasComponent<SpriteAtlasComponent>()) {
+						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+						Renderer2D::DrawQuad(transform, sprite, *activeCamera, cameraTransform, atlas, (int)entity);
+					}
+					else {
+						Renderer2D::DrawQuad(transform, sprite, *activeCamera, cameraTransform, (int)entity);
 					}
 				}
 			}
@@ -529,56 +529,51 @@ namespace Teddy
 
 		Renderer2D::BeginScene(camera);
 
-		// Draw sprites
-		{
-			auto spriteGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
-			for (auto entity : spriteGroup)
-			{
-				auto tuple = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
-				auto& transform = std::get<0>(tuple);
-				auto& sprite = std::get<1>(tuple);
+		std::vector<std::tuple<entt::entity, float, bool>> sortedEntities;
 
-				glm::mat4 transformMatrix = transform.GetTransform();
-				
-				Entity ent{ entity, this };
-				if (ent.HasComponent<SpriteAtlasComponent>())
-				{
-					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
-					Renderer2D::DrawQuad(transform, sprite, atlas, (int)entity);
-				}
-				else
-				{
-					Renderer2D::DrawQuad(transform, sprite, (int)entity);
-				}
-			}
+		auto spriteView = m_Registry.group<>(entt::get<TransformComponent, SpriteRendererComponent>);
+		for (auto entity : spriteView) {
+			auto& transform = spriteView.get<TransformComponent>(entity);
+			sortedEntities.emplace_back(entity, transform.Translation.z, false);
 		}
 
-		// Draw Animations
-		{
-			auto animationGroup = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
-			for (auto entity : animationGroup)
-			{
-				auto tuple = animationGroup.get<TransformComponent, SpriteAnimationComponent>(entity);
-				auto& transform = std::get<0>(tuple);
-				auto& animation = std::get<1>(tuple);
+		auto animView = m_Registry.group<>(entt::get<TransformComponent, SpriteAnimationComponent>);
+		for (auto entity : animView) {
+			auto& transform = animView.get<TransformComponent>(entity);
+			sortedEntities.emplace_back(entity, transform.Translation.z, true);
+		}
 
-				Entity ent{ entity, this };
-				if (ent.HasComponent<SpriteAtlasComponent>())
-				{
-					if (animation.Textures.size())
-					{
+		std::sort(sortedEntities.begin(), sortedEntities.end(),
+			[](const auto& a, const auto& b) { return std::get<1>(a) < std::get<1>(b); });
+
+		for (const auto& [entity, z, isAnimation] : sortedEntities) {
+			Entity ent{ entity, this };
+			auto& transform = ent.GetComponent<TransformComponent>();
+
+			if (isAnimation) { // Draw animations
+				auto& animation = ent.GetComponent<SpriteAnimationComponent>();
+				if (ent.HasComponent<SpriteAtlasComponent>()) {
+					if (animation.Textures.size()) {
 						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 						FowardAtlasAnimation(ts, animation, atlas);
 						Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
 					}
 				}
-				else
-				{
-					if (animation.Textures.size())
-					{
+				else {
+					if (animation.Textures.size()) {
 						FowardAnimation(ts, animation);
 						Renderer2D::DrawQuad(transform, animation, (int)entity);
 					}
+				}
+			}
+			else { // Draw sprites
+				auto& sprite = ent.GetComponent<SpriteRendererComponent>();
+				if (ent.HasComponent<SpriteAtlasComponent>()) {
+					auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
+					Renderer2D::DrawQuad(transform, sprite, atlas, (int)entity);
+				}
+				else {
+					Renderer2D::DrawQuad(transform, sprite, (int)entity);
 				}
 			}
 		}
