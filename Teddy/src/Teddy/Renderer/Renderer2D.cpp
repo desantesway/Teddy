@@ -603,12 +603,12 @@ namespace Teddy
 		{
 			float width, height;
 			camera.GetWidthAndHeight(width, height);
-			newTransform.Translation += glm::vec3(cameraTransform.Translation.x, cameraTransform.Translation.y, cameraTransform.Translation.z-1);
+			newTransform.Translation += glm::vec3(cameraTransform.Translation.x, cameraTransform.Translation.y, 0.0f);
 			newTransform.Scale *= glm::vec3(width * cameraTransform.Scale.x, height * cameraTransform.Scale.y, 1.0f);
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
-				//backgroundTransform = glm::scale(backgroundTransform,
-				//	glm::vec3(transform.Translation.z / transform.Scale.z, transform.Translation.z / transform.Scale.z, 1.0f));
+				newTransform.Scale *= glm::vec3(cameraTransform.Translation.z / cameraTransform.Scale.z, 
+					cameraTransform.Translation.z / cameraTransform.Scale.z, 1.0f);
 			}
 		}
 
