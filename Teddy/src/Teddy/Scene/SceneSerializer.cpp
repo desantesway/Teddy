@@ -298,6 +298,8 @@ namespace Teddy
 
 			out << YAML::Key << "OutlineColor" << YAML::Value << textComponent.OutlineColor;
 			out << YAML::Key << "OutlineThickness" << YAML::Value << textComponent.OutlineThickness;
+			
+			out << YAML::Key << "TextAlignment" << YAML::Value << (int)textComponent.TextAlignment;
 
 			out << YAML::EndMap; // TextComponent
 		}
@@ -540,9 +542,7 @@ namespace Teddy
 						if (textComponent["FontAsset"])
 							txc.FontAsset = AssetManager::Get().Load<Font>(textComponent["FontAsset"].as<std::string>(), Boolean::True);
 						else
-						{
 							txc.FontAsset = AssetManager::Get().Load<Font>();
-						}
 
 						txc.Color = textComponent["Color"].as<glm::vec4>();
 						txc.BackgroundColor = textComponent["BackgroundColor"].as<glm::vec4>();
@@ -552,6 +552,11 @@ namespace Teddy
 
 						txc.OutlineColor = textComponent["OutlineColor"].as<glm::vec4>();
 						txc.OutlineThickness = textComponent["OutlineThickness"].as<float>();
+
+						if(textComponent["TextAlignment"])
+							txc.TextAlignment = (TextComponent::AlignmentType)textComponent["TextAlignment"].as<int>();
+						else
+							txc.TextAlignment = TextComponent::AlignmentType::None;
 
 						txc.CalculateTextQuad();
 					}

@@ -710,6 +710,13 @@ namespace Teddy
 					recalculate = true;
 				}
 
+				int textAlignment = (int)component.TextAlignment;
+				if(ImGui::DragInt("Text Alignment", &textAlignment, 0.01f, 0, 6))
+				{
+					recalculate = true;
+					component.TextAlignment = (TextComponent::AlignmentType)textAlignment;
+				}
+
 				ImGui::Button("Font", ImVec2(100.0f, 0.0f));
 				if (ImGui::BeginDragDropTarget())
 				{

@@ -702,8 +702,8 @@ namespace Teddy
 		{
 			case TextComponent::AlignmentType::Center:
 			{
-				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x / 2,
-					component.TextQuad.Scale.y / 2,
+				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x * transform.Scale.x / 2,
+					component.TextQuad.Scale.y * transform.Scale.y / 2,
 					0.0f);
 				break;
 			}
