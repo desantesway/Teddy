@@ -69,6 +69,11 @@ namespace Teddy
             "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
             });
 
+		auto text = m_ActiveScene->CreateEntity("Text");
+		auto& textComponent = text.AddComponent<TextComponent>();
+		textComponent.SetString("Teddy Engine");
+		textComponent.TextAlignment = TextComponent::AlignmentType::Center;
+
         auto cam = m_ActiveScene->CreateEntity("Camera");
         cam.AddComponent<CameraComponent>();
 
@@ -445,14 +450,27 @@ namespace Teddy
 				Entity ent = Entity{ entity, m_ActiveScene.get() };
                 if (ent.HasComponent<TextComponent>())
                 {
-                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+                    auto& text = ent.GetComponent<TextComponent>();
+                    TransformComponent textQuad{ text.TextQuad };
+                    switch (text.TextAlignment) // TODO: FIX THIS COMPLETELY (Scale/rotation) and then fix physics actual location
+                    {
+                    case TextComponent::AlignmentType::Center:
+                    {
+                        textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x / 2,
+                            text.TextQuad.Scale.y / 2,
+                            0.0f);
+                        break;
+                    }
+                    default:
+                        break;
+                    }
 
                     glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
                         * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
                         * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
-                        * glm::scale(glm::mat4(1.0f), scale)
+                        * glm::scale(glm::mat4(1.0f), tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f))
                         //* ent.GetComponent<TransformComponent>().GetTransform() // Collisions are only 2D
-                        * ent.GetComponent<TextComponent>().TextQuad.GetTransform();
+                        * textQuad.GetTransform();
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
@@ -478,10 +496,23 @@ namespace Teddy
             if (selectedEntity.HasComponent<TextComponent>())
             {
                 TransformComponent tc = selectedEntity.GetComponent<TransformComponent>();
-                glm::vec3 scale = tc.Scale;
 
-                glm::mat4 transform = selectedEntity.GetComponent<TransformComponent>().GetTransform()
-                    * selectedEntity.GetComponent<TextComponent>().TextQuad.GetTransform();
+                auto& text = selectedEntity.GetComponent<TextComponent>();
+                TransformComponent textQuad{ text.TextQuad };
+                switch (text.TextAlignment) // TODO: More alignment options
+                { // TODO: FIX THIS COMPLETELY (Scale/rotation) and then fix physics actual location
+                case TextComponent::AlignmentType::Center:
+                {
+                    textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x / 2,
+                        text.TextQuad.Scale.y / 2,
+                        0.0f);
+                    break;
+                }
+                default:
+                    break;
+                }
+
+                glm::mat4 transform = tc.GetTransform() * textQuad.GetTransform();
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }

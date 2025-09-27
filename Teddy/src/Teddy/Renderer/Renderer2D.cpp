@@ -693,27 +693,36 @@ namespace Teddy
 	
 	// TODO: outline with freetype
 	// TODO: Rotation in the center + letter rotation
-	void Renderer2D::DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
-		Ref<Font> font, const TransformComponent& transform, int entityID)
+	void Renderer2D::DrawString(const TextComponent& component, TransformComponent& transform, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 		
-		if (textParams.BackgroundColor.a != 0)
-		{ // TODO: Fix this
-			TransformComponent bgQuad{transform};
-			bgQuad.Translation += textQuad.Translation - glm::vec3(0.0f, 0.0f, 0.01f);
-			bgQuad.Rotation += textQuad.Rotation;
-			bgQuad.Scale *= textQuad.Scale;
-			DrawQuad(bgQuad, {textParams.BackgroundColor}, entityID);
+		TransformComponent textQuad{ transform };
+		switch (component.TextAlignment) // TODO: More alignment options
+		{
+			case TextComponent::AlignmentType::Center:
+			{
+				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x / 2,
+					component.TextQuad.Scale.y / 2,
+					0.0f);
+				break;
+			}
+			default:
+				break;
 		}
 
-		glm::mat4 scale = glm::mat4(1.0f);
+		if (component.BackgroundColor.a != 0)
+		{ // TODO: Fix this
+			TransformComponent bgQuad{ textQuad };
+			bgQuad.Translation += component.TextQuad.Translation - glm::vec3(0.0f, 0.0f, 0.01f);
+			bgQuad.Rotation += component.TextQuad.Rotation;
+			bgQuad.Scale *= component.TextQuad.Scale;
+			DrawQuad(bgQuad, { component.BackgroundColor}, entityID);
+		}
 
-		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(-textParams.OutlineThickness / 2, textParams.OutlineThickness / 2, 1.0f));
-
-		const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
+		const auto& fontGeometry = component.FontAsset->GetMSDFData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
-		Ref<Texture2D> fontAtlas = font->GetAtlasTexture();
+		Ref<Texture2D> fontAtlas = component.FontAsset->GetAtlasTexture();
 
 		float atlasIndex = 0.0f;
 		for (uint32_t i = 0; i < s_Data.FontAtlasSlotIndex; i++)
@@ -740,9 +749,9 @@ namespace Teddy
 		double y = 0.0;
 		const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
 
-		const glm::mat4& textTransform = transform.GetTransform();
+		const glm::mat4& textTransform = textQuad.GetTransform();
 
-		for (size_t i = 0; i < textParams.TextString.size(); i++)
+		for (size_t i = 0; i < component.TextString.size(); i++)
 		{
 			if (s_Data.TextResources.IndexCount >= Renderer2DData::MaxIndices)
 			{
@@ -753,7 +762,7 @@ namespace Teddy
 				s_Data.FontAtlasSlotIndex++;
 			}
 
-			char character = textParams.TextString[i];
+			char character = component.TextString[i];
 
 			if (character == '\r')
 				continue;
@@ -761,28 +770,28 @@ namespace Teddy
 			if (character == '\n')
 			{
 				x = 0;
-				y -= fsScale * metrics.lineHeight + textParams.LineSpacing;
+				y -= fsScale * metrics.lineHeight + component.LineSpacing;
 				continue;
 			}
 
 			if (character == ' ')
 			{
 				float advance = spaceGlyphAdvance;
-				if (i < textParams.TextString.size() - 1)
+				if (i < component.TextString.size() - 1)
 				{
-					char nextCharacter = textParams.TextString[i + 1];
+					char nextCharacter = component.TextString[i + 1];
 					double dAdvance;
 					fontGeometry.getAdvance(dAdvance, character, nextCharacter);
 					advance = (float)dAdvance;
 				}
 
-				x += fsScale * advance + textParams.Kerning;
+				x += fsScale * advance + component.Kerning;
 				continue;
 			}
 
 			if (character == '\t')
 			{
-				x += 4.0f * (fsScale * spaceGlyphAdvance + textParams.Kerning);
+				x += 4.0f * (fsScale * spaceGlyphAdvance + component.Kerning);
 				continue;
 			}
 
@@ -815,37 +824,37 @@ namespace Teddy
 
 			// Add index + atlas array
 			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMin, 0.0f, 1.0f);
-			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->Color = component.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMin;
-			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = component.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->OutlineThickness = component.OutlineThickness;
 			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
 			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
-			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->Color = component.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
-			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = component.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->OutlineThickness = component.OutlineThickness;
 			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
 			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMax, 0.0f, 1.0f);
-			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->Color = component.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = texCoordMax;
-			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = component.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->OutlineThickness = component.OutlineThickness;
 			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
 
 			s_Data.TextResources.VertexBufferPtr->Position = textTransform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
-			s_Data.TextResources.VertexBufferPtr->Color = textParams.Color;
+			s_Data.TextResources.VertexBufferPtr->Color = component.Color;
 			s_Data.TextResources.VertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
-			s_Data.TextResources.VertexBufferPtr->OutlineColor = textParams.OutlineColor;
-			s_Data.TextResources.VertexBufferPtr->OutlineThickness = textParams.OutlineThickness;
+			s_Data.TextResources.VertexBufferPtr->OutlineColor = component.OutlineColor;
+			s_Data.TextResources.VertexBufferPtr->OutlineThickness = component.OutlineThickness;
 			s_Data.TextResources.VertexBufferPtr->AtlasIndex = atlasIndex;
 			s_Data.TextResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.TextResources.VertexBufferPtr++;
@@ -853,36 +862,16 @@ namespace Teddy
 			s_Data.TextResources.IndexCount += 6;
 			s_Data.Stats.QuadCount++;
 
-			if (i < textParams.TextString.size() - 1)
+			if (i < component.TextString.size() - 1)
 			{
 				double advance = glyph->getAdvance();
-				char nextCharacter = textParams.TextString[i + 1];
+				char nextCharacter = component.TextString[i + 1];
 				fontGeometry.getAdvance(advance, character, nextCharacter);
 
-				x += fsScale * advance + textParams.Kerning;
+				x += fsScale * advance + component.Kerning;
 			}
 		}
 
-	}
-
-	void Renderer2D::DrawString(const TextComponent& component, TransformComponent& transform, int entityID)
-	{
-		DrawString(
-			TextParams
-			{
-				component.TextString,
-				component.Color,
-				component.Kerning,
-				component.LineSpacing,
-				component.BackgroundColor,
-				component.OutlineColor,
-				component.OutlineThickness
-			},
-			component.TextQuad,
-			component.FontAsset,
-			transform,
-			entityID
-		);
 	}
 
 	float Renderer2D::GetLineWidth()
