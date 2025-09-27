@@ -137,6 +137,8 @@ namespace Teddy
 
 	static Renderer2DData s_Data;
 
+	Teddy::Renderer2D::ShaderType Teddy::Renderer2D::m_LastShaderDrawn = Teddy::Renderer2D::ShaderType::None;
+
 	void Renderer2D::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
@@ -438,6 +440,13 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (m_LastShaderDrawn != ShaderType::Quad)
+		{
+			if (m_LastShaderDrawn != ShaderType::None)
+				Flush();
+			m_LastShaderDrawn = ShaderType::Quad;
+		}
+
 		constexpr size_t quadVertexCount = 4;
 		glm::vec2 textureCoords[] = {
 			{ (atlas.X * atlas.SpriteWidth) / atlasWidth,		(atlas.Y * atlas.SpriteHeight) / atlasHeight },
@@ -466,6 +475,13 @@ namespace Teddy
 		const float& texIndex, const float& tilingFactor, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		if (m_LastShaderDrawn != ShaderType::Quad)
+		{
+			if (m_LastShaderDrawn != ShaderType::None)
+				Flush();
+			m_LastShaderDrawn = ShaderType::Quad;
+		}
 
 		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
@@ -538,6 +554,13 @@ namespace Teddy
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		if (m_LastShaderDrawn != ShaderType::Circle)
+		{
+			if (m_LastShaderDrawn != ShaderType::None)
+				Flush();
+			m_LastShaderDrawn = ShaderType::Circle;
+		}
 
 		if (s_Data.CircleResources.IndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
@@ -697,6 +720,13 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 		
+		if (m_LastShaderDrawn != ShaderType::Text)
+		{
+			if (m_LastShaderDrawn != ShaderType::None)
+				Flush();
+			m_LastShaderDrawn = ShaderType::Text;
+		}
+
 		TransformComponent textQuad{ transform };
 		switch (component.TextAlignment) // TODO: More alignment options
 		{
