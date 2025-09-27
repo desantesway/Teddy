@@ -16,7 +16,9 @@ namespace Teddy
 	void SDLWindow::SetEventCallback(const EventCallbackFn& callback) 
 	{
 		m_Data.EventCallback = callback;
+#ifdef TED_ENABLE_MIDI
 		m_Data.MidiDriver.SetEventCallback(std::make_shared<EventCallbackFn>(m_Data.EventCallback));
+#endif
 	}
 
 	SDLWindow::SDLWindow(const WindowProps& props)
@@ -45,12 +47,11 @@ namespace Teddy
 
 		if (s_SDLWindowCount == 0)
 		{
-			if (m_Data.EnableMidi) // Change this to a definition
-			{
-				m_Data.MidiDriver.Init();
-				m_Data.MidiDriver.InitIn(0);
-				m_Data.MidiDriver.InitOut(2);
-			}
+#ifdef TED_ENABLE_MIDI
+			m_Data.MidiDriver.Init();
+			m_Data.MidiDriver.InitIn(0);
+			m_Data.MidiDriver.InitOut(2);
+#endif
 
 			SDL_SetAppMetadata(m_Data.Title.c_str(), "0.01", "com.teddy.window");
 			int success = 0;
@@ -124,10 +125,9 @@ namespace Teddy
 
 		CalculateFPS(ts);
 
-		if (m_Data.EnableMidi)
-		{
+#ifdef TED_ENABLE_MIDI
 			m_Data.MidiDriver.OnUpdate();
-		}
+#endif
 
 		SDLEvents();
 
