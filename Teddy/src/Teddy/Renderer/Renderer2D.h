@@ -58,21 +58,6 @@ namespace Teddy
 		template<typename T>
 		static void ReloadShader(BashRenderResource<T>& resource);
 
-		struct TextParams
-		{
-			std::string TextString;
-			glm::vec4 Color{ 1.0f };
-			float Kerning = 0.0f;
-			float LineSpacing = 0.0f;
-
-			glm::vec4 BackgroundColor{ 0.0f };
-
-			glm::vec4 OutlineColor{ 0.0f };
-			float OutlineThickness = 0.0f;
-		};
-
-		static void DrawString(const TextParams& textParams, const TransformComponent& textQuad, 
-			Ref<Font> font, const TransformComponent& transform, int entityID = -1);
 		static void DrawString(const TextComponent& component, TransformComponent& transform, int entityID = -1);
 
 		static float GetLineWidth();
