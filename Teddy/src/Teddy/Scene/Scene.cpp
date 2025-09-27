@@ -377,11 +377,12 @@ namespace Teddy
 
 	void Scene::AlwaysOnUpdate()
 	{
-		auto view = m_Registry.view<SpriteRendererComponent>();
 		auto& assets = AssetManager::Get();
-		for (auto entity : view)
+
+		auto viewSprite = m_Registry.view<SpriteRendererComponent>();
+		for (auto entity : viewSprite)
 		{
-			auto& sprite = view.get<SpriteRendererComponent>(entity);
+			auto& sprite = viewSprite.get<SpriteRendererComponent>(entity);
 
 			if (sprite.Texture && assets.IsHotReloading<Texture2D>())
 			{
@@ -396,7 +397,27 @@ namespace Teddy
 
 			}
 		}
-		// TODO: Animations hot reload
+
+		auto viewAnimation = m_Registry.view<SpriteAnimationComponent>();
+		for (auto animationEntity : viewAnimation)
+		{
+			auto& spriteAnimation = viewAnimation.get<SpriteAnimationComponent>(animationEntity);
+
+			if (spriteAnimation.Textures.size() > 0 && assets.IsHotReloading<Texture2D>())
+			{
+				for (auto& animation : spriteAnimation.Textures)
+				{
+					std::string texturePath = assets.AssetNeedsToReload<Texture2D>(animation->GetPath(), true);
+
+					if (texturePath != "")
+					{
+						animation = nullptr;
+						assets.RemoveExpired<Texture2D>(texturePath, Boolean::True);
+						animation = assets.Load<Texture2D>(texturePath, Boolean::True, true);
+					}
+				}
+			}
+		}
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts)
