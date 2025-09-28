@@ -2,7 +2,7 @@
 
 #include <Teddy.h>
 
-#include "../Game/CupheadLayer.h"
+#include "../Game/CupheadMainLayer.h"
 
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"

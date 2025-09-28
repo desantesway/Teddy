@@ -12,11 +12,14 @@ set_property(TARGET Cuphead PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOUR
 
 target_sources(Cuphead PRIVATE    
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadApp.cpp
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadLayer.h
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadLayer.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadMainLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/CupheadMainLayer.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/OverlayLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/OverlayLayer.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/StartLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/StartLayer.cpp
 
                                     # Editor
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/TedditorApp.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.cpp
 )

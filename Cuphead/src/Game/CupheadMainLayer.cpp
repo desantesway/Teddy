@@ -1,9 +1,6 @@
-#include "CupheadLayer.h"
+#include "CupheadMainLayer.h"
 
 #include <chrono>
-
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "Teddy/Renderer/Shader.h"
 
 #include <imgui.h>
 
@@ -24,6 +21,7 @@ void CupheadLayer::OnAttach()
 	TED_PROFILE_FUNCTION();
 
 	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
+    m_ActiveScene->OnRuntimeStart();
 
     auto camEntt = m_ActiveScene->CreateEntity("Camera");
 	camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
@@ -41,7 +39,6 @@ void CupheadLayer::OnAttach()
     transitionQuad.IsBackground = true;
     auto& transitionQuadTransform = transitionQuadAnimation.GetComponent<Teddy::TransformComponent>();
     transitionQuadTransform.Translation = glm::vec3(0.0f, 0.0f, 6.0f);
-    m_ActiveScene->OnRuntimeStart();
 
     // Transition Circle
     auto transitionAnimation = m_ActiveScene->CreateEntity("Title Transition");
@@ -127,15 +124,6 @@ void CupheadLayer::OnDetach()
 void CupheadLayer::OnUpdate(Teddy::Timestep ts)
 {
 	TED_PROFILE_FUNCTION();
-
-	Teddy::Renderer2D::ResetStats();
-
-    {
-        TED_PROFILE_SCOPE("Renderer Prep");
-
-        Teddy::RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-        Teddy::RenderCommand::Clear();
-    }
 
     {
         TED_PROFILE_SCOPE("Scene Entities Prep");
