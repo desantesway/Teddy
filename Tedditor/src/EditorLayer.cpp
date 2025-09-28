@@ -516,7 +516,9 @@ namespace Teddy
 
                 Renderer2D::DrawRect(transform, glm::vec4(1, 0.5f, 0, 1));
             }
-            else if(selectedEntity.HasComponent<SpriteRendererComponent>() || selectedEntity.HasComponent<SpriteAnimationComponent>())
+            else if(selectedEntity.HasComponent<SpriteRendererComponent>() || 
+                selectedEntity.HasComponent<SpriteAnimationComponent>() ||
+                selectedEntity.HasComponent<CircleRendererComponent>())
             {
                 TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
                 Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));

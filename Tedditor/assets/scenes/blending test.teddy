@@ -1,0 +1,90 @@
+Scene: Untitled
+Entities:
+  - Entity: 7820564289441799032
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, -2]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    TextComponent:
+      TextString: dfgdfg
+      FontAsset: ../Teddy/assets/fonts/instrument-sans/ttf/InstrumentSans-Bold.ttf
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      BackgroundColor: [0, 0, 0, 0]
+      OutlineColor: [0, 0, 0, 0]
+      OutlineThickness: 0
+      TextAlignment: 0
+  - Entity: 17287990507490879851
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0.3, 0.4, -0.1]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 0.59607846]
+      Thickness: 1
+      Fade: 0.005
+  - Entity: 2619457180888541728
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 12.7]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.7853982
+        PerspectiveNear: 0.01
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 15146244094066165957
+    TagComponent:
+      Tag: Animation
+    TransformComponent:
+      Translation: [0, 0, -2.7]
+      Rotation: [0, 0, 0]
+      Scale: [1.8351449, 1, 1]
+    SpriteAtlasComponent:
+      X: 0
+      Y: 2
+      SpriteWidth: 1013
+      SpriteHeight: 552
+    SpriteAnimationComponent:
+      OriginalAspectRatio: false
+      Background: false
+      Color: [1, 1, 1, 1]
+      TexturePaths:
+        - assets/textures/CupAndMugMan_1013x552_2048x2048_0.png
+        - assets/textures/CupAndMugMan_1013x552_2048x2048_1.png
+        - assets/textures/CupAndMugMan_1013x552_1013x552_2.png
+      TilingFactor: 1
+      TextureIndex: 0
+      PlayableIndicies:
+        []
+      FrameTime: 0.1
+      InitialFrameTime: 0.5
+      FinalFrameTime: 0.1
+      Loop: true
+      PingPong: true
+      Pause: false
+  - Entity: 4505456127533418065
+    TagComponent:
+      Tag: black
+    TransformComponent:
+      Translation: [0, 0, 0.8]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      OriginalAspectRatio: true
+      Background: false
+      Color: [0, 0, 0, 0.5]
+      TilingFactor: 1

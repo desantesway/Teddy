@@ -62,7 +62,6 @@ namespace Teddy
 
 		static float GetLineWidth();
 		static void SetLineWidth(float width);
-
 		struct Statistics
 		{
 			uint32_t DrawCalls = 0;
@@ -75,8 +74,12 @@ namespace Teddy
 		static void ResetStats();
 		static Statistics GetStats();
 	private:
-		static void StartBatch();
 		static void NextBatch();
+		static void StartBatch();
+
+		enum class ShaderType {None = 0, Quad, Circle, Text};
+
+		static ShaderType m_LastShaderDrawn;
 	};
 
 }
