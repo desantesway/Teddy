@@ -107,7 +107,7 @@ namespace Teddy
 			m_ImGuiLayer->Begin();
 			{
 				TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
-
+			
 				for (Layer* layer : m_LayerStack)
 					layer->OnImGuiRender();
 			}

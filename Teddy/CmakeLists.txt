@@ -189,6 +189,14 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneSerializer.cpp
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Post Processing <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Post Processing
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/PostProcessing/PostProcessing.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/PostProcessing/PostProcessing.cpp
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -3,6 +3,7 @@
 #include "Teddy/Renderer/Renderer2D.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Teddy/PostProcessing/PostProcessing.h"
 
 namespace Teddy 
 {
@@ -15,6 +16,7 @@ namespace Teddy
 
 		RenderCommand::Init();
 		Renderer2D::Init();
+		PostProcessing::Init();
 	}
 
 	void Renderer::Shutdown()

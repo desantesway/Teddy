@@ -249,6 +249,7 @@ namespace Teddy
 		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(whiteTextureData, TextureSpecification());
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+		// TODO: API abscraction
 		GLint maxFragmentUnits = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragmentUnits);
 		s_Data.TextureSlotsCapacity = std::min<uint32_t>((uint32_t)maxFragmentUnits, Renderer2DData::MaxTextureSlots);

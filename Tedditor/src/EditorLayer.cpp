@@ -2,7 +2,6 @@
 
 #include <chrono>
 
-#include "Platform/OpenGL/OpenGLShader.h"
 #include "Teddy/Renderer/Shader.h"
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Renderer/MSDFData.h"
@@ -10,6 +9,7 @@
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
 #include "Teddy/Image/Atlas.h"
+#include "Teddy/PostProcessing/PostProcessing.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -40,11 +40,14 @@ namespace Teddy
         fbSpec.Attachments = Teddy::FramebufferAttachmentSpecification({
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
             Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
+			Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
         });
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		// Post processing framebuffer (for editor layer)
+        m_PostProcessedFramebuffer = Framebuffer::Create(fbSpec);
 
         NewScene();
         m_EditorScene = m_ActiveScene;
@@ -94,7 +97,7 @@ namespace Teddy
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
+            m_PostProcessedFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
@@ -169,6 +172,12 @@ namespace Teddy
             }
 
             m_Framebuffer->Unbind();
+
+            m_PostProcessedFramebuffer->Bind();
+
+            PostProcessing::Apply(m_Framebuffer);
+
+            m_PostProcessedFramebuffer->Unbind();
         }
 
     }
@@ -332,7 +341,7 @@ namespace Teddy
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image(m_Framebuffer->GetColorAttachmentRendererID(),
+        ImGui::Image(m_PostProcessedFramebuffer->GetColorAttachmentRendererID(),
             ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
         if (ImGui::BeginDragDropTarget())

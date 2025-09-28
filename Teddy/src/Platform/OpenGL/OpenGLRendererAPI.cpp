@@ -53,11 +53,24 @@ namespace Teddy
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
+	void OpenGLRendererAPI::ClearColor()
+	{
+		TED_PROFILE_FUNCTION();
+
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
 	void OpenGLRendererAPI::Clear() 
 	{
 		TED_PROFILE_FUNCTION();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::DrawFramebufferTexture(uint32_t renderID)
+	{
+		glBindTexture(GL_TEXTURE_2D, renderID);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) 

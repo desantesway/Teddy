@@ -89,6 +89,9 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
+		enum class BlendingMode { None = 0, Alpha, Additive };
+		BlendingMode BlendMode = BlendingMode::None;
+
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
 		SpriteAnimationComponent(float initFrame, float frame, float finalFrame)
