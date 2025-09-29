@@ -48,7 +48,7 @@ namespace Teddy
 		private:
 			Ref<VertexArray> m_SquareVA;
 			Ref<Shader> m_FlatColorShader;
-			Ref<Framebuffer> m_Framebuffer, m_PostProcessedFramebuffer;
+			Ref<Framebuffer> m_PostProcessedFramebuffer;
 
 			Ref<Scene> m_ActiveScene;
 			Ref<Scene> m_EditorScene;

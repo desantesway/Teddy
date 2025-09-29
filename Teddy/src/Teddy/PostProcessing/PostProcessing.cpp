@@ -8,11 +8,9 @@
 
 namespace Teddy
 {
-	struct QuadVertex
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
-	};
+	PostProcessing* PostProcessing::s_Instance = nullptr;
+	Ref<Framebuffer> PostProcessing::m_Framebuffer = nullptr;
+	FramebufferSpecification PostProcessing::m_FramebufferSpec;
 
 	struct FramebufferData
 	{
@@ -21,17 +19,28 @@ namespace Teddy
 
 		Ref<Shader> Shader;
 		std::string ShaderName = "PostProcessing";
-
-		float LineWidth = 2.0f;
-
-		glm::vec4 QuadVertexPositions[4];
 	};
 
 	static FramebufferData s_Data;
 
+	PostProcessing::PostProcessing()
+	{
+		TED_CORE_ASSERT(!s_Instance, "Post Processing already exists!");
+		s_Instance = this;
+	}
+
 	void PostProcessing::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		m_FramebufferSpec.Attachments = Teddy::FramebufferAttachmentSpecification({
+			Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
+			Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
+			Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
+			});
+		m_FramebufferSpec.Width = 1920;
+		m_FramebufferSpec.Height = 1080;
+		m_Framebuffer = Framebuffer::Create(m_FramebufferSpec);
 
 		s_Data.VertexArray = VertexArray::Create();
 
@@ -64,9 +73,14 @@ namespace Teddy
 		TED_PROFILE_FUNCTION();
 	}
 
+	void PostProcessing::Resize(uint32_t width, uint32_t height)
+	{
+		m_Framebuffer->Resize(width, height);
+	}
+
 	// TODO: Shader hot reload
 	// TODO: Shader with multiple effects
-	void PostProcessing::Apply(Ref<Framebuffer> framebuffer)
+	void PostProcessing::Apply()
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -77,6 +91,6 @@ namespace Teddy
 		s_Data.Shader->Bind();
 		s_Data.VertexArray->Bind();
 
-		RenderCommand::DrawFramebufferTexture(framebuffer->GetColorAttachmentRendererID());
+		RenderCommand::DrawFramebufferTexture(m_Framebuffer->GetColorAttachmentRendererID());
 	}
 }

@@ -36,18 +36,8 @@ namespace Teddy
         m_IconSimulate = assets.Load<Texture2D>("Simulate", "Resources/Icons/Simulate.png");
         m_IconStop = assets.Load<Texture2D>("StopButton", "Resources/Icons/StopButton.png");
 
-        FramebufferSpecification fbSpec;
-        fbSpec.Attachments = Teddy::FramebufferAttachmentSpecification({
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RGBA8, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
-            Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::RED_INTEGER, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT),
-			Teddy::FramebufferTextureSpecification(Teddy::FramebufferTextureFormat::Depth, Teddy::TextureFilterFormat::LINEAR, Teddy::TextureWrapFormat::REPEAT)
-        });
-        fbSpec.Width = 1920;
-        fbSpec.Height = 1080;
-        m_Framebuffer = Framebuffer::Create(fbSpec);
-
 		// Post processing framebuffer (for editor layer)
-        m_PostProcessedFramebuffer = Framebuffer::Create(fbSpec);
+        m_PostProcessedFramebuffer = Framebuffer::Create(PostProcessing::Get().GetFramebufferSpec());
 
         NewScene();
         m_EditorScene = m_ActiveScene;
@@ -92,11 +82,11 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
-        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+        if (FramebufferSpecification spec = m_PostProcessedFramebuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
-            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            PostProcessing::Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_PostProcessedFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -107,13 +97,13 @@ namespace Teddy
         {
             TED_PROFILE_SCOPE("Renderer Prep");
 
-            m_Framebuffer->Bind();
+            PostProcessing::Bind();
 
             RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
             RenderCommand::Clear();
         }
 
-        m_Framebuffer->ClearAttachment(1, -1);
+        PostProcessing::Clear();
 
         {
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
@@ -160,7 +150,7 @@ namespace Teddy
 
                 if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
                 {
-                    int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+                    int pixelData = PostProcessing::GetFramebuffer()->ReadPixel(1, mouseX, mouseY);
                     entt::entity handle = (entt::entity)pixelData;
                     if (pixelData == -1) {
                         m_HoveredEntity = {};
@@ -171,11 +161,11 @@ namespace Teddy
                 }
             }
 
-            m_Framebuffer->Unbind();
+            PostProcessing::Unbind();
 
             m_PostProcessedFramebuffer->Bind();
 
-            PostProcessing::Apply(m_Framebuffer);
+            PostProcessing::Apply();
 
             m_PostProcessedFramebuffer->Unbind();
         }
