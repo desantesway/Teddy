@@ -1,0 +1,86 @@
+#pragma once
+
+#include "../Panels/SceneHierarchyPanel.h"
+#include "../Panels/ContentBrowserPanel.h"
+#include "Teddy/Renderer/Framebuffer.h"
+
+namespace Teddy
+{
+	class Editor
+	{
+	public:
+
+		Editor() = default;
+		~Editor() = default;
+
+		void Init();
+		void OnUpdate(Timestep ts);
+		void OnEvent(Event& event);
+		void OnImGuiRender();
+
+		void BindFramebuffer() { m_PostProcessedFramebuffer->Bind(); }
+		void UnbindFramebuffer() { m_PostProcessedFramebuffer->Unbind(); }
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+
+		void OnOverlayRender();
+
+		void UI_Toolbar();
+
+		void GenerateAtlas();
+		void GenerateAtlas(const std::vector<std::string>& filepaths);
+
+		void NewScene();
+
+		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
+
+		void SaveScene();
+		void SaveSceneAs();
+
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+
+		void OnScenePlay();
+		void OnSceneStop();
+		void OnSceneSimulate();
+
+		void OnDuplicateEntity();
+
+		void RemoveSceneAssetBypass();
+		void SceneAssetBypass();
+	private:
+		Ref<Framebuffer> m_PostProcessedFramebuffer;
+
+		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
+		std::filesystem::path m_EditorScenePath;
+		Entity m_SquareEntity;
+		Entity m_CameraEntity;
+		Entity m_SecondCamera;
+
+		Entity m_HoveredEntity;
+		int m_GizmoType = -1;
+		bool m_ShowPhysicsColliders = true;
+
+		bool m_PrimaryCamera = true;
+
+		EditorCamera m_EditorCamera;
+
+		Ref<Texture2D> m_BoardTexture;
+
+		bool m_ViewportFocused = false, m_ViewportHovered = false;
+		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportBounds[2] = { {0.0f, 0.0f}, {0.0f, 0.0f} };
+
+		enum class SceneState { Edit = 0, Play = 1, Simulate = 2 };
+		SceneState m_SceneState = SceneState::Edit;
+
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
+
+		// Editor Resources
+		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconSimulate;
+	};
+}

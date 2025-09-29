@@ -132,7 +132,6 @@ namespace Teddy
 
 		if (m_SelectionContext)
 		{
-			// ?
 			DrawComponents(m_SelectionContext);
 		}
 

@@ -28,6 +28,7 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Teddy/Renderer/Renderer2D.h"
 #include "Teddy/Renderer/RenderCommand.h"
+#include "Teddy/PostProcessing/PostProcessing.h"
 
 #include "Teddy/Renderer/Buffer.h"
 #include "Teddy/Renderer/Shader.h"
