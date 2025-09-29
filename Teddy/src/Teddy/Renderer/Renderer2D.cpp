@@ -146,22 +146,6 @@ namespace Teddy
 
 		s_Data.TextureSlotsCapacity = std::min<uint32_t>(GPUUtils::GetMaxImageUnits(), s_Data.MaxTextureSlots);
 
-		// Quad
-		s_Data.QuadResources.VertexArray = VertexArray::Create();
-
-		s_Data.QuadResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.QuadResources.VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" },
-			{ ShaderDataType::Float, "a_EntityID" }
-			});
-		s_Data.QuadResources.VertexArray->AddVertexBuffer(s_Data.QuadResources.VertexBuffer);
-
-		s_Data.QuadResources.VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
 		uint32_t offset = 0;
@@ -179,8 +163,24 @@ namespace Teddy
 		}
 
 		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadResources.VertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
+
+		// Quad
+		s_Data.QuadResources.VertexArray = VertexArray::Create();
+		s_Data.QuadResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+
+		s_Data.QuadResources.VertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float,  "a_TexIndex" },
+			{ ShaderDataType::Float,  "a_TilingFactor" },
+			{ ShaderDataType::Int,    "a_EntityID" }
+			});
+
+		s_Data.QuadResources.VertexArray->AddVertexBuffer(s_Data.QuadResources.VertexBuffer);
+		s_Data.QuadResources.VertexArray->SetIndexBuffer(quadIB);
+		s_Data.QuadResources.VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
 		// Circle
 		s_Data.CircleResources.VertexArray = VertexArray::Create();

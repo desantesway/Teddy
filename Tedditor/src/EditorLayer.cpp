@@ -28,7 +28,7 @@ namespace Teddy
     {
         OPTICK_FRAME("MainThread");
 
-        //AssetManager::Get().SetHotReloading(true);
+        AssetManager::Get().SetHotReloading(true);
         m_Editor.Init();
     }
 
@@ -40,6 +40,8 @@ namespace Teddy
     void EditorLayer::OnUpdate(Timestep ts)
     {
         TED_PROFILE_FUNCTION();
+
+        m_Editor.ResizeFramebuffer();
 
         Renderer2D::ResetStats();
 

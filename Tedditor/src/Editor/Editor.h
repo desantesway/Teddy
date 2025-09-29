@@ -18,6 +18,8 @@ namespace Teddy
 		void OnEvent(Event& event);
 		void OnImGuiRender();
 
+		void ResizeFramebuffer();
+
 		void BindFramebuffer() { m_PostProcessedFramebuffer->Bind(); }
 		void UnbindFramebuffer() { m_PostProcessedFramebuffer->Unbind(); }
 	private:
