@@ -28,6 +28,7 @@ namespace Teddy
     {
         OPTICK_FRAME("MainThread");
 
+        //AssetManager::Get().SetHotReloading(true);
         m_Editor.Init();
     }
 

@@ -14,7 +14,8 @@ namespace Teddy
 
 	void AssetManager::OnUpdate()
 	{
-		m_FileWatcher.Watch(); // TODO: Make it disabled by default
+		if(m_HotReload)
+			m_FileWatcher.Watch();
 	}
 
 	template<typename T>

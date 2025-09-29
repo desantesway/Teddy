@@ -218,6 +218,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.cpp
 
+    # GPU Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/GPUUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/GPUUtils.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Math <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -288,6 +292,9 @@ add_library(Teddy STATIC
     # Texture Formats
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTextureFormats.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTextureFormats.h
+
+    # Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLUtils.h
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Windows <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>

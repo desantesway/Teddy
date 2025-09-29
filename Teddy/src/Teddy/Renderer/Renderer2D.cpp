@@ -9,6 +9,7 @@
 
 #include "Teddy/Renderer/MSDFData.h"
 #include "Teddy/Core/AssetManager.h"
+#include "Teddy/Utils/GPUUtils.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -143,6 +144,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		s_Data.TextureSlotsCapacity = std::min<uint32_t>(GPUUtils::GetMaxImageUnits(), s_Data.MaxTextureSlots);
+
 		// Quad
 		s_Data.QuadResources.VertexArray = VertexArray::Create();
 
@@ -249,11 +252,6 @@ namespace Teddy
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(whiteTextureData, TextureSpecification());
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
-		// TODO: API abscraction
-		GLint maxFragmentUnits = 0;
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragmentUnits);
-		s_Data.TextureSlotsCapacity = std::min<uint32_t>((uint32_t)maxFragmentUnits, Renderer2DData::MaxTextureSlots);
 
 		// Adding shaders
 		auto& assets = AssetManager::Get();

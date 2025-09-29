@@ -28,6 +28,8 @@ namespace Teddy
 
 		void OnUpdate();
 
+		void SetHotReloading(bool hotReload) { m_HotReload = hotReload; }
+
 		template<typename T>
 		std::unordered_set<std::string> AssetsToReload(bool changesHandled);
 
@@ -143,6 +145,7 @@ namespace Teddy
 		AssetGroup<Font> m_Fonts;
 		Ref<Font> m_DefaultFont = nullptr;
 
+		bool m_HotReload = false;
 	private:
 		static AssetManager* s_Instance;
 	};
