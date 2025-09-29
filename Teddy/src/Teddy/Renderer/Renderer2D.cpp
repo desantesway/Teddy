@@ -142,6 +142,7 @@ namespace Teddy
 	void Renderer2D::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
 		// Quad
 		s_Data.QuadResources.VertexArray = VertexArray::Create();
 

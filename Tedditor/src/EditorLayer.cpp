@@ -396,6 +396,22 @@ namespace Teddy
             }
         }
 
+        ImGui::Begin("Post Processing Effects");
+
+		bool enabled = PostProcessing::IsEffectEnabled(PostProcessing::Effect::ChromaticAberration);
+        ImGui::Checkbox("Chromatic Aberration", &enabled);
+        if (enabled)
+        {
+            PostProcessing::EnableEffect(PostProcessing::Effect::ChromaticAberration);
+            glm::vec3 offset = PostProcessing::GetChromaticAberrationOffset();
+			ImGui::DragFloat3("Offset", glm::value_ptr(offset), 0.01f, -10.0f, 10.0f);
+            PostProcessing::SetChromaticAberrationOffset(offset);
+        }
+        else
+			PostProcessing::DisableEffect(PostProcessing::Effect::ChromaticAberration);
+
+        ImGui::End();
+
         ImGui::End();
 
         ImGui::PopStyleVar();

@@ -12,6 +12,20 @@ namespace Teddy
 	Ref<Framebuffer> PostProcessing::m_Framebuffer = nullptr;
 	FramebufferSpecification PostProcessing::m_FramebufferSpec;
 
+	PostProcessing::PostProcessing()
+	{
+		TED_CORE_ASSERT(!s_Instance, "Post Processing already exists!");
+		s_Instance = this;
+	}
+
+	struct PostProcessingEffects
+	{
+		glm::vec2 Position;
+		glm::vec2 TexCoord;
+		int ChromaticAberration = 1; // glsl doesnt accept bool
+		glm::vec3 ChromaticAberrationOffset = glm::vec3( -1.0f, 1.0f, 1.0f); // (R,G,B)
+	};
+
 	struct FramebufferData
 	{
 		Ref<VertexArray> VertexArray;
@@ -19,15 +33,13 @@ namespace Teddy
 
 		Ref<Shader> Shader;
 		std::string ShaderName = "PostProcessing";
+
+		PostProcessingEffects Effects[4];
+
+		glm::vec4 VertexPositions[4];
 	};
 
 	static FramebufferData s_Data;
-
-	PostProcessing::PostProcessing()
-	{
-		TED_CORE_ASSERT(!s_Instance, "Post Processing already exists!");
-		s_Instance = this;
-	}
 
 	void PostProcessing::Init()
 	{
@@ -42,19 +54,28 @@ namespace Teddy
 		m_FramebufferSpec.Height = 1080;
 		m_Framebuffer = Framebuffer::Create(m_FramebufferSpec);
 
+		s_Data.VertexPositions[0] = { -1.0f, -1.0f, 0.0f, 1.0f };
+		s_Data.VertexPositions[1] = { 1.0f, -1.0f, 0.0f, 1.0f };
+		s_Data.VertexPositions[2] = { 1.0f,  1.0f, 0.0f, 1.0f };
+		s_Data.VertexPositions[3] = { -1.0f,  1.0f, 0.0f, 1.0f };
+
+		constexpr size_t quadVertexCount = 4;
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+			s_Data.Effects[i].Position = s_Data.VertexPositions[i];
+			s_Data.Effects[i].TexCoord = textureCoords[i];
+		}
+
 		s_Data.VertexArray = VertexArray::Create();
 
-		float squareVertices[4 * 4] = {
-			-1.0f, -1.0f, 0.0f, 0.0f,
-			 1.0f, -1.0f, 1.0f, 0.0f,
-			 1.0f,  1.0f, 1.0f, 1.0f,
-			-1.0f,  1.0f, 0.0f, 1.0f
-		};
-
-		s_Data.VertexBuffer = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
+		s_Data.VertexBuffer = VertexBuffer::Create(4 * sizeof(PostProcessingEffects));
 		s_Data.VertexBuffer->SetLayout({
-			{ ShaderDataType::Float2, "a_Pos" },
-			{ ShaderDataType::Float2, "a_TexCoord" }
+			{ ShaderDataType::Float2,	"a_Pos" },
+			{ ShaderDataType::Float2,	"a_TexCoord" },
+			{ ShaderDataType::Int,		"a_ChromaticAberration" },
+			{ ShaderDataType::Float3,	"a_ChromaticAberrationOffset" },
 			});
 		s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffer);
 
@@ -79,7 +100,6 @@ namespace Teddy
 	}
 
 	// TODO: Shader hot reload
-	// TODO: Shader with multiple effects
 	void PostProcessing::Apply()
 	{
 		TED_PROFILE_FUNCTION();
@@ -88,9 +108,65 @@ namespace Teddy
 		RenderCommand::SetClearColor({ 1.0f, 1.0f, 1.0f, 1 });
 		RenderCommand::ClearColor();
 
+		s_Data.VertexBuffer->SetData(s_Data.Effects, sizeof(s_Data.Effects));
+
 		s_Data.Shader->Bind();
 		s_Data.VertexArray->Bind();
 
 		RenderCommand::DrawFramebufferTexture(m_Framebuffer->GetColorAttachmentRendererID());
+	}
+
+	bool PostProcessing::IsEffectEnabled(Effect effect)
+	{
+		switch (effect)
+		{
+		case Effect::ChromaticAberration:
+			return s_Data.Effects[0].ChromaticAberration == 1;
+		case Effect::None:
+			return false;
+		default:
+			return false;
+		}
+	}
+
+	void PostProcessing::EnableEffect(Effect effect)
+	{
+		switch (effect)
+		{
+		case Effect::ChromaticAberration:
+			for (size_t i = 0; i < 4; i++)
+				s_Data.Effects[i].ChromaticAberration = 1;
+			break;
+		case Effect::None:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void PostProcessing::DisableEffect(Effect effect)
+	{
+		switch (effect)
+		{
+		case Effect::ChromaticAberration:
+			for (size_t i = 0; i < 4; i++)
+				s_Data.Effects[i].ChromaticAberration = 0;
+			break;
+		case Effect::None:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void PostProcessing::SetChromaticAberrationOffset(glm::vec3 offset)
+	{
+		for (size_t i = 0; i < 4; i++)
+			s_Data.Effects[i].ChromaticAberrationOffset = offset;
+	}
+
+	glm::vec3 PostProcessing::GetChromaticAberrationOffset()
+	{
+		return s_Data.Effects[0].ChromaticAberrationOffset;
 	}
 }

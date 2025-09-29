@@ -26,7 +26,17 @@ namespace Teddy
 		static PostProcessing& Get() { return *s_Instance; }
 
 		static void Apply();
-	
+		
+		enum class Effect {None = 0, ChromaticAberration};
+
+		static bool IsEffectEnabled(Effect effect);
+
+		static void EnableEffect(Effect effect);
+		static void DisableEffect(Effect effect);
+
+		static void SetChromaticAberrationOffset(glm::vec3 offset);
+		static glm::vec3 GetChromaticAberrationOffset();
+
 	private:
 		static Ref<Framebuffer> m_Framebuffer;
 		static FramebufferSpecification m_FramebufferSpec;
