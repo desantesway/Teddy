@@ -36,9 +36,9 @@ namespace Teddy
 		static void SetQuad(const glm::mat4& transform, const glm::vec4& color,
 			const float& texIndex, const float& tilingFactor,
 			const SpriteAtlasComponent& atlas, const float& atlasWidth, const float& atlasHeight, 
-			int entityID);
+			int blendMode, int entityID);
 		static void SetQuad(const glm::mat4& transform, const glm::vec4& color,
-			const float& texIndex, const float& tilingFactor, int entityID = -1);
+			const float& texIndex, const float& tilingFactor, int blendMode, int entityID = -1);
 
 		static void DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, 
 			const Camera& camera, const TransformComponent& cameraTransform,

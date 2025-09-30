@@ -33,6 +33,7 @@ namespace Teddy
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+		int BlendingMode = 0;
 
 		// Editor-only
 		int EntityID;
@@ -172,6 +173,7 @@ namespace Teddy
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float,  "a_TexIndex" },
 			{ ShaderDataType::Float,  "a_TilingFactor" },
+			{ ShaderDataType::Int,	  "a_BlendingMode" },
 			{ ShaderDataType::Int,    "a_EntityID" }
 			});
 
@@ -432,7 +434,7 @@ namespace Teddy
 
 	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
 		const float& texIndex, const float& tilingFactor, 
-		const SpriteAtlasComponent& atlas, const float& atlasWidth, const float& atlasHeight,
+		const SpriteAtlasComponent& atlas, const float& atlasWidth, const float& atlasHeight, int blendMode,
 		int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
@@ -459,6 +461,7 @@ namespace Teddy
 			s_Data.QuadResources.VertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadResources.VertexBufferPtr->TexIndex = texIndex;
 			s_Data.QuadResources.VertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadResources.VertexBufferPtr->BlendingMode = blendMode;
 			s_Data.QuadResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.QuadResources.VertexBufferPtr++;
 		}
@@ -469,7 +472,7 @@ namespace Teddy
 	}
 
 	void Renderer2D::SetQuad(const glm::mat4& transform, const glm::vec4& color,
-		const float& texIndex, const float& tilingFactor, int entityID)
+		const float& texIndex, const float& tilingFactor, int blendMode, int entityID)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
@@ -490,6 +493,7 @@ namespace Teddy
 			s_Data.QuadResources.VertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadResources.VertexBufferPtr->TexIndex = texIndex;
 			s_Data.QuadResources.VertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadResources.VertexBufferPtr->BlendingMode = blendMode;
 			s_Data.QuadResources.VertexBufferPtr->EntityID = entityID;
 			s_Data.QuadResources.VertexBufferPtr++;
 		}
@@ -698,7 +702,7 @@ namespace Teddy
 			}				
 			
 			SetQuad(transform.GetTransform(), sprite.Color, textureIndex, sprite.TilingFactor,
-				atlas, width, height, entityID);
+				atlas, width, height, (int)sprite.BlendMode, entityID);
 
 		}
 		else
@@ -707,7 +711,7 @@ namespace Teddy
 
 			const float textureIndex = 0.0f;
 
-			SetQuad(transform.GetTransform(), sprite.Color, textureIndex, sprite.TilingFactor, entityID);
+			SetQuad(transform.GetTransform(), sprite.Color, textureIndex, sprite.TilingFactor, (int)sprite.BlendMode, entityID);
 		}
 	}
 	

@@ -23,6 +23,9 @@ void CupheadLayer::OnAttach()
 	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
     m_ActiveScene->OnRuntimeStart();
 
+	Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
+	Teddy::PostProcessing::SetChromaticAberrationOffset({ 5.0f, 5.0f, -5.0f }); // Max: 10
+
     auto camEntt = m_ActiveScene->CreateEntity("Camera");
 	camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
     auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
@@ -35,7 +38,7 @@ void CupheadLayer::OnAttach()
     auto transitionQuadAnimation = m_ActiveScene->CreateEntity("Title Transition Quad");
     m_TransitionQuad = Teddy::CreateRef<Teddy::Entity>(transitionQuadAnimation);
     auto& transitionQuad = m_TransitionQuad->AddComponent<Teddy::SpriteRendererComponent>();
-    transitionQuad.Color = glm::vec4(0.0f);
+    transitionQuad.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     transitionQuad.IsBackground = true;
     auto& transitionQuadTransform = transitionQuadAnimation.GetComponent<Teddy::TransformComponent>();
     transitionQuadTransform.Translation = glm::vec3(0.0f, 0.0f, 6.0f);
@@ -164,6 +167,10 @@ void CupheadLayer::StartTransition(Teddy::Timestep ts)
 
 	transitionQuad.Color.a += 2.5f * ts;
     transitionCircle.Thickness += 2.0f * ts; 
+    if (transitionCircle.Thickness > 1.0f)
+		transitionCircle.Thickness = 1.0f;
+	if (transitionQuad.Color.a > 1.0f)
+		transitionQuad.Color.a = 1.0f;
     
 }
 

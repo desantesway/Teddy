@@ -45,15 +45,24 @@ void main()
 
     if(ChromaticAberration != 0)
     {
+        float maxOffset = max(max(abs(ChromaticAberrationOffset.x), abs(ChromaticAberrationOffset.y)), 
+        abs(ChromaticAberrationOffset.z));
+
+        float zoomFactor = 1.0 / (1.0 + 0.001 * maxOffset);
+        vec2 center = vec2(0.5, 0.5);  // Center of the screen
+        vec2 zoomedCoord = (Input.TexCoord - center) * zoomFactor + center;
+
+        // Clamp the texture coordinates to avoid sampling outside the texture bounds
+        zoomedCoord = clamp(zoomedCoord, 0.0, 1.0);
+
         float redOffset   =  0.0005 * ChromaticAberrationOffset.x;
         float greenOffset =  0.0005 * ChromaticAberrationOffset.y;
         float blueOffset  =  0.0005 * ChromaticAberrationOffset.z;
 
-        color.r  = texture(screenTexture, Input.TexCoord + vec2(redOffset  )).r;
-        color.g  = texture(screenTexture, Input.TexCoord + vec2(greenOffset)).g;
-        color.ba = texture(screenTexture, Input.TexCoord + vec2(blueOffset )).ba;
+        color.r  = texture(screenTexture, zoomedCoord + vec2(0.0, redOffset)).r;
+        color.g  = texture(screenTexture, zoomedCoord + vec2(greenOffset, 0.0)).g;
+        color.ba = texture(screenTexture, zoomedCoord + vec2(blueOffset, 0.0)).ba;
     }
-    
 
     o_Color = color;
 }

@@ -22,8 +22,8 @@ namespace Teddy
 	{
 		glm::vec2 Position = glm::vec2(0.0f);
 		glm::vec2 TexCoord = glm::vec2(0.0f);
-		int ChromaticAberration = 1; // glsl doesnt accept bool
-		glm::vec3 ChromaticAberrationOffset = glm::vec3( -1.0f, 1.0f, 1.0f); // (R,G,B)
+		int ChromaticAberration = 0; // glsl doesnt accept bool
+		glm::vec3 ChromaticAberrationOffset = glm::vec3( 1.0f, 1.0f, 1.0f); // (R,G,B)
 	};
 
 	struct FramebufferData
@@ -122,7 +122,7 @@ namespace Teddy
 		ShaderHotReload();
 
 		RenderCommand::DisableDepth();
-		RenderCommand::SetClearColor({ 1.0f, 1.0f, 1.0f, 1 });
+		RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 		RenderCommand::ClearColor();
 
 		s_Data.VertexBuffer->SetData(s_Data.Effects, sizeof(s_Data.Effects));
