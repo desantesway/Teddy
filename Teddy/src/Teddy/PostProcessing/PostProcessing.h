@@ -9,7 +9,7 @@ namespace Teddy
 	{
 	public:
 		PostProcessing();
-		~PostProcessing() = default;
+		~PostProcessing() { s_Instance = nullptr; }
 
 		static void Init();
 		static void Shutdown();

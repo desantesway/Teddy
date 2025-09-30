@@ -15,6 +15,8 @@ namespace Teddy
 	AssetManager::~AssetManager()
 	{
 		m_FileWatcher.StopWatching();
+
+		s_Instance = nullptr;
 	}
 
 	void AssetManager::OnUpdate()

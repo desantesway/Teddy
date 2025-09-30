@@ -8,7 +8,7 @@
 
 namespace Teddy
 {
-	PostProcessing* PostProcessing::s_Instance = nullptr; // TODO: Scope<>
+	PostProcessing* PostProcessing::s_Instance = nullptr;
 	Ref<Framebuffer> PostProcessing::m_Framebuffer = nullptr;
 	FramebufferSpecification PostProcessing::m_FramebufferSpec;
 
@@ -20,8 +20,8 @@ namespace Teddy
 
 	struct PostProcessingEffects
 	{
-		glm::vec2 Position;
-		glm::vec2 TexCoord;
+		glm::vec2 Position = glm::vec2(0.0f);
+		glm::vec2 TexCoord = glm::vec2(0.0f);
 		int ChromaticAberration = 1; // glsl doesnt accept bool
 		glm::vec3 ChromaticAberrationOffset = glm::vec3( -1.0f, 1.0f, 1.0f); // (R,G,B)
 	};
@@ -36,7 +36,7 @@ namespace Teddy
 
 		PostProcessingEffects Effects[4];
 
-		glm::vec4 VertexPositions[4];
+		glm::vec4 VertexPositions[4] = { glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f) };
 	};
 
 	static FramebufferData s_Data;
@@ -99,10 +99,28 @@ namespace Teddy
 		m_Framebuffer->Resize(width, height);
 	}
 
+	void ShaderHotReload()
+	{
+		auto& assets = AssetManager::Get();
+
+		if (assets.IsHotReloading<Shader>())
+		{
+			std::string shaderPath = assets.AssetNeedsToReload<Shader>(s_Data.Shader->GetPath(), true);
+			if (shaderPath != "")
+			{
+				s_Data.Shader = nullptr;
+				assets.RemoveExpired<Shader>(shaderPath, Boolean::True);
+				s_Data.Shader = assets.Load<Shader>(s_Data.ShaderName, shaderPath, true);
+			}
+		}
+	}
+
 	// TODO: Shader hot reload
 	void PostProcessing::Apply()
 	{
 		TED_PROFILE_FUNCTION();
+
+		ShaderHotReload();
 
 		RenderCommand::DisableDepth();
 		RenderCommand::SetClearColor({ 1.0f, 1.0f, 1.0f, 1 });

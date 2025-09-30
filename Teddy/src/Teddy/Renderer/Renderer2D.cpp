@@ -120,13 +120,13 @@ namespace Teddy
 		std::array<Weak<Texture2D>, MaxTextureSlots> FontAtlasSlots;
 		uint32_t FontAtlasSlotIndex = 0;
 
-		glm::vec4 QuadVertexPositions[4];
+		glm::vec4 QuadVertexPositions[4] = { glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f) };
 
 		Renderer2D::Statistics Stats;
 
 		struct CameraData
 		{
-			glm::mat4 ViewProjection;
+			glm::mat4 ViewProjection = glm::mat4(0.0f);
 		};
 
 		CameraData CameraBuffer;

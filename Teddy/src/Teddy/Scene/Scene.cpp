@@ -441,7 +441,7 @@ namespace Teddy
 		}
 
 		// Render
-		Camera* activeCamera;
+		Camera* activeCamera = nullptr;
 		TransformComponent cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent>();

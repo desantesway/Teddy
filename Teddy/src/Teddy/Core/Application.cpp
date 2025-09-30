@@ -114,8 +114,6 @@ namespace Teddy
 
 		while (m_Running)
 		{
-			TED_PROFILE_SCOPE("Application Run Loop");
-
 			OnUpdate();
 		}
 	}
