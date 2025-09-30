@@ -1,4 +1,3 @@
-
 #include <Teddy.h>
 
 // --- Entry Point --------------------------
@@ -8,8 +7,9 @@
 #include "StartLayer.h"
 #include "CupheadMainLayer.h"
 #include "OverlayLayer.h"
+#include "EndLayer.h"
 #ifdef TED_DEBUG
-#include "../Editor/EditorLayer.h"
+	#include "../Editor/EditorLayer.h"
 #endif
 
 class Cuphead : public Teddy::Application
@@ -18,15 +18,16 @@ public:
 	Cuphead(const Teddy::ApplicationSpecification& specification)
 		: Teddy::Application(specification)
 	{
-		PushLayer(new StartLayer());
-
+		
 #ifdef TED_DEBUG
-		PushLayer(new Teddy::EditorLayer());
+		PushLayer(Teddy::CreateRef<Teddy::EditorLayer>());
 #else
-		PushLayer(new CupheadLayer());
+		PushLayer(Teddy::CreateRef<StartLayer>());
+		PushLayer(Teddy::CreateRef<CupheadLayer>());
+		PushLayer(Teddy::CreateRef<OverlayLayer>());
+		PushLayer(Teddy::CreateRef<EndLayer>());
 #endif
 
-		PushLayer(new OverlayLayer());
 	}
 
 	~Cuphead()

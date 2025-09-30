@@ -73,15 +73,16 @@ void CupheadLayer::OnAttach()
     text.SetString("Press Any Button");
     text.Color = glm::vec4(233.0f/255.0f, 193.0f /255.0f, 80.0f /255.0f, 1.0f);
     text.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+    auto& textTransform = textEntity.GetComponent<Teddy::TransformComponent>();
+    textTransform.Scale *= 0.41;
+    textTransform.Translation = glm::vec3(0.0f, -2.60f, 1.5f);
 
     class TitleText : public Teddy::ScriptableEntity
     {
     public:
         void OnCreate()
         {
-            auto& textTransform = GetComponent<Teddy::TransformComponent>();
-            textTransform.Scale *= 0.41;
-            textTransform.Translation += glm::vec3(0.0f, -2.60f, 1.5f);
+            
         }
 
         void OnDestroy()
@@ -149,6 +150,8 @@ void CupheadLayer::LoadMainMenu(Teddy::Timestep ts)
 
 void CupheadLayer::StartTransition(Teddy::Timestep ts)
 {
+    TED_PROFILE_FUNCTION();
+
 	auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
     auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
     if (transitionCircle.Thickness >= 1 && transitionQuad.Color.a >= 1.0f)
@@ -166,17 +169,31 @@ void CupheadLayer::StartTransition(Teddy::Timestep ts)
 
 bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)
 {
+    TED_PROFILE_FUNCTION();
+
 	m_ProceedToMainMenu = true;
 
     return true;
 }
 
+bool CupheadLayer::OnWindowResize(Teddy::WindowResizeEvent& e)
+{
+    TED_PROFILE_FUNCTION();
+
+    m_ActiveScene->OnViewportResize((uint32_t)e.GetWidth(), (uint32_t)e.GetHeight());
+
+    return false;
+}
+
 void CupheadLayer::OnEvent(Teddy::Event& event)
 {
-    m_ActiveScene->OnEvent(event);
+    TED_PROFILE_FUNCTION();
 
     Teddy::EventDispatcher dispatcher(event);
     dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
+    dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize));
+
+    m_ActiveScene->OnEvent(event);
 }
 
 void CupheadLayer::OnImGuiRender()

@@ -18,6 +18,8 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/OverlayLayer.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/StartLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/StartLayer.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.cpp
 
                                     # Editor
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h

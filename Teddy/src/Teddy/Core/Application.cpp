@@ -142,7 +142,7 @@ namespace Teddy
 
 		m_Minimized = false;
 
-		return true;
+		return false;
 	}
 
 	bool Application::OnWindowMoved(WindowMovedEvent& e)

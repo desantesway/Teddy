@@ -13,7 +13,7 @@ namespace Teddy
 		Editor() = default;
 		~Editor() = default;
 
-		void Init();
+		void Init(Ref<Scene> activeScene);
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& event);
 		void OnImGuiRender();
@@ -22,6 +22,10 @@ namespace Teddy
 
 		void BindFramebuffer() { m_PostProcessedFramebuffer->Bind(); }
 		void UnbindFramebuffer() { m_PostProcessedFramebuffer->Unbind(); }
+
+		enum class SceneState { Edit = 0, Play = 1, Simulate = 2 };
+		SceneState GetState() { return m_SceneState; }
+
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -75,7 +79,6 @@ namespace Teddy
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 		glm::vec2 m_ViewportBounds[2] = { {0.0f, 0.0f}, {0.0f, 0.0f} };
 
-		enum class SceneState { Edit = 0, Play = 1, Simulate = 2 };
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Panels
