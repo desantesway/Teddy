@@ -16,7 +16,7 @@ namespace Teddy
         OPTICK_FRAME("MainThread");
 
         AssetManager::Get().SetHotReloading(true);
-        m_Editor.Init();
+        m_Editor.Init(CreateRef<Scene>());
     }
 
     void EditorLayer::OnDetach()
