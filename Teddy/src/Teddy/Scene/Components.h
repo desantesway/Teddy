@@ -67,6 +67,8 @@ namespace Teddy
 		}
 	};
 
+	enum class BlendingMode { None = 0, Multiply = 1, Invert = 2, InvertAlpha = 3 };
+
 	struct SpriteAnimationComponent
 	{
 		glm::vec4 Color{ 1.0f };
@@ -86,7 +88,6 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
-		enum class BlendingMode { None = 0, Alpha, Additive };
 		BlendingMode BlendMode = BlendingMode::None;
 
 		SpriteAnimationComponent() = default;
@@ -105,6 +106,8 @@ namespace Teddy
 		bool IsBackground = false;
 		bool OriginalAspectRatio = true;
 
+		BlendingMode BlendMode = BlendingMode::None;
+
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
@@ -113,7 +116,7 @@ namespace Teddy
 		SpriteRendererComponent(SpriteAnimationComponent& animation)
 			: Color(animation.Color), Texture(animation.Textures[animation.TextureIndex]), 
 			TilingFactor(animation.TilingFactor), OriginalAspectRatio(animation.OriginalAspectRatio), 
-			IsBackground(animation.IsBackground)
+			IsBackground(animation.IsBackground), BlendMode(animation.BlendMode)
 		{ }
 	};
 
