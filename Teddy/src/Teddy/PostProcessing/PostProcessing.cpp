@@ -114,8 +114,7 @@ namespace Teddy
 			}
 		}
 	}
-
-	// TODO: Shader hot reload
+	
 	void PostProcessing::Apply()
 	{
 		TED_PROFILE_FUNCTION();
