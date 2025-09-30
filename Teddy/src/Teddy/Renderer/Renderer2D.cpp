@@ -11,9 +11,6 @@
 #include "Teddy/Core/AssetManager.h"
 #include "Teddy/Utils/GPUUtils.h"
 
-#include <glad/glad.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 // TODO: For 3D implement instancing instead of batching

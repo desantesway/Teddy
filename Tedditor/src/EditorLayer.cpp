@@ -1,21 +1,8 @@
+#include "TeddyPch.h"
+
 #include "EditorLayer.h"
 
-#include <chrono>
-
-#include "Teddy/Renderer/Shader.h"
-#include "Teddy/Renderer/Font.h"
-#include "Teddy/Renderer/MSDFData.h"
-#include "Teddy/Math/Math.h"
-#include "Teddy/Scene/SceneSerializer.h"
-#include "Teddy/Utils/PlatformUtils.h"
-#include "Teddy/Image/Atlas.h"
 #include "Teddy/PostProcessing/PostProcessing.h"
-
-#include <imgui.h>
-#include <ImGuizmo.h>
-
-
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace Teddy
 {

@@ -1,19 +1,9 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
-
 #include "Teddy/Core/Window.h"
-
 #include "Teddy/Core/LayerStack.h"
-#include "Teddy/Events/Event.h"
-#include "Teddy/Events/ApplicationEvent.h"
-
-#include "Teddy/Core/Timestep.h"
-
 #include "Teddy/ImGui/ImGuiLayer.h"
-
 #include "Teddy/Core/Input.h"
-#include "Teddy/Utils/FileWatcher.h"
 #include "Teddy/Core/AssetManager.h"
 
 #ifdef TED_DIST

@@ -1,8 +1,10 @@
 #include "TeddyPch.h"
-#include "Teddy/Renderer/GraphicsContext.h"
 
+#include "Teddy/Renderer/GraphicsContext.h"
 #include "Teddy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLContext.h"
+#endif
 
 namespace Teddy 
 {

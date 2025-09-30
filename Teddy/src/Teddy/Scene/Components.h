@@ -6,9 +6,6 @@
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Core/AssetManager.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Teddy
 {
 

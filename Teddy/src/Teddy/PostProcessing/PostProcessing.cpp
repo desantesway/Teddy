@@ -8,7 +8,7 @@
 
 namespace Teddy
 {
-	PostProcessing* PostProcessing::s_Instance = nullptr;
+	PostProcessing* PostProcessing::s_Instance = nullptr; // TODO: Scope<>
 	Ref<Framebuffer> PostProcessing::m_Framebuffer = nullptr;
 	FramebufferSpecification PostProcessing::m_FramebufferSpec;
 

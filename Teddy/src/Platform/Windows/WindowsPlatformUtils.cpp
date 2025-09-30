@@ -3,9 +3,9 @@
 
 #include "Teddy/Core/Application.h"
 
-#include <commdlg.h>
-
-#define SDL_PLATFORM_WIN32 1
+#ifdef TED_PLATFORM_WINDOWS
+	#define SDL_PLATFORM_WIN32 1
+#endif
 #include <SDL3/SDL.h>
 
 namespace Teddy

@@ -5,8 +5,6 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/MouseEvent.h"
 
-#include <glm/glm.hpp>
-
 namespace Teddy
 {
 

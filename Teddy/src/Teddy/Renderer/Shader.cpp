@@ -1,7 +1,10 @@
 #include "Teddy/Renderer/Shader.h"
 
 #include "Teddy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLShader.h"
+#endif
 
 namespace Teddy 
 {

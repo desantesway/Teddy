@@ -1,5 +1,4 @@
 #pragma once
-#include "TeddyPch.h"
 
 namespace Teddy 
 {

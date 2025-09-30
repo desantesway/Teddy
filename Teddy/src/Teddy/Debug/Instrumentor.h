@@ -2,9 +2,9 @@
 
 #include "Teddy/Core/Log.h"
 
-#include <string>
-
+#pragma warning(push, 0)
 #include <optick.h>
+#pragma warning(pop)
 
 namespace Teddy 
 {
@@ -147,7 +147,14 @@ namespace Teddy
 		{
 			OPTICK_STOP_CAPTURE();
 			OPTICK_FRAME("Final frame");
-			OPTICK_SAVE_CAPTURE(filepath.c_str());
+			try 
+			{
+				OPTICK_SAVE_CAPTURE(filepath.c_str());
+			}
+			catch (...)
+			{
+				TED_CORE_ERROR("Could not save profiling results to '{0}'", filepath);
+			}
 		}
 
 		static Instrumentor& Get()

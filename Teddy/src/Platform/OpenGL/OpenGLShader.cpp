@@ -87,6 +87,12 @@ namespace Teddy
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath, const bool& forceBuild)
 		: m_FilePath(filepath), m_Name(name)
 	{
+		//shaderc::Compiler compiler;
+		//shaderc::CompileOptions options;
+		//options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+		//options.SetOptimizationLevel(shaderc_optimization_level_performance);
+		//options.SetSuppressWarnings();
+
 		TED_PROFILE_FUNCTION();
 
 		Utils::CreateCacheDirectoryIfNeeded();

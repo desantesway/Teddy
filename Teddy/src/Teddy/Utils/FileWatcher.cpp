@@ -1,8 +1,5 @@
 #include "Teddy/Utils/FileWatcher.h"
-#include "Teddy/Renderer/Renderer.h"
 
-#include <chrono>
-#include <filesystem>
 #include <yaml-cpp/yaml.h>
 
 namespace Teddy

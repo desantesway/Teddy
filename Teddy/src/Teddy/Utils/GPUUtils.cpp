@@ -1,6 +1,8 @@
 #include "Teddy/Utils/GPUUtils.h"
 #include "Teddy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLUtils.h"
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLUtils.h"
+#endif
 
 namespace Teddy::GPUUtils
 {

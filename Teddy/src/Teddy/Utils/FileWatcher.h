@@ -1,9 +1,7 @@
 #pragma once
 
+#include "TeddyPch.h"
 #include "Teddy/Utils/FileGroupWatcher.h"
-
-#include <unordered_map>
-#include <string>
 
 namespace Teddy
 {

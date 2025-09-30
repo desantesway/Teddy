@@ -1,18 +1,5 @@
 #include "TeddyPch.h"
-#include "Teddy/Core/Application.h"
-
-#include "Teddy/Core/Log.h"
-
-#include "Teddy/Core/Input.h"
-#include "Teddy/Core/MidiCodes.h"
-#include "Teddy/Core/KeyCodes.h"
-#include "Teddy/Core/MouseCodes.h"
-
-#include "Teddy/Renderer/Renderer.h"
-
-#include "Teddy/Utils/PlatformUtils.h"
-
-#include "Teddy/Utils/FileWatcher.h"
+#include <Teddy.h>
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>

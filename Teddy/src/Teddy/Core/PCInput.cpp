@@ -5,13 +5,11 @@
 
 #include "Teddy/Core/CodeConverter.h"
 
-#include <SDL3/SDL.h>
-
 namespace Teddy
 {
 
-	bool m_MidiPedal = false;
-	std::unordered_map<int, bool> m_MidiKeysPressed;
+	bool  Input::m_MidiPedal = false;
+	std::unordered_map<int, bool> Input::m_MidiKeysPressed;
 
 	void Input::OnEvent(Event& e) 
 	{

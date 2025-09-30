@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
 #include "Teddy/Utils/FileWatcher.h"
 
 #include "Teddy/Renderer/Shader.h"

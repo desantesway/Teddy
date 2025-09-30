@@ -6,8 +6,6 @@
 #include "Teddy/Core/KeyCodes.h"
 #include "Teddy/Core/MidiCodes.h"
 
-#include <glm/glm.hpp>
-
 namespace Teddy 
 {
 	class Input
@@ -28,6 +26,10 @@ namespace Teddy
 		static glm::vec2 GetMousePosition();
 		static float GetMouseX();
 		static float GetMouseY();
+
+	private: 
+		static bool m_MidiPedal;
+		static std::unordered_map<int, bool> m_MidiKeysPressed;
 	};
 }
 

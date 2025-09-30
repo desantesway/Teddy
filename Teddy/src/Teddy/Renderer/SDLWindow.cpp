@@ -6,8 +6,6 @@
 
 #include "Teddy/Renderer/GraphicsContext.h"
 
-#include <thread>
-
 namespace Teddy 
 {
 	

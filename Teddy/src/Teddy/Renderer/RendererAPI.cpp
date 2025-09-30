@@ -1,7 +1,9 @@
 #include "TeddyPch.h"
 #include "Teddy/Renderer/RendererAPI.h"
 
-#include "Platform/OpenGL/OpenGLRendererAPI.h"
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLRendererAPI.h"
+#endif
 
 namespace Teddy 
 {

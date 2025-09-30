@@ -26,6 +26,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <random>
 
 #ifdef TED_PLATFORM_WINDOWS
 	#include <Windows.h>

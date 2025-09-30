@@ -1,10 +1,6 @@
 #include "Teddy.h"
 #include "Editor.h"
 
-#include "Teddy/Scene/SceneSerializer.h"
-#include "Teddy/Utils/PlatformUtils.h"
-#include "Teddy/Image/Atlas.h"
-
 #include <imgui.h>
 #include <ImGuizmo.h>
 

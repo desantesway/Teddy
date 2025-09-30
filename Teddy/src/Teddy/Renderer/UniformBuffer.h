@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
-
 namespace Teddy
 {
 

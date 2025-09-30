@@ -2,8 +2,6 @@
 
 #include "Teddy/Renderer/VertexArray.h"
 
-#include <glm/glm.hpp>
-
 namespace Teddy 
 {
 

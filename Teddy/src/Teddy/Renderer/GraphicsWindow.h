@@ -1,7 +1,4 @@
 #pragma once
-#include "Teddy/Core/Window.h"
-
-#include <SDL3/SDL.h>
 
 namespace Teddy 
 {
