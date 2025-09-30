@@ -10,7 +10,7 @@ namespace Teddy
 {
     extern const std::filesystem::path g_AssetPath;
 
-    void Editor::Init()
+    void Editor::Init(Ref<Scene> activeScene)
     {
         auto& assets = AssetManager::Get();
 
@@ -21,7 +21,11 @@ namespace Teddy
         // Post processing framebuffer (for editor layer)
         m_PostProcessedFramebuffer = Framebuffer::Create(PostProcessing::Get().GetFramebufferSpec());
 
-        NewScene();
+        m_ActiveScene = activeScene;
+        m_ActiveScene->OnViewportResize((uint32_t)1920, (uint32_t)1080);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        m_EditorScenePath = std::filesystem::path();
         m_EditorScene = m_ActiveScene;
 
         auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
@@ -34,23 +38,6 @@ namespace Teddy
         }
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-        auto square = m_ActiveScene->CreateEntity("black");
-        auto& sprite = square.AddComponent<SpriteRendererComponent>();
-        sprite.Color = { 0.0f, 0.0f, 0.0f, 0.5f };
-        square.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.1f };
-
-        auto bg = m_ActiveScene->CreateEntity("Animation");
-        auto& spriteAnimation = bg.AddComponent<SpriteAnimationComponent>();
-        auto& atlas = bg.AddComponent<SpriteAtlasComponent>(0, 2, 1013, 552);
-        spriteAnimation.PingPong = true;
-        spriteAnimation.Textures = assets.LoadMultiple<Texture2D>({ "assets/textures/CupAndMugMan_1013x552_2048x2048_0.png",
-            "assets/textures/CupAndMugMan_1013x552_2048x2048_1.png",
-            "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
-            });
-
-        auto cam = m_ActiveScene->CreateEntity("Camera");
-        cam.AddComponent<CameraComponent>();
 
         Renderer2D::SetLineWidth(4.0f);
     }

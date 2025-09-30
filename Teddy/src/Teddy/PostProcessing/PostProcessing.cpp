@@ -131,6 +131,7 @@ namespace Teddy
 		s_Data.VertexArray->Bind();
 
 		RenderCommand::DrawFramebufferTexture(m_Framebuffer->GetColorAttachmentRendererID());
+		RenderCommand::EnableDepth();
 	}
 
 	bool PostProcessing::IsEffectEnabled(Effect effect)
