@@ -12,8 +12,6 @@ Moving beyond the initial tutorial structure, Teddy has been extensively extende
 
 ---
 
-# If you want to see how it is in real use check the Cuphead branch [here](https://github.com/desantesway/Teddy/tree/cuphead), where I am remaking a Cuphead level and menus.
-
 ## 🧪 Usage (Windows)
 
 ### ⚠️ Requires VulkanSDK
