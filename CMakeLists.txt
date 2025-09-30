@@ -25,7 +25,8 @@ set(OUTPUT_INT_DIR "${CMAKE_BINARY_DIR}/bin-int/${CMAKE_BUILD_TYPE}-${CMAKE_SYST
 add_subdirectory(Teddy)
 add_subdirectory(Sandbox)
 add_subdirectory(Tedditor)
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Tedditor)
+add_subdirectory(Cuphead)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Cuphead)
 
 add_subdirectory(Teddy/vendor)
 
@@ -37,10 +38,14 @@ target_link_options(Tedditor PRIVATE /ignore:4099)
 # Engine linking
 target_link_libraries(Sandbox PRIVATE Teddy)
 target_link_libraries(Tedditor PRIVATE Teddy)
+target_link_libraries(TedditorLib PRIVATE Teddy)
+target_link_libraries(Cuphead PRIVATE Teddy)
 
 # VS folders
 set_target_properties(Teddy PROPERTIES FOLDER "Engine")
+set_target_properties(Cuphead PROPERTIES FOLDER "Engine/Game")
 set_target_properties(Sandbox PROPERTIES FOLDER "Engine/Game")
-set_target_properties(Tedditor PROPERTIES FOLDER "Engine/Game")
+set_target_properties(Tedditor PROPERTIES FOLDER "Engine/Editor")
+set_target_properties(TedditorLib PROPERTIES FOLDER "Engine/Editor")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
