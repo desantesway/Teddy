@@ -60,4 +60,5 @@ add_library(TedditorLib STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Editor.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/Editor.cpp
     )
+
 target_include_directories(TedditorLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/)
