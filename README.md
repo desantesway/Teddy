@@ -1,3 +1,9 @@
+# Current Progress:
+
+<img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/04f94fe5-313e-463e-8372-360b721bd288" />
+
+At this moment, I've done only the title screen, it has chromatic aberration, the old burn screen effect and the cuphead and mugman animation.
+
 # 🧸 Teddy – Game Engine (C++, OpenGL, SDL3 & ImGui)
 
 **Teddy** is a custom game engine built with **C++**, **OpenGL**, **SDL3**, designed to make my own games while learning render APIs.  
