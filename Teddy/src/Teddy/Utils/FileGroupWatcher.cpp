@@ -1,7 +1,5 @@
 #include "Teddy/Utils/FileGroupWatcher.h"
 
-#include "Teddy/Renderer/Renderer.h"
-
 namespace Teddy
 {
 	namespace Utils

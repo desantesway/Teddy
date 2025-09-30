@@ -1,18 +1,8 @@
 #include "TeddyPch.h"
 #include "Teddy/Core/Application.h"
 
-#include "Teddy/Core/Log.h"
-
-#include "Teddy/Core/Input.h"
-#include "Teddy/Core/MidiCodes.h"
-#include "Teddy/Core/KeyCodes.h"
-#include "Teddy/Core/MouseCodes.h"
-
 #include "Teddy/Renderer/Renderer.h"
-
 #include "Teddy/Utils/PlatformUtils.h"
-
-#include "Teddy/Utils/FileWatcher.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
@@ -38,7 +28,7 @@ namespace Teddy
 
 		Renderer::Init();
 
-		m_ImGuiLayer = new ImGuiLayer();
+		m_ImGuiLayer = CreateRef<ImGuiLayer>();
 		PushOverlay(m_ImGuiLayer);
 	}
 
@@ -49,7 +39,7 @@ namespace Teddy
 		Renderer::Shutdown();
 	}
 
-	void Application::PushLayer(Layer* layer)
+	void Application::PushLayer(Ref<Layer> layer)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -57,7 +47,7 @@ namespace Teddy
 		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer* layer)
+	void Application::PushOverlay(Ref<Layer> layer)
 	{
 		TED_PROFILE_FUNCTION();
 
@@ -100,15 +90,15 @@ namespace Teddy
 			{
 				TED_PROFILE_SCOPE("LayerStack OnUpdate");
 
-				for (Layer* layer : m_LayerStack)
+				for (Ref<Layer> layer : m_LayerStack)
 					layer->OnUpdate(timestep);
 			}
 
 			m_ImGuiLayer->Begin();
 			{
 				TED_PROFILE_SCOPE("ImGui LayerStack OnUpdate");
-
-				for (Layer* layer : m_LayerStack)
+			
+				for (Ref<Layer> layer : m_LayerStack)
 					layer->OnImGuiRender();
 			}
 			m_ImGuiLayer->End();
@@ -124,8 +114,6 @@ namespace Teddy
 
 		while (m_Running)
 		{
-			TED_PROFILE_SCOPE("Application Run Loop");
-
 			OnUpdate();
 		}
 	}

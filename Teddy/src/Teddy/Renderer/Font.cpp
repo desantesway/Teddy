@@ -38,7 +38,7 @@ namespace Teddy
 		spec.Wrap = TextureWrapFormat::REPEAT;
         spec.GenerateMips = false;
 
-        Ref<Texture2D> texture = AssetManager::Get().Load<Texture2D>((int)bitmap.pixels, spec);
+        Ref<Texture2D> texture = AssetManager::Get().Load<Texture2D>((uintptr_t)bitmap.pixels, spec);
         texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
         return texture;
     }

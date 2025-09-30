@@ -4,8 +4,6 @@
 #include "Teddy/Scene/Entity.h"
 #include "Teddy/Scene/Components.h"
 
-#include <fstream>
-
 #include <yaml-cpp/yaml.h>
 
 namespace YAML 

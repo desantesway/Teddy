@@ -1,7 +1,9 @@
 #include "TeddyPch.h"
 #include "Teddy/Renderer/Framebuffer.h"
 
+#ifdef TED_PLATFORM_WINDOWS
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
+#endif
 
 #include "Teddy/Renderer/Renderer.h"
 

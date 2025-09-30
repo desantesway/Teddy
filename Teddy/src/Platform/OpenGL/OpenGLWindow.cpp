@@ -1,7 +1,6 @@
 #include "TeddyPch.h"
 #include "Platform/OpenGL/OpenGLWindow.h"
 
-#include <SDL3/SDL.h>
 #include <glad/glad.h>
 
 namespace Teddy 

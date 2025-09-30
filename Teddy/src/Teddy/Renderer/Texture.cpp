@@ -2,7 +2,10 @@
 #include "Teddy/Renderer/Texture.h"
 
 #include "Teddy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
+
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLTexture.h"
+#endif
 
 namespace Teddy 
 {

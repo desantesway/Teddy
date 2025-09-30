@@ -3,7 +3,6 @@
 
 #include "Teddy/Events/MidiEvent.h"
 #include "Teddy/Core/MidiCodes.h"
-
 #include "Teddy/Core/CodeConverter.h"
 
 namespace Teddy 

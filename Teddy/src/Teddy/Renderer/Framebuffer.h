@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
 #include "Teddy/Renderer/TextureFormats.h"
 
 namespace Teddy

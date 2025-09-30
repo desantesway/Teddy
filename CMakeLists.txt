@@ -30,6 +30,11 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT C
 
 add_subdirectory(Teddy/vendor)
 
+# Ignoring shader c warnings
+target_link_options(Teddy PRIVATE /ignore:4099)
+target_link_options(Sandbox PRIVATE /ignore:4099)
+target_link_options(Tedditor PRIVATE /ignore:4099)
+
 # Engine linking
 target_link_libraries(Sandbox PRIVATE Teddy)
 target_link_libraries(Tedditor PRIVATE Teddy)

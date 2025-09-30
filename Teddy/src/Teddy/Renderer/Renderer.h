@@ -2,7 +2,6 @@
 
 #include "Teddy/Renderer/RenderCommand.h"
 
-#include "Teddy/Renderer/OrthographicCamera.h"
 #include "Teddy/Renderer/Shader.h"
 
 namespace Teddy 
@@ -16,7 +15,6 @@ namespace Teddy
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
 		static void Submit(const Ref<Shader>& shader,

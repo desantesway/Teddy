@@ -1,10 +1,5 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
-
-#include <string>
-#include <glm/glm.hpp>
-
 namespace Teddy 
 {
 	class Shader 

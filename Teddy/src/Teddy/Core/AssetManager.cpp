@@ -12,9 +12,17 @@ namespace Teddy
 		s_Instance = this;
 	}
 
+	AssetManager::~AssetManager()
+	{
+		m_FileWatcher.StopWatching();
+
+		s_Instance = nullptr;
+	}
+
 	void AssetManager::OnUpdate()
 	{
-		m_FileWatcher.Watch();
+		if(m_HotReload)
+			m_FileWatcher.Watch();
 	}
 
 	template<typename T>

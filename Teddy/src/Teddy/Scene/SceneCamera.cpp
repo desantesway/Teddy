@@ -1,8 +1,6 @@
 #include "TeddyPch.h"
 #include "Teddy/Scene/SceneCamera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Teddy
 {
 	SceneCamera::SceneCamera()

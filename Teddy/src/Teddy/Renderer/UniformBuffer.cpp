@@ -1,8 +1,12 @@
 #include "TeddyPch.h"
-#include "UniformBuffer.h"
+#include "Teddy/Renderer/UniformBuffer.h"
 
 #include "Teddy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLUniformBuffer.h"
+
+#ifdef TED_PLATFORM_WINDOWS
+	#include "Platform/OpenGL/OpenGLUniformBuffer.h"
+#endif
+
 
 namespace Teddy
 {

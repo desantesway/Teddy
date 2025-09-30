@@ -2,7 +2,7 @@
 #include "Teddy/Renderer/Renderer.h"
 #include "Teddy/Renderer/Renderer2D.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Teddy/PostProcessing/PostProcessing.h"
 
 namespace Teddy 
 {
@@ -15,6 +15,7 @@ namespace Teddy
 
 		RenderCommand::Init();
 		Renderer2D::Init();
+		PostProcessing::Init();
 	}
 
 	void Renderer::Shutdown()
@@ -25,11 +26,6 @@ namespace Teddy
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height) 
 	{
 		RenderCommand::SetViewport(0, 0, width, height);
-	}
-
-	void Renderer::BeginScene(OrthographicCamera& camera)
-	{
-		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()

@@ -9,10 +9,8 @@
 
 #include "Teddy/Renderer/MSDFData.h"
 #include "Teddy/Core/AssetManager.h"
+#include "Teddy/Utils/GPUUtils.h"
 
-#include <glad/glad.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 // TODO: For 3D implement instancing instead of batching
@@ -122,13 +120,13 @@ namespace Teddy
 		std::array<Weak<Texture2D>, MaxTextureSlots> FontAtlasSlots;
 		uint32_t FontAtlasSlotIndex = 0;
 
-		glm::vec4 QuadVertexPositions[4];
+		glm::vec4 QuadVertexPositions[4] = { glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f) };
 
 		Renderer2D::Statistics Stats;
 
 		struct CameraData
 		{
-			glm::mat4 ViewProjection;
+			glm::mat4 ViewProjection = glm::mat4(0.0f);
 		};
 
 		CameraData CameraBuffer;
@@ -142,21 +140,8 @@ namespace Teddy
 	void Renderer2D::Init()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
-		// Quad
-		s_Data.QuadResources.VertexArray = VertexArray::Create();
 
-		s_Data.QuadResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.QuadResources.VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" },
-			{ ShaderDataType::Float, "a_EntityID" }
-			});
-		s_Data.QuadResources.VertexArray->AddVertexBuffer(s_Data.QuadResources.VertexBuffer);
-
-		s_Data.QuadResources.VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+		s_Data.TextureSlotsCapacity = std::min<uint32_t>(GPUUtils::GetMaxImageUnits(), s_Data.MaxTextureSlots);
 
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
@@ -175,8 +160,24 @@ namespace Teddy
 		}
 
 		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadResources.VertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
+
+		// Quad
+		s_Data.QuadResources.VertexArray = VertexArray::Create();
+		s_Data.QuadResources.VertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+
+		s_Data.QuadResources.VertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float,  "a_TexIndex" },
+			{ ShaderDataType::Float,  "a_TilingFactor" },
+			{ ShaderDataType::Int,    "a_EntityID" }
+			});
+
+		s_Data.QuadResources.VertexArray->AddVertexBuffer(s_Data.QuadResources.VertexBuffer);
+		s_Data.QuadResources.VertexArray->SetIndexBuffer(quadIB);
+		s_Data.QuadResources.VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
 		// Circle
 		s_Data.CircleResources.VertexArray = VertexArray::Create();
@@ -248,10 +249,6 @@ namespace Teddy
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture = AssetManager::Get().Load<Texture2D>(whiteTextureData, TextureSpecification());
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
-		GLint maxFragmentUnits = 0;
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragmentUnits);
-		s_Data.TextureSlotsCapacity = std::min<uint32_t>((uint32_t)maxFragmentUnits, Renderer2DData::MaxTextureSlots);
 
 		// Adding shaders
 		auto& assets = AssetManager::Get();

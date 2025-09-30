@@ -6,10 +6,7 @@
 #include "Teddy/Events/ApplicationEvent.h"
 #include "Teddy/Events/KeyEvent.h"
 #include "Teddy/Events/MouseEvent.h"
-
 #include "Teddy/Core/CodeConverter.h"
-
-#include "Teddy/Renderer/Renderer.h"
 
 namespace Teddy 
 {

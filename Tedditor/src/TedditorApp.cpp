@@ -15,7 +15,7 @@ namespace Teddy
 		Tedditor(const ApplicationSpecification& spec)
 			: Application(spec)
 		{
-			PushLayer(new EditorLayer());
+			PushLayer(CreateRef<EditorLayer>());
 		}
 
 		~Tedditor() 

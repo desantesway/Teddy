@@ -22,9 +22,19 @@ namespace Teddy
 			s_RendererAPI->SetClearColor(color);
 		}
 
+		static void ClearColor()
+		{
+			s_RendererAPI->ClearColor();
+		}
+
 		static void Clear()
 		{
 			s_RendererAPI->Clear();
+		}
+
+		static void DrawFramebufferTexture(uint32_t renderID)
+		{
+			s_RendererAPI->DrawFramebufferTexture(renderID);
 		}
 
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0)

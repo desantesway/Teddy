@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Teddy/Core/Base.h"
 #include "Teddy/Utils/FileWatcher.h"
 
 #include "Teddy/Renderer/Shader.h"
@@ -15,7 +14,7 @@ namespace Teddy
 	{
 	public:
 		AssetManager();
-		~AssetManager() { m_FileWatcher.StopWatching(); }
+		~AssetManager();
 
 		static AssetManager& Get() { return *s_Instance; }
 
@@ -27,6 +26,8 @@ namespace Teddy
 		};
 
 		void OnUpdate();
+
+		void SetHotReloading(bool hotReload) { m_HotReload = hotReload; }
 
 		template<typename T>
 		std::unordered_set<std::string> AssetsToReload(bool changesHandled);
@@ -143,6 +144,7 @@ namespace Teddy
 		AssetGroup<Font> m_Fonts;
 		Ref<Font> m_DefaultFont = nullptr;
 
+		bool m_HotReload = false;
 	private:
 		static AssetManager* s_Instance;
 	};

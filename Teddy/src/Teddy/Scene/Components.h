@@ -6,9 +6,6 @@
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Core/AssetManager.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Teddy
 {
 
@@ -89,6 +86,9 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
+		enum class BlendingMode { None = 0, Alpha, Additive };
+		BlendingMode BlendMode = BlendingMode::None;
+
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
 		SpriteAnimationComponent(float initFrame, float frame, float finalFrame)
@@ -141,8 +141,8 @@ namespace Teddy
 	{
 		ScriptableEntity* Instance = nullptr;
 
-		ScriptableEntity* (*InstantiateScript)();
-		void (*DestroyScript)(NativeScriptComponent*);
+		ScriptableEntity* (*InstantiateScript)() = nullptr;
+		void (*DestroyScript)(NativeScriptComponent*) = nullptr;
 
 		template<typename T>
 		void Bind()

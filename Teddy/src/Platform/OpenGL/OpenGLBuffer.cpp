@@ -1,5 +1,5 @@
 #include "Platform/OpenGL/OpenGLBuffer.h"
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 namespace Teddy 
 {

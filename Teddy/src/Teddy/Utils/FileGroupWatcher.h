@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <chrono>
+#include "TeddyPch.h"
 
 namespace Teddy
 {

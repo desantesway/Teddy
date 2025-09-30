@@ -1,13 +1,12 @@
 #include "SceneHierarchyPanel.h"
 
-#include <imgui.h>
-#include <imgui_internal.h>
-
+#include "TeddyPch.h"
 #include "Teddy/Scene/Components.h"
-#include <cstring>
-#include <algorithm>
 
 #include <glm/gtc/type_ptr.hpp>
+
+#include <imgui.h>
+#include <imgui_internal.h>
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -15,7 +14,6 @@
 #ifdef _MSVC_LANG
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-
 
 namespace Teddy
 {
@@ -132,7 +130,6 @@ namespace Teddy
 
 		if (m_SelectionContext)
 		{
-			// ?
 			DrawComponents(m_SelectionContext);
 		}
 

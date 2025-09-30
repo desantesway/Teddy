@@ -1,14 +1,11 @@
 #include "TeddyPch.h"
 #include "Teddy/Scene/Scene.h"
-#include "Teddy/Scene/Components.h"
 
+#include "Teddy/Scene/Components.h"
 #include "Teddy/Renderer/Renderer2D.h"
 #include "Teddy/Scene/Entity.h"
 #include "Teddy/Scene/ScriptableEntity.h"
 
-#include "Teddy/Renderer/MSDFData.h"
-
-#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/glm.hpp>
 
 namespace Teddy
@@ -444,7 +441,7 @@ namespace Teddy
 		}
 
 		// Render
-		Camera* activeCamera;
+		Camera* activeCamera = nullptr;
 		TransformComponent cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent>();

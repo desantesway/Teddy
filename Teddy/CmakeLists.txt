@@ -126,16 +126,10 @@ add_library(Teddy STATIC
 
     # Camera
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Camera.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCamera.cpp
 
     # Texture
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Texture.cpp
-
-    # Camera Controller
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/OrthographicCameraController.cpp
 
     # Renderer 2D
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Renderer/Renderer2D.h
@@ -189,6 +183,14 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Scene/SceneSerializer.cpp
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    #<> Post Processing <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    # Post Processing
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/PostProcessing/PostProcessing.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/PostProcessing/PostProcessing.cpp
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Debug <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -209,6 +211,10 @@ add_library(Teddy STATIC
     # File Group Watcher
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/FileGroupWatcher.cpp
+
+    # GPU Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/GPUUtils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Utils/GPUUtils.cpp
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Math <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -281,6 +287,9 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTextureFormats.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLTextureFormats.h
 
+    # Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Platform/OpenGL/OpenGLUtils.h
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Windows <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -312,6 +321,8 @@ set_target_properties(Teddy PROPERTIES
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG /ignore:4099")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /ignore:4099")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /ignore:4099")
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} /ignore:4099")
 endif()
