@@ -53,10 +53,11 @@ Engine                 | 2D                          | 3D                     | 
 -------------          | -------------               | -------------          | -------------
 Scenes Serialization   | Quad/Circle/Line rendering  | Perspective Camera     | Fustrum Culling
 ECS                    | Textures                    |                        | Audio Engine
-Physics                | Collider rendering          |                        | Protection
-Keyboard IO            | Batching                    |                        | Vulkan
-Mouse IO               | Perspective Camera          |                        | Compression
-Midi IO                | Orthographic Camera         |                        | Mip Mapping
-Scene editor           | Dynamic font rendering      |                        | GPU profiler
-Profiler               |                             |                        | 2D lights
-Stats                  |                             |                        | ...
+Keyboard/Mouse/Midi IO | Batching                    |                        | Vulkan
+Scene Editor           | Perspective Camera          |                        | Compression
+Profiler               | Orthographic Camera         |                        | GPU profiler
+Stats                  | Dynamic font rendering      |                        | 2D lights
+Post Processing        | Physics                     |                        | Protection
+Scene&Tex Hot Reload   | Collider rendering          |                        | 
+Atlas Render&Generator |                             |                        | 
+Physics                |                             |                        | 
