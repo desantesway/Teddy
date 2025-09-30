@@ -13,7 +13,7 @@ public:
 	Sandbox(const Teddy::ApplicationSpecification& specification)
 		: Teddy::Application(specification)
 	{
-		PushLayer(new Sandbox2D());
+		PushLayer(CreateRef<Sandbox2D>());
 	}
 	~Sandbox() 
 	{
@@ -22,7 +22,7 @@ public:
 };
 
 
-Teddy::Application* Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs args)
+Teddy::Scope<Teddy::Application> Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs args)
 	
 {
 	ApplicationSpecification spec;
@@ -31,5 +31,5 @@ Teddy::Application* Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs a
 	spec.WorkingDirectory = "../Tedditor";
 	spec.CommandLineArgs = args;
 
-	return new Sandbox(spec);
+	return CreateScope<Sandbox>(spec);
 }

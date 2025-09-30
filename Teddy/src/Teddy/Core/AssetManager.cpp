@@ -12,6 +12,11 @@ namespace Teddy
 		s_Instance = this;
 	}
 
+	AssetManager::~AssetManager()
+	{
+		m_FileWatcher.StopWatching();
+	}
+
 	void AssetManager::OnUpdate()
 	{
 		if(m_HotReload)

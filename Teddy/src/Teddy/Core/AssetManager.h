@@ -14,7 +14,7 @@ namespace Teddy
 	{
 	public:
 		AssetManager();
-		~AssetManager() { m_FileWatcher.StopWatching(); }
+		~AssetManager();
 
 		static AssetManager& Get() { return *s_Instance; }
 

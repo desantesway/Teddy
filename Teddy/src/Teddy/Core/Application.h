@@ -44,14 +44,14 @@ namespace Teddy
 
 		void OnEvent(Event& e);
 
-		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* layer);
+		void PushLayer(Ref<Layer> layer);
+		void PushOverlay(Ref<Layer> layer);
 
 		Window& GetWindow() { return *m_Window; }
 
 		void Close() { m_Running = false; }
 
-		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+		Ref<ImGuiLayer> GetImGuiLayer() { return m_ImGuiLayer; }
 
 		static Application& Get() { return *s_Instance; }
 
@@ -67,7 +67,7 @@ namespace Teddy
 		ApplicationSpecification m_Specification;
 
 		Scope<Window> m_Window;
-		ImGuiLayer* m_ImGuiLayer;
+		Ref<ImGuiLayer> m_ImGuiLayer;
 		bool m_Running = true; 
 		bool m_NeedsRender = false;
 		bool m_Minimized = false;
