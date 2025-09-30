@@ -44,6 +44,7 @@ The goal: Build a **scalable, low-level game engine** to enable:
 - ⚙️ **Custom Physics Simulation** – deterministic 2D physics with debug visualization
 - 📝 **Dynamic Text Rendering** – for UI and runtime data display
 - 🧰 **ImGui-based Editor** – live entity management, scene loading/saving, physics debugging, real-time graphs and metrics
+- 🎨 **Post-Processing Effects** – starting with chromatic aberration (extensible for bloom, tone mapping, and other effects)
 
 ---
 
