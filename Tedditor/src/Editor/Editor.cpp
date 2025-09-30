@@ -755,6 +755,7 @@ namespace Teddy
         {
             if (control)
                 OnDuplicateEntity();
+            break;
         }
 
         // Gizmos

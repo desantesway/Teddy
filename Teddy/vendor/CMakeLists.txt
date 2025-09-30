@@ -45,7 +45,7 @@ set(OPTICK_SRC
 
 add_library(optick STATIC ${OPTICK_SRC})
 
-target_include_directories(optick PUBLIC optick/src)
+target_include_directories(optick SYSTEM PUBLIC optick/src)
 
 target_link_libraries(Teddy PUBLIC optick)
 set_target_properties(optick PROPERTIES FOLDER "Dependencies/Profiling")
@@ -283,6 +283,9 @@ target_link_libraries(Teddy PUBLIC spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 set_target_properties(spdlog PROPERTIES FOLDER "Dependencies/Log")
 
+#target_compile_options(spdlog PRIVATE /w)
+target_include_directories(Teddy SYSTEM PRIVATE spdlog/include)
+
 # Glad
 find_package(OpenGL REQUIRED)
 
@@ -323,6 +326,9 @@ set_target_properties(yaml-cpp PROPERTIES FOLDER "Dependencies/Yaml")
 set_target_properties(yaml-cpp-parse PROPERTIES FOLDER "Dependencies/Yaml")
 set_target_properties(yaml-cpp-read PROPERTIES FOLDER "Dependencies/Yaml")
 set_target_properties(yaml-cpp-sandbox PROPERTIES FOLDER "Dependencies/Yaml")
+
+target_include_directories(Teddy SYSTEM PRIVATE yaml-cpp/include)
+#target_compile_options(yaml-cpp PRIVATE /w)
 
 # Box2D
 add_subdirectory(box2d)
@@ -395,7 +401,7 @@ if(Vulkan_FOUND)
     endif()
 
     foreach(tgt IN ITEMS Teddy optick)
-        target_include_directories(${tgt} PUBLIC ${Vulkan_INCLUDE_DIRS} ${SPIRV_EXTRA_INCLUDE})
+        target_include_directories(${tgt} SYSTEM PUBLIC ${Vulkan_INCLUDE_DIRS} ${SPIRV_EXTRA_INCLUDE})
         # Core Vulkan + shaderc (shaderc_combined already pulls SPIRV-Tools internally)
         target_link_libraries(${tgt} PUBLIC Vulkan::Vulkan Vulkan::shaderc_combined)
         # Only link the extra libraries if they were found (TARGET exists)
