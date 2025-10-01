@@ -12,39 +12,43 @@
 	#include "../Editor/EditorLayer.h"
 #endif
 
-class Cuphead : public Teddy::Application
+namespace Cuphead
 {
-public:
-	Cuphead(const Teddy::ApplicationSpecification& specification)
-		: Teddy::Application(specification)
+	class CupheadApp : public Teddy::Application
 	{
+	public:
+		CupheadApp(const Teddy::ApplicationSpecification& specification)
+			: Teddy::Application(specification)
+		{
 		
-#ifdef TED_DEBUG
-		PushLayer(Teddy::CreateRef<Teddy::EditorLayer>());
-#else
-		PushLayer(Teddy::CreateRef<StartLayer>());
-		PushLayer(Teddy::CreateRef<CupheadLayer>());
-		PushLayer(Teddy::CreateRef<OverlayLayer>());
-		PushLayer(Teddy::CreateRef<EndLayer>());
-#endif
+	#ifdef TED_DEBUG
+			PushLayer(Teddy::CreateRef<Teddy::EditorLayer>());
+	#else
+			PushLayer(Teddy::CreateRef<StartLayer>());
+			PushLayer(Teddy::CreateRef<CupheadLayer>());
+			PushLayer(Teddy::CreateRef<OverlayLayer>());
+			PushLayer(Teddy::CreateRef<EndLayer>());
+	#endif
 
-	}
+		}
 
-	~Cuphead()
-	{
-		// Cleanup code can go here
-	}
-};
+		~CupheadApp()
+		{
+			// Cleanup code can go here
+		}
+	};
 
+
+}
 
 Teddy::Application* Teddy::CreateApplication(Teddy::ApplicationCommandLineArgs args)
 	
 {
-	ApplicationSpecification spec;
+	Teddy::ApplicationSpecification spec;
 
 	spec.Name = "Cuphead Remake";
 	spec.WorkingDirectory = "";
 	spec.CommandLineArgs = args;
 
-	return new Cuphead(spec);
+	return new Cuphead::CupheadApp(spec);
 }

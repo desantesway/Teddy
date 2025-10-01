@@ -21,8 +21,14 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.cpp
 
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/GameScenes.h
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/GameScenes.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/GameScenes.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/GameScenes.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainTitleScene.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainTitleScene.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainMenuScene.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainMenuScene.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.h
 
                                     # Editor
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h

@@ -7,7 +7,7 @@
 
 namespace Teddy
 {
-	class EditorLayer : public CupheadLayer
+	class EditorLayer : public Cuphead::CupheadLayer
 	{
 	public:
 		EditorLayer();

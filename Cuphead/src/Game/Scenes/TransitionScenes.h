@@ -1,0 +1,45 @@
+#pragma once
+
+#include "Teddy/Scene/Scene.h"
+#include "Teddy/Core/Timestep.h"
+
+namespace Cuphead
+{
+	class TransitionScenes
+	{
+	public:
+
+		TransitionScenes() = default;
+		~TransitionScenes() = default;
+
+		void Init();
+
+		void OnUpdate(Teddy::Timestep ts);
+
+		void InitFadeScene();
+		bool FadeIn();
+		bool FadeIn(const float& velocity, const Teddy::Timestep& ts);
+		bool IsFadedIn();
+		bool FadeOut(const float& velocity, const Teddy::Timestep& ts);
+
+		void InitCircleScene();
+		bool CircleIn();
+		bool CircleIn(const float& velocity, const Teddy::Timestep& ts);
+		bool IsCircleIn();
+		bool CircleOut(const float& velocity, const Teddy::Timestep& ts);
+	private:
+		void CheckAndCreateScene();
+	private:
+
+		bool m_Faded = false;
+		bool m_FadeIn = false;
+
+		bool m_CircleClosed = false;
+		bool m_CircleIn = false;
+
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+
+		Teddy::Ref<Teddy::Entity> m_TransitionQuad = nullptr;
+		Teddy::Ref<Teddy::Entity> m_TransitionCircle = nullptr;
+	};
+}

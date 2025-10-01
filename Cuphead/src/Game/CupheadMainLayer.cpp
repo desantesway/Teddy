@@ -1,85 +1,82 @@
+#include "TeddyPch.h"
 #include "CupheadMainLayer.h"
-
-#include <chrono>
-
-#include <imgui.h>
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "Teddy/Scene/SceneSerializer.h"
 #include "Teddy/Utils/PlatformUtils.h"
 
-#include "GameScenes.h"
+#include "Scenes/GameScenes.h"
 
-CupheadLayer::CupheadLayer()
-	: Layer("Main Layer")
+namespace Cuphead
 {
 
-}
-
-void CupheadLayer::OnAttach()
-{
-	TED_PROFILE_FUNCTION();
-
-    //TODO: change this to a gamestate singleton
-
-	m_ActiveScene = GameScenes::Get()->InitTitleStart();
-
-	Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
-	Teddy::PostProcessing::SetChromaticAberrationOffset({ 5.0f, 5.0f, -5.0f }); // Max: 10
-}
-
-void CupheadLayer::OnDetach()
-{
-	TED_PROFILE_FUNCTION();
-}
-
-void CupheadLayer::OnUpdate(Teddy::Timestep ts)
-{
-	TED_PROFILE_FUNCTION();
-
-    if (GameScenes::Get()->OnUpdate(ts))
-        m_ActiveScene = GameScenes::Get()->InitNextScene();
-
+    CupheadLayer::CupheadLayer()
+	    : Layer("Main Layer")
     {
-        TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
-        m_ActiveScene->AlwaysOnUpdate();
-        m_ActiveScene->OnUpdateRuntime(ts);
     }
-}
 
-bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)
-{
-    TED_PROFILE_FUNCTION();
+    void CupheadLayer::OnAttach()
+    {
+	    TED_PROFILE_FUNCTION();
 
-    GameScenes::Get()->ProceedToMainMenu();
+		GameScenes::Init();
+	    m_ActiveScene = GameScenes::InitNextScene();
 
-    return true;
-}
+	    Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
+	    Teddy::PostProcessing::SetChromaticAberrationOffset({ 5.0f, 5.0f, -5.0f }); // Max: 10
+    }
 
-bool CupheadLayer::OnWindowResize(Teddy::WindowResizeEvent& e)
-{
-    TED_PROFILE_FUNCTION();
+    void CupheadLayer::OnDetach()
+    {
+	    TED_PROFILE_FUNCTION();
+    }
 
-    m_ActiveScene->OnViewportResize((uint32_t)e.GetWidth(), (uint32_t)e.GetHeight());
+    void CupheadLayer::OnUpdate(Teddy::Timestep ts)
+    {
+	    TED_PROFILE_FUNCTION();
 
-    return false;
-}
+        {
+            TED_PROFILE_SCOPE("Renderer Draw (CPU)");
 
-void CupheadLayer::OnEvent(Teddy::Event& event)
-{
-    TED_PROFILE_FUNCTION();
+            m_ActiveScene->AlwaysOnUpdate();
+            m_ActiveScene->OnUpdateRuntime(ts);
+        }
 
-    Teddy::EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
-    dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize));
+        if (GameScenes::OnUpdate(ts))
+            m_ActiveScene = GameScenes::InitNextScene();
+    }
 
-    m_ActiveScene->OnEvent(event);
-}
+    bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)
+    {
+        TED_PROFILE_FUNCTION();
+        
+        return false;
+    }
 
-void CupheadLayer::OnImGuiRender()
-{
-	TED_PROFILE_FUNCTION();
+    bool CupheadLayer::OnWindowResize(Teddy::WindowResizeEvent& e)
+    {
+        TED_PROFILE_FUNCTION();
+
+        m_ActiveScene->OnViewportResize((uint32_t)e.GetWidth(), (uint32_t)e.GetHeight());
+
+        return false;
+    }
+
+    void CupheadLayer::OnEvent(Teddy::Event& event)
+    {
+        TED_PROFILE_FUNCTION();
+        
+        Teddy::EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
+        dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize));
+
+        GameScenes::Get()->OnEvent(event);
+        m_ActiveScene->OnEvent(event);
+    }
+
+    void CupheadLayer::OnImGuiRender()
+    {
+	    TED_PROFILE_FUNCTION();
+    }
+
 }
