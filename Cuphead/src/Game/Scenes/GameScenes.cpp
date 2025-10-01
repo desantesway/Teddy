@@ -4,8 +4,11 @@ namespace Cuphead
 {
     GameScenes* GameScenes::instance = nullptr;
 
-    MainTitleScene GameScenes::m_MainTitleScene;
+    Teddy::Ref<Teddy::Scene> GameScenes::m_ActiveScene = nullptr;
+
     TransitionScenes GameScenes::m_TransitionScenes;
+    MainTitleScene GameScenes::m_MainTitleScene;
+    MainMenuScene GameScenes::m_MainMenuScene;
 
     int GameScenes::m_CurrentScene = 0;
 
@@ -32,6 +35,8 @@ namespace Cuphead
             {
                 case 1:
                     return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
+                case 2:
+                    return false;
                 default:
                     TED_CORE_INFO("No scene loaded for index {0}", m_CurrentScene);
                     break;
@@ -43,12 +48,20 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitMainTitle()
     {
-        return m_MainTitleScene.Init();
+        // TODO: AssetManager bypass
+        Teddy::Ref<Teddy::Scene> scene = m_MainTitleScene.Init();
+        m_ActiveScene = scene;
+        return scene;
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitTitleMenu()
     {
-		return nullptr;
+        m_TransitionScenes.FadeOut();
+        m_TransitionScenes.SetCircleAlpha(0.0f);
+        m_TransitionScenes.CircleOut();
+		Teddy::Ref<Teddy::Scene> scene = m_MainMenuScene.Init();
+		m_ActiveScene = scene;
+		return scene;
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
@@ -58,7 +71,7 @@ namespace Cuphead
             case 1:
                 return InitMainTitle();
             case 2:
-                return InitMainTitle(); //InitTitleMenu() !!!!!!
+                return InitTitleMenu();
             default:
                 TED_CORE_INFO("No scene found for index {0}", m_CurrentScene);
                 return nullptr;

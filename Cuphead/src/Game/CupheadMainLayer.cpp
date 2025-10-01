@@ -68,7 +68,7 @@ namespace Cuphead
         
         Teddy::EventDispatcher dispatcher(event);
         dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
-        dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize));
+        dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize)); // TODO: WINDOW SIZE/RESIZE
 
         GameScenes::Get()->OnEvent(event);
         m_ActiveScene->OnEvent(event);

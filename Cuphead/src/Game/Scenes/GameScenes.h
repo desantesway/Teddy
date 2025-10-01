@@ -3,6 +3,7 @@
 #include <Teddy.h>
 #include "MainTitleScene.h"
 #include "TransitionScenes.h"
+#include "MainMenuScene.h"
 
 namespace Cuphead
 {
@@ -28,8 +29,11 @@ namespace Cuphead
 	private:
 		static int m_CurrentScene;
 
+		static Teddy::Ref<Teddy::Scene> m_ActiveScene;
+
 		static TransitionScenes m_TransitionScenes;
 		static MainTitleScene m_MainTitleScene;
+		static MainMenuScene m_MainMenuScene;
 	private:
 		static GameScenes* instance;
 	};

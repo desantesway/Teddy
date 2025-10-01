@@ -22,11 +22,26 @@ namespace Cuphead
                 m_Faded = true;
 			}
         }
+        else if (m_FadeOut && m_Faded)
+        {
+            if (FadeOut(2.5f, ts))
+            {
+                m_Faded = false;
+            }
+        }
+
         if (m_CircleIn && !m_CircleClosed)
         {
             if (CircleIn(2.0f, ts))
             {
                 m_CircleClosed = true;
+            }
+        }
+        else if (m_CircleOut && m_CircleClosed)
+        {
+            if (CircleOut(2.5f, ts))
+            {
+                m_CircleClosed = false;
             }
         }
 
@@ -66,7 +81,18 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
+        m_FadeOut = false;
         m_FadeIn = true;
+
+        return false;
+    }
+
+    bool TransitionScenes::FadeOut()
+    {
+        TED_PROFILE_FUNCTION();
+
+        m_FadeIn = false;
+        m_FadeOut = true;
 
         return false;
     }
@@ -80,6 +106,21 @@ namespace Cuphead
         if (transitionQuad.Color.a > 1.0f)
         {
             transitionQuad.Color.a = 1.0f;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool TransitionScenes::FadeOut(const float& velocity, const Teddy::Timestep& ts)
+    {
+        TED_PROFILE_FUNCTION();
+
+        auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+        transitionQuad.Color.a -= velocity * ts;
+        if (transitionQuad.Color.a < 0.0f)
+        {
+            transitionQuad.Color.a = 0.0f;
             return true;
         }
 
@@ -112,6 +153,7 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
+		m_CircleOut = false;
         m_CircleIn = true;
 
         return false;
@@ -135,5 +177,36 @@ namespace Cuphead
     bool TransitionScenes::IsCircleIn()
     {
         return m_CircleClosed && m_CircleIn;
+    }
+
+    bool TransitionScenes::CircleOut()
+    {
+        TED_PROFILE_FUNCTION();
+
+        m_CircleIn = false;
+        m_CircleOut = true;
+
+        return false;
+    }
+
+    bool TransitionScenes::CircleOut(const float& velocity, const Teddy::Timestep& ts)
+    {
+        TED_PROFILE_FUNCTION();
+
+        auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+        transitionCircle.Thickness -= velocity * ts;
+        if (transitionCircle.Thickness < 0.0f)
+        {
+            transitionCircle.Thickness = 0.0f;
+            return true;
+        }
+
+        return false;
+    }
+
+    void TransitionScenes::SetCircleAlpha(const float& alpha)
+    {
+        auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+		transitionCircle.Color.a = alpha;
     }
 }

@@ -20,22 +20,29 @@ namespace Cuphead
 		bool FadeIn();
 		bool FadeIn(const float& velocity, const Teddy::Timestep& ts);
 		bool IsFadedIn();
+		bool FadeOut();
 		bool FadeOut(const float& velocity, const Teddy::Timestep& ts);
+		bool IsFadedOut();
 
 		void InitCircleScene();
 		bool CircleIn();
 		bool CircleIn(const float& velocity, const Teddy::Timestep& ts);
 		bool IsCircleIn();
+		bool CircleOut();
 		bool CircleOut(const float& velocity, const Teddy::Timestep& ts);
+		bool IsCircleOut();
+		void SetCircleAlpha(const float& alpha);
 	private:
 		void CheckAndCreateScene();
 	private:
 
 		bool m_Faded = false;
 		bool m_FadeIn = false;
+		bool m_FadeOut = false;
 
 		bool m_CircleClosed = false;
 		bool m_CircleIn = false;
+		bool m_CircleOut = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 

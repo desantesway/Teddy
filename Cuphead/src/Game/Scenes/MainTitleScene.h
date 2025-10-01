@@ -12,8 +12,5 @@ namespace Cuphead
 		~MainTitleScene() = default;
 
 		Teddy::Ref<Teddy::Scene> Init();
-	private:
-		bool m_Transitioning = false;
-		bool m_LoadMainMenu = false;
 	};
 }

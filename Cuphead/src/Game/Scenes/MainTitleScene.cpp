@@ -9,7 +9,7 @@ namespace Cuphead
         Teddy::Ref<Teddy::Scene> initialScene = Teddy::CreateRef<Teddy::Scene>();
         initialScene->OnRuntimeStart();
 
-        auto camEntt = initialScene->CreateEntity("Camera");
+        auto camEntt = initialScene->CreateEntity("Main Title Camera");
         camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
         auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
         cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
@@ -18,7 +18,7 @@ namespace Cuphead
         // Cuphead Animation
         auto& assets = Teddy::AssetManager::Get();
 
-        auto cupheadAnimation = initialScene->CreateEntity("Animation Title");
+        auto cupheadAnimation = initialScene->CreateEntity("Main Title Animation Title");
         cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 1013, 552);
         auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.05f, 0.25f); // TODO: intial frame is being ran twice?
         spriteAnimation.PingPong = true;
@@ -34,7 +34,7 @@ namespace Cuphead
         spriteAnimation.IsBackground = true;
 
         // Text
-        auto textEntity = initialScene->CreateEntity("Title text");
+        auto textEntity = initialScene->CreateEntity("Main Title Title text");
         auto& text = textEntity.AddComponent<Teddy::TextComponent>();
         text.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
         text.SetString("Press Any Button");
@@ -69,10 +69,12 @@ namespace Cuphead
         textEntity.AddComponent<Teddy::NativeScriptComponent>().Bind<TitleText>();
 
         // Background
-        auto background = initialScene->CreateEntity("Background");
+        auto background = initialScene->CreateEntity("Main Title Background");
         auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
         sprite.IsBackground = true;
-        sprite.Texture = assets.Load<Teddy::Texture2D>("Background", "assets/Textures/cuttedSpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
+        sprite.Texture = assets.Load<Teddy::Texture2D>("Main Title Background", "assets/Textures/SpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
+
+        background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1280, 720);
 
         return initialScene;
     }
