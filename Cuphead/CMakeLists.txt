@@ -21,6 +21,9 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/EndLayer.cpp
 
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/GameScenes.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/GameScenes.cpp
+
                                     # Editor
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.cpp

@@ -23,11 +23,4 @@ private:
 	void LoadMainMenu(Teddy::Timestep ts);
 protected:
 	Teddy::Ref<Teddy::Scene> m_ActiveScene;
-
-	bool m_ProceedToMainMenu = false;
-	bool m_Transitioning = false;
-	bool m_LoadMainMenu = false;
-
-	Teddy::Ref<Teddy::Entity> m_TransitionCircle;
-	Teddy::Ref<Teddy::Entity> m_TransitionQuad;
 };
