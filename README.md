@@ -1,3 +1,9 @@
+# Current Progress:
+
+<img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/04f94fe5-313e-463e-8372-360b721bd288" />
+
+At this moment, I've done only the title screen, it has chromatic aberration, the old burn screen effect and the cuphead and mugman animation.
+
 # 🧸 Teddy – Game Engine (C++, OpenGL, SDL3 & ImGui)
 
 **Teddy** is a custom game engine built with **C++**, **OpenGL**, **SDL3**, designed to make my own games while learning render APIs.  
@@ -42,6 +48,7 @@ The goal: Build a **scalable, low-level game engine** to enable:
 - ⚙️ **Custom Physics Simulation** – deterministic 2D physics with debug visualization
 - 📝 **Dynamic Text Rendering** – for UI and runtime data display
 - 🧰 **ImGui-based Editor** – live entity management, scene loading/saving, physics debugging, real-time graphs and metrics
+- 🎨 **Post-Processing Effects** – starting with chromatic aberration (extensible for bloom, tone mapping, and other effects)
 
 ---
 
@@ -51,10 +58,11 @@ Engine                 | 2D                          | 3D                     | 
 -------------          | -------------               | -------------          | -------------
 Scenes Serialization   | Quad/Circle/Line rendering  | Perspective Camera     | Fustrum Culling
 ECS                    | Textures                    |                        | Audio Engine
-Physics                | Collider rendering          |                        | Protection
-Keyboard IO            | Batching                    |                        | Vulkan
-Mouse IO               | Perspective Camera          |                        | Compression
-Midi IO                | Orthographic Camera         |                        | Mip Mapping
-Scene editor           | Dynamic font rendering      |                        | GPU profiler
-Profiler               |                             |                        | 2D lights
-Stats                  |                             |                        | ...
+Keyboard/Mouse/Midi IO | Batching                    |                        | Vulkan
+Scene Editor           | Perspective Camera          |                        | Compression
+Profiler               | Orthographic Camera         |                        | GPU profiler
+Stats                  | Dynamic font rendering      |                        | 2D lights
+Post Processing        | Physics                     |                        | Protection
+Scene&Tex Hot Reload   | Collider rendering          |                        | 
+Atlas Render&Generator |                             |                        | 
+Physics                |                             |                        | 
