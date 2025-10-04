@@ -26,7 +26,16 @@ namespace Cuphead
 		background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1410, 840);
 		background.GetComponent<Teddy::TransformComponent>().Scale *= 1.1f;
 		
-		// 1410 x 840
+		// Menu
+		auto pauseBackground = initialScene->CreateEntity("Pause Background");
+		auto& pauseSprite = pauseBackground.AddComponent<Teddy::SpriteRendererComponent>();
+		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("Pause Background", "assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png");
+
+		pauseBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
+		auto& pauseTransform = pauseBackground.GetComponent<Teddy::TransformComponent>();
+		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 1.0f);
+		pauseTransform.Scale *= 2.6f;
+
 		return initialScene;
 	}
 }
