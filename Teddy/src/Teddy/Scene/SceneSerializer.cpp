@@ -277,6 +277,11 @@ namespace Teddy
 			out << YAML::EndMap;
 		}
 
+		if (entity.HasComponent<ButtonComponent>())
+		{
+			out << YAML::Key << "ButtonComponent";
+		}
+
 		if (entity.HasComponent<TextComponent>())
 		{
 			out << YAML::Key << "TextComponent";
@@ -528,6 +533,13 @@ namespace Teddy
 						crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
 						crc.Thickness = circleRendererComponent["Thickness"].as<float>();
 						crc.Fade = circleRendererComponent["Fade"].as<float>();
+					}
+
+					auto buttonComponent = entity["ButtonComponent"];
+
+					if (buttonComponent)
+					{
+						auto& bc = deserializedEntity.AddComponent<ButtonComponent>();
 					}
 
 					auto textComponent = entity["TextComponent"];

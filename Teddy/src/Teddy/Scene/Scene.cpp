@@ -374,6 +374,7 @@ namespace Teddy
 
 	void Scene::AlwaysOnUpdate()
 	{
+		// Buttons
 		auto viewButton = m_Registry.view<ButtonComponent>();
 		for (auto buttonEntity : viewButton)
 		{
@@ -391,6 +392,7 @@ namespace Teddy
 
 		auto& assets = AssetManager::Get();
 
+		// Texture hot reloading
 		auto viewSprite = m_Registry.view<SpriteRendererComponent>();
 		for (auto entity : viewSprite)
 		{
