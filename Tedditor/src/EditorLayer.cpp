@@ -45,8 +45,6 @@ namespace Teddy
         PostProcessing::Clear();
 
         m_Editor.OnUpdate(ts);
-        
-        ButtonInteractionSystem::Get()->OnUpdate();
 
         {
             TED_PROFILE_SCOPE("Post Processing");

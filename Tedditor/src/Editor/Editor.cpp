@@ -12,6 +12,8 @@ namespace Teddy
 
     void Editor::Init(Ref<Scene> activeScene)
     {
+        ButtonInteractionSystem::Get().HoveredHandled(true);
+
         auto& assets = AssetManager::Get();
 
         m_IconPlay = assets.Load<Texture2D>("PlayButton", "Resources/Icons/PlayButton.png");
@@ -39,9 +41,36 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
+        class HoveringTest : public ScriptableEntity
+        {
+        public:
+            void OnCreate() override
+            {
+				m_Color = GetComponent<Teddy::SpriteRendererComponent>().Color;
+            }
+
+            void OnUpdate(Timestep ts) override
+            {
+                auto& sprite = GetComponent<Teddy::SpriteRendererComponent>();
+                if (GetComponent<Teddy::ButtonComponent>().Hovered)
+                {
+					sprite.Color = m_HoveredColor;
+                }
+                else
+                {
+                    sprite.Color = m_Color;
+                }
+            }
+
+        private:
+			glm::vec4 m_HoveredColor = { 0.2f, 0.2f, 0.9f, 1.0f };
+            glm::vec4 m_Color = glm::vec4(1.0f);
+        };
+
 		auto test = m_ActiveScene->CreateEntity("Quad");
 		test.AddComponent<SpriteRendererComponent>();
         test.AddComponent<ButtonComponent>();
+        test.AddComponent<Teddy::NativeScriptComponent>().Bind<HoveringTest>();
 
         Renderer2D::SetLineWidth(4.0f);
     }
@@ -52,6 +81,7 @@ namespace Teddy
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
+            PostProcessing::Get().Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_PostProcessedFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -93,7 +123,6 @@ namespace Teddy
                 OnOverlayRender();
             }
 
-            // TODO: Update this with button interaction / fix
             if (!ImGuizmo::IsOver())
             {
                 auto [mx, my] = ImGui::GetMousePos();
@@ -106,14 +135,17 @@ namespace Teddy
 
                 if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
                 {
-                    int pixelData = m_PostProcessedFramebuffer->ReadPixel(1, mouseX, mouseY);
+                    int pixelData = PostProcessing::Get().GetFramebuffer()->ReadPixel(1, mouseX, mouseY);
                     entt::entity handle = (entt::entity)pixelData;
+                    
                     if (pixelData == -1) 
                     {
                         m_HoveredEntity = {};
+                        ButtonInteractionSystem::Get().SetHoveredEntity(entt::null);
                     }
                     else 
                     {
+                        ButtonInteractionSystem::Get().SetHoveredEntity(handle);
                         m_HoveredEntity = Entity(handle, m_ActiveScene.get());
                     }
                 }

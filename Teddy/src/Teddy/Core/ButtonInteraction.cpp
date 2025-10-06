@@ -8,6 +8,7 @@ namespace Teddy
     entt::entity ButtonInteractionSystem::m_HoveredEntity = entt::null;
     uint32_t ButtonInteractionSystem::m_Width = 1920, ButtonInteractionSystem::m_Height = 1080;
 	ButtonInteractionSystem* ButtonInteractionSystem::s_Instance = nullptr;
+    bool ButtonInteractionSystem::m_Enabled = true;
 
     ButtonInteractionSystem::ButtonInteractionSystem()
     {
@@ -17,23 +18,28 @@ namespace Teddy
 
 	void ButtonInteractionSystem::OnUpdate()
 	{
-        glm::vec2 mouse = Input::GetMousePosition();
-        int mouseX = mouse.x;
-        int mouseY = mouse.y;
-
-        mouseY = m_Height - mouseY;
-
-        if (mouseX >= 0 && mouseY >= 0 && mouseX < m_Width && mouseY < m_Height)
+        if (m_Enabled)
         {
-            int pixelData = PostProcessing::GetFramebuffer()->ReadPixel(1, mouseX, mouseY);
-            
-            if (pixelData == -1) 
+            glm::vec2 mouse = Input::GetMousePosition();
+            int mouseX = mouse.x;
+            int mouseY = mouse.y;
+
+            TED_CORE_INFO("Mouse Position: {0}, {1}", mouseX, mouseY);
+
+            mouseY = m_Height - mouseY;
+
+            if (mouseX >= 0 && mouseY >= 0 && mouseX < m_Width && mouseY < m_Height)
             {
-                m_HoveredEntity = entt::null;
-            }
-            else 
-            {
-                m_HoveredEntity = (entt::entity)pixelData;
+                int pixelData = PostProcessing::GetFramebuffer()->ReadPixel(1, mouseX, mouseY);
+
+                if (pixelData == -1)
+                {
+                    m_HoveredEntity = entt::null;
+                }
+                else
+                {
+                    m_HoveredEntity = (entt::entity)pixelData;
+                }
             }
         }
 	}

@@ -229,7 +229,7 @@ namespace Teddy
 		void SetString(std::string string) { TextString = string; CalculateTextQuad();}
 	};
 
-	struct ButtonComponent // TODO: Serialization
+	struct ButtonComponent
 	{
 		bool Hovered = false;
 
