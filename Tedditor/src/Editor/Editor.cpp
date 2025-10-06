@@ -39,6 +39,10 @@ namespace Teddy
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
+		auto test = m_ActiveScene->CreateEntity("Quad");
+		test.AddComponent<SpriteRendererComponent>();
+        test.AddComponent<ButtonComponent>();
+
         Renderer2D::SetLineWidth(4.0f);
     }
 
@@ -48,7 +52,6 @@ namespace Teddy
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
-            PostProcessing::Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_PostProcessedFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -90,6 +93,7 @@ namespace Teddy
                 OnOverlayRender();
             }
 
+            // TODO: Update this with button interaction / fix
             if (!ImGuizmo::IsOver())
             {
                 auto [mx, my] = ImGui::GetMousePos();
@@ -102,12 +106,14 @@ namespace Teddy
 
                 if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
                 {
-                    int pixelData = PostProcessing::GetFramebuffer()->ReadPixel(1, mouseX, mouseY);
+                    int pixelData = m_PostProcessedFramebuffer->ReadPixel(1, mouseX, mouseY);
                     entt::entity handle = (entt::entity)pixelData;
-                    if (pixelData == -1) {
+                    if (pixelData == -1) 
+                    {
                         m_HoveredEntity = {};
                     }
-                    else {
+                    else 
+                    {
                         m_HoveredEntity = Entity(handle, m_ActiveScene.get());
                     }
                 }

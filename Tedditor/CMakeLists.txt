@@ -33,6 +33,7 @@ target_compile_definitions(Tedditor PRIVATE
     $<$<CONFIG:Debug>:TED_DEBUG>
     $<$<CONFIG:Release>:TED_RELEASE>
     $<$<CONFIG:Dist>:TED_DIST>
+    TED_EDITOR
 )
 
 set_target_properties(Tedditor PROPERTIES

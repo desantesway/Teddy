@@ -3,6 +3,7 @@
 #include "EditorLayer.h"
 
 #include "Teddy/PostProcessing/PostProcessing.h"
+#include "Teddy/Core/ButtonInteraction.h"
 
 namespace Teddy
 {
@@ -45,6 +46,8 @@ namespace Teddy
 
         m_Editor.OnUpdate(ts);
         
+        ButtonInteractionSystem::Get()->OnUpdate();
+
         {
             TED_PROFILE_SCOPE("Post Processing");
 

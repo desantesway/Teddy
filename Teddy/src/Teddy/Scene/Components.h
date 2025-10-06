@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Teddy/Core/ButtonInteraction.h"
 #include "Teddy/Scene/SceneCamera.h"
 #include "Teddy/Core/UUID.h"
 #include "Teddy/Renderer/Texture.h"
@@ -88,7 +89,7 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
-		BlendingMode BlendMode = BlendingMode::None;
+		BlendingMode BlendMode = BlendingMode::None; // TODO: Serialization
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
@@ -228,6 +229,13 @@ namespace Teddy
 		void SetString(std::string string) { TextString = string; CalculateTextQuad();}
 	};
 
+	struct ButtonComponent // TODO: Serialization
+	{
+		bool Hovered = false;
+
+		void SetHovered(bool isHovered) { Hovered = isHovered; }
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -237,5 +245,5 @@ namespace Teddy
 		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
 		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
-		TextComponent>;
+		TextComponent, ButtonComponent>;
 }

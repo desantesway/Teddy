@@ -3,6 +3,7 @@
 
 #include "Teddy/Renderer/Renderer.h"
 #include "Teddy/Utils/PlatformUtils.h"
+#include "Teddy/PostProcessing/PostProcessing.h"
 
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
@@ -85,7 +86,7 @@ namespace Teddy
 
 		if (!m_Minimized)
 		{
-			AssetManager::Get().OnUpdate();
+			m_AssetManager.OnUpdate();
 
 			{
 				TED_PROFILE_SCOPE("LayerStack OnUpdate");
@@ -137,6 +138,8 @@ namespace Teddy
 		m_Window->SetWidth(e.GetWidth());
 		m_Window->SetHeight(e.GetHeight());
 		Renderer::OnWindowResize(m_Window->GetWidth(), m_Window->GetHeight());
+		PostProcessing::Resize(m_Window->GetWidth(), m_Window->GetWidth());
+		m_ButtonInteractionSystem.OnWindowResize(m_Window->GetWidth(), m_Window->GetWidth());
 
 		//OnUpdate(); // TODO: same as bellow
 

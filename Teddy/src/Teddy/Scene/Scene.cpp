@@ -374,6 +374,21 @@ namespace Teddy
 
 	void Scene::AlwaysOnUpdate()
 	{
+		auto viewButton = m_Registry.view<ButtonComponent>();
+		for (auto buttonEntity : viewButton)
+		{
+			auto& button = viewButton.get<ButtonComponent>(buttonEntity);
+
+			if ((int)buttonEntity == (int)ButtonInteractionSystem::GetHoveredEntity())
+			{
+				button.Hovered = true;
+			}
+			else
+			{
+				button.Hovered = false;
+			}
+		}
+
 		auto& assets = AssetManager::Get();
 
 		auto viewSprite = m_Registry.view<SpriteRendererComponent>();
@@ -703,6 +718,7 @@ namespace Teddy
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 	}
 
+	// TODO: Remove this
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
@@ -773,6 +789,11 @@ namespace Teddy
 
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+	}
+	 
+	template<>
+	void Scene::OnComponentAdded<ButtonComponent>(Entity entity, ButtonComponent& component)
 	{
 	}
 }

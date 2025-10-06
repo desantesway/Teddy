@@ -5,6 +5,7 @@
 #include "Teddy/ImGui/ImGuiLayer.h"
 #include "Teddy/Core/Input.h"
 #include "Teddy/Core/AssetManager.h"
+#include "Teddy/Core/ButtonInteraction.h"
 
 #ifdef TED_DIST
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -77,6 +78,7 @@ namespace Teddy
 
 		Input m_Input;
 		AssetManager m_AssetManager;
+		ButtonInteractionSystem m_ButtonInteractionSystem;
 	private:
 		static Application* s_Instance;
 		
