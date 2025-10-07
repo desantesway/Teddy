@@ -223,6 +223,8 @@ namespace Teddy
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 
+			out << YAML::Key << "BlendingMode" << YAML::Value << (int)spriteRendererComponent.BlendMode;
+
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
@@ -264,6 +266,8 @@ namespace Teddy
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteAnimationComponent.TilingFactor;
 
+			out << YAML::Key << "BlendingMode" << YAML::Value << (int)spriteAnimationComponent.BlendMode;
+
 			// Animation
 			out << YAML::Key << "TextureIndex" << YAML::Value << spriteAnimationComponent.TextureIndex;
 			out << YAML::Key << "PlayableIndicies" << YAML::Value << spriteAnimationComponent.PlayableIndicies;
@@ -274,7 +278,14 @@ namespace Teddy
 			out << YAML::Key << "PingPong" << YAML::Value << spriteAnimationComponent.PingPong;
 			out << YAML::Key << "Pause" << YAML::Value << spriteAnimationComponent.Pause;
 
+
+
 			out << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<ButtonComponent>())
+		{
+			out << YAML::Key << "ButtonComponent";
 		}
 
 		if (entity.HasComponent<TextComponent>())
@@ -467,6 +478,11 @@ namespace Teddy
 
 						if (spriteRendererComponent["TilingFactor"])
 							src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+
+						if (spriteRendererComponent["BlendingMode"])
+							src.BlendMode = (BlendingMode)spriteRendererComponent["BlendingMode"].as<int>();
+						else
+							src.BlendMode = BlendingMode::None;
 					}
 
 					auto spriteAtlasComponent = entity["SpriteAtlasComponent"];
@@ -510,6 +526,11 @@ namespace Teddy
 
 						sanc.TilingFactor = spriteAnimationComponent["TilingFactor"].as<float>();
 
+						if (spriteAnimationComponent["BlendingMode"])
+							sanc.BlendMode = (BlendingMode)spriteAnimationComponent["BlendingMode"].as<int>();
+						else
+							sanc.BlendMode = BlendingMode::None;
+
 						// Animations
 						sanc.TextureIndex = spriteAnimationComponent["TextureIndex"].as<int>();
 						sanc.PlayableIndicies = spriteAnimationComponent["PlayableIndicies"].as<std::vector<int>>();
@@ -528,6 +549,13 @@ namespace Teddy
 						crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
 						crc.Thickness = circleRendererComponent["Thickness"].as<float>();
 						crc.Fade = circleRendererComponent["Fade"].as<float>();
+					}
+
+					auto buttonComponent = entity["ButtonComponent"];
+
+					if (buttonComponent)
+					{
+						auto& bc = deserializedEntity.AddComponent<ButtonComponent>();
 					}
 
 					auto textComponent = entity["TextComponent"];
