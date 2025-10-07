@@ -31,6 +31,29 @@ namespace Cuphead
 		unsigned int CurrentSelection = 0;
 	};
 
+	struct VisualMenu
+	{
+		Teddy::Entity Resolution;
+		Teddy::Entity ResolutionButton;
+		Teddy::Entity Display;
+		Teddy::Entity DisplayButton;
+		Teddy::Entity VSync;
+		Teddy::Entity VSyncButton;
+		Teddy::Entity OverScan;
+		Teddy::Entity OverScanBar;
+		Teddy::Entity Brightness;
+		Teddy::Entity BrightnessBar;
+		Teddy::Entity ColorBleed;
+		Teddy::Entity ColorBleedBar;
+		Teddy::Entity TitleScreen;
+		Teddy::Entity TitleScreenButton;
+		Teddy::Entity Back;
+
+		Teddy::Entity Background;
+
+		unsigned int CurrentSelection = 0;
+	};
+
 	class MainMenuScene
 	{
 	public:
@@ -48,16 +71,21 @@ namespace Cuphead
 		static void UpdateMainMenuButtonColors();
 		static void HideMainMenu();
 		static void EnterMainMenuOption();
+		static bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void InitOptionsMenu();
 		static void HideOptionsMenu();
 		static void UpdateOptionsButtonColors();
 		static bool OptionsMenuEnter();
+		static bool OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e);
+
+		void InitVisualMenu();
+		static bool OnVisualMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		static void UpdateVisualColors();
+		static void HideVisualMenu();
 
 		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
-		static bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
 		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
-		static bool OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e);
 		static bool OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_MainMenu;
@@ -69,6 +97,7 @@ namespace Cuphead
 		
 		static MainMenu m_MainMenuOptions;
 		static OptionsMenu m_OptionsMenu;
+		static VisualMenu m_VisualMenu;
 
 		static unsigned int m_CurrentMenu;
 	};

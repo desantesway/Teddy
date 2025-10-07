@@ -12,6 +12,7 @@ namespace Cuphead
 
 	MainMenu MainMenuScene::m_MainMenuOptions;
 	OptionsMenu MainMenuScene::m_OptionsMenu;
+	VisualMenu MainMenuScene::m_VisualMenu;
 	unsigned int MainMenuScene::m_CurrentMenu = 0;
 
 	Teddy::Ref<Teddy::Scene> MainMenuScene::Init()
@@ -44,6 +45,64 @@ namespace Cuphead
 		return m_MainMenu;
 	}
 
+	void MainMenuScene::InitVisualMenu()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+
+		// Visual background
+		m_VisualMenu.Background = m_MainMenu->CreateEntity("Visual Background");
+		auto& optionsSprite = m_VisualMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
+		optionsSprite.Texture = assets.Load<Teddy::Texture2D>("Visual Background", "assets/Textures/SpriteAtlasTexture-Options-1024x2048-fmt12.png");
+		m_VisualMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 590, 520);
+		auto& optionsTransform = m_VisualMenu.Background.GetComponent<Teddy::TransformComponent>();
+		optionsTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);
+		optionsTransform.Scale *= 5.0f;
+
+		// Options Text
+		{
+			m_VisualMenu.Resolution = m_MainMenu->CreateEntity("Visual Resolution Text");
+			auto& resText = m_VisualMenu.Resolution.AddComponent<Teddy::TextComponent>();
+			resText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			resText.SetString("RESOLUTION:");
+			resText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+			auto& resTransform = m_VisualMenu.Resolution.GetComponent<Teddy::TransformComponent>();
+			resTransform.Scale *= 0.4f;
+			resTransform.Translation += glm::vec3(-1.0f, 0.85f, 0.1f);
+
+			m_VisualMenu.ResolutionButton = m_MainMenu->CreateEntity("Visual Button Text");
+			auto& resButText = m_VisualMenu.ResolutionButton.AddComponent<Teddy::TextComponent>();
+			resButText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			resButText.SetString("1920x1080");
+			resButText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+			auto& resButTransform = m_VisualMenu.ResolutionButton.GetComponent<Teddy::TransformComponent>();
+			resButTransform.Scale *= 0.4f;
+			resButTransform.Translation += glm::vec3(1.0f, 0.85f, 0.1f);
+		}
+
+		UpdateVisualColors();
+	}
+
+	void MainMenuScene::UpdateVisualColors()
+	{
+		if (m_CurrentMenu == 5)
+		{
+			m_VisualMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_WhiteColor;
+			m_VisualMenu.Resolution.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
+			m_VisualMenu.ResolutionButton.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 0) ? m_RedColor : m_BlackColor;
+		}
+		else
+		{
+			HideVisualMenu();
+		}
+	}
+
+	void MainMenuScene::HideVisualMenu()
+	{
+		m_VisualMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.Resolution.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.ResolutionButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+	}
+
 	bool MainMenuScene::OptionsMenuEnter()
 	{
 		switch (m_OptionsMenu.CurrentSelection)
@@ -51,6 +110,9 @@ namespace Cuphead
 		case 0:
 			break;
 		case 1:
+			m_CurrentMenu = 5;
+			HideOptionsMenu();
+			UpdateVisualColors();
 			break;
 		case 2:
 			break;
@@ -128,6 +190,8 @@ namespace Cuphead
 		backTransform.Translation += glm::vec3(0.0f, -0.55f, 0.1f);
 
 		UpdateOptionsButtonColors();
+
+		InitVisualMenu();
 	}
 
 	void MainMenuScene::HideOptionsMenu()
@@ -341,6 +405,32 @@ namespace Cuphead
 		return false;
 	}
 
+	bool MainMenuScene::OnVisualMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Escape:
+			m_CurrentMenu = 2;
+			HideVisualMenu();
+			UpdateOptionsButtonColors();
+			return true;
+		case Teddy::Key::Down:
+		case Teddy::Key::S:
+			m_VisualMenu.CurrentSelection = (m_VisualMenu.CurrentSelection + 1) % 8;
+			UpdateVisualColors();
+			return true;
+		case Teddy::Key::Up:
+		case Teddy::Key::W:
+			m_VisualMenu.CurrentSelection = (m_VisualMenu.CurrentSelection - 1 + 8) % 8;
+			UpdateVisualColors();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
 	bool MainMenuScene::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
 		TED_PROFILE_FUNCTION();
@@ -349,16 +439,14 @@ namespace Cuphead
 		{
 		case 0: 
 			return OnMainMenuKeyPressed(e);
-			break;
 		case 1:
 			return OnPlayMenuKeyPressed(e);
-			break;
 		case 2:
 			return OnOptionsMenuKeyPressed(e);
-			break;
 		case 3:
 			return OnDlcMenuKeyPressed(e);
-			break;
+		case 5:
+			return OnVisualMenuKeyPressed(e);
 		default:
 			break;
 		}
