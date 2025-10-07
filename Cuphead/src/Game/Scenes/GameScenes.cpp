@@ -89,7 +89,7 @@ namespace Cuphead
             m_TransitionScenes.CircleIn();
             return true;
         default:
-            TED_CORE_INFO("No scene found for index {0}", m_CurrentScene);
+            //TED_CORE_INFO("No scene found for index {0}", m_CurrentScene);
             return false;
         }
 
@@ -102,5 +102,14 @@ namespace Cuphead
 
         Teddy::EventDispatcher dispatcher(event);
         dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(GameScenes::OnKeyPressed));
+
+        switch (m_CurrentScene)
+        {
+        case 2:
+			m_MainMenuScene.OnEvent(event);
+            break;
+        default:
+            break;
+        }
     }
 }
