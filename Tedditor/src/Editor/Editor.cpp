@@ -67,10 +67,10 @@ namespace Teddy
             glm::vec4 m_Color = glm::vec4(1.0f);
         };
 
-		auto test = m_ActiveScene->CreateEntity("Quad");
-		test.AddComponent<SpriteRendererComponent>();
-        test.AddComponent<ButtonComponent>();
-        test.AddComponent<Teddy::NativeScriptComponent>().Bind<HoveringTest>();
+		auto test = m_ActiveScene->CreateEntity("Text");
+		auto& text = test.AddComponent<TextComponent>();
+		text.SetString("Hello, Teddy!");
+		text.TextAlignment = TextComponent::AlignmentType::LeftCenter;
 
         Renderer2D::SetLineWidth(4.0f);
     }
@@ -208,6 +208,13 @@ namespace Teddy
                             0.0f);
                         break;
                     }
+                    case TextComponent::AlignmentType::LeftCenter:
+                    {
+                        textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x,
+                            text.TextQuad.Scale.y / 2,
+                            0.0f);
+                        break;
+					}
                     default:
                         break;
                     }
@@ -251,6 +258,13 @@ namespace Teddy
                 case TextComponent::AlignmentType::Center:
                 {
                     textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x / 2,
+                        text.TextQuad.Scale.y / 2,
+                        0.0f);
+                    break;
+                }
+                case TextComponent::AlignmentType::LeftCenter:
+                {
+                    textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x,
                         text.TextQuad.Scale.y / 2,
                         0.0f);
                     break;

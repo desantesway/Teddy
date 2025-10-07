@@ -738,6 +738,13 @@ namespace Teddy
 					0.0f);
 				break;
 			}
+			case TextComponent::AlignmentType::LeftCenter:
+			{
+				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x,
+					component.TextQuad.Scale.y / 2,
+					0.0f);
+				break;
+			}
 			default:
 				break;
 		}
