@@ -70,7 +70,10 @@ namespace Teddy
 		auto test = m_ActiveScene->CreateEntity("Text");
 		auto& text = test.AddComponent<TextComponent>();
 		text.SetString("Hello, Teddy!");
-		text.TextAlignment = TextComponent::AlignmentType::LeftCenter;
+		text.TextAlignment = TextComponent::AlignmentType::RightCenter;
+
+		auto& transform = test.GetComponent<TransformComponent>();
+		transform.Scale *= 0.5;
 
         Renderer2D::SetLineWidth(4.0f);
     }
@@ -215,6 +218,13 @@ namespace Teddy
                             0.0f);
                         break;
 					}
+                    case TextComponent::AlignmentType::RightCenter:
+                    {
+                        textQuad.Translation -= glm::vec3(0.0f,
+                            text.TextQuad.Scale.y / 2,
+                            0.0f);
+                        break;
+                    }
                     default:
                         break;
                     }
@@ -265,6 +275,13 @@ namespace Teddy
                 case TextComponent::AlignmentType::LeftCenter:
                 {
                     textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x,
+                        text.TextQuad.Scale.y / 2,
+                        0.0f);
+                    break;
+                }
+                case TextComponent::AlignmentType::RightCenter:
+                {
+                    textQuad.Translation -= glm::vec3(0.0f,
                         text.TextQuad.Scale.y / 2,
                         0.0f);
                     break;

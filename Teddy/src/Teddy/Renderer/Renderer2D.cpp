@@ -740,8 +740,15 @@ namespace Teddy
 			}
 			case TextComponent::AlignmentType::LeftCenter:
 			{
-				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x,
-					component.TextQuad.Scale.y / 2,
+				textQuad.Translation -= glm::vec3(component.TextQuad.Scale.x * transform.Scale.x,
+					component.TextQuad.Scale.y * transform.Scale.y / 2,
+					0.0f);
+				break;
+			}
+			case TextComponent::AlignmentType::RightCenter:
+			{
+				textQuad.Translation -= glm::vec3(0.0f,
+					component.TextQuad.Scale.y * transform.Scale.y / 2,
 					0.0f);
 				break;
 			}

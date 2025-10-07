@@ -218,7 +218,7 @@ namespace Teddy
 
 		TransformComponent TextQuad;
 
-		enum class AlignmentType { None = 0, Center, TopLeft, TopRight, BottomLeft, BottomRight, LeftCenter };
+		enum class AlignmentType { None = 0, Center, TopLeft, TopRight, BottomLeft, BottomRight, LeftCenter, RightCenter };
 		AlignmentType TextAlignment = AlignmentType::None;
 
 		TextComponent() = default;
