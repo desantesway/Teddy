@@ -4,9 +4,33 @@
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/KeyEvent.h"
+#include "Teddy/Scene/Entity.h"
 
 namespace Cuphead
 {
+	struct MainMenu
+	{
+		Teddy::Entity PlayButton;
+		Teddy::Entity OptionsButton;
+		Teddy::Entity DlcButton;
+		Teddy::Entity ExitButton;
+
+		unsigned int CurrentSelection = 0;
+	};
+
+	struct OptionsMenu
+	{
+		Teddy::Entity AudioButton;
+		Teddy::Entity VisualButton;
+		Teddy::Entity ControlsButton;
+		Teddy::Entity LanguageButton;
+		Teddy::Entity BackButton;
+
+		Teddy::Entity Background;
+
+		unsigned int CurrentSelection = 0;
+	};
+
 	class MainMenuScene
 	{
 	public:
@@ -19,24 +43,33 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 	private:
-		static void UpdateButtonColor();
-		static void EnterOption();
+
+		void InitMainMenu();
+		static void UpdateMainMenuButtonColors();
 		static void HideMainMenu();
+		static void EnterMainMenuOption();
+
+		void InitOptionsMenu();
+		static void HideOptionsMenu();
+		static void UpdateOptionsButtonColors();
+		static bool OptionsMenuEnter();
 
 		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
-
+		static bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		static bool OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		static bool OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_MainMenu;
-		static glm::vec4 m_NormalColor;
-		static glm::vec4 m_HighlightColor;
+		static glm::vec4 m_GrayColor;
+		static glm::vec4 m_WhiteColor;
+		static glm::vec4 m_BlackColor;
+		static glm::vec4 m_RedColor;
 		static glm::vec4 m_InvisibleColor;
-		 
-		static Teddy::Entity m_PlayButton;
-		static Teddy::Entity m_OptionsButton;
-		static Teddy::Entity m_DlcButton;
-		static Teddy::Entity m_ExitButton;
+		
+		static MainMenu m_MainMenuOptions;
+		static OptionsMenu m_OptionsMenu;
 
-		static unsigned int m_CurrentMainMenuSelection;
 		static unsigned int m_CurrentMenu;
 	};
 }

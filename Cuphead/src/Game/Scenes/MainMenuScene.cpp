@@ -4,15 +4,14 @@
 
 namespace Cuphead
 {
-	glm::vec4 MainMenuScene::m_HighlightColor = glm::vec4(1.0f);
-	glm::vec4 MainMenuScene::m_NormalColor = glm::vec4(110.0f / 255.0f, 110.0f / 255.0f, 110.0f / 255.0f, 1.0f);
+	glm::vec4 MainMenuScene::m_WhiteColor = glm::vec4(1.0f);
+	glm::vec4 MainMenuScene::m_GrayColor = glm::vec4(110.0f / 255.0f, 110.0f / 255.0f, 110.0f / 255.0f, 1.0f);
+	glm::vec4 MainMenuScene::m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+	glm::vec4 MainMenuScene::m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
 	glm::vec4 MainMenuScene::m_InvisibleColor = glm::vec4(0.0f);
 
-	Teddy::Entity MainMenuScene::m_PlayButton;
-	Teddy::Entity MainMenuScene::m_OptionsButton;
-	Teddy::Entity MainMenuScene::m_DlcButton;
-	Teddy::Entity MainMenuScene::m_ExitButton;
-	unsigned int MainMenuScene::m_CurrentMainMenuSelection = 0;
+	MainMenu MainMenuScene::m_MainMenuOptions;
+	OptionsMenu MainMenuScene::m_OptionsMenu;
 	unsigned int MainMenuScene::m_CurrentMenu = 0;
 
 	Teddy::Ref<Teddy::Scene> MainMenuScene::Init()
@@ -35,60 +34,173 @@ namespace Cuphead
 		auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.IsBackground = true;
 		sprite.Texture = assets.Load<Teddy::Texture2D>("Main Menu Background", "assets/Textures/SpriteAtlasTexture-Slot_Select_BG-2048x1024-fmt10.png");
-		
+
 		background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1410, 840);
 		background.GetComponent<Teddy::TransformComponent>().Scale *= 1.1f;
-		
+
+		InitMainMenu();
+		InitOptionsMenu();
+
+		return m_MainMenu;
+	}
+
+	bool MainMenuScene::OptionsMenuEnter()
+	{
+		switch (m_OptionsMenu.CurrentSelection)
+		{
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			m_CurrentMenu = 0;
+			HideOptionsMenu();
+			UpdateMainMenuButtonColors();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	void MainMenuScene::InitOptionsMenu()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+
+		// Options background
+		m_OptionsMenu.Background = m_MainMenu->CreateEntity("Options Background");
+		auto& pauseSprite = m_OptionsMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
+		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("Options Background", "assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png");
+		m_OptionsMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
+		auto& pauseTransform = m_OptionsMenu.Background.GetComponent<Teddy::TransformComponent>();
+		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);
+		pauseTransform.Scale *= 2.6f;
+
+		// Options Text
+		m_OptionsMenu.AudioButton = m_MainMenu->CreateEntity("Options Audio Text");
+		auto& audioText = m_OptionsMenu.AudioButton.AddComponent<Teddy::TextComponent>();
+		audioText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+		audioText.SetString("AUDIO");
+		audioText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+		auto& audioTransform = m_OptionsMenu.AudioButton.GetComponent<Teddy::TransformComponent>();
+		audioTransform.Scale *= 0.4f;
+		audioTransform.Translation += glm::vec3(0.0f, 0.85f, 0.1f);
+
+		m_OptionsMenu.VisualButton = m_MainMenu->CreateEntity("Options Visual Text");
+		auto& visualText = m_OptionsMenu.VisualButton.AddComponent<Teddy::TextComponent>();
+		visualText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+		visualText.SetString("VISUAL");
+		visualText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+		auto& visualTransform = m_OptionsMenu.VisualButton.GetComponent<Teddy::TransformComponent>();
+		visualTransform.Scale *= 0.4f;
+		visualTransform.Translation += glm::vec3(0.0f, 0.5f, 0.1f);
+
+		m_OptionsMenu.ControlsButton = m_MainMenu->CreateEntity("Options Controls Text");
+		auto& controlsText = m_OptionsMenu.ControlsButton.AddComponent<Teddy::TextComponent>();
+		controlsText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+		controlsText.SetString("CONTROLS");
+		controlsText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+		auto& controlsTransform = m_OptionsMenu.ControlsButton.GetComponent<Teddy::TransformComponent>();
+		controlsTransform.Scale *= 0.4f;
+		controlsTransform.Translation += glm::vec3(0.0f, 0.15f, 0.1f);
+
+		m_OptionsMenu.LanguageButton = m_MainMenu->CreateEntity("Options Language Text");
+		auto& langText = m_OptionsMenu.LanguageButton.AddComponent<Teddy::TextComponent>();
+		langText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+		langText.SetString("LANGUAGE");
+		langText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+		auto& langTransform = m_OptionsMenu.LanguageButton.GetComponent<Teddy::TransformComponent>();
+		langTransform.Scale *= 0.4f;
+		langTransform.Translation += glm::vec3(0.0f, -0.2f, 0.1f);
+
+		m_OptionsMenu.BackButton = m_MainMenu->CreateEntity("Options Back Text");
+		auto& backText = m_OptionsMenu.BackButton.AddComponent<Teddy::TextComponent>();
+		backText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+		backText.SetString("BACK");
+		backText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+		auto& backTransform = m_OptionsMenu.BackButton.GetComponent<Teddy::TransformComponent>();
+		backTransform.Scale *= 0.4f;
+		backTransform.Translation += glm::vec3(0.0f, -0.55f, 0.1f);
+
+		UpdateOptionsButtonColors();
+	}
+
+	void MainMenuScene::HideOptionsMenu()
+	{
+		m_OptionsMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_InvisibleColor;
+		m_OptionsMenu.AudioButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_OptionsMenu.VisualButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_OptionsMenu.ControlsButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_OptionsMenu.LanguageButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_OptionsMenu.BackButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+	}
+
+	void MainMenuScene::UpdateOptionsButtonColors()
+	{
+		if (m_CurrentMenu == 2)
+		{
+			m_OptionsMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_WhiteColor;
+			m_OptionsMenu.AudioButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 0) ? m_RedColor : m_BlackColor;
+			m_OptionsMenu.VisualButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 1) ? m_RedColor : m_BlackColor;
+			m_OptionsMenu.ControlsButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 2) ? m_RedColor : m_BlackColor;
+			m_OptionsMenu.LanguageButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 3) ? m_RedColor : m_BlackColor;
+			m_OptionsMenu.BackButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 4) ? m_RedColor : m_BlackColor;
+		}
+		else
+		{
+			HideOptionsMenu();
+		}
+	}
+
+	void MainMenuScene::InitMainMenu()
+	{
+		TED_PROFILE_FUNCTION();
+
+		auto& assets = Teddy::AssetManager::Get();
+
 		// Main Menu Text
-		m_PlayButton = m_MainMenu->CreateEntity("Main Menu Start Text");
-		auto& titleText = m_PlayButton.AddComponent<Teddy::TextComponent>();
+		m_MainMenuOptions.PlayButton = m_MainMenu->CreateEntity("Main Menu Start Text");
+		auto& titleText = m_MainMenuOptions.PlayButton.AddComponent<Teddy::TextComponent>();
 		titleText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		titleText.SetString("START");
 		titleText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
-		auto& titleTransform = m_PlayButton.GetComponent<Teddy::TransformComponent>();
+		auto& titleTransform = m_MainMenuOptions.PlayButton.GetComponent<Teddy::TransformComponent>();
 		titleTransform.Scale *= 0.4f;
 		titleTransform.Translation += glm::vec3(0.0f, 0.8f, 0.0f);
 
-		m_OptionsButton = m_MainMenu->CreateEntity("Main Menu Options Text");
-		auto& titleOptionsText = m_OptionsButton.AddComponent<Teddy::TextComponent>();
+		m_MainMenuOptions.OptionsButton = m_MainMenu->CreateEntity("Main Menu Options Text");
+		auto& titleOptionsText = m_MainMenuOptions.OptionsButton.AddComponent<Teddy::TextComponent>();
 		titleOptionsText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		titleOptionsText.SetString("OPTIONS");
 		titleOptionsText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
-		auto& titleOptionsTransform = m_OptionsButton.GetComponent<Teddy::TransformComponent>();
+		auto& titleOptionsTransform = m_MainMenuOptions.OptionsButton.GetComponent<Teddy::TransformComponent>();
 		titleOptionsTransform.Scale *= 0.4f;
 		titleOptionsTransform.Translation += glm::vec3(0.0f, 0.4f, 0.0f);
 
-		m_DlcButton = m_MainMenu->CreateEntity("Main Menu Dlc Text");
-		auto& titleDlcText = m_DlcButton.AddComponent<Teddy::TextComponent>();
+		m_MainMenuOptions.DlcButton = m_MainMenu->CreateEntity("Main Menu Dlc Text");
+		auto& titleDlcText = m_MainMenuOptions.DlcButton.AddComponent<Teddy::TextComponent>();
 		titleDlcText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		titleDlcText.SetString("DLC");
 		titleDlcText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
-		auto& titleDlcTransform = m_DlcButton.GetComponent<Teddy::TransformComponent>();
+		auto& titleDlcTransform = m_MainMenuOptions.DlcButton.GetComponent<Teddy::TransformComponent>();
 		titleDlcTransform.Scale *= 0.4f;
 		titleOptionsTransform.Translation += glm::vec3(0.0f, 0.0f, 0.0f);
 
-		m_ExitButton = m_MainMenu->CreateEntity("Main Menu Exit Text");
-		auto& titleExitText = m_ExitButton.AddComponent<Teddy::TextComponent>();
+		m_MainMenuOptions.ExitButton = m_MainMenu->CreateEntity("Main Menu Exit Text");
+		auto& titleExitText = m_MainMenuOptions.ExitButton.AddComponent<Teddy::TextComponent>();
 		titleExitText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		titleExitText.SetString("EXIT");
 		titleExitText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
-		auto& titleExitTransform = m_ExitButton.GetComponent<Teddy::TransformComponent>();
+		auto& titleExitTransform = m_MainMenuOptions.ExitButton.GetComponent<Teddy::TransformComponent>();
 		titleExitTransform.Scale *= 0.4f;
 		titleExitTransform.Translation += glm::vec3(0.0f, -0.4f, 0.0f);
 
-		UpdateButtonColor();
-
-		// Options Menu
-		auto pauseBackground = m_MainMenu->CreateEntity("Options Background");
-		auto& pauseSprite = pauseBackground.AddComponent<Teddy::SpriteRendererComponent>();
-		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("Options Background", "assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png");
-		pauseSprite.Color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-		pauseBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
-		auto& pauseTransform = pauseBackground.GetComponent<Teddy::TransformComponent>();
-		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 1.0f);
-		pauseTransform.Scale *= 2.6f;
-
-		return m_MainMenu;
+		UpdateMainMenuButtonColors();
 	}
 
 	void MainMenuScene::OnEvent(Teddy::Event& event)
@@ -99,25 +211,32 @@ namespace Cuphead
 		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(MainMenuScene::OnKeyPressed));
 	}
 
-	void MainMenuScene::UpdateButtonColor()
+	void MainMenuScene::UpdateMainMenuButtonColors()
 	{
-		m_PlayButton.GetComponent<Teddy::TextComponent>().Color = (m_CurrentMainMenuSelection == 0) ? m_HighlightColor : m_NormalColor;
-		m_OptionsButton.GetComponent<Teddy::TextComponent>().Color = (m_CurrentMainMenuSelection == 1) ? m_HighlightColor : m_NormalColor;
-		m_DlcButton.GetComponent<Teddy::TextComponent>().Color = (m_CurrentMainMenuSelection == 2) ? m_HighlightColor : m_NormalColor;
-		m_ExitButton.GetComponent<Teddy::TextComponent>().Color = (m_CurrentMainMenuSelection == 3) ? m_HighlightColor : m_NormalColor;
+		if (m_CurrentMenu == 0)
+		{
+			m_MainMenuOptions.PlayButton.GetComponent<Teddy::TextComponent>().Color = (m_MainMenuOptions.CurrentSelection == 0) ? m_WhiteColor : m_GrayColor;
+			m_MainMenuOptions.OptionsButton.GetComponent<Teddy::TextComponent>().Color = (m_MainMenuOptions.CurrentSelection == 1) ? m_WhiteColor : m_GrayColor;
+			m_MainMenuOptions.DlcButton.GetComponent<Teddy::TextComponent>().Color = (m_MainMenuOptions.CurrentSelection == 2) ? m_WhiteColor : m_GrayColor;
+			m_MainMenuOptions.ExitButton.GetComponent<Teddy::TextComponent>().Color = (m_MainMenuOptions.CurrentSelection == 3) ? m_WhiteColor : m_GrayColor;
+		}
+		else
+		{
+			HideMainMenu();
+		}
 	}
 
 	void MainMenuScene::HideMainMenu()
 	{
-		MainMenuScene::m_PlayButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
-		MainMenuScene::m_OptionsButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
-		MainMenuScene::m_DlcButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
-		MainMenuScene::m_ExitButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
+		m_MainMenuOptions.PlayButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
+		m_MainMenuOptions.OptionsButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
+		m_MainMenuOptions.DlcButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
+		m_MainMenuOptions.ExitButton.GetComponent<Teddy::TextComponent>().Color = MainMenuScene::m_InvisibleColor;
 	}
 
-	void MainMenuScene::EnterOption()
+	void MainMenuScene::EnterMainMenuOption()
 	{
-		switch (m_CurrentMainMenuSelection)
+		switch (m_MainMenuOptions.CurrentSelection)
 		{
 		case 0:
 			m_CurrentMenu = 1;
@@ -126,6 +245,7 @@ namespace Cuphead
 		case 1:
 			m_CurrentMenu = 2;
 			HideMainMenu();
+			UpdateOptionsButtonColors();
 			break;
 		case 2:
 			m_CurrentMenu = 3;
@@ -139,6 +259,88 @@ namespace Cuphead
 		}
 	}
 
+	bool MainMenuScene::OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Down:
+		case Teddy::Key::S:
+			m_MainMenuOptions.CurrentSelection = (m_MainMenuOptions.CurrentSelection + 1) % 4;
+			UpdateMainMenuButtonColors();
+			return true;
+		case Teddy::Key::Up:
+		case Teddy::Key::W:
+			m_MainMenuOptions.CurrentSelection = (m_MainMenuOptions.CurrentSelection - 1 + 4) % 4;
+			UpdateMainMenuButtonColors();
+			return true;
+		case Teddy::Key::Return:
+			EnterMainMenuOption();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	bool MainMenuScene::OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Escape:
+			m_CurrentMenu = 0;
+			UpdateMainMenuButtonColors();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	bool MainMenuScene::OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Escape:
+			m_CurrentMenu = 0;
+			HideOptionsMenu();
+			UpdateMainMenuButtonColors();
+			return true;
+		case Teddy::Key::Down:
+		case Teddy::Key::S:
+			m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection + 1) % 5;
+			UpdateOptionsButtonColors();
+			return true;
+		case Teddy::Key::Up:
+		case Teddy::Key::W:
+			m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection - 1 + 5) % 5;
+			UpdateOptionsButtonColors();
+			return true;
+		case Teddy::Key::Return:
+			return OptionsMenuEnter();
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	bool MainMenuScene::OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Escape:
+			m_CurrentMenu = 0;
+			UpdateMainMenuButtonColors();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
 	bool MainMenuScene::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
 		TED_PROFILE_FUNCTION();
@@ -146,63 +348,21 @@ namespace Cuphead
 		switch (m_CurrentMenu)
 		{
 		case 0: 
-			switch (e.GetKeyCode())
-			{
-			case Teddy::Key::Down:
-			case Teddy::Key::S:
-				m_CurrentMainMenuSelection = (m_CurrentMainMenuSelection + 1) % 4;
-				UpdateButtonColor();
-				break;
-			case Teddy::Key::Up:
-			case Teddy::Key::W:
-				m_CurrentMainMenuSelection = (m_CurrentMainMenuSelection - 1 + 4) % 4;
-				UpdateButtonColor();
-				break;
-			case Teddy::Key::Return:
-				EnterOption();
-				break;
-			default:
-				break;
-			}
+			return OnMainMenuKeyPressed(e);
 			break;
 		case 1:
-			switch (e.GetKeyCode())
-			{
-			case Teddy::Key::Escape:
-				m_CurrentMenu = 0;
-				UpdateButtonColor();
-				break;
-			default:
-				break;
-			}
+			return OnPlayMenuKeyPressed(e);
 			break;
 		case 2:
-			switch (e.GetKeyCode())
-			{
-			case Teddy::Key::Escape:
-				m_CurrentMenu = 0;
-				UpdateButtonColor();
-				break;
-			default:
-				break;
-			}
+			return OnOptionsMenuKeyPressed(e);
 			break;
 		case 3:
-			switch (e.GetKeyCode())
-			{
-			case Teddy::Key::Escape:
-				m_CurrentMenu = 0;
-				UpdateButtonColor();
-				break;
-			default:
-				break;
-			}
+			return OnDlcMenuKeyPressed(e);
 			break;
 		default:
 			break;
 		}
 		
-
 		return false;
 	}
 }
