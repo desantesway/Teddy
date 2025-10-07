@@ -10,6 +10,8 @@ namespace Teddy
 		ButtonInteractionSystem();
 		~ButtonInteractionSystem() = default;
 
+		static void Init(uint32_t width, uint32_t height);
+
 		static void OnUpdate();
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
@@ -23,7 +25,7 @@ namespace Teddy
 		static bool m_Enabled;
 
 		static entt::entity m_HoveredEntity;
-		static uint32_t m_Width, m_Height; // TODO: Get from application
+		static uint32_t m_Width, m_Height;
 
 	private:
 		static ButtonInteractionSystem* s_Instance;

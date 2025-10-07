@@ -89,7 +89,7 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
-		BlendingMode BlendMode = BlendingMode::None; // TODO: Serialization
+		BlendingMode BlendMode = BlendingMode::None;
 
 		SpriteAnimationComponent() = default;
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;

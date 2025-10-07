@@ -480,6 +480,10 @@ namespace Teddy
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
+				int blendingMode = (int)component.BlendMode;
+				ImGui::DragInt("Blending Mode", &blendingMode, 0.05, 0.0f, 10.0f);
+				component.BlendMode = (BlendingMode)blendingMode;
+
 				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
 
 				if (ImGui::BeginDragDropTarget())
@@ -522,6 +526,10 @@ namespace Teddy
 				ImGui::Checkbox("Original Aspect Ratio", &component.OriginalAspectRatio);
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				int blendingMode = (int)component.BlendMode;
+				ImGui::DragInt("Blending Mode", &blendingMode, 0.05, 0.0f, 10.0f);
+				component.BlendMode = (BlendingMode)blendingMode;
 
 				int texturesPerRow = 3;
 				for (int i = 0; i < component.Textures.size(); i++)

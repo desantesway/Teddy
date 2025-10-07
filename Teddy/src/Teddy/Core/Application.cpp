@@ -29,6 +29,8 @@ namespace Teddy
 
 		Renderer::Init();
 
+		m_ButtonInteractionSystem.Init(m_Window->GetWidth(), m_Window->GetHeight());
+
 		m_ImGuiLayer = CreateRef<ImGuiLayer>();
 		PushOverlay(m_ImGuiLayer);
 	}

@@ -6,7 +6,7 @@
 namespace Teddy
 {
     entt::entity ButtonInteractionSystem::m_HoveredEntity = entt::null;
-    uint32_t ButtonInteractionSystem::m_Width = 1920, ButtonInteractionSystem::m_Height = 1080;
+    uint32_t ButtonInteractionSystem::m_Width = 0, ButtonInteractionSystem::m_Height = 0;
 	ButtonInteractionSystem* ButtonInteractionSystem::s_Instance = nullptr;
     bool ButtonInteractionSystem::m_Enabled = true;
 
@@ -14,6 +14,12 @@ namespace Teddy
     {
 		TED_ASSERT(!s_Instance, "ButtonInteractionSystem already exists!");
 		s_Instance = this;
+    }
+
+    void ButtonInteractionSystem::Init(uint32_t width, uint32_t height)
+    {
+		m_Width = width;
+		m_Height = height;
     }
 
 	void ButtonInteractionSystem::OnUpdate()

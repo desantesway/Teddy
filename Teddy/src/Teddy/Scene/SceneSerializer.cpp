@@ -223,6 +223,8 @@ namespace Teddy
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 
+			out << YAML::Key << "BlendingMode" << YAML::Value << (int)spriteRendererComponent.BlendMode;
+
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
@@ -264,6 +266,8 @@ namespace Teddy
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteAnimationComponent.TilingFactor;
 
+			out << YAML::Key << "BlendingMode" << YAML::Value << (int)spriteAnimationComponent.BlendMode;
+
 			// Animation
 			out << YAML::Key << "TextureIndex" << YAML::Value << spriteAnimationComponent.TextureIndex;
 			out << YAML::Key << "PlayableIndicies" << YAML::Value << spriteAnimationComponent.PlayableIndicies;
@@ -273,6 +277,8 @@ namespace Teddy
 			out << YAML::Key << "Loop" << YAML::Value << spriteAnimationComponent.Loop;
 			out << YAML::Key << "PingPong" << YAML::Value << spriteAnimationComponent.PingPong;
 			out << YAML::Key << "Pause" << YAML::Value << spriteAnimationComponent.Pause;
+
+
 
 			out << YAML::EndMap;
 		}
@@ -472,6 +478,11 @@ namespace Teddy
 
 						if (spriteRendererComponent["TilingFactor"])
 							src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+
+						if (spriteRendererComponent["BlendingMode"])
+							src.BlendMode = (BlendingMode)spriteRendererComponent["BlendingMode"].as<int>();
+						else
+							src.BlendMode = BlendingMode::None;
 					}
 
 					auto spriteAtlasComponent = entity["SpriteAtlasComponent"];
@@ -514,6 +525,11 @@ namespace Teddy
 								sanc.Textures.push_back(AssetManager::Get().Load<Texture2D>(texPath, Boolean::True));
 
 						sanc.TilingFactor = spriteAnimationComponent["TilingFactor"].as<float>();
+
+						if (spriteAnimationComponent["BlendingMode"])
+							sanc.BlendMode = (BlendingMode)spriteAnimationComponent["BlendingMode"].as<int>();
+						else
+							sanc.BlendMode = BlendingMode::None;
 
 						// Animations
 						sanc.TextureIndex = spriteAnimationComponent["TextureIndex"].as<int>();
