@@ -723,7 +723,7 @@ namespace Teddy
 				}
 
 				int textAlignment = (int)component.TextAlignment;
-				if(ImGui::DragInt("Text Alignment", &textAlignment, 0.01f, 0, 6))
+				if(ImGui::DragInt("Text Alignment", &textAlignment, 0.01f, 0, 10))
 				{
 					recalculate = true;
 					component.TextAlignment = (TextComponent::AlignmentType)textAlignment;
