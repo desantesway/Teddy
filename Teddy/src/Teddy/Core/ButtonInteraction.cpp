@@ -30,8 +30,6 @@ namespace Teddy
             int mouseX = mouse.x;
             int mouseY = mouse.y;
 
-            TED_CORE_INFO("Mouse Position: {0}, {1}", mouseX, mouseY);
-
             mouseY = m_Height - mouseY;
 
             if (mouseX >= 0 && mouseY >= 0 && mouseX < m_Width && mouseY < m_Height)
