@@ -66,6 +66,10 @@ add_library(Teddy STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/AssetManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/AssetManager.cpp
 
+    # Button Interaction
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/ButtonInteraction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Core/ButtonInteraction.cpp
+
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     #<> Events <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

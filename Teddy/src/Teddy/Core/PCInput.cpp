@@ -75,7 +75,7 @@ namespace Teddy
 	glm::vec2 Input::GetMousePosition()
 	{
 		float x, y;
-		SDL_GetMouseState(&x, &y);
+		SDL_GetMouseState(&x, &y); // TODO: SDL abstraction
 
 		return { x, y };
 	}

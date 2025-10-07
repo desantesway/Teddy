@@ -715,7 +715,7 @@ namespace Teddy
 		}
 	}
 	
-	// TODO: outline with freetype
+	// TODO: outline with freetype or stencil pencil?
 	// TODO: Rotation in the center + letter rotation
 	void Renderer2D::DrawString(const TextComponent& component, TransformComponent& transform, int entityID)
 	{

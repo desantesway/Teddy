@@ -58,6 +58,7 @@ namespace Teddy
 			AddToComponentTree<SpriteAnimationComponent>(entity, isEmpty, "Sprites with animations");
 			AddToComponentTree<CircleRendererComponent>(entity, isEmpty, "Circles");
 			AddToComponentTree<TextComponent>(entity, isEmpty, "Text");
+			AddToComponentTree<ButtonComponent>(entity, isEmpty, "Button");
 
 			if (isEmpty)
 				m_ComponentToEntityTree["Empty"].push_back(entity);
@@ -391,6 +392,7 @@ namespace Teddy
 			DisplayAddComponentEntry<SpriteAnimationComponent>("Sprite Animation");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<TextComponent>("Text");
+			DisplayAddComponentEntry<ButtonComponent>("Button");
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
@@ -405,6 +407,11 @@ namespace Teddy
 				DrawVec3Control("Rotation", rotation);
 				component.Rotation = glm::radians(rotation);
 				DrawVec3Control("Scale", component.Scale, 1.0f);
+			});
+
+		DrawComponent<ButtonComponent>("Button", true, entity, [](auto& component)
+			{
+				ImGui::Checkbox("Is Hovered", &component.Hovered);
 			});
 
 		DrawComponent<CameraComponent>("Camera Renderer", true, entity, [](auto& component)
@@ -473,6 +480,10 @@ namespace Teddy
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
+				int blendingMode = (int)component.BlendMode;
+				ImGui::DragInt("Blending Mode", &blendingMode, 0.05, 0.0f, 10.0f);
+				component.BlendMode = (BlendingMode)blendingMode;
+
 				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
 
 				if (ImGui::BeginDragDropTarget())
@@ -515,6 +526,10 @@ namespace Teddy
 				ImGui::Checkbox("Original Aspect Ratio", &component.OriginalAspectRatio);
 				ImGui::Checkbox("Background", &component.IsBackground);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				int blendingMode = (int)component.BlendMode;
+				ImGui::DragInt("Blending Mode", &blendingMode, 0.05, 0.0f, 10.0f);
+				component.BlendMode = (BlendingMode)blendingMode;
 
 				int texturesPerRow = 3;
 				for (int i = 0; i < component.Textures.size(); i++)

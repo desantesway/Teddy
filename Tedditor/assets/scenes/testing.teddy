@@ -1,20 +1,15 @@
 Scene: Untitled
 Entities:
-  - Entity: 4265656100832240146
+  - Entity: 15672595063469382504
     TagComponent:
-      Tag: Red Square
+      Tag: Quad
     TransformComponent:
-      Translation: [0, 0, -8.5]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 0.5, 0.5, 1]
-  - Entity: 9358859588543852094
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, -1.8, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
+      OriginalAspectRatio: true
+      Background: false
       Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    ButtonComponent

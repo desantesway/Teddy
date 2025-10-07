@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Teddy/Renderer/Framebuffer.h"
+#include "Teddy/Core/ButtonInteraction.h"
 
 namespace Teddy
 {
@@ -15,7 +16,7 @@ namespace Teddy
 		static void Shutdown();
 
 		static void Bind() { m_Framebuffer->Bind(); }
-		static void Unbind() { m_Framebuffer->Unbind(); }
+		static void Unbind() { ButtonInteractionSystem::Get().OnUpdate(); m_Framebuffer->Unbind(); }
 
 		static void Clear() { m_Framebuffer->ClearAttachment(1, -1); }
 
