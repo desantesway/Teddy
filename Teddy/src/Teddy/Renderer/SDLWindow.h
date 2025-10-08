@@ -35,6 +35,9 @@ namespace Teddy
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override;
 
+		virtual void SetScreenMode(ScreenMode mode) override;
+		virtual ScreenMode GetScreenMode() const override;
+
 		virtual unsigned int GetThreadCount() const override;
 
 		virtual void CalculateFPS(Timestep ts) override;

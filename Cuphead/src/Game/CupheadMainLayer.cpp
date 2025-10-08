@@ -25,6 +25,7 @@ namespace Cuphead
 
 	    Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
 	    Teddy::PostProcessing::SetChromaticAberrationOffset({ 2.5f, 2.5f, -2.5f }); // Max: 5
+		Teddy::Application::Get().GetWindow().SetScreenMode(Teddy::ScreenMode::Fullscreen);
     }
 
     void CupheadLayer::OnDetach()

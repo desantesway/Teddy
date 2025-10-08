@@ -55,7 +55,12 @@ namespace Cuphead
 			m_VisualMenu.DisplayButton = m_MainMenu->CreateEntity("Visual Display Button Text");
 			auto& disButText = m_VisualMenu.DisplayButton.AddComponent<Teddy::TextComponent>();
 			disButText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
-			disButText.SetString("FULLSCREEN");
+			if (app.GetWindow().GetScreenMode() == Teddy::ScreenMode::Windowed)
+				disButText.SetString("WINDOWED");
+			else if (app.GetWindow().GetScreenMode() == Teddy::ScreenMode::Borderless)
+				disButText.SetString("BORDERLESS");
+			else
+				disButText.SetString("FULLSCREEN");
 			disButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& disButTransform = m_VisualMenu.DisplayButton.GetComponent<Teddy::TransformComponent>();
 			disButTransform.Scale *= 0.35f;
@@ -149,7 +154,7 @@ namespace Cuphead
 			m_VisualMenu.TitleScreenButton = m_MainMenu->CreateEntity("Visual TitleScreen Button Text");
 			auto& ttSButText = m_VisualMenu.TitleScreenButton.AddComponent<Teddy::TextComponent>();
 			ttSButText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
-			ttSButText.SetString("NO");
+			ttSButText.SetString("ORIGINAL");
 			ttSButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& ttSButTransform = m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TransformComponent>();
 			ttSButTransform.Scale *= 0.35f;
@@ -243,6 +248,23 @@ namespace Cuphead
 		case Teddy::Key::D:
 			switch (m_VisualMenu.CurrentSelection)
 			{
+			case 1:
+				if (window.GetScreenMode() == Teddy::ScreenMode::Windowed)
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("BORDERLESS");
+					window.SetScreenMode(Teddy::ScreenMode::Borderless);
+				}
+				else if (window.GetScreenMode() == Teddy::ScreenMode::Borderless)
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("FULLSCREEN");
+					window.SetScreenMode(Teddy::ScreenMode::Fullscreen);
+				}
+				else
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("WINDOWED");
+					window.SetScreenMode(Teddy::ScreenMode::Windowed);
+				}
+				break;
 			case 2:
 				window.IsVSync() ? window.SetVSync(false) : window.SetVSync(true);
 				m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().SetString(window.IsVSync() ? "ON" : "OFF");
@@ -269,6 +291,23 @@ namespace Cuphead
 		case Teddy::Key::A:
 			switch (m_VisualMenu.CurrentSelection)
 			{
+			case 1:
+				if (window.GetScreenMode() == Teddy::ScreenMode::Windowed)
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("FULLSCREEN");
+					window.SetScreenMode(Teddy::ScreenMode::Fullscreen);
+				}
+				else if (window.GetScreenMode() == Teddy::ScreenMode::Borderless)
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("WINDOWED");
+					window.SetScreenMode(Teddy::ScreenMode::Windowed);
+				}
+				else
+				{
+					m_VisualMenu.DisplayButton.GetComponent<Teddy::TextComponent>().SetString("BORDERLESS");
+					window.SetScreenMode(Teddy::ScreenMode::Borderless);
+				}
+				break;
 			case 2:
 				window.IsVSync() ? window.SetVSync(false) : window.SetVSync(true);
 				m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().SetString(window.IsVSync() ? "ON" : "OFF");
