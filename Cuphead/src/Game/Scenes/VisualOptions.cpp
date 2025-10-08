@@ -75,7 +75,7 @@ namespace Cuphead
 			m_VisualMenu.VSyncButton = m_MainMenu->CreateEntity("Visual VSync Button Text");
 			auto& vsyncButText = m_VisualMenu.VSyncButton.AddComponent<Teddy::TextComponent>();
 			vsyncButText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
-			vsyncButText.SetString("ON");
+			vsyncButText.SetString(app.GetWindow().IsVSync() ? "ON" : "OFF");
 			vsyncButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& vsyncButTransform = m_VisualMenu.VSyncButton.GetComponent<Teddy::TransformComponent>();
 			vsyncButTransform.Scale *= 0.35f;
@@ -221,6 +221,7 @@ namespace Cuphead
 	
 	bool MainMenuScene::OnVisualMenuKeyPressed(Teddy::KeyPressedEvent& e)
 	{
+		auto& window = Teddy::Application::Get().GetWindow();
 		switch (e.GetKeyCode())
 		{
 		case Teddy::Key::Escape:
@@ -242,6 +243,10 @@ namespace Cuphead
 		case Teddy::Key::D:
 			switch (m_VisualMenu.CurrentSelection)
 			{
+			case 2:
+				window.IsVSync() ? window.SetVSync(false) : window.SetVSync(true);
+				m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().SetString(window.IsVSync() ? "ON" : "OFF");
+				break;
 			case 3:
 				m_VisualMenu.OverscanBar.Increment();
 				UpdateVisualColors();
@@ -264,6 +269,10 @@ namespace Cuphead
 		case Teddy::Key::A:
 			switch (m_VisualMenu.CurrentSelection)
 			{
+			case 2:
+				window.IsVSync() ? window.SetVSync(false) : window.SetVSync(true);
+				m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().SetString(window.IsVSync() ? "ON" : "OFF");
+				break;
 			case 3:
 				m_VisualMenu.OverscanBar.Decrement();
 				UpdateVisualColors();
@@ -285,11 +294,15 @@ namespace Cuphead
 		case Teddy::Key::Return:
 			switch (m_VisualMenu.CurrentSelection)
 			{
+			case 2:
+				window.IsVSync() ? window.SetVSync(false) : window.SetVSync(true);
+				m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().SetString(window.IsVSync() ? "ON" : "OFF");
+				break;
 			case 7:
 				m_CurrentMenu = 2;
 				HideVisualMenu();
 				UpdateOptionsButtonColors();
-				return true;
+				break;
 			}
 			return true;
 		default:

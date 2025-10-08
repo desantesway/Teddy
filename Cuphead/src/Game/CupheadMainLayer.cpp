@@ -1,10 +1,11 @@
 #include "TeddyPch.h"
 #include "CupheadMainLayer.h"
 
-#include "Teddy/Scene/SceneSerializer.h"
-#include "Teddy/Utils/PlatformUtils.h"
+#include <Teddy.h>
 
 #include "Scenes/GameScenes.h"
+
+#include <imgui.h>
 
 namespace Cuphead
 {
@@ -77,6 +78,26 @@ namespace Cuphead
     void CupheadLayer::OnImGuiRender()
     {
 	    TED_PROFILE_FUNCTION();
+
+#ifdef TED_DIST
+        return;
+#endif
+
+        ImGui::Begin("Stats");
+
+        auto stats = Teddy::Renderer2D::GetStats();
+        auto windowStats = Teddy::Application::Get().GetWindow().GetStats();
+
+        ImGui::Text("Window Stats:");
+        ImGui::Text("Fps: %.1f", windowStats.FPS);
+
+        ImGui::Text("Renderer2D Stats:");
+        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+        ImGui::Text("Quads: %d", stats.QuadCount);
+        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+        ImGui::End();
     }
 
 }
