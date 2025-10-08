@@ -13,7 +13,7 @@ namespace Cuphead
 		// Visual background
 		m_VisualMenu.Background = m_MainMenu->CreateEntity("Visual Background");
 		auto& optionsSprite = m_VisualMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
-		optionsSprite.Texture = assets.Load<Teddy::Texture2D>("Visual Background", "assets/Textures/SpriteAtlasTexture-Options-1024x2048-fmt12.png");
+		optionsSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Options-1024x2048-fmt12.png", Teddy::Boolean::True);
 		m_VisualMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 590, 520);
 		auto& optionsTransform = m_VisualMenu.Background.GetComponent<Teddy::TransformComponent>();
 		optionsTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);

@@ -72,7 +72,7 @@ namespace Cuphead
         auto background = initialScene->CreateEntity("Main Title Background");
         auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
         sprite.IsBackground = true;
-        sprite.Texture = assets.Load<Teddy::Texture2D>("Main Title Background", "assets/Textures/SpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png");
+        sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Title_Assets (Group 1)-2048x1024-fmt10.png", Teddy::Boolean::True);
 
         background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1280, 720);
 

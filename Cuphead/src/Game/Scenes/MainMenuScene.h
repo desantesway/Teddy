@@ -66,6 +66,7 @@ namespace Cuphead
 		Teddy::Entity Background;
 		Teddy::Entity Selected;
 		Teddy::Entity Text;
+		Teddy::Entity PlayerText;
 
 		Teddy::Entity Cuphead;
 		Teddy::Entity Mugman;

@@ -33,7 +33,7 @@ namespace Cuphead
 		auto background = m_MainMenu->CreateEntity("Main Menu Background");
 		auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.IsBackground = true;
-		sprite.Texture = assets.Load<Teddy::Texture2D>("Main Menu Background", "assets/Textures/SpriteAtlasTexture-Slot_Select_BG-2048x1024-fmt10.png");
+		sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Slot_Select_BG-2048x1024-fmt10.png", Teddy::Boolean::True);
 
 		background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1410, 840);
 		background.GetComponent<Teddy::TransformComponent>().Scale *= 1.1f;
@@ -60,7 +60,7 @@ namespace Cuphead
 		titleText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& titleTransform = m_MainMenuOptions.PlayButton.GetComponent<Teddy::TransformComponent>();
 		titleTransform.Scale *= 0.4f;
-		titleTransform.Translation += glm::vec3(0.0f, 0.8f, 0.0f);
+		titleTransform.Translation += glm::vec3(0.0f, 0.8f, 0.001f);
 
 		m_MainMenuOptions.OptionsButton = m_MainMenu->CreateEntity("Main Menu Options Text");
 		auto& titleOptionsText = m_MainMenuOptions.OptionsButton.AddComponent<Teddy::TextComponent>();
@@ -69,7 +69,7 @@ namespace Cuphead
 		titleOptionsText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& titleOptionsTransform = m_MainMenuOptions.OptionsButton.GetComponent<Teddy::TransformComponent>();
 		titleOptionsTransform.Scale *= 0.4f;
-		titleOptionsTransform.Translation += glm::vec3(0.0f, 0.4f, 0.0f);
+		titleOptionsTransform.Translation += glm::vec3(0.0f, 0.4f, 0.001f);
 
 		m_MainMenuOptions.DlcButton = m_MainMenu->CreateEntity("Main Menu Dlc Text");
 		auto& titleDlcText = m_MainMenuOptions.DlcButton.AddComponent<Teddy::TextComponent>();
@@ -78,7 +78,7 @@ namespace Cuphead
 		titleDlcText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& titleDlcTransform = m_MainMenuOptions.DlcButton.GetComponent<Teddy::TransformComponent>();
 		titleDlcTransform.Scale *= 0.4f;
-		titleOptionsTransform.Translation += glm::vec3(0.0f, 0.0f, 0.0f);
+		titleDlcTransform.Translation += glm::vec3(0.0f, 0.0f, 0.001f);
 
 		m_MainMenuOptions.ExitButton = m_MainMenu->CreateEntity("Main Menu Exit Text");
 		auto& titleExitText = m_MainMenuOptions.ExitButton.AddComponent<Teddy::TextComponent>();
@@ -87,7 +87,7 @@ namespace Cuphead
 		titleExitText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& titleExitTransform = m_MainMenuOptions.ExitButton.GetComponent<Teddy::TransformComponent>();
 		titleExitTransform.Scale *= 0.4f;
-		titleExitTransform.Translation += glm::vec3(0.0f, -0.4f, 0.0f);
+		titleExitTransform.Translation += glm::vec3(0.0f, -0.4f, 0.001f);
 
 		UpdateMainMenuButtonColors();
 	}

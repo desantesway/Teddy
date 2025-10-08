@@ -13,7 +13,7 @@ namespace Cuphead
 		// Options background
 		m_OptionsMenu.Background = m_MainMenu->CreateEntity("Options Background");
 		auto& pauseSprite = m_OptionsMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
-		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("Options Background", "assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png");
+		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png", Teddy::Boolean::True);
 		m_OptionsMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
 		auto& pauseTransform = m_OptionsMenu.Background.GetComponent<Teddy::TransformComponent>();
 		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);

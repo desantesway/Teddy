@@ -13,7 +13,7 @@ namespace Cuphead
 
 		m_DlcMenu.Entity = m_MainMenu->CreateEntity("DLC Photo");
 		auto& sprite = m_DlcMenu.Entity.AddComponent<Teddy::SpriteRendererComponent>();
-		sprite.Texture = assets.Load<Teddy::Texture2D>("DLC Photo", "assets/Textures/PC _ Computer - Cuphead_ Don't Deal With the Devil! - Miscellaneous - DLC Sellscreen.png");
+		sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/PC _ Computer - Cuphead_ Don't Deal With the Devil! - Miscellaneous - DLC Sellscreen.png", Teddy::Boolean::True);
 		auto& transform = m_DlcMenu.Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);
 		transform.Scale *= 4.0f;
