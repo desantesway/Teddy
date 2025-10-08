@@ -5,6 +5,7 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/KeyEvent.h"
 #include "Teddy/Scene/Entity.h"
+#include "ScrollBar.h"
 
 namespace Cuphead
 {
@@ -33,18 +34,19 @@ namespace Cuphead
 
 	struct VisualMenu
 	{
+
 		Teddy::Entity Resolution;
 		Teddy::Entity ResolutionButton;
 		Teddy::Entity Display;
 		Teddy::Entity DisplayButton;
 		Teddy::Entity VSync;
 		Teddy::Entity VSyncButton;
-		Teddy::Entity OverScan;
-		Teddy::Entity OverScanBar;
+		Teddy::Entity Overscan;
+		ScrollBar OverscanBar;
 		Teddy::Entity Brightness;
-		Teddy::Entity BrightnessBar;
+		ScrollBar BrightnessBar;
 		Teddy::Entity ColorBleed;
-		Teddy::Entity ColorBleedBar;
+		ScrollBar ColorBleedBar;
 		Teddy::Entity TitleScreen;
 		Teddy::Entity TitleScreenButton;
 		Teddy::Entity Back;
