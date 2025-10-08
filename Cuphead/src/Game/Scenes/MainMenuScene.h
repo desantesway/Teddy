@@ -56,6 +56,23 @@ namespace Cuphead
 		unsigned int CurrentSelection = 0;
 	};
 
+	struct DlcMenu
+	{
+		Teddy::Entity Entity;
+	};
+
+	struct PlayMenu
+	{
+		Teddy::Entity Background;
+		Teddy::Entity Selected;
+		Teddy::Entity Text;
+
+		Teddy::Entity Cuphead;
+		Teddy::Entity Mugman;
+
+		bool CurrentSelection = 0;
+	};
+
 	class MainMenuScene
 	{
 	public:
@@ -86,9 +103,17 @@ namespace Cuphead
 		static void UpdateVisualColors();
 		static void HideVisualMenu();
 
-		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
-		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		void InitDlcMenu();
+		static void HideDlcMenu();
+		static void UpdateDlcButtonColors();
 		static bool OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e);
+
+		void InitPlayMenu();
+		static void HidePlayMenu();
+		static void UpdatePlayButtonColors();
+		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
+
+		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_MainMenu;
 		static glm::vec4 m_GrayColor;
@@ -100,6 +125,8 @@ namespace Cuphead
 		static MainMenu m_MainMenuOptions;
 		static OptionsMenu m_OptionsMenu;
 		static VisualMenu m_VisualMenu;
+		static DlcMenu m_DlcMenu;
+		static PlayMenu m_PlayMenu;
 
 		static unsigned int m_CurrentMenu;
 	};

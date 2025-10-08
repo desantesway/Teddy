@@ -39,7 +39,9 @@ namespace Cuphead
 		background.GetComponent<Teddy::TransformComponent>().Scale *= 1.1f;
 
 		InitMainMenu();
+		InitPlayMenu();
 		InitOptionsMenu();
+		InitDlcMenu();
 
 		return m_MainMenu;
 	}
@@ -128,6 +130,7 @@ namespace Cuphead
 		case 0:
 			m_CurrentMenu = 1;
 			HideMainMenu();
+			UpdatePlayButtonColors();
 			break;
 		case 1:
 			m_CurrentMenu = 2;
@@ -137,6 +140,7 @@ namespace Cuphead
 		case 2:
 			m_CurrentMenu = 3;
 			HideMainMenu();
+			UpdateDlcButtonColors();
 			break;
 		case 3:
 			Teddy::Application::Get().Close();
