@@ -25,8 +25,16 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/GameScenes.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainTitleScene.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainTitleScene.h
+
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainMenuScene.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainMenuScene.h
+
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/DlcMenu.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/PlayMenu.cpp
+
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/OptionsMenu.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/VisualOptions.cpp
+
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/Slider.cpp
