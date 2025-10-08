@@ -36,6 +36,8 @@ namespace Teddy
 		}
 	};
 
+	enum class ScreenMode { Windowed = 0, Borderless = 1, Fullscreen = 2 };
+
 	// Interface representing a desktop system based Window
 	class Window
 	{
@@ -57,6 +59,9 @@ namespace Teddy
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
+
+		virtual void SetScreenMode(ScreenMode mode) = 0;
+		virtual ScreenMode GetScreenMode() const = 0;
 
 		virtual void* GetNativeWindow() const = 0;
 		virtual void* GetNativeContext() const = 0;

@@ -146,6 +146,38 @@ namespace Teddy
 		return m_Data.VSync;
 	}
 
+	void SDLWindow::SetScreenMode(ScreenMode mode)
+	{
+		switch (mode)
+		{
+		case Teddy::ScreenMode::Windowed:
+			SDL_SetWindowFullscreen((SDL_Window*)m_Window->GetWindow(), false);
+			SDL_SetWindowBordered((SDL_Window*)m_Window->GetWindow(), true);
+			break;
+		case Teddy::ScreenMode::Borderless:
+			SDL_SetWindowFullscreen((SDL_Window*)m_Window->GetWindow(), false);
+			SDL_SetWindowBordered((SDL_Window*)m_Window->GetWindow(), false);
+			break;
+		case Teddy::ScreenMode::Fullscreen:
+			SDL_SetWindowFullscreen((SDL_Window*)m_Window->GetWindow(), true);
+			SDL_SetWindowBordered((SDL_Window*)m_Window->GetWindow(), false);
+			break;
+		default:
+			break;
+		}
+	}
+
+	ScreenMode SDLWindow::GetScreenMode() const
+	{
+		Uint32 flags = SDL_GetWindowFlags((SDL_Window*)m_Window->GetWindow());
+		if (flags & SDL_WINDOW_FULLSCREEN)
+			return ScreenMode::Fullscreen;
+		else if (flags & SDL_WINDOW_BORDERLESS)
+			return ScreenMode::Borderless;
+		else
+			return ScreenMode::Windowed;
+	}
+
 	unsigned int SDLWindow::GetThreadCount() const
 	{ 
 		return std::thread::hardware_concurrency();
