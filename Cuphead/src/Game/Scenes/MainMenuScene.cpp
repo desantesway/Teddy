@@ -58,7 +58,7 @@ namespace Cuphead
 		optionsTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);
 		optionsTransform.Scale *= 5.0f;
 
-		// Options Text
+		// Options
 		auto& app = Teddy::Application::Get();
 		{
 			m_VisualMenu.Resolution = m_MainMenu->CreateEntity("Visual Resolution Text");
@@ -67,7 +67,7 @@ namespace Cuphead
 			resText.SetString("RESOLUTION:");
 			resText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 			auto& resTransform = m_VisualMenu.Resolution.GetComponent<Teddy::TransformComponent>();
-			resTransform.Scale *= 0.4f;
+			resTransform.Scale *= 0.35f;
 			resTransform.Translation += glm::vec3(0.0f, 1.75f, 0.1f);
 
 			m_VisualMenu.ResolutionButton = m_MainMenu->CreateEntity("Visual Resolution Button Text");
@@ -77,7 +77,7 @@ namespace Cuphead
 			resButText.SetString(resolution);
 			resButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& resButTransform = m_VisualMenu.ResolutionButton.GetComponent<Teddy::TransformComponent>();
-			resButTransform.Scale *= 0.4f;
+			resButTransform.Scale *= 0.35f;
 			resButTransform.Translation += glm::vec3(0.1f, 1.75f, 0.1f);
 		}
 
@@ -88,7 +88,7 @@ namespace Cuphead
 			disText.SetString("DISPLAY:");
 			disText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 			auto& disTransform = m_VisualMenu.Display.GetComponent<Teddy::TransformComponent>();
-			disTransform.Scale *= 0.4f;
+			disTransform.Scale *= 0.35f;
 			disTransform.Translation += glm::vec3(0.0f, 1.4f, 0.1f);
 
 			m_VisualMenu.DisplayButton = m_MainMenu->CreateEntity("Visual Display Button Text");
@@ -97,7 +97,7 @@ namespace Cuphead
 			disButText.SetString("FULLSCREEN");
 			disButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& disButTransform = m_VisualMenu.DisplayButton.GetComponent<Teddy::TransformComponent>();
-			disButTransform.Scale *= 0.4f;
+			disButTransform.Scale *= 0.35f;
 			disButTransform.Translation += glm::vec3(0.1f, 1.4f, 0.1f);
 		}
 
@@ -108,7 +108,7 @@ namespace Cuphead
 			vsyncText.SetString("VSYNC:");
 			vsyncText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 			auto& vsyncTransform = m_VisualMenu.VSync.GetComponent<Teddy::TransformComponent>();
-			vsyncTransform.Scale *= 0.4f;
+			vsyncTransform.Scale *= 0.35f;
 			vsyncTransform.Translation += glm::vec3(0.0f, 1.05f, 0.1f);
 
 			m_VisualMenu.VSyncButton = m_MainMenu->CreateEntity("Visual VSync Button Text");
@@ -117,7 +117,7 @@ namespace Cuphead
 			vsyncButText.SetString("ON");
 			vsyncButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& vsyncButTransform = m_VisualMenu.VSyncButton.GetComponent<Teddy::TransformComponent>();
-			vsyncButTransform.Scale *= 0.4f;
+			vsyncButTransform.Scale *= 0.35f;
 			vsyncButTransform.Translation += glm::vec3(0.1f, 1.05f, 0.1f);
 		}
 
@@ -128,15 +128,82 @@ namespace Cuphead
 			overscanText.SetString("OVERSCAN:");
 			overscanText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 			auto& overscanTransform = m_VisualMenu.Overscan.GetComponent<Teddy::TransformComponent>();
-			overscanTransform.Scale *= 0.4f;
+			overscanTransform.Scale *= 0.35f;
 			overscanTransform.Translation += glm::vec3(0.0f, 0.7f, 0.1f);
 
 			
-			Teddy::TransformComponent barTransform;
-			barTransform.Scale *= glm::vec3(0.075f, 0.075f, 1.0f);
-			barTransform.Translation += glm::vec3(0.2f, 0.65f, 0.1f);
+			Teddy::TransformComponent barSliderTransform;
+			barSliderTransform.Scale *= glm::vec3(0.075f, 0.075f, 1.0f);
+			barSliderTransform.Translation += glm::vec3(0.2f, 0.65f, 0.1f);
 
-			m_VisualMenu.OverscanBar = ScrollBar(m_MainMenu, barTransform, 0, 0.125f);
+			m_VisualMenu.OverscanBar = Slider(m_MainMenu, barSliderTransform, 0, 0.125f);
+		}
+
+		{
+			m_VisualMenu.Brightness = m_MainMenu->CreateEntity("Visual Brightness Text");
+			auto& brightText = m_VisualMenu.Brightness.AddComponent<Teddy::TextComponent>();
+			brightText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			brightText.SetString("BRIGHTNESS:");
+			brightText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
+			auto& brightTransform = m_VisualMenu.Brightness.GetComponent<Teddy::TransformComponent>();
+			brightTransform.Scale *= 0.35f;
+			brightTransform.Translation += glm::vec3(0.0f, 0.35f, 0.1f);
+
+
+			Teddy::TransformComponent brightSliderTransform;
+			brightSliderTransform.Scale *= glm::vec3(0.075f, 0.075f, 1.0f);
+			brightSliderTransform.Translation += glm::vec3(0.2f, 0.3f, 0.1f);
+
+			m_VisualMenu.BrightnessBar = Slider(m_MainMenu, brightSliderTransform, 5, 0.125f);
+		}
+
+		{
+			m_VisualMenu.ColorBleed = m_MainMenu->CreateEntity("Visual ColorBleed Text");
+			auto& cBleedText = m_VisualMenu.ColorBleed.AddComponent<Teddy::TextComponent>();
+			cBleedText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			cBleedText.SetString("COLOR BLEED:");
+			cBleedText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
+			auto& cBleedTransform = m_VisualMenu.ColorBleed.GetComponent<Teddy::TransformComponent>();
+			cBleedTransform.Scale *= 0.35f;
+			cBleedTransform.Translation += glm::vec3(0.0f, 0.0f, 0.1f);
+
+
+			Teddy::TransformComponent cBleedSliderTransform;
+			cBleedSliderTransform.Scale *= glm::vec3(0.075f, 0.075f, 1.0f);
+			cBleedSliderTransform.Translation += glm::vec3(0.2f, -0.05f, 0.1f);
+
+			m_VisualMenu.ColorBleedBar = Slider(m_MainMenu, cBleedSliderTransform, 5, 0.125f);
+		}
+
+		{
+			m_VisualMenu.TitleScreen = m_MainMenu->CreateEntity("Visual TitleScreen Text");
+			auto& ttSText = m_VisualMenu.TitleScreen.AddComponent<Teddy::TextComponent>();
+			ttSText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			ttSText.SetString("TITLE SCREEN:");
+			ttSText.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
+			auto& ttSTransform = m_VisualMenu.TitleScreen.GetComponent<Teddy::TransformComponent>();
+			ttSTransform.Scale *= 0.35f;
+			ttSTransform.Translation += glm::vec3(0.0f, -0.35f, 0.1f);
+
+			m_VisualMenu.TitleScreenButton = m_MainMenu->CreateEntity("Visual TitleScreen Button Text");
+			auto& ttSButText = m_VisualMenu.TitleScreenButton.AddComponent<Teddy::TextComponent>();
+			ttSButText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			ttSButText.SetString("NO");
+			ttSButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
+			auto& ttSButTransform = m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TransformComponent>();
+			ttSButTransform.Scale *= 0.35f;
+			ttSButTransform.Translation += glm::vec3(0.1f, -0.35f, 0.1f);
+		}
+
+		{
+			m_VisualMenu.Back = m_MainMenu->CreateEntity("Visual Back Text");
+			auto& backText = m_VisualMenu.Back.AddComponent<Teddy::TextComponent>();
+			backText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+			backText.SetString("BACK");
+			backText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+			auto& backTransform = m_VisualMenu.Back.GetComponent<Teddy::TransformComponent>();
+			backTransform.Scale *= 0.35f;
+			backTransform.Translation += glm::vec3(0.0f, -1.15f, 0.1f);
 		}
 
 		UpdateVisualColors();
@@ -156,13 +223,13 @@ namespace Cuphead
 			m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 2) ? m_RedColor : m_BlackColor;
 			m_VisualMenu.Overscan.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
 			m_VisualMenu.OverscanBar.UpdateBar((m_VisualMenu.CurrentSelection == 3) ? m_RedColor : m_BlackColor);
-			//m_VisualMenu.Brightness.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
-			//m_VisualMenu.BrightnessBar.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 4) ? m_RedColor : m_BlackColor;
-			//m_VisualMenu.ColorBleed.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
-			//m_VisualMenu.ColorBleedBar.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 5) ? m_RedColor : m_BlackColor;
-			//m_VisualMenu.TitleScreen.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
-			//m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 6) ? m_RedColor : m_BlackColor;
-			//m_VisualMenu.Back.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 7) ? m_RedColor : m_BlackColor;
+			m_VisualMenu.Brightness.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
+			m_VisualMenu.BrightnessBar.UpdateBar((m_VisualMenu.CurrentSelection == 4) ? m_RedColor : m_BlackColor);
+			m_VisualMenu.ColorBleed.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
+			m_VisualMenu.ColorBleedBar.UpdateBar((m_VisualMenu.CurrentSelection == 5) ? m_RedColor : m_BlackColor);
+			m_VisualMenu.TitleScreen.GetComponent<Teddy::TextComponent>().Color = m_BlackColor;
+			m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 6) ? m_RedColor : m_BlackColor;
+			m_VisualMenu.Back.GetComponent<Teddy::TextComponent>().Color = (m_VisualMenu.CurrentSelection == 7) ? m_RedColor : m_BlackColor;
 
 		}
 		else
@@ -182,13 +249,13 @@ namespace Cuphead
 		m_VisualMenu.VSyncButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
 		m_VisualMenu.Overscan.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
 		m_VisualMenu.OverscanBar.UpdateBar(m_InvisibleColor);
-		//m_VisualMenu.Brightness.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.BrightnessBar.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.ColorBleed.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.ColorBleedBar.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.TitleScreen.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
-		//m_VisualMenu.Back.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.Brightness.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.BrightnessBar.UpdateBar(m_InvisibleColor);
+		m_VisualMenu.ColorBleed.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.ColorBleedBar.UpdateBar(m_InvisibleColor);
+		m_VisualMenu.TitleScreen.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
+		m_VisualMenu.Back.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
 	}
 
 	bool MainMenuScene::OptionsMenuEnter()
@@ -238,7 +305,7 @@ namespace Cuphead
 		audioText.SetString("AUDIO");
 		audioText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& audioTransform = m_OptionsMenu.AudioButton.GetComponent<Teddy::TransformComponent>();
-		audioTransform.Scale *= 0.4f;
+		audioTransform.Scale *= 0.35f;
 		audioTransform.Translation += glm::vec3(0.0f, 0.85f, 0.1f);
 
 		m_OptionsMenu.VisualButton = m_MainMenu->CreateEntity("Options Visual Text");
@@ -247,7 +314,7 @@ namespace Cuphead
 		visualText.SetString("VISUAL");
 		visualText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& visualTransform = m_OptionsMenu.VisualButton.GetComponent<Teddy::TransformComponent>();
-		visualTransform.Scale *= 0.4f;
+		visualTransform.Scale *= 0.35f;
 		visualTransform.Translation += glm::vec3(0.0f, 0.5f, 0.1f);
 
 		m_OptionsMenu.ControlsButton = m_MainMenu->CreateEntity("Options Controls Text");
@@ -256,7 +323,7 @@ namespace Cuphead
 		controlsText.SetString("CONTROLS");
 		controlsText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& controlsTransform = m_OptionsMenu.ControlsButton.GetComponent<Teddy::TransformComponent>();
-		controlsTransform.Scale *= 0.4f;
+		controlsTransform.Scale *= 0.35f;
 		controlsTransform.Translation += glm::vec3(0.0f, 0.15f, 0.1f);
 
 		m_OptionsMenu.LanguageButton = m_MainMenu->CreateEntity("Options Language Text");
@@ -265,7 +332,7 @@ namespace Cuphead
 		langText.SetString("LANGUAGE");
 		langText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& langTransform = m_OptionsMenu.LanguageButton.GetComponent<Teddy::TransformComponent>();
-		langTransform.Scale *= 0.4f;
+		langTransform.Scale *= 0.35f;
 		langTransform.Translation += glm::vec3(0.0f, -0.2f, 0.1f);
 
 		m_OptionsMenu.BackButton = m_MainMenu->CreateEntity("Options Back Text");
@@ -274,7 +341,7 @@ namespace Cuphead
 		backText.SetString("BACK");
 		backText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& backTransform = m_OptionsMenu.BackButton.GetComponent<Teddy::TransformComponent>();
-		backTransform.Scale *= 0.4f;
+		backTransform.Scale *= 0.35f;
 		backTransform.Translation += glm::vec3(0.0f, -0.55f, 0.1f);
 
 		UpdateOptionsButtonColors();
@@ -515,18 +582,48 @@ namespace Cuphead
 		case Teddy::Key::Right:
 		case Teddy::Key::D:
 			switch (m_VisualMenu.CurrentSelection)
+			{
 				case 3:
 					m_VisualMenu.OverscanBar.Increment();
 					UpdateVisualColors();
 					break;
+				case 4:
+					m_VisualMenu.BrightnessBar.Increment();
+					UpdateVisualColors();
+					break;
+				case 5:
+					m_VisualMenu.ColorBleedBar.Increment();
+					UpdateVisualColors();
+					break;
+			}
 			return true;
 		case Teddy::Key::Left:
 		case Teddy::Key::A:
 			switch (m_VisualMenu.CurrentSelection)
+			{
 				case 3:
 					m_VisualMenu.OverscanBar.Decrement();
 					UpdateVisualColors();
 					break;
+				case 4:
+					m_VisualMenu.BrightnessBar.Decrement();
+					UpdateVisualColors();
+					break;
+				case 5:
+					m_VisualMenu.ColorBleedBar.Decrement();
+					UpdateVisualColors();
+					break;
+			}
+			return true;
+		case Teddy::Key::Return:
+			switch (m_VisualMenu.CurrentSelection)
+			{
+			case 7:
+				m_CurrentMenu = 2;
+				HideVisualMenu();
+				UpdateOptionsButtonColors();
+				return true;
+			}
 			return true;
 		default:
 			break;

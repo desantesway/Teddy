@@ -29,8 +29,8 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/MainMenuScene.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/TransitionScenes.h
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/ScrollBar.cpp
-                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/ScrollBar.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/Slider.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/Slider.h
 
                                     # Editor
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h

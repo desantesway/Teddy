@@ -5,7 +5,7 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/KeyEvent.h"
 #include "Teddy/Scene/Entity.h"
-#include "ScrollBar.h"
+#include "Slider.h"
 
 namespace Cuphead
 {
@@ -42,11 +42,11 @@ namespace Cuphead
 		Teddy::Entity VSync;
 		Teddy::Entity VSyncButton;
 		Teddy::Entity Overscan;
-		ScrollBar OverscanBar;
+		Slider OverscanBar;
 		Teddy::Entity Brightness;
-		ScrollBar BrightnessBar;
+		Slider BrightnessBar;
 		Teddy::Entity ColorBleed;
-		ScrollBar ColorBleedBar;
+		Slider ColorBleedBar;
 		Teddy::Entity TitleScreen;
 		Teddy::Entity TitleScreenButton;
 		Teddy::Entity Back;

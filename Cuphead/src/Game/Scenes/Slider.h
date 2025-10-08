@@ -7,12 +7,12 @@
 
 namespace Cuphead
 {
-	class ScrollBar
+	class Slider
 	{
 	public:
-		ScrollBar() = default;
-		ScrollBar(Teddy::Ref<Teddy::Scene> scene, Teddy::TransformComponent& transform, int position, float spacing);
-		~ScrollBar() = default;
+		Slider() = default;
+		Slider(Teddy::Ref<Teddy::Scene> scene, Teddy::TransformComponent& transform, int position, float spacing);
+		~Slider() = default;
 
 		void Increment();
 		void Decrement();

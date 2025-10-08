@@ -1,10 +1,10 @@
-#include "ScrollBar.h"
+#include "Slider.h"
 
 #include <Teddy.h>
 
 namespace Cuphead
 {
-	ScrollBar::ScrollBar(Teddy::Ref<Teddy::Scene> scene, Teddy::TransformComponent& transform, int position, float spacing)
+	Slider::Slider(Teddy::Ref<Teddy::Scene> scene, Teddy::TransformComponent& transform, int position, float spacing)
 	{
 		constexpr int barSize = 10;
 		m_Spacing = spacing;
@@ -15,7 +15,7 @@ namespace Cuphead
 			entity.AddComponent<Teddy::SpriteRendererComponent>();
 
 			auto& transf = entity.GetComponent<Teddy::TransformComponent>();
-			transf.Scale *= glm::vec3(1.5f, 0.75f, 1.0f);
+			transf.Scale *= glm::vec3(1.45f, 0.75f, 1.0f);
 			transf.Translation += glm::vec3(m_Spacing * i, 0.0f, 0.0f);
 
 			transf.Translation += transform.Translation;
@@ -43,17 +43,17 @@ namespace Cuphead
 		
 	}
 
-	void ScrollBar::Decrement()
+	void Slider::Decrement()
 	{
 		SetPosition(m_CurrentPosition - 1);
 	}
 
-	void ScrollBar::Increment()
+	void Slider::Increment()
 	{
 		SetPosition(m_CurrentPosition + 1);
 	}
 
-	void ScrollBar::SetPosition(int position)
+	void Slider::SetPosition(int position)
 	{
 		if (position == m_CurrentPosition)
 			return;
@@ -69,7 +69,7 @@ namespace Cuphead
 		m_CurrentPosition = position;
 	}
 
-	void ScrollBar::UpdateBar(glm::vec4& Color)
+	void Slider::UpdateBar(glm::vec4& Color)
 	{
 		for (int i = 0; i < m_Entities.size(); i++)
 		{
