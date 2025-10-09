@@ -25,6 +25,8 @@ namespace Cuphead
 		{
 			Teddy::Entity LeftBackground;
 			Teddy::Entity RightBackground;
+
+			Teddy::Entity Spire;
 		};
 
 		Background m_Background;

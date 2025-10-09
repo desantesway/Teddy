@@ -13,7 +13,6 @@ namespace Cuphead
 		auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
 		cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
 
-
 		auto& window = Teddy::Application::Get().GetWindow();
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
@@ -32,11 +31,20 @@ namespace Cuphead
 		rsprite.IsBackground = true;
 		rsprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Dragon_Background-2048x2048-fmt12 #0710017.png", Teddy::Boolean::True);
 		m_Background.RightBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1520, 780);
-
 		m_Background.RightBackground.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 0.001f);
-
-		// Scroll background (having two entities shifted)
-
+		
+		m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire");
+		auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
+		
+		std::vector<std::string> paths;
+		for(int i = 0; i <= 35; i++)
+			paths.push_back("assets/Textures/Dragon/Spire/Spire_402x1026_2048x2048_" + std::to_string(i) + ".png");
+		
+		spireSprite.Textures = assets.LoadMultiple<Teddy::Texture2D>(paths);
+		m_Background.Spire.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 402, 1026);
+		auto& spireTransform = m_Background.Spire.GetComponent<Teddy::TransformComponent>();
+		spireTransform.Translation = glm::vec3(0.0f, -0.625f, 1.0f);
+		spireTransform.Scale *= 10.0f;
 		return m_Scene;
 	}
 
@@ -50,7 +58,7 @@ namespace Cuphead
 		auto& rightTransform = m_Background.RightBackground.GetComponent<Teddy::TransformComponent>();
 		rightTransform.Translation.x += m_MovementSpeed;
 
-		if (leftTransform.Translation.x >= 0.0f || rightTransform.Translation.x  >= 14.5f)
+		if (leftTransform.Translation.x >= 0.0f )//|| rightTransform.Translation.x  >= 14.5f)
 		{
 			leftTransform.Translation.x = -14.5f;
 			rightTransform.Translation.x =  0.0f;
