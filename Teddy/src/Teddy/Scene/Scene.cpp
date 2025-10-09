@@ -173,15 +173,22 @@ namespace Teddy
 
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas, SpriteAnimationAtlasComponent& indicies)
 	{
-		if (indicies.AnimationSprites.size() == 0) indicies.GenerateFrames(animation, atlas);
+		if (indicies.AnimationSprites.size() == 0 || animation.PlayableIndicies.size() == 0) indicies.GenerateFrames(animation, atlas);
 		if (!animation.Pause)
 		{
 			animation.Timer += ts;
-			if (indicies.Index == animation.PlayableIndicies[0] || indicies.Index == 0) {
+			bool present = false;
+			for (int i = 0; i < animation.PlayableIndicies.size(); i++)
+				if (animation.PlayableIndicies[i] == indicies.Index)
+					present = true;
+			if (indicies.Index == animation.PlayableIndicies[0] || !present) {
 				if (animation.Timer >= animation.InitialFrameTime) {
 					if (animation.PingPong && animation.Reverse)
 						animation.Reverse = false;
-					indicies.Index = animation.Reverse && animation.Loop ? animation.PlayableIndicies.back() : animation.PlayableIndicies[1];
+					indicies.Index = animation.Reverse && animation.Loop ? 
+						animation.PlayableIndicies.back() : 
+						animation.PlayableIndicies.size() > 1 ? animation.PlayableIndicies[1]:
+						animation.PlayableIndicies[0];
 					animation.Timer = 0;
 				}
 			}

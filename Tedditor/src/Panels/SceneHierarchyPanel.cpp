@@ -360,6 +360,10 @@ namespace Teddy
 				break;
 			}
 		}
+
+		std::sort(result.begin(), result.end());
+		result.erase(std::unique(result.begin(), result.end()), result.end());
+
 		return result;
 	}
 
@@ -621,7 +625,11 @@ namespace Teddy
 				{
 					indicies = std::string(buffer);
 					bool validIndices = true;
-					auto parsed = ParseIndicesString(component.Textures.size(), indicies, validIndices);
+					std::vector<int> parsed;
+					if(ent.HasComponent<SpriteAnimationAtlasComponent>())
+						parsed = ParseIndicesString(ent.GetComponent<SpriteAnimationAtlasComponent>().AnimationSprites.size(), indicies, validIndices);
+					else
+						parsed = ParseIndicesString(component.Textures.size(), indicies, validIndices);
 					if (validIndices) {
 						component.PlayableIndicies = parsed;
 					}
