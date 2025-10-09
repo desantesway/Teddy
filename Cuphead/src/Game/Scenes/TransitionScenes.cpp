@@ -185,6 +185,11 @@ namespace Cuphead
         return m_CircleClosed && m_CircleIn;
     }
 
+    bool TransitionScenes::IsCircleOut()
+    {
+        return !m_CircleClosed && m_CircleOut;
+    }
+
     bool TransitionScenes::CircleOut()
     {
         TED_PROFILE_FUNCTION();
