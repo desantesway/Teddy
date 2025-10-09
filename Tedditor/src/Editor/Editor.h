@@ -35,7 +35,8 @@ namespace Teddy
 		void UI_Toolbar();
 
 		void GenerateAtlas();
-		void GenerateAtlas(const std::vector<std::string>& filepaths);
+		void GenerateAtlas(const int width, const int height, const int toleration, const std::string name);
+		void GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name);
 
 		void NewScene();
 
@@ -70,6 +71,8 @@ namespace Teddy
 		bool m_ShowPhysicsColliders = true;
 
 		bool m_PrimaryCamera = true;
+
+		bool m_AtlasPopup = false;
 
 		EditorCamera m_EditorCamera;
 

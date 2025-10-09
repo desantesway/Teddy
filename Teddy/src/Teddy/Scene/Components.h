@@ -2,7 +2,6 @@
 
 #include "Teddy/Core/ButtonInteraction.h"
 #include "Teddy/Scene/SceneCamera.h"
-#include "Teddy/Core/UUID.h"
 #include "Teddy/Renderer/Texture.h"
 #include "Teddy/Renderer/Font.h"
 #include "Teddy/Core/AssetManager.h"
@@ -70,6 +69,13 @@ namespace Teddy
 
 	enum class BlendingMode { None = 0, Multiply = 1, Invert = 2, InvertAlpha = 3 };
 
+	struct AnimationSprite
+	{
+		int X = 0;
+		int Y = 0;
+		int TextureIndex = 0;
+	};
+
 	struct SpriteAnimationComponent
 	{
 		glm::vec4 Color{ 1.0f };
@@ -82,7 +88,7 @@ namespace Teddy
 		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
 		float Timer = 0.0f;
 		float FrameTime = 0.1f;
-		float InitialFrameTime = 0.5f;
+		float InitialFrameTime = FrameTime;
 		float FinalFrameTime = FrameTime;
 		bool Loop = true;
 		bool PingPong = false;
@@ -119,6 +125,17 @@ namespace Teddy
 			TilingFactor(animation.TilingFactor), OriginalAspectRatio(animation.OriginalAspectRatio), 
 			IsBackground(animation.IsBackground), BlendMode(animation.BlendMode)
 		{ }
+	};
+
+	struct SpriteAnimationAtlasComponent
+	{
+		std::unordered_map<int, AnimationSprite> AnimationSprites;
+		int Index = 0;
+
+		void GenerateFrames(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas);
+
+		SpriteAnimationAtlasComponent() = default;
+		SpriteAnimationAtlasComponent(const SpriteAnimationAtlasComponent&) = default;
 	};
 
 	struct CircleRendererComponent
@@ -245,5 +262,5 @@ namespace Teddy
 		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
 		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
-		TextComponent, ButtonComponent>;
+		TextComponent, ButtonComponent, SpriteAnimationAtlasComponent>;
 }

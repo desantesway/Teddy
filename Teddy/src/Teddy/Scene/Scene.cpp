@@ -171,112 +171,60 @@ namespace Teddy
 		}
 	}
 
-	void ProgressAtlas(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas, SpriteAnimationAtlasComponent& indicies)
 	{
-		int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
-		int maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
-		if (animation.Reverse)
-		{
-			atlas.X--;
-			if (atlas.X < 0)
-			{
-				atlas.X = maxX - 1;
-				atlas.Y++;
-				if (atlas.Y > maxY - 1)
-				{
-					atlas.Y = 0;
-					animation.TextureIndex--;
-					if(animation.PlayableIndicies.size() > 0)
-					{
-						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
-							== animation.PlayableIndicies.end() && animation.TextureIndex >= animation.PlayableIndicies[0])
-							animation.TextureIndex--;
-					}
-				}
-			}
-		}
-		else
-		{
-			atlas.X++;
-			if (atlas.X > maxX - 1)
-			{
-				atlas.X = 0;
-				atlas.Y--;
-				if (atlas.Y < 0)
-				{
-					animation.TextureIndex++;
-					maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
-					atlas.Y = maxY - 1;
-					if(animation.PlayableIndicies.size() > 0)
-					{ 
-						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
-							== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
-							animation.TextureIndex++;
-					}
-				}
-			}
-		}
-	}
-
-	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
-	{
+		if (indicies.AnimationSprites.size() == 0 || animation.PlayableIndicies.size() == 0) indicies.GenerateFrames(animation, atlas);
 		if (!animation.Pause)
 		{
-			int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[animation.TextureIndex]->GetWidth() / atlas.SpriteWidth);
-
-			int maxY = (atlas.SpriteHeight == 0) ? 1 : (animation.Textures[animation.TextureIndex]->GetHeight() / atlas.SpriteHeight);
 			animation.Timer += ts;
-
-			bool atFirstFrame;
-			bool atLastFrame;
-			if(animation.PlayableIndicies.size() > 0)
-			{
-				atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= animation.PlayableIndicies[0]);
-				atLastFrame = (atlas.X == maxX - 1 && atlas.Y == 0 && animation.TextureIndex >= animation.PlayableIndicies.back());
-			}
-			else
-			{
-				atFirstFrame = (atlas.X == 0 && atlas.Y == maxY - 1 && animation.TextureIndex <= 0);
-				atLastFrame = (animation.TextureIndex >= animation.Textures.size() - 1);
-			}
-
-			if (atFirstFrame) {
+			bool present = false;
+			for (int i = 0; i < animation.PlayableIndicies.size(); i++)
+				if (animation.PlayableIndicies[i] == indicies.Index)
+					present = true;
+			if (indicies.Index == animation.PlayableIndicies[0] || !present) {
 				if (animation.Timer >= animation.InitialFrameTime) {
-					if (animation.PingPong && animation.Reverse) {
+					if (animation.PingPong && animation.Reverse)
 						animation.Reverse = false;
-					}
-					else {
-						ProgressAtlas(animation, atlas);
-					}
+					indicies.Index = animation.Reverse && animation.Loop ? 
+						animation.PlayableIndicies.back() : 
+						animation.PlayableIndicies.size() > 1 ? animation.PlayableIndicies[1]:
+						animation.PlayableIndicies[0];
 					animation.Timer = 0;
 				}
 			}
-			else if (atLastFrame) {
+			else if (indicies.Index == animation.PlayableIndicies.back()) {
 				if (animation.Timer >= animation.FinalFrameTime) {
-					if (animation.Loop) {
-						if (animation.PingPong) {
+					if (animation.Loop)
+					{
+						if (animation.PingPong || animation.Reverse)
+						{
 							animation.Reverse = true;
-							ProgressAtlas(animation, atlas);
+							indicies.Index = animation.PlayableIndicies[animation.PlayableIndicies.size() - 2];
 						}
-						else {
-							animation.TextureIndex = 0;
-						}
+						else
+							indicies.Index = animation.PlayableIndicies[0];
 					}
 					animation.Timer = 0;
 				}
 			}
-			else if (animation.TextureIndex <= animation.Textures.size() - 1 && animation.Timer >= animation.FrameTime) {
-				ProgressAtlas(animation, atlas);
+			else if (indicies.Index <= animation.PlayableIndicies.back() && animation.Timer >= animation.FrameTime) {
+				for (int i = 0; i < animation.PlayableIndicies.size(); i++)
+				{
+					if (indicies.Index == animation.PlayableIndicies[i])
+					{
+						if (animation.Reverse && i - 1 >= 0)
+							indicies.Index = animation.PlayableIndicies[i - 1];
+						else if(!animation.Reverse && i + 1 < animation.PlayableIndicies.size())
+							indicies.Index = animation.PlayableIndicies[i + 1];
+						break;
+					}
+				}
 				animation.Timer = 0;
 			}
-		}
 
-		if (animation.TextureIndex < 0 || animation.TextureIndex >= animation.Textures.size())
-		{
-			if (animation.PlayableIndicies.size() > 0)
-				animation.TextureIndex = animation.PlayableIndicies[0];
-			else
-				animation.TextureIndex = 0;
+			atlas.X = indicies.AnimationSprites[indicies.Index].X;
+			atlas.Y = indicies.AnimationSprites[indicies.Index].Y;
+			animation.TextureIndex = indicies.AnimationSprites[indicies.Index].TextureIndex;
 		}
 	}
 
@@ -305,12 +253,19 @@ namespace Teddy
 				{
 					if (animation.PingPong && animation.Reverse)
 						animation.Reverse = false;
-					animation.TextureIndex++;
-					if (animation.PlayableIndicies.size() > 0)
+					if (animation.Reverse && animation.Loop)
 					{
-						while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
-							== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
-							animation.TextureIndex++;
+						animation.TextureIndex = animation.PlayableIndicies.size() > 0 ? animation.PlayableIndicies.back() : animation.Textures.size() - 1;
+					}
+					else
+					{
+						animation.TextureIndex++;
+						if (animation.PlayableIndicies.size() > 0)
+						{
+							while (std::find(animation.PlayableIndicies.begin(), animation.PlayableIndicies.end(), animation.TextureIndex)
+								== animation.PlayableIndicies.end() && animation.TextureIndex < animation.Textures.size())
+								animation.TextureIndex++;
+						}
 					}
 					animation.Timer = 0;
 				}
@@ -321,7 +276,7 @@ namespace Teddy
 				{
 					if (animation.Loop)
 					{
-						if (animation.PingPong)
+						if (animation.PingPong || animation.Reverse)
 						{
 							animation.Reverse = true;
 							animation.TextureIndex--;
@@ -340,7 +295,7 @@ namespace Teddy
 			}
 			else if (animation.TextureIndex < animation.Textures.size() - 1 && animation.FrameTime < animation.Timer)
 			{
-				if (animation.PingPong && animation.Reverse)
+				if (animation.Reverse)
 				{
 					animation.TextureIndex--;
 					if (animation.PlayableIndicies.size() > 0)
@@ -508,7 +463,8 @@ namespace Teddy
 					if (animation.Textures.size()) {
 						if (ent.HasComponent<SpriteAtlasComponent>()) {
 							auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
-							FowardAtlasAnimation(ts, animation, atlas);
+							auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
+							FowardAtlasAnimation(ts, animation, atlas, indicies);
 							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
 						}
 						else {
@@ -571,7 +527,8 @@ namespace Teddy
 				if (animation.Textures.size()) {
 					if (ent.HasComponent<SpriteAtlasComponent>()) {
 						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
-						FowardAtlasAnimation(ts, animation, atlas);
+						auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
+						FowardAtlasAnimation(ts, animation, atlas, indicies);
 						Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
 					}
 					else {
@@ -730,5 +687,29 @@ namespace Teddy
 	{
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAnimationComponent>(Entity entity, SpriteAnimationComponent& component)
+	{
+		if (entity.HasComponent<SpriteAtlasComponent>())
+		{
+			if (!entity.HasComponent<SpriteAnimationAtlasComponent>())
+			{
+				entity.AddComponent<SpriteAnimationAtlasComponent>().GenerateFrames(component, entity.GetComponent<SpriteAtlasComponent>());
+			}
+		}
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteAtlasComponent>(Entity entity, SpriteAtlasComponent& component)
+	{
+		if (entity.HasComponent<SpriteAnimationComponent>())
+		{
+			if (!entity.HasComponent<SpriteAnimationAtlasComponent>())
+			{
+				entity.AddComponent<SpriteAnimationAtlasComponent>().GenerateFrames(entity.GetComponent<SpriteAnimationComponent>(), component);
+			}
+		}
 	}
 }

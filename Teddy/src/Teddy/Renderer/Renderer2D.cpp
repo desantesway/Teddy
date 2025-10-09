@@ -507,6 +507,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (color.a == 0.0f) return;
+
 		if (s_Data.LineResources.IndexCount >= Renderer2DData::MaxLineIndices)
 			NextBatch();
 
@@ -527,6 +529,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (color.a == 0.0f) return;
+
 		glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
@@ -542,6 +546,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (color.a == 0.0f) return;
+
 		glm::vec3 lineVertices[4];
 		for (size_t i = 0; i < 4; i++)
 			lineVertices[i] = transform * s_Data.QuadVertexPositions[i];
@@ -555,6 +561,8 @@ namespace Teddy
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness /*= 1.0f*/, float fade /*= 0.005f*/, int entityID /*= -1*/)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
+
+		if (color.a == 0.0f) return;
 
 		if (m_LastShaderDrawn != ShaderType::Circle)
 		{
@@ -585,6 +593,8 @@ namespace Teddy
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
+		if (color.a == 0.0f) return;
+
 		if (s_Data.CircleLineResources.IndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
 
@@ -606,6 +616,8 @@ namespace Teddy
 	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite,
 		const Camera& camera, const TransformComponent& cameraTransform, int entityID)
 	{
+		if (sprite.Color.a == 0.0f) return;
+
 		SpriteAtlasComponent atlas;
 
 		if (sprite.Texture)
@@ -622,6 +634,8 @@ namespace Teddy
 		const Camera& camera, const TransformComponent& cameraTransform,
 		const SpriteAtlasComponent& atlas, int entityID)
 	{
+		if (sprite.Color.a == 0.0f) return;
+
 		TransformComponent newTransform = transform;
 		if (sprite.IsBackground)
 		{
@@ -641,6 +655,8 @@ namespace Teddy
 
 	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite, int entityID)
 	{
+		if (sprite.Color.a == 0.0f) return;
+
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		SpriteAtlasComponent atlas;
@@ -658,6 +674,8 @@ namespace Teddy
 	void Renderer2D::DrawQuad(TransformComponent& transform, const SpriteRendererComponent& sprite,
 		const SpriteAtlasComponent& atlas, int entityID)
 	{
+		if (sprite.Color.a == 0.0f) return;
+
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		if (sprite.Texture)
@@ -719,6 +737,8 @@ namespace Teddy
 	// TODO: Rotation in the center + letter rotation
 	void Renderer2D::DrawString(const TextComponent& component, TransformComponent& transform, int entityID)
 	{
+		if (component.Color.a == 0.0f) return;
+
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 		
 		if (m_LastShaderDrawn != ShaderType::Text)
