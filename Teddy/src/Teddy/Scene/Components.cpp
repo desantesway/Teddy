@@ -4,6 +4,35 @@
 
 namespace Teddy
 {
+    
+    void SpriteAnimationAtlasComponent::GenerateFrames(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
+    {
+		int index = 0;
+		bool add = animation.PlayableIndicies.size() == 0;
+        for (int i = 0; i < animation.Textures.size(); i++)
+        {
+            int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[i]->GetWidth() / atlas.SpriteWidth);
+            int maxY = atlas.SpriteHeight == 0 ? 1 : (animation.Textures[i]->GetHeight() / atlas.SpriteHeight);
+            int x = 0;
+			int y = 0;
+        
+            while (x < maxX && y < maxY)
+            {
+                this->AnimationSprites[index] = AnimationSprite{ x, y, i };
+				if (add) animation.PlayableIndicies.push_back(index);
+                x++;
+                if(x > maxX - 1)
+                {
+                    x = 0;
+                    y++;
+				}
+        
+                index++;
+            }
+        }
+        
+    }
+
 	void TextComponent::CalculateTextQuad()
 	{
         TED_PROFILE_CATEGORY("Text Quad", InstrumentorCategory::Visibility);

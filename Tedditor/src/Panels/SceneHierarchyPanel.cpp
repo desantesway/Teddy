@@ -640,6 +640,7 @@ namespace Teddy
 					component.Reverse = false;
 				}
 				ImGui::Checkbox("Pause", &component.Pause);
+				ImGui::Checkbox("Reverse", &component.Reverse);
 
 				DrawSecondComponent<SpriteAtlasComponent>("Atlas", true, ent, component,
 					[](auto&component, auto& secndComponent)

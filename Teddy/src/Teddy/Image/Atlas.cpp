@@ -26,6 +26,7 @@ namespace Teddy::Atlas
             stbi_image_free(data);
         }
 
+        int maxW = refW, maxH = refH;
         for (size_t i = 1; i < filepaths.size(); i++) {
             int w, h, ch;
             unsigned char* data = stbi_load(filepaths[i].c_str(), &w, &h, &ch, 4);
@@ -33,13 +34,13 @@ namespace Teddy::Atlas
                 TED_CORE_ERROR("Failed to load {}", filepaths[i]);
             stbi_image_free(data);
 
-            if (w != refW || h != refH)
-                TED_CORE_ASSERT(false, "All images must have the same resolution");
+            maxW = std::max(maxW, w);
+            maxH = std::max(maxH, h);
         }
 
         float shrinkFactor = 1.0f - (toleration / 100.0f);
-        int spriteW = static_cast<int>(std::floor(refW * shrinkFactor));
-        int spriteH = static_cast<int>(std::floor(refH * shrinkFactor));
+        int spriteW = maxW;//static_cast<int>(std::floor(refW * shrinkFactor)); // TODO : fix
+        int spriteH = maxH;//static_cast<int>(std::floor(refH * shrinkFactor));
 
         int padding = 1;
         int paddingW = spriteW + 2 * padding;
@@ -84,25 +85,22 @@ namespace Teddy::Atlas
 
                 int col = i % cols;
                 int row = i / cols;
-                int flippedRow = (rows - 1) - row;
-
                 int entryX = col * paddingW + padding;
-                int entryY = flippedRow * paddingH + padding;
-                int entryW = spriteW;
-                int entryH = spriteH;
+                int entryY = row * paddingH + padding;
 
                 int w, h, ch;
                 unsigned char* src = stbi_load(filepaths[index].c_str(), &w, &h, &ch, 4);
                 if (!src)
                     TED_CORE_ERROR("Failed to load {}", filepaths[index]);
 
+                int offsetX = entryX + (spriteW - w) / 2;
+                int offsetY = entryY + (spriteH - h) / 2;
+
                 if (count != 1) {
-                    for (int y = 0; y < spriteH; y++) {
-                        for (int x = 0; x < spriteW; x++) {
-                            int srcX = static_cast<int>((x / (float)spriteW) * w);
-                            int srcY = static_cast<int>((y / (float)spriteH) * h);
-                            unsigned char* srcPixel = &src[(srcY * w + srcX) * 4];
-                            unsigned char* dstPixel = &buffer[((entryY + y) * atlasW + (entryX + x)) * 4];
+                    for (int y = 0; y < h; y++) {
+                        for (int x = 0; x < w; x++) {
+                            unsigned char* srcPixel = &src[(y * w + x) * 4];
+                            unsigned char* dstPixel = &buffer[((offsetY + y) * atlasW + (offsetX + x)) * 4];
                             dstPixel[0] = srcPixel[0];
                             dstPixel[1] = srcPixel[1];
                             dstPixel[2] = srcPixel[2];
