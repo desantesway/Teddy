@@ -71,22 +71,22 @@ namespace Teddy
         auto& cupheadSprite = test.AddComponent<Teddy::SpriteAnimationComponent>();
         cupheadSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
         cupheadSprite.Loop = true;
-        cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/textures/MugmanSelect_136x159_1024x1024_0.png", Teddy::Boolean::True));
-        test.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 136, 159);
+        cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/textures/Cuphead_143x171_1024x1024_0.png", Teddy::Boolean::True));
+        test.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 143, 171);
         auto& cupheadTransform = test.GetComponent<Teddy::TransformComponent>();
         cupheadTransform.Translation = glm::vec3(0.4f, 0.24f, 1.0f);
         cupheadTransform.Scale *= 1.3f;
 
         auto cupheadAnimation = m_ActiveScene->CreateEntity("Main Title Animation Title");
-        cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1126, 614);
+        cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1013, 552);
         auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.25f, 0.05f, 0.25f);
         spriteAnimation.PingPong = true;
         spriteAnimation.Textures = assets.LoadMultiple<Teddy::Texture2D>(
             {
-                "assets/textures/yo_1126x614_2048x2048_0.png",
-                "assets/textures/yo_1126x614_2048x2048_1.png",
-                "assets/textures/yo_1126x614_2048x2048_2.png",
-                "assets/textures/yo_1126x614_2048x2048_3.png"
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_0.png",
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_1.png",
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_2.png",
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_3.png"
             });
         auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
         animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
@@ -398,7 +398,9 @@ namespace Teddy
                     SaveSceneAs();
 
                 if (ImGui::MenuItem("Generate Atlas", "Ctrl+Shift+A"))
-                    GenerateAtlas();
+                {
+                    m_AtlasPopup = true;
+                }
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
@@ -421,6 +423,36 @@ namespace Teddy
             }
 
             ImGui::EndMenuBar();
+        }
+
+        {
+            static int atlasWidth = 2048;
+            static int atlasHeight = 2048;
+            static int atlasTolerance = 10;
+            static char atlasName[128] = "";
+
+            if (m_AtlasPopup) {
+                ImGui::OpenPopup("Generate Atlas");
+            }
+
+            if (ImGui::BeginPopupModal("Generate Atlas", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+                ImGui::InputInt("Width", &atlasWidth);
+                ImGui::InputInt("Height", &atlasHeight);
+                ImGui::InputInt("Tolerance", &atlasTolerance);
+                ImGui::InputText("Name", atlasName, IM_ARRAYSIZE(atlasName));
+
+                if (ImGui::Button("Generate", ImVec2(120, 0))) {
+                    GenerateAtlas(atlasWidth, atlasHeight, atlasTolerance, atlasName);
+                    ImGui::CloseCurrentPopup();
+                    m_AtlasPopup = false;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+                    ImGui::CloseCurrentPopup();
+                    m_AtlasPopup = false;
+                }
+                ImGui::EndPopup();
+            }
         }
 
         ImGui::Begin("Stats");
@@ -634,15 +666,28 @@ namespace Teddy
         AssetManager::Get().BypassAll();
     }
 
-    void Editor::GenerateAtlas()
+    void Editor::GenerateAtlas(const int width, const int height, const int toleration, const std::string name)
     {
         std::vector<std::string> filepaths = FileDialogs::OpenFiles(
             "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
         );
-        GenerateAtlas(filepaths);
+        GenerateAtlas(filepaths, width, height, toleration, "");
     }
 
-    void Editor::GenerateAtlas(const std::vector<std::string>& filepaths)
+    void Editor::GenerateAtlas()
+    {
+        static int width = 2048;
+        static int height = 2048;
+        static int tolerance = 10;
+        static char name[128] = "";
+
+        std::vector<std::string> filepaths = FileDialogs::OpenFiles(
+            "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
+        );
+        GenerateAtlas(filepaths, width, height, tolerance, name);
+    }
+
+    void Editor::GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name)
     {
         for (std::string file : filepaths)
         {
@@ -654,7 +699,7 @@ namespace Teddy
         }
 
         if (filepaths.size() > 0)
-            Atlas::Generate(filepaths, 2048, 2048, 10, "");
+            Atlas::Generate(filepaths, width, height, toleration, name);
     }
 
     void Editor::NewScene()
@@ -799,7 +844,7 @@ namespace Teddy
         case Key::A:
         {
             if (control && shift)
-                GenerateAtlas();
+                m_AtlasPopup = true;
             break;
         }
         case Key::N:
