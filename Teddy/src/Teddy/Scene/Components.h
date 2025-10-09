@@ -78,7 +78,6 @@ namespace Teddy
 
 	struct SpriteAnimationComponent
 	{
-		// TODO: On the constructor build a map of indicies to start and end frames for easy access and then just access Map[PlayableIndicies] on foward animation
 		glm::vec4 Color{ 1.0f };
 		std::vector<Ref<Texture2D>> Textures;
 		float TilingFactor = 1.0f;
