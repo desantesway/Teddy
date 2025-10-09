@@ -4,6 +4,7 @@
 #include "MainTitleScene.h"
 #include "TransitionScenes.h"
 #include "MainMenuScene.h"
+#include "../Level/LevelScene.h"
 
 namespace Cuphead
 {
@@ -26,6 +27,7 @@ namespace Cuphead
 
 		static Teddy::Ref<Teddy::Scene> InitMainTitle();
 		static Teddy::Ref<Teddy::Scene> InitTitleMenu();
+		static Teddy::Ref<Teddy::Scene> InitLevel();
 	private:
 		static int m_CurrentScene;
 
@@ -34,6 +36,7 @@ namespace Cuphead
 		static TransitionScenes m_TransitionScenes;
 		static MainTitleScene m_MainTitleScene;
 		static MainMenuScene m_MainMenuScene;
+		static LevelScene m_LevelScene;
 	private:
 		static GameScenes* instance;
 	};

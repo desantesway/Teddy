@@ -16,6 +16,7 @@ namespace Teddy
 	class Scene
 	{
 	public:
+		Scene(bool isRuntime) { OnRuntimeStart(); }
 		Scene();
 		~Scene(); 
 

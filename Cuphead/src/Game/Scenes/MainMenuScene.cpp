@@ -18,8 +18,7 @@ namespace Cuphead
 	{
 		TED_PROFILE_FUNCTION();
 
-		m_MainMenu = Teddy::CreateRef<Teddy::Scene>();
-		m_MainMenu->OnRuntimeStart();
+		m_MainMenu = Teddy::CreateRef<Teddy::Scene>(true);
 
 		auto camEntt = m_MainMenu->CreateEntity("Main Menu Camera");
 		camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
@@ -44,6 +43,11 @@ namespace Cuphead
 		InitDlcMenu();
 
 		return m_MainMenu;
+	}
+
+	void MainMenuScene::OnUpdate(Teddy::Timestep ts)
+	{
+		OnPlayUpdate();
 	}
 
 	void MainMenuScene::InitMainMenu()

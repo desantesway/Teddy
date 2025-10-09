@@ -23,6 +23,7 @@ namespace Cuphead
 		bool FadeOut();
 		bool FadeOut(const float& velocity, const Teddy::Timestep& ts);
 		bool IsFadedOut();
+		void SetFadeAlpha(const float& alpha);
 
 		void InitCircleScene();
 		bool CircleIn();

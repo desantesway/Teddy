@@ -43,6 +43,10 @@ target_sources(Cuphead PRIVATE
                                     # Editor
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/EditorLayer.cpp
+
+                                    # Level
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/LevelScene.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/LevelScene.cpp
 )
 
 target_include_directories(Cuphead PUBLIC

@@ -39,7 +39,7 @@ namespace Cuphead
         }
         else if (m_CircleOut && m_CircleClosed)
         {
-            if (CircleOut(2.5f, ts))
+            if (CircleOut(2.0f, ts))
             {
                 m_CircleClosed = false;
             }
@@ -132,6 +132,12 @@ namespace Cuphead
         bool ret = m_Faded && m_FadeIn;
 
         return ret;
+    }
+
+    void TransitionScenes::SetFadeAlpha(const float& alpha)
+    {
+        auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+        transitionQuad.Color.a = alpha;
     }
 
     void TransitionScenes::InitCircleScene()

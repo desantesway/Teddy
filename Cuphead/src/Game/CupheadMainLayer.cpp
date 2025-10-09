@@ -45,7 +45,10 @@ namespace Cuphead
         }
 
         if (GameScenes::OnUpdate(ts))
+        {
+			m_ActiveScene->OnRuntimeStop();
             m_ActiveScene = GameScenes::InitNextScene();
+        }
     }
 
     bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)

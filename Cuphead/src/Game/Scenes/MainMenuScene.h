@@ -85,8 +85,8 @@ namespace Cuphead
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
 
+		static unsigned int LoadLevel() { return m_LoadLevel; }
 	private:
-
 		void InitMainMenu();
 		static void UpdateMainMenuButtonColors();
 		static void HideMainMenu();
@@ -113,6 +113,7 @@ namespace Cuphead
 		static void HidePlayMenu();
 		static void UpdatePlayButtonColors();
 		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		void OnPlayUpdate();
 
 		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
@@ -129,6 +130,7 @@ namespace Cuphead
 		static DlcMenu m_DlcMenu;
 		static PlayMenu m_PlayMenu;
 
+		static unsigned int m_LoadLevel; // 0 = none, 1 = cuphead, 2 = mugman
 		static unsigned int m_CurrentMenu;
 	};
 }
