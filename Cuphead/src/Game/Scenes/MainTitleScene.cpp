@@ -19,14 +19,14 @@ namespace Cuphead
         auto& assets = Teddy::AssetManager::Get();
 
         auto cupheadAnimation = initialScene->CreateEntity("Main Title Animation Title");
-        cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 1013, 552);
-        auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.05f, 0.25f); // TODO: intial frame is being ran twice?
+        cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1013, 552);
+        auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.25f, 0.05f, 0.25f);
         spriteAnimation.PingPong = true;
         spriteAnimation.Textures = assets.LoadMultiple<Teddy::Texture2D>(
             {
-                "assets/textures/CupAndMugMan_1013x552_2048x2048_0.png",
-                "assets/textures/CupAndMugMan_1013x552_2048x2048_1.png",
-                "assets/textures/CupAndMugMan_1013x552_1013x552_2.png"
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_0.png",
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_1.png",
+                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_2.png"
             });
         auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
         animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);

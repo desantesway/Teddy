@@ -46,7 +46,7 @@ namespace Cuphead
 
 		m_PlayMenu.Cuphead = m_MainMenu->CreateEntity("Cuphead Select");
 		auto& cupheadSprite = m_PlayMenu.Cuphead.AddComponent<Teddy::SpriteAnimationComponent>();
-		//cupheadSprite.PlayableIndicies = { 0 };//{ 11, 12, 13 };
+		cupheadSprite.PlayableIndicies = { 11, 12, 13 };
 		cupheadSprite.Loop = true;
 		cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/Textures/CupheadSelect_143x171_1024x1024_0.png", Teddy::Boolean::True));
 		m_PlayMenu.Cuphead.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 143, 171);
@@ -56,7 +56,7 @@ namespace Cuphead
 
 		m_PlayMenu.Mugman = m_MainMenu->CreateEntity("Mugman Select");
 		auto& mugmanSprite = m_PlayMenu.Mugman.AddComponent<Teddy::SpriteAnimationComponent>();
-		//mugmanSprite.PlayableIndicies = { 0 };//{ 11, 12, 13 };
+		mugmanSprite.PlayableIndicies = { 11, 12, 13 };
 		mugmanSprite.Loop = true;
 		mugmanSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/Textures/MugmanSelect_136x159_1024x1024_0.png", Teddy::Boolean::True));
 		m_PlayMenu.Mugman.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 136, 159);
@@ -88,8 +88,29 @@ namespace Cuphead
 				glm::vec4(80.0f / 155.0f, 152.0f / 255.0f, 96.0f / 255.0f, 1.0f);
 			m_PlayMenu.Text.GetComponent<Teddy::TextComponent>().Color = m_WhiteColor * glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
 			m_PlayMenu.PlayerText.GetComponent<Teddy::TextComponent>().Color = m_WhiteColor * glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
-			m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().Color = m_WhiteColor;
-			m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().Color = m_WhiteColor;
+
+			auto& cupheadAnimation = m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>();
+			cupheadAnimation.Color = m_WhiteColor;
+
+			auto& mugmanAnimation = m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>();
+			mugmanAnimation.Color = m_WhiteColor;
+
+			if (m_PlayMenu.CurrentSelection == 0)
+			{
+				cupheadAnimation.PlayableIndicies = std::vector<int>{ 8, 9, 10 };
+				m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 8;
+
+				mugmanAnimation.PlayableIndicies = std::vector<int>{ 11, 12, 13 };
+				m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 11;
+			}
+			else
+			{
+				cupheadAnimation.PlayableIndicies = std::vector<int>{ 11, 12, 13 };
+				m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 11;
+
+				mugmanAnimation.PlayableIndicies = std::vector<int>{ 8, 9, 10 };
+				m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 8;
+			}
 		}
 		else
 		{
@@ -116,6 +137,22 @@ namespace Cuphead
 			m_PlayMenu.CurrentSelection = 1;
 			UpdatePlayButtonColors();
 			return true;
+		case Teddy::Key::Return:
+			switch (m_PlayMenu.CurrentSelection)
+			{
+				case 0:
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+					TED_CORE_INFO("Starting Game with Cuphead");
+					break;
+				case 1:
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+					TED_CORE_INFO("Starting Game with Mugman");
+					break;
+			default:
+				break;
+			}
 		default:
 			break;
 		}
