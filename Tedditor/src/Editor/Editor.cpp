@@ -68,31 +68,31 @@ namespace Teddy
             glm::vec4 m_Color = glm::vec4(1.0f);
         };
 
-		auto test = m_ActiveScene->CreateEntity("Mugman Animation");
-        auto& cupheadSprite = test.AddComponent<Teddy::SpriteAnimationComponent>();
-        cupheadSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
-        cupheadSprite.Loop = true;
-        cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/textures/Cuphead_143x171_1024x1024_0.png", Teddy::Boolean::True));
-        test.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 143, 171);
-        auto& cupheadTransform = test.GetComponent<Teddy::TransformComponent>();
-        cupheadTransform.Translation = glm::vec3(0.4f, 0.24f, 1.0f);
-        cupheadTransform.Scale *= 1.3f;
-
-        auto cupheadAnimation = m_ActiveScene->CreateEntity("Main Title Animation Title");
-        cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1013, 552);
-        auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.25f, 0.05f, 0.25f);
-        spriteAnimation.PingPong = true;
-        spriteAnimation.Textures = assets.LoadMultiple<Teddy::Texture2D>(
-            {
-                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_0.png",
-                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_1.png",
-                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_2.png",
-                "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_3.png"
-            });
-        auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
-        animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
-        animationTransform.Scale = glm::vec3(0.0f, 0.75f, 1.0f);
-        spriteAnimation.IsBackground = true;
+		//auto test = m_ActiveScene->CreateEntity("Mugman Animation");
+        //auto& cupheadSprite = test.AddComponent<Teddy::SpriteAnimationComponent>();
+        //cupheadSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        //cupheadSprite.Loop = true;
+        //cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/textures/Cuphead_143x171_1024x1024_0.png", Teddy::Boolean::True));
+        //test.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 143, 171);
+        //auto& cupheadTransform = test.GetComponent<Teddy::TransformComponent>();
+        //cupheadTransform.Translation = glm::vec3(0.4f, 0.24f, 1.0f);
+        //cupheadTransform.Scale *= 1.3f;
+        //
+        //auto cupheadAnimation = m_ActiveScene->CreateEntity("Main Title Animation Title");
+        //cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1013, 552);
+        //auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.25f, 0.05f, 0.25f);
+        //spriteAnimation.PingPong = true;
+        //spriteAnimation.Textures = assets.LoadMultiple<Teddy::Texture2D>(
+        //    {
+        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_0.png",
+        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_1.png",
+        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_2.png",
+        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_3.png"
+        //    });
+        //auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
+        //animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
+        //animationTransform.Scale = glm::vec3(0.0f, 0.75f, 1.0f);
+        //spriteAnimation.IsBackground = true;
 
         Renderer2D::SetLineWidth(4.0f);
     }

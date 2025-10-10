@@ -65,14 +65,14 @@ namespace Teddy::Atlas
         while (fileCount > 0 && scaledCapacity > 0)
         {
             scaledAtlasQuantity++;
-			fileCount -= scaledCapacity;
+            fileCount -= scaledCapacity;
         }
         fileCount = filepaths.size();
         while (fileCount > 0 && baseCapacity > 0)
         {
-			baseAtlasQuantity++;
+            baseAtlasQuantity++;
             fileCount -= baseCapacity;
-		}
+        }
 
         if (baseAtlasQuantity > scaledAtlasQuantity) {
             spriteW = scaledW;
