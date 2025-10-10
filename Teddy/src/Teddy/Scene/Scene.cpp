@@ -172,7 +172,7 @@ namespace Teddy
 	}
 
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas, SpriteAnimationAtlasComponent& indicies)
-	{
+	{ // TODO: loop ts, animatons are not stepped correctly with lag spikes
 		if (indicies.AnimationSprites.size() == 0 || animation.PlayableIndicies.size() == 0) indicies.GenerateFrames(animation, atlas);
 		if (!animation.Pause)
 		{

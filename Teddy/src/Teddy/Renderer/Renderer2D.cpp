@@ -118,7 +118,7 @@ namespace Teddy
 		std::array<Weak<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
 
-		std::array<Weak<Texture2D>, MaxTextureSlots> FontAtlasSlots;
+		std::array<Weak<Texture2D>, MaxTextureSlots> FontAtlasSlots; // TODO: This should be the same as Texture
 		uint32_t FontAtlasSlotIndex = 0;
 
 		glm::vec4 QuadVertexPositions[4] = { glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f), glm::vec4(0.0f) };
@@ -354,6 +354,7 @@ namespace Teddy
 		s_Data.TextureSlotIndex = 1;
 		s_Data.FontAtlasSlotIndex = 0;
 
+		// TODO: free weak refs from texture
 		// DEBUG: Uncomment this if for some reason you change from weak to ref s_Data.TextureSlots/s_Data.FontAtlasSlots
 		//for (uint32_t i = 1; i < Renderer2DData::MaxTextureSlots; ++i)
 		//	s_Data.TextureSlots[i].reset();

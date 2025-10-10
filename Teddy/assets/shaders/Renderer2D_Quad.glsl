@@ -110,6 +110,10 @@ void main()
 	{
 		color = 1 - texColor;
 	}
+	else if(v_BlendingMode == 1)
+	{
+		color.rgb *= color.a;
+	}
 
 	if (color.a == 0.0)
 		discard;
