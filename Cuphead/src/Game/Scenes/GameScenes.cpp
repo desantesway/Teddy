@@ -92,16 +92,16 @@ namespace Cuphead
     {
         if (m_CurrentScene != 2)
             m_MainTitleScene.~MainTitleScene();
-		else if (m_CurrentScene != 3)
+		if (m_CurrentScene != 3)
             m_MainMenuScene.~MainMenuScene();
-		else if (m_CurrentScene != 4)
+        if (m_CurrentScene != 4)
             m_LevelScene.~LevelScene();
         Teddy::AssetManager::Get().RemoveExpiredAll();
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        //m_CurrentScene = 2;
+        m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:

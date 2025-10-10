@@ -24,7 +24,8 @@ namespace Cuphead
 		camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
 		auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
 		cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
-		cam.Camera.SetViewportSize(1920, 1080); // TODO: Viewport sharing + other scenes
+		auto& window = Teddy::Application::Get().GetWindow();
+		cam.Camera.SetViewportSize(window.GetWidth(), window.GetHeight());
 
 		// Background
 		auto& assets = Teddy::AssetManager::Get();

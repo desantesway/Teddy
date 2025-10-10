@@ -62,13 +62,13 @@ namespace Teddy::Atlas
 		int baseAtlasQuantity = 0;
         
 		int fileCount = filepaths.size();
-        while (fileCount > 0)
+        while (fileCount > 0 && scaledCapacity > 0)
         {
             scaledAtlasQuantity++;
 			fileCount -= scaledCapacity;
         }
         fileCount = filepaths.size();
-        while (fileCount > 0)
+        while (fileCount > 0 && baseCapacity > 0)
         {
 			baseAtlasQuantity++;
             fileCount -= baseCapacity;
@@ -84,8 +84,8 @@ namespace Teddy::Atlas
             TED_CORE_INFO("No benefit from toleration; keeping original sprite size.");
         }
 
-        int paddingW = spriteW + 2 * padding;
-        int paddingH = spriteH + 2 * padding;
+        int paddingW = spriteW;
+        int paddingH = spriteH;
         int cols = maxWidth / paddingW;
         int rows = maxHeight / paddingH;
         int capacity = cols * rows;

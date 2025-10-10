@@ -13,7 +13,8 @@ namespace Cuphead
         camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
         auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
         cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
-        cam.Camera.SetViewportSize(1920, 1080);
+        auto& window = Teddy::Application::Get().GetWindow();
+        cam.Camera.SetViewportSize(window.GetWidth(), window.GetHeight());
 
         // Cuphead Animation
         auto& assets = Teddy::AssetManager::Get();

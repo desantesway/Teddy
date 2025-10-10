@@ -22,6 +22,7 @@ namespace Cuphead
 
 		GameScenes::Init();
 	    m_ActiveScene = GameScenes::InitNextScene();
+        GameScenes::FreeScenes();
 
 	    Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
 	    Teddy::PostProcessing::SetChromaticAberrationOffset({ 2.5f, 2.5f, -2.5f });

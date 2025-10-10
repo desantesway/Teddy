@@ -13,9 +13,17 @@ namespace Cuphead
 		~LevelScene() = default;
 		
 		Teddy::Ref<Teddy::Scene> Init(unsigned int character);
+		Teddy::Ref<Teddy::Scene> GetScene() { return m_Scene; }
 
 		void OnUpdate(Teddy::Timestep ts);
+
 	private:
+		void InitPhase1();
+		void InitPhase1Background();
+		void OnUpdatePhase1();
+	private:
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+
 		const float m_MovementVelocity = 1.1f;
 		float m_MovementSpeed = 0.0f;
 
@@ -25,10 +33,19 @@ namespace Cuphead
 			Teddy::Entity RightBackground;
 
 			Teddy::Entity Spire;
+
+			Teddy::Entity Cloud1Left;
+			Teddy::Entity Cloud1Right;
+			Teddy::Entity Cloud2Left;
+			Teddy::Entity Cloud2Right;
+			Teddy::Entity Cloud3;
+			Teddy::Entity Cloud4;
+			Teddy::Entity Cloud5;
 		};
 
 		Background m_Background;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
+		int m_Phase = 1;
 	};
 }
