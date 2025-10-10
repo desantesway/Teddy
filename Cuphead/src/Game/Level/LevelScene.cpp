@@ -65,7 +65,7 @@ namespace Cuphead
 		}
 
 		// Background cloud 1
-		{ // faster than cloud 2
+		{ 
 			m_Background.Cloud1Right = m_Scene->CreateEntity("Phase 1 Cloud 1 Right");
 			auto& cloud1Sprite = m_Background.Cloud1Right.AddComponent<Teddy::SpriteRendererComponent>();
 			cloud1Sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
@@ -101,6 +101,63 @@ namespace Cuphead
 			auto& cloud2LeftTransform = m_Background.Cloud2Left.GetComponent<Teddy::TransformComponent>();
 			cloud2LeftTransform.Translation = glm::vec3(-27.5f, -1.5f, 0.6f);
 			cloud2LeftTransform.Scale *= 4.0f;
+		}
+
+		// Background cloud 3
+		{
+			m_Background.Cloud3Right = m_Scene->CreateEntity("Phase 1 Cloud 3 Right");
+			auto& cloud3Sprite = m_Background.Cloud3Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud3Sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud3Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 2047, 374);
+			auto& cloud3Transform = m_Background.Cloud3Right.GetComponent<Teddy::TransformComponent>();
+			cloud3Transform.Translation = glm::vec3(-10.0f, -1.5f, 0.7f);
+			cloud3Transform.Scale *= 6.0f;
+
+			m_Background.Cloud3Left = m_Scene->CreateEntity("Phase 1 Cloud 3 Left");
+			auto& cloud3LeftSprite = m_Background.Cloud3Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud3LeftSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud3Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 2047, 374);
+			auto& cloud3LeftTransform = m_Background.Cloud3Left.GetComponent<Teddy::TransformComponent>();
+			cloud3LeftTransform.Translation = glm::vec3(-45.0f, -1.5f, 0.7f);
+			cloud3LeftTransform.Scale *= 6.0f;
+		}
+
+		// Background cloud 4
+		{
+			m_Background.Cloud4Right = m_Scene->CreateEntity("Phase 1 Cloud 4 Right");
+			auto& cloud4Sprite = m_Background.Cloud4Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud4Sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud4Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 3, 2047, 374);
+			auto& cloud4Transform = m_Background.Cloud4Right.GetComponent<Teddy::TransformComponent>();
+			cloud4Transform.Translation = glm::vec3(0.0f, -3.0f, 0.8f);
+			cloud4Transform.Scale *= 5.0f;
+
+			m_Background.Cloud4Left = m_Scene->CreateEntity("Phase 1 Cloud 4 Left");
+			auto& cloud4LeftSprite = m_Background.Cloud4Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud4LeftSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud4Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 3, 2047, 374);
+			auto& cloud4LeftTransform = m_Background.Cloud4Left.GetComponent<Teddy::TransformComponent>();
+			cloud4LeftTransform.Translation = glm::vec3(-27.5f, -3.0f, 0.8f);
+			cloud4LeftTransform.Scale *= 5.0f;
+		}
+
+		// Background cloud 5
+		{
+			m_Background.Cloud5Right = m_Scene->CreateEntity("Phase 1 Cloud 5 Right");
+			auto& cloud5Sprite = m_Background.Cloud5Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud5Sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud5Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 4, 2047, 374);
+			auto& cloud5Transform = m_Background.Cloud5Right.GetComponent<Teddy::TransformComponent>();
+			cloud5Transform.Translation = glm::vec3(0.0f, -2.5f, 0.9f);
+			cloud5Transform.Scale *= 4.0f;
+
+			m_Background.Cloud5Left = m_Scene->CreateEntity("Phase 1 Cloud 5 Left");
+			auto& cloud5LeftSprite = m_Background.Cloud5Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud5LeftSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/clouds_2047x374_2048x2048_0.png", Teddy::Boolean::True);
+			m_Background.Cloud5Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 4, 2047, 374);
+			auto& cloud5LeftTransform = m_Background.Cloud5Left.GetComponent<Teddy::TransformComponent>();
+			cloud5LeftTransform.Translation = glm::vec3(-17.5f, -2.5f, 0.9f);
+			cloud5LeftTransform.Scale *= 4.0f;
 		}
 	}
 
@@ -165,6 +222,45 @@ namespace Cuphead
 				cloud2LeftTransform.Translation.x = -27.5f;
 			}
 
+		}
+
+		// Cloud 3
+		{
+			auto& cloud3Transform = m_Background.Cloud3Right.GetComponent<Teddy::TransformComponent>();
+			cloud3Transform.Translation.x += m_MovementSpeed * 0.7f;
+			auto& cloud3LeftTransform = m_Background.Cloud3Left.GetComponent<Teddy::TransformComponent>();
+			cloud3LeftTransform.Translation.x += m_MovementSpeed * 0.7f;
+			if (cloud3Transform.Translation.x >= 25.0f)
+			{
+				cloud3Transform.Translation.x = -10.0f;
+				cloud3LeftTransform.Translation.x = -45.0f;
+			}
+		}
+
+		// Cloud 4
+		{
+			auto& cloud4Transform = m_Background.Cloud4Right.GetComponent<Teddy::TransformComponent>();
+			cloud4Transform.Translation.x += m_MovementSpeed * 0.6f;
+			auto& cloud4LeftTransform = m_Background.Cloud4Left.GetComponent<Teddy::TransformComponent>();
+			cloud4LeftTransform.Translation.x += m_MovementSpeed * 0.6f;
+			if (cloud4Transform.Translation.x >= 27.5f)
+			{
+				cloud4Transform.Translation.x = 0.0f;
+				cloud4LeftTransform.Translation.x = -27.5f;
+			}
+		}
+
+		// Cloud 5
+		{
+			auto& cloud5Transform = m_Background.Cloud5Right.GetComponent<Teddy::TransformComponent>();
+			cloud5Transform.Translation.x += m_MovementSpeed * 0.25f;
+			auto& cloud5LeftTransform = m_Background.Cloud5Left.GetComponent<Teddy::TransformComponent>();
+			cloud5LeftTransform.Translation.x += m_MovementSpeed * 0.25f;
+			if (cloud5Transform.Translation.x >= 17.5f)
+			{
+				cloud5Transform.Translation.x = 0.0f;
+				cloud5LeftTransform.Translation.x = -17.5f;
+			}
 		}
 	}
 }

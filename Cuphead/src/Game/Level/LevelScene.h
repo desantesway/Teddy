@@ -38,9 +38,12 @@ namespace Cuphead
 			Teddy::Entity Cloud1Right;
 			Teddy::Entity Cloud2Left;
 			Teddy::Entity Cloud2Right;
-			Teddy::Entity Cloud3;
-			Teddy::Entity Cloud4;
-			Teddy::Entity Cloud5;
+			Teddy::Entity Cloud3Left;
+			Teddy::Entity Cloud3Right;
+			Teddy::Entity Cloud4Left;
+			Teddy::Entity Cloud4Right;
+			Teddy::Entity Cloud5Left;
+			Teddy::Entity Cloud5Right;
 		};
 
 		Background m_Background;
