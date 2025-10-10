@@ -18,6 +18,10 @@ namespace Cuphead
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
 		InitPhase1();
+		if (character == 1)
+			m_Player.InitCuphead(m_Scene);
+		else
+			m_Player.InitMugman(m_Scene);
 		
 		return m_Scene;
 	}

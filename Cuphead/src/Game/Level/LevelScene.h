@@ -3,6 +3,7 @@
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Scene/Entity.h"
+#include "Player.h"
 
 namespace Cuphead
 {
@@ -59,6 +60,8 @@ namespace Cuphead
 
 		Background m_Background;
 		Foreground m_Foreground;
+
+		Player m_Player;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;
