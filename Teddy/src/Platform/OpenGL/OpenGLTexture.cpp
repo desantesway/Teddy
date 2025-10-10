@@ -73,6 +73,28 @@ namespace Teddy
 
 			TED_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
+			// Pre-multiply alpha
+			if (channels == 4)
+			{
+				for (int i = 0; i < width * height; ++i)
+				{
+					unsigned char* pixel = &data[i * 4];
+
+					float r = pixel[0] / 255.0f;
+					float g = pixel[1] / 255.0f;
+					float b = pixel[2] / 255.0f;
+					float a = pixel[3] / 255.0f;
+
+					r *= a;
+					g *= a;
+					b *= a;
+
+					pixel[0] = static_cast<unsigned char>(r * 255.0f);
+					pixel[1] = static_cast<unsigned char>(g * 255.0f);
+					pixel[2] = static_cast<unsigned char>(b * 255.0f);
+				}
+			}
+
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 

@@ -81,7 +81,6 @@ namespace Cuphead
 			auto& cloud1LeftTransform = m_Background.Cloud1Left.GetComponent<Teddy::TransformComponent>();
 			cloud1LeftTransform.Translation = glm::vec3(-45.0f, 0.75f, 0.5f);
 			cloud1LeftTransform.Scale *= 7.0f;
-
 		}
 
 		// Background cloud 2
@@ -161,6 +160,16 @@ namespace Cuphead
 		}
 	}
 
+	void LevelScene::InitPhase1Foreground()
+	{
+		// one bellow dragon, 2 above dragon
+
+		// Foreground cloud 1
+		{
+			
+		}
+	}
+
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
 		m_MovementSpeed = m_MovementVelocity * ts;
@@ -196,10 +205,10 @@ namespace Cuphead
 		// Cloud1
 		{
 			auto& cloud1Transform = m_Background.Cloud1Right.GetComponent<Teddy::TransformComponent>();
-			cloud1Transform.Translation.x += m_MovementSpeed * 0.9f;
+			cloud1Transform.Translation.x += m_MovementSpeed * 0.8f;
 
 			auto& cloud1LeftTransform = m_Background.Cloud1Left.GetComponent<Teddy::TransformComponent>();
-			cloud1LeftTransform.Translation.x += m_MovementSpeed * 0.9f;
+			cloud1LeftTransform.Translation.x += m_MovementSpeed * 0.8f;
 
 			if (cloud1Transform.Translation.x >= 25.0f)
 			{
@@ -211,10 +220,10 @@ namespace Cuphead
 		// Cloud 2
 		{
 			auto& cloud2Transform = m_Background.Cloud2Right.GetComponent<Teddy::TransformComponent>();
-			cloud2Transform.Translation.x += m_MovementSpeed * 0.85f;
+			cloud2Transform.Translation.x += m_MovementSpeed * 0.75f;
 
 			auto& cloud2LeftTransform = m_Background.Cloud2Left.GetComponent<Teddy::TransformComponent>();
-			cloud2LeftTransform.Translation.x += m_MovementSpeed * 0.85f;
+			cloud2LeftTransform.Translation.x += m_MovementSpeed * 0.75f;
 
 			if (cloud2Transform.Translation.x >= 17.5f)
 			{
@@ -227,9 +236,9 @@ namespace Cuphead
 		// Cloud 3
 		{
 			auto& cloud3Transform = m_Background.Cloud3Right.GetComponent<Teddy::TransformComponent>();
-			cloud3Transform.Translation.x += m_MovementSpeed * 0.7f;
+			cloud3Transform.Translation.x += m_MovementSpeed * 0.6f;
 			auto& cloud3LeftTransform = m_Background.Cloud3Left.GetComponent<Teddy::TransformComponent>();
-			cloud3LeftTransform.Translation.x += m_MovementSpeed * 0.7f;
+			cloud3LeftTransform.Translation.x += m_MovementSpeed * 0.6f;
 			if (cloud3Transform.Translation.x >= 25.0f)
 			{
 				cloud3Transform.Translation.x = -10.0f;
@@ -240,9 +249,9 @@ namespace Cuphead
 		// Cloud 4
 		{
 			auto& cloud4Transform = m_Background.Cloud4Right.GetComponent<Teddy::TransformComponent>();
-			cloud4Transform.Translation.x += m_MovementSpeed * 0.6f;
+			cloud4Transform.Translation.x += m_MovementSpeed * 0.5f;
 			auto& cloud4LeftTransform = m_Background.Cloud4Left.GetComponent<Teddy::TransformComponent>();
-			cloud4LeftTransform.Translation.x += m_MovementSpeed * 0.6f;
+			cloud4LeftTransform.Translation.x += m_MovementSpeed * 0.5f;
 			if (cloud4Transform.Translation.x >= 27.5f)
 			{
 				cloud4Transform.Translation.x = 0.0f;

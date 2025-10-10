@@ -20,6 +20,7 @@ namespace Cuphead
 	private:
 		void InitPhase1();
 		void InitPhase1Background();
+		void InitPhase1Foreground();
 		void OnUpdatePhase1();
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
@@ -44,6 +45,16 @@ namespace Cuphead
 			Teddy::Entity Cloud4Right;
 			Teddy::Entity Cloud5Left;
 			Teddy::Entity Cloud5Right;
+		};
+
+		struct Foreground
+		{
+			Teddy::Entity Cloud1Left;
+			Teddy::Entity Cloud1Right;
+			Teddy::Entity Cloud2Left;
+			Teddy::Entity Cloud2Right;
+			Teddy::Entity Cloud3Left;
+			Teddy::Entity Cloud3Right;
 		};
 
 		Background m_Background;

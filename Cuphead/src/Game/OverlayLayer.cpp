@@ -28,7 +28,7 @@ void OverlayLayer::OnAttach()
     overlayTransform.Translation = { 0.0f, 0.0f, 98.0f };
     overlayTransform.Scale = {1.0f, 0.012f, 1.0f};
     overlayAnimation.Loop = true;
-	overlayAnimation.BlendMode = Teddy::BlendingMode::InvertAlpha;
+	overlayAnimation.BlendMode = Teddy::BlendingMode::Invert;
 
     std::vector<std::string> overlayScreens;
     for (int i = 0; i <= 126; i++)
