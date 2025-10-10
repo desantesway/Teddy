@@ -16,8 +16,6 @@ namespace Cuphead
 
 		void OnUpdate(Teddy::Timestep ts);
 	private:
-		Teddy::Ref<Teddy::Scene> m_Scene;
-
 		const float m_MovementVelocity = 1.1f;
 		float m_MovementSpeed = 0.0f;
 

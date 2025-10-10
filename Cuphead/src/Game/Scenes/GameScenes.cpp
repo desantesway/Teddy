@@ -62,10 +62,10 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitMainTitle()
     {
-        // TODO: AssetManager bypass
+        m_MainMenuScene.~MainMenuScene();
         Teddy::Ref<Teddy::Scene> scene = m_MainTitleScene.Init();
         m_ActiveScene = scene;
-        return scene;
+        return m_ActiveScene;
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitTitleMenu()
@@ -75,7 +75,7 @@ namespace Cuphead
         m_TransitionScenes.CircleOut();
 		Teddy::Ref<Teddy::Scene> scene = m_MainMenuScene.Init();
 		m_ActiveScene = scene;
-		return scene;
+		return m_ActiveScene;
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitLevel()
@@ -85,7 +85,18 @@ namespace Cuphead
         m_TransitionScenes.SetCircleAlpha(1.0f);
         Teddy::Ref<Teddy::Scene> scene = m_LevelScene.Init(m_MainMenuScene.LoadLevel());
         m_ActiveScene = scene;
-        return scene;
+        return m_ActiveScene;
+    }
+
+    void GameScenes::FreeScenes()
+    {
+        if (m_CurrentScene != 2)
+            m_MainTitleScene.~MainTitleScene();
+		else if (m_CurrentScene != 3)
+            m_MainMenuScene.~MainMenuScene();
+		else if (m_CurrentScene != 4)
+            m_LevelScene.~LevelScene();
+        Teddy::AssetManager::Get().RemoveExpiredAll();
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()

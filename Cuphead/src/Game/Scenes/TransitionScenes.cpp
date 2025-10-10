@@ -68,12 +68,11 @@ namespace Cuphead
 	{
         CheckAndCreateScene();
 
-        auto transitionQuadAnimation = m_Scene->CreateEntity("Title Transition Quad");
-        m_TransitionQuad = Teddy::CreateRef<Teddy::Entity>(transitionQuadAnimation);
-        auto& transitionQuad = m_TransitionQuad->AddComponent<Teddy::SpriteRendererComponent>();
+        m_TransitionQuad = m_Scene->CreateEntity("Title Transition Quad");
+        auto& transitionQuad = m_TransitionQuad.AddComponent<Teddy::SpriteRendererComponent>();
         transitionQuad.Color = glm::vec4(0.0f);
         transitionQuad.IsBackground = true;
-        auto& transitionQuadTransform = transitionQuadAnimation.GetComponent<Teddy::TransformComponent>();
+        auto& transitionQuadTransform = m_TransitionQuad.GetComponent<Teddy::TransformComponent>();
         transitionQuadTransform.Translation = glm::vec3(0.0f, 0.0f, 6.0f);
 	}
 
@@ -101,7 +100,7 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
-        auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+        auto& transitionQuad = m_TransitionQuad.GetComponent<Teddy::SpriteRendererComponent>();
         transitionQuad.Color.a += velocity * ts;
         if (transitionQuad.Color.a > 1.0f)
         {
@@ -116,7 +115,7 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
-        auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+        auto& transitionQuad = m_TransitionQuad.GetComponent<Teddy::SpriteRendererComponent>();
         transitionQuad.Color.a -= velocity * ts;
         if (transitionQuad.Color.a < 0.0f)
         {
@@ -136,7 +135,7 @@ namespace Cuphead
 
     void TransitionScenes::SetFadeAlpha(const float& alpha)
     {
-        auto& transitionQuad = m_TransitionQuad->GetComponent<Teddy::SpriteRendererComponent>();
+        auto& transitionQuad = m_TransitionQuad.GetComponent<Teddy::SpriteRendererComponent>();
         transitionQuad.Color.a = alpha;
     }
 
@@ -145,12 +144,11 @@ namespace Cuphead
         CheckAndCreateScene();
 
         // Transition Circle
-        auto transitionAnimation = m_Scene->CreateEntity("Title Transition Circle");
-        m_TransitionCircle = Teddy::CreateRef<Teddy::Entity>(transitionAnimation);
-        auto& transitionCircle = m_TransitionCircle->AddComponent<Teddy::CircleRendererComponent>();
+        m_TransitionCircle = m_Scene->CreateEntity("Title Transition Circle");
+        auto& transitionCircle = m_TransitionCircle.AddComponent<Teddy::CircleRendererComponent>();
         transitionCircle.Color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
         transitionCircle.Thickness = 0.0f;
-        auto& transitionTransform = transitionAnimation.GetComponent<Teddy::TransformComponent>();
+        auto& transitionTransform = m_TransitionCircle.GetComponent<Teddy::TransformComponent>();
         transitionTransform.Scale = glm::vec3(7.0f, 7.0f, 1.0f);
         transitionTransform.Translation = glm::vec3(0.0f, 0.0f, 5.0f);
     }
@@ -169,7 +167,7 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
-        auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+        auto& transitionCircle = m_TransitionCircle.GetComponent<Teddy::CircleRendererComponent>();
         transitionCircle.Thickness += velocity * ts;
         if (transitionCircle.Thickness > 1.0f)
         {
@@ -204,7 +202,7 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
-        auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+        auto& transitionCircle = m_TransitionCircle.GetComponent<Teddy::CircleRendererComponent>();
         transitionCircle.Thickness -= velocity * ts;
         if (transitionCircle.Thickness < 0.0f)
         {
@@ -217,7 +215,7 @@ namespace Cuphead
 
     void TransitionScenes::SetCircleAlpha(const float& alpha)
     {
-        auto& transitionCircle = m_TransitionCircle->GetComponent<Teddy::CircleRendererComponent>();
+        auto& transitionCircle = m_TransitionCircle.GetComponent<Teddy::CircleRendererComponent>();
 		transitionCircle.Color.a = alpha;
     }
 }

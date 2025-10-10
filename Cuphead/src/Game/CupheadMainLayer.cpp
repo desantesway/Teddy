@@ -48,6 +48,7 @@ namespace Cuphead
         {
 			m_ActiveScene->OnRuntimeStop();
             m_ActiveScene = GameScenes::InitNextScene();
+            GameScenes::FreeScenes();
         }
     }
 

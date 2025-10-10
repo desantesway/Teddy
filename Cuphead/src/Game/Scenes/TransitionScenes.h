@@ -2,6 +2,7 @@
 
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Core/Timestep.h"
+#include "Teddy/Scene/Entity.h"
 
 namespace Cuphead
 {
@@ -47,7 +48,7 @@ namespace Cuphead
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
-		Teddy::Ref<Teddy::Entity> m_TransitionQuad = nullptr;
-		Teddy::Ref<Teddy::Entity> m_TransitionCircle = nullptr;
+		Teddy::Entity m_TransitionQuad;
+		Teddy::Entity m_TransitionCircle;
 	};
 }

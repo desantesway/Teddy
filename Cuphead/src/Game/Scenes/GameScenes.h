@@ -22,6 +22,7 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 		static Teddy::Ref<Teddy::Scene> InitNextScene();
+		static void FreeScenes();
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
