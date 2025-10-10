@@ -58,6 +58,7 @@ namespace Cuphead
 		};
 
 		Background m_Background;
+		Foreground m_Foreground;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;

@@ -101,7 +101,7 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        //m_CurrentScene = 2;
+        m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:
