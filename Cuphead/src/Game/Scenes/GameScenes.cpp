@@ -49,6 +49,10 @@ namespace Cuphead
                     {
                         m_TransitionScenes.CircleOut();
                     }
+                    else if (!m_LevelScene.HasIntroStarted())
+                    {
+                        m_LevelScene.StartIntro();
+                    }
                     m_LevelScene.OnUpdate(ts);
                     return false;
                 default:
@@ -90,12 +94,13 @@ namespace Cuphead
 
     void GameScenes::FreeScenes()
     {
-        if (m_CurrentScene != 2)
+        if (m_CurrentScene != 1)
             m_MainTitleScene.~MainTitleScene();
-		if (m_CurrentScene != 3)
+        if (m_CurrentScene != 2)
             m_MainMenuScene.~MainMenuScene();
-        if (m_CurrentScene != 4)
+		if (m_CurrentScene != 3)
             m_LevelScene.~LevelScene();
+        
         Teddy::AssetManager::Get().RemoveExpiredAll();
     }
 

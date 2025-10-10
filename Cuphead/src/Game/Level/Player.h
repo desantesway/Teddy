@@ -11,16 +11,40 @@ namespace Cuphead
 	public:
 		Player() = default;
 		~Player() = default;
-		void InitCuphead(Teddy::Ref<Teddy::Scene> scene);
-		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
-		void StartIntro();
+
+		void OnUpdate(Teddy::Timestep ts);
 
 		Teddy::Entity GetEntity() { return m_Entity; }
 
-		void OnUpdate(Teddy::Timestep ts);
+		void InitCuphead(Teddy::Ref<Teddy::Scene> scene);
+		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
+
+		void StartIntro();
+		void StartIdle();
+
 	private:
+		void LoadCupheadTextures();
+		void BreakCookie();
+		void DeleteCookie(Teddy::Timestep ts);
+	private:
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+
 		Teddy::Entity m_Entity;
-		const float m_MovementVelocity = 1.1f;
-		float m_MovementSpeed = 0.0f;
+		Teddy::Entity m_Cookie;
+
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MovementTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
+
+		enum class PlayerState
+		{
+			Idle = 0,
+			Running,
+			Jumping,
+			Falling,
+			Dashing,
+			Crouching,
+			Intro
+		};
+		PlayerState m_State = PlayerState::Idle;
 	};
 }

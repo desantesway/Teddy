@@ -241,6 +241,8 @@ namespace Cuphead
 			break;
 		}
 		
+		m_Player.OnUpdate(ts);
+
 	}
 
 	void LevelScene::OnUpdatePhase1()
@@ -369,4 +371,12 @@ namespace Cuphead
 			}
 		}
 	}
+
+	void LevelScene::StartIntro()
+	{
+		m_StartIntro = true;
+
+		m_Player.StartIntro();
+	}
+	
 }

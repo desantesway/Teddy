@@ -18,6 +18,9 @@ namespace Cuphead
 
 		void OnUpdate(Teddy::Timestep ts);
 
+		void StartIntro();
+		bool IsIntroDone() { return m_IntroDone; }
+		bool HasIntroStarted() { return m_StartIntro; }
 	private:
 		void InitPhase1();
 		void InitPhase1Background();
@@ -65,5 +68,8 @@ namespace Cuphead
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;
+
+		bool m_IntroDone = false;
+		bool m_StartIntro = false;
 	};
 }
