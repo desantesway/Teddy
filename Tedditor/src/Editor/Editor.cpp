@@ -24,7 +24,8 @@ namespace Teddy
         m_PostProcessedFramebuffer = Framebuffer::Create(PostProcessing::Get().GetFramebufferSpec());
 
         m_ActiveScene = activeScene;
-        m_ActiveScene->OnViewportResize((uint32_t)1920, (uint32_t)1080);
+        auto& window = Teddy::Application::Get().GetWindow();
+        m_ActiveScene->OnViewportResize((uint32_t)window.GetWidth(), (uint32_t)window.GetHeight());
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
         m_EditorScenePath = std::filesystem::path();
@@ -94,6 +95,12 @@ namespace Teddy
         //spriteAnimation.IsBackground = true;
 
         Renderer2D::SetLineWidth(4.0f);
+    }
+
+    void Editor::SetActiveScene(Ref<Scene> scene)
+    {
+		m_ActiveScene = scene;
+		m_EditorScene = m_ActiveScene;
     }
 
     void Editor::ResizeFramebuffer()
