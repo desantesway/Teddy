@@ -182,9 +182,12 @@ namespace Teddy
 
 		accumulator += frameDelta;
 
+		if (accumulator < fixedTimeStep)
+		{
+			b2World_Step(m_PhysicsWorld, accumulator, subStepCount);
+		}
 		while (accumulator >= fixedTimeStep)
 		{
-			b2World_Step(m_PhysicsWorld, fixedTimeStep, subStepCount);
 			accumulator -= fixedTimeStep;
 		}
 
@@ -464,11 +467,6 @@ namespace Teddy
 					}
 					nsc.Instance->OnUpdate(ts);
 				});
-		}
-
-		// Physics
-		{
-			SimulatePhysics(ts);
 		}
 
 		// Render

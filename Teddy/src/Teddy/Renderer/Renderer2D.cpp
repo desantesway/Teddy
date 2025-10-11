@@ -688,7 +688,8 @@ namespace Teddy
 
 				if (ratio != expectedRatio)
 				{
-					transform.Scale.x = transform.Scale.y * expectedRatio;
+					if (transform.Scale.x < 0) transform.Scale.x = -transform.Scale.y * expectedRatio;
+					else transform.Scale.x = transform.Scale.y * expectedRatio;
 				}
 			}
 
