@@ -29,14 +29,14 @@ namespace Cuphead
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(1.0f, 0.0f, false);
 				else
-					m_State = PlayerState::Idle;
+					StartIdle();
 			}
 			else
 			{
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(-1.0f, 0.0f, false);
 				else
-					m_State = PlayerState::Idle;
+					StartIdle();
 			}
 			break;
 		default:
@@ -123,28 +123,27 @@ namespace Cuphead
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		
-		auto& box = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
-		box.Offset = { 0.0f, -0.05f };
-		box.Size = { 0.15f, 0.4f };
+		auto& boxCollider = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
+		boxCollider.Offset = { 0.0f, -0.05f };
+		boxCollider.Size = { 0.15f, 0.4f };
 
+		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 		if (m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2)
 		{
 			transform.Translation -= glm::vec3(0.0f, 0.15f, 0.0f);
 			indicies.Index = 88;
 			transform.Scale = glm::vec3(1.0f);
+			m_Scene->RefreshBody(boxBody, boxCollider, transform);
 		}
 		else if (m_State == PlayerState::Intro0)
 		{
 			transform.Translation -= glm::vec3(0.0f, 0.2f, 0.0f);
 			indicies.Index = 87;
 			transform.Scale = glm::vec3(1.0f);
+			m_Scene->RefreshBody(boxBody, boxCollider, transform);
 		}
 
 		m_State = PlayerState::Idle;
-
-		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-
-		m_Scene->RefreshBody(boxBody, box, transform);
 	}
 
 	void Player::DeleteCookie(Teddy::Timestep ts)
@@ -277,12 +276,33 @@ namespace Cuphead
 		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
 	}
 
-	void Player::StartRunning()
+	// TODO: Bug stuck if left idle for a while
+	// TODO: Verify hit box
+	void Player::StartRunning() // TODO: is there a transition?
 	{
-		if(m_DirectionRight)
-			m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = 1.0f;
-		else
-			m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = -1.0f;
+		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.0f : -1.0f;
+
+		if (m_State == PlayerState::Running) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_MovementTextures;
+		sprite.PingPong = false;
+		sprite.Loop = true;
+		sprite.Reverse = true;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 347;
+		atlas.SpriteHeight = 192;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		sprite.PlayableIndicies.clear();
+		for (int i = 68; i < 84; i++)
+			sprite.PlayableIndicies.push_back(i);
+		indicies.Index = 68;
+
+		m_State = PlayerState::Running;
 	}
 
 	bool Player::OnKeyPressed(Teddy::KeyPressedEvent& e)
@@ -292,13 +312,11 @@ namespace Cuphead
 		case Teddy::Key::A:
 		case Teddy::Key::Left:
 			m_DirectionRight = false;
-			m_State = PlayerState::Running;
 			StartRunning();
 			return true;
 		case Teddy::Key::D:
 		case Teddy::Key::Right:
 			m_DirectionRight = true;
-			m_State = PlayerState::Running;
 			StartRunning();
 			return true;
 		default:
