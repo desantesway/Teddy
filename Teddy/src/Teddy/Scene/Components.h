@@ -184,6 +184,8 @@ namespace Teddy
 
 		void* RuntimeBody = nullptr;
 
+		void ApplyForce(float forceX, float forceY, bool wake);
+
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};
