@@ -223,10 +223,19 @@ namespace Teddy
 					if (animation.Timer >= animation.InitialFrameTime) {
 						if (animation.PingPong && animation.Reverse)
 							animation.Reverse = false;
-						indicies.Index = animation.Reverse && animation.Loop ?
-							animation.PlayableIndicies.back() :
-							animation.PlayableIndicies.size() > 1 ? animation.PlayableIndicies[1] :
-							animation.PlayableIndicies[0];
+						if (animation.Loop)
+						{
+							indicies.Index = animation.Reverse ?
+								animation.PlayableIndicies.back() :
+								animation.PlayableIndicies.size() > 1 ? animation.PlayableIndicies[1] :
+								animation.PlayableIndicies[0];
+						}
+						else
+						{
+							indicies.Index = animation.Reverse ? animation.PlayableIndicies[0]
+								: animation.PlayableIndicies.size() > 1 ? animation.PlayableIndicies[1] : animation.PlayableIndicies[0];
+						}
+						
 						animation.Timer -= animation.InitialFrameTime;
 						changed = true;
 					}
