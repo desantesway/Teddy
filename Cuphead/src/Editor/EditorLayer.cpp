@@ -32,6 +32,8 @@ namespace Teddy
     {
         TED_PROFILE_FUNCTION();
 
+        m_Editor.SetActiveScene(CupheadLayer::GetActiveScene());
+
         m_Editor.ResizeFramebuffer();
 
         Teddy::Renderer2D::ResetStats();

@@ -10,10 +10,16 @@ namespace Cuphead
 
 		switch (m_State)
 		{
-		case PlayerState::Intro:
-			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 28 || 
-				m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 73 || 
-				m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 106)
+		case PlayerState::Intro0:
+			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 27)
+				StartIdle();
+			break;
+		case PlayerState::Intro1:
+			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 73)
+				StartIdle();
+			break;
+		case PlayerState::Intro2:
+			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 106)
 				StartIdle();
 			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 95)
 				BreakCookie();
@@ -43,7 +49,7 @@ namespace Cuphead
 	{
 		m_Scene = scene;
 		m_Entity = m_Scene->CreateEntity("Cuphead Player");
-		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f );
+		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 
 		LoadCupheadTextures();
 		sprite.Textures = m_MovementTextures;
@@ -70,7 +76,6 @@ namespace Cuphead
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
 
-		m_State = PlayerState::Idle;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -88,7 +93,15 @@ namespace Cuphead
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Scale = glm::vec3(1.0f);
-		
+		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f); // TODO: Save a TransformComponent of the real thing
+
+		if (m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2)
+			indicies.Index = 88;
+		else if (m_State == PlayerState::Intro0)
+		{
+			indicies.Index = 87;
+		}
+		m_State = PlayerState::Idle;
 	}
 
 	void Player::DeleteCookie(Teddy::Timestep ts)
@@ -110,6 +123,7 @@ namespace Cuphead
 			{
 				fadeOut = false;
 				done = true;
+				m_Cookie = {};
 			}
 		}
 	}
@@ -133,7 +147,7 @@ namespace Cuphead
 		sprite.PlayableIndicies = {107, 108, 109, 110, 111, 112, 113};
 
 		auto& transform = m_Cookie.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(0.2f, 0.0f, 0.01f);
+		transform.Translation = glm::vec3(0.2f, -0.15f, 0.01f);
 
 		transform.Translation += m_Entity.GetComponent<Teddy::TransformComponent>().Translation;
 	}
@@ -147,10 +161,8 @@ namespace Cuphead
 		static std::mt19937 gen(rd());
 		static std::uniform_int_distribution<> distr(0, 2);
 
-		int choice = distr(gen);
-		//choice = 2;
-
-		m_State = PlayerState::Intro;
+		int choice = distr(gen); // TODO: Fix intro 1, x axis is shaken in the atlas
+		choice = 2;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
@@ -168,22 +180,26 @@ namespace Cuphead
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 
-		TED_CORE_INFO("Choice: {}", choice);
 		switch (choice)
 		{
 		case 0:
 		{
-			for (int i = 0; i < 29; i++)
+			for (int i = 0; i < 28; i++)
 				sprite.PlayableIndicies.push_back(i);
 			indicies.Index = 0;
 			transform.Scale *= 1.4f;
+			transform.Translation += glm::vec3(0.0f,0.2f,0.0f);
+			m_State = PlayerState::Intro0;
 			break;
 		}
 		case 1:
 		{
-			for (int i = 29; i < 74; i++)
+			for (int i = 28; i < 74; i++)
 				sprite.PlayableIndicies.push_back(i);
-			indicies.Index = 29;
+			indicies.Index = 28;
+			transform.Scale *= 1.3f;
+			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
+			m_State = PlayerState::Intro1;
 			break;
 		}
 		case 2:
@@ -191,12 +207,18 @@ namespace Cuphead
 			for (int i = 74; i < 107; i++)
 				sprite.PlayableIndicies.push_back(i);
 			indicies.Index = 74;
+			transform.Scale *= 1.3f;
+			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
+			m_State = PlayerState::Intro2;
 			break;
 		}
 		default:
-			for (int i = 29; i < 74; i++)
+			for (int i = 28; i < 74; i++)
 				sprite.PlayableIndicies.push_back(i);
-			indicies.Index = 29;
+			indicies.Index = 28;
+			transform.Scale *= 1.3f;
+			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
+			m_State = PlayerState::Intro1;
 			break;
 		}
 	}

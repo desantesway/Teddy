@@ -43,8 +43,11 @@ namespace Cuphead
 			Falling,
 			Dashing,
 			Crouching,
-			Intro
+			Intro0,
+			Intro1,
+			Intro2
 		};
+
 		PlayerState m_State = PlayerState::Idle;
 	};
 }
