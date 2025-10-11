@@ -3,6 +3,7 @@
 #include "../Panels/SceneHierarchyPanel.h"
 #include "../Panels/ContentBrowserPanel.h"
 #include "Teddy/Renderer/Framebuffer.h"
+#include "Teddy/Scene/Scene.h"
 
 namespace Teddy
 {
@@ -25,7 +26,7 @@ namespace Teddy
 
 		enum class SceneState { Edit = 0, Play = 1, Simulate = 2 };
 		SceneState GetState() { return m_SceneState; }
-
+		void SetActiveScene(Ref<Scene> scene);
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);

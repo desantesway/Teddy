@@ -566,7 +566,11 @@ namespace Teddy
 						std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
 						Ref<Texture2D> texture = AssetManager::Get().Load<Texture2D>(texturePath.string(), Boolean::True);
 						if (texture->IsLoaded())
+						{
 							component.Textures.push_back(texture);
+							if (ent.HasComponent<SpriteAtlasComponent>())
+								ent.GetComponent<SpriteAnimationAtlasComponent>().GenerateFrames(component, ent.GetComponent<SpriteAtlasComponent>());
+						}
 						else
 							TED_WARN("Could not load texture {0}", texturePath.filename().string());
 					}
@@ -618,7 +622,7 @@ namespace Teddy
 					indicies += std::to_string(index) + ", ";
 				}
 
-				char buffer[256];
+				char buffer[1024];
 				memset(buffer, 0, sizeof(buffer));
 				std::strncpy(buffer, indicies.c_str(), sizeof(buffer));
 				if (ImGui::InputText("Playable Indicies", buffer, sizeof(buffer)))
@@ -665,7 +669,15 @@ namespace Teddy
 						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
+
 					});
+
+				// TODO: Optimize this
+				if (ent.HasComponent<SpriteAnimationAtlasComponent>())
+				{
+					ent.GetComponent<SpriteAnimationAtlasComponent>().AnimationSprites.clear();
+					ent.GetComponent<SpriteAnimationAtlasComponent>().GenerateFrames(component, ent.GetComponent<SpriteAtlasComponent>());
+				}
 			});
 
 		

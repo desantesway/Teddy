@@ -97,6 +97,12 @@ namespace Teddy
         Renderer2D::SetLineWidth(4.0f);
     }
 
+    void Editor::SetActiveScene(Ref<Scene> scene)
+    {
+		m_ActiveScene = scene;
+		m_EditorScene = m_ActiveScene;
+    }
+
     void Editor::ResizeFramebuffer()
     {
         if (FramebufferSpecification spec = m_PostProcessedFramebuffer->GetSpecification();
