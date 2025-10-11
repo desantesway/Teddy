@@ -52,7 +52,7 @@ namespace Teddy
 		}
 	};
 
-	struct SpriteAtlasComponent
+	struct SpriteAtlasComponent 
 	{
 		int X = 0;
 		int Y = 0;
@@ -127,7 +127,7 @@ namespace Teddy
 		{ }
 	};
 
-	struct SpriteAnimationAtlasComponent
+	struct SpriteAnimationAtlasComponent // TODO: OnRemove
 	{
 		std::unordered_map<int, AnimationSprite> AnimationSprites;
 		int Index = 0;
