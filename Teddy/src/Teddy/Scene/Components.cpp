@@ -1,10 +1,11 @@
 #include "TeddyPch.h"
 #include "Teddy/Scene/Components.h"
 #include "Teddy/Renderer/MSDFData.h"
+#include <box2d/box2d.h>
 
 namespace Teddy
 {
-    
+
     void SpriteAnimationAtlasComponent::GenerateFrames(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
     {
 		int index = 0;

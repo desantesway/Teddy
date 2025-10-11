@@ -11,7 +11,6 @@ void OverlayLayer::OnAttach()
 	TED_PROFILE_FUNCTION();
 
 	m_ActiveScene = Teddy::CreateRef<Teddy::Scene>();
-    m_ActiveScene->OnRuntimeStart();
 
 	auto camEntt = m_ActiveScene->CreateEntity("Camera");
     camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 99.0f };

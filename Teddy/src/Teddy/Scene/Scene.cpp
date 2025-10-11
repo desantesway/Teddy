@@ -10,15 +10,14 @@
 
 namespace Teddy
 {
-
 	static b2BodyType Rigidbody2DTypeToBox2Body(Rigidbody2DComponent::BodyType type)
 	{
 		switch (type)
 		{
-			case Rigidbody2DComponent::BodyType::Static:		return b2_staticBody;
-			case Rigidbody2DComponent::BodyType::Kinematic:		return b2_kinematicBody;
-			case Rigidbody2DComponent::BodyType::Dynamic:		return b2_dynamicBody;
-			default: TED_CORE_ASSERT(false, "Unknown Box2D body type!"); return b2_staticBody;
+		case Rigidbody2DComponent::BodyType::Static:		return b2_staticBody;
+		case Rigidbody2DComponent::BodyType::Kinematic:		return b2_kinematicBody;
+		case Rigidbody2DComponent::BodyType::Dynamic:		return b2_dynamicBody;
+		default: TED_CORE_ASSERT(false, "Unknown Box2D body type!"); return b2_staticBody;
 		}
 	}
 
@@ -136,9 +135,44 @@ namespace Teddy
 			});
 	}
 
+	void Scene::RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform) // TODO: circle
+	{
+		if (rigidBody.RuntimeBody)
+		{
+			b2DestroyBody(*static_cast<b2BodyId*>(rigidBody.RuntimeBody));
+			delete static_cast<b2BodyId*>(rigidBody.RuntimeBody);
+			rigidBody.RuntimeBody = nullptr;
+		}
+
+		b2BodyDef bodyDef = b2DefaultBodyDef();
+		bodyDef.type = Rigidbody2DTypeToBox2Body(rigidBody.Type);
+		bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
+		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
+		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
+
+		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
+		rigidBody.RuntimeBody = new b2BodyId(bodyId);
+
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.density = boxCollider.Density;
+		shapeDef.material.restitution = boxCollider.Restitution;
+		shapeDef.material.friction = boxCollider.Friction;
+
+		b2Polygon box;
+
+		box = b2MakeOffsetBox(boxCollider.Size.x * transform.Scale.x,
+			boxCollider.Size.y * transform.Scale.y, { boxCollider.Offset.x, boxCollider.Offset.y },
+			b2MakeRot(0));
+
+		b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &shapeDef, &box);
+	}
+
 	void Scene::SimulatePhysics(Timestep ts)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Physics);
+
+		if (m_PhysicsWorld.index1 == b2_nullWorldId.index1 && m_PhysicsWorld.generation == b2_nullWorldId.generation)
+			return;
 
 		constexpr float fixedTimeStep = 1.0f / 60.0f;
 		constexpr int subStepCount = 4;
@@ -601,8 +635,7 @@ namespace Teddy
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
-
-
+				
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;

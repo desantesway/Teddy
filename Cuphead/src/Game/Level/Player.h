@@ -20,9 +20,11 @@ namespace Cuphead
 		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
 
 		void StartIntro();
-		void StartIdle();
 
 	private:
+		void InitPlayer();
+		void StartIdle();
+
 		void LoadCupheadTextures();
 		void BreakCookie();
 		void DeleteCookie(Teddy::Timestep ts);

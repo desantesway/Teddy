@@ -7,7 +7,6 @@ namespace Cuphead
     Teddy::Ref<Teddy::Scene> MainTitleScene::Init()
     {
         Teddy::Ref<Teddy::Scene> initialScene = Teddy::CreateRef<Teddy::Scene>();
-        initialScene->OnRuntimeStart();
 
         auto camEntt = initialScene->CreateEntity("Main Title Camera");
         camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };

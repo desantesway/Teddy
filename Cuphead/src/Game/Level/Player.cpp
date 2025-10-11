@@ -49,33 +49,47 @@ namespace Cuphead
 	{
 		m_Scene = scene;
 		m_Entity = m_Scene->CreateEntity("Cuphead Player");
-		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 
 		LoadCupheadTextures();
-		sprite.Textures = m_MovementTextures;
-		m_Entity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 347, 192);
-		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f);
+
+		InitPlayer();
 	}
 
 	void Player::InitMugman(Teddy::Ref<Teddy::Scene> scene)
 	{
 		m_Scene = scene;
 		m_Entity = m_Scene->CreateEntity("Mugman Player");
-		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 
 		LoadCupheadTextures();
+
+		InitPlayer();
+	}
+
+	void Player::InitPlayer()
+	{
+		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 		sprite.Textures = m_MovementTextures;
 		m_Entity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 347, 192);
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f);
+
+		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
+		sprite.PingPong = true;
+		sprite.Loop = true;
+
+		// Physics
+		auto& body = m_Entity.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
+		body.FixedRotation = true;
+		auto& box = m_Entity.AddComponent<Teddy::BoxCollider2DComponent>();
+		box.Offset = {0.0f, -0.05f};
+		box.Size = {0.15f, 0.4f};
 	}
 
 	void Player::StartIdle()
 	{
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
-
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -93,15 +107,27 @@ namespace Cuphead
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Scale = glm::vec3(1.0f);
-		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f); // TODO: Save a TransformComponent of the real thing
+		
+		auto& box = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
+		box.Offset = { 0.0f, -0.05f };
+		box.Size = { 0.15f, 0.4f };
 
 		if (m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2)
+		{
+			transform.Translation -= glm::vec3(0.0f, 0.15f, 0.0f);
 			indicies.Index = 88;
+		}
 		else if (m_State == PlayerState::Intro0)
 		{
+			transform.Translation -= glm::vec3(0.0f, 0.2f, 0.0f);
 			indicies.Index = 87;
 		}
+
 		m_State = PlayerState::Idle;
+
+		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+
+		m_Scene->RefreshBody(boxBody, box, transform);
 	}
 
 	void Player::DeleteCookie(Teddy::Timestep ts)
@@ -123,6 +149,7 @@ namespace Cuphead
 			{
 				fadeOut = false;
 				done = true;
+				m_Scene->DestroyEntity(m_Cookie);
 				m_Cookie = {};
 			}
 		}
@@ -130,6 +157,9 @@ namespace Cuphead
 
 	void Player::BreakCookie()
 	{
+		static bool created = false;
+		if (created)
+			return;
 		m_Cookie = m_Scene->CreateEntity("Cookie");
 		auto& sprite = m_Cookie.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 		sprite.Textures = m_IntroTextures;
@@ -150,6 +180,8 @@ namespace Cuphead
 		transform.Translation = glm::vec3(0.2f, -0.15f, 0.01f);
 
 		transform.Translation += m_Entity.GetComponent<Teddy::TransformComponent>().Translation;
+
+		created = true;
 	}
 
 	void Player::StartIntro()
@@ -162,7 +194,6 @@ namespace Cuphead
 		static std::uniform_int_distribution<> distr(0, 2);
 
 		int choice = distr(gen); // TODO: Fix intro 1, x axis is shaken in the atlas
-		choice = 2;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
@@ -179,6 +210,8 @@ namespace Cuphead
 		sprite.PlayableIndicies.clear();
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		auto& boxCollider = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
+		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
 		switch (choice)
 		{
@@ -190,6 +223,7 @@ namespace Cuphead
 			transform.Scale *= 1.4f;
 			transform.Translation += glm::vec3(0.0f,0.2f,0.0f);
 			m_State = PlayerState::Intro0;
+			boxCollider.Offset = { 0.0f, -0.1f };
 			break;
 		}
 		case 1:
@@ -198,8 +232,8 @@ namespace Cuphead
 				sprite.PlayableIndicies.push_back(i);
 			indicies.Index = 28;
 			transform.Scale *= 1.3f;
-			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
 			m_State = PlayerState::Intro1;
+			boxCollider.Offset = { 0.0f, -0.1f };
 			break;
 		}
 		case 2:
@@ -208,8 +242,8 @@ namespace Cuphead
 				sprite.PlayableIndicies.push_back(i);
 			indicies.Index = 74;
 			transform.Scale *= 1.3f;
-			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
 			m_State = PlayerState::Intro2;
+			boxCollider.Offset = { 0.0f, -0.1f };
 			break;
 		}
 		default:
@@ -217,9 +251,11 @@ namespace Cuphead
 				sprite.PlayableIndicies.push_back(i);
 			indicies.Index = 28;
 			transform.Scale *= 1.3f;
-			transform.Translation += glm::vec3(0.0f, 0.15f, 0.0f);
 			m_State = PlayerState::Intro1;
+			boxCollider.Offset = { 0.0f, -0.1f };
 			break;
 		}
+
+		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
 	}
 }

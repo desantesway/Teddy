@@ -17,13 +17,12 @@ namespace Cuphead
 		virtual void OnImGuiRender() override;
 
 		Teddy::Ref<Teddy::Scene> GetActiveScene() { return m_ActiveScene; }
+
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnWindowResize(Teddy::WindowResizeEvent& e);
-
-		void StartTransition(Teddy::Timestep);
-		void LoadMainMenu(Teddy::Timestep ts);
 	protected:
+		bool new_Scene = false;
 		Teddy::Ref<Teddy::Scene> m_ActiveScene;
 	};
 }

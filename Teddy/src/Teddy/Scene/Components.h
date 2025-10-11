@@ -200,6 +200,8 @@ namespace Teddy
 
 		void* RuntimeFixture = nullptr;
 
+		void RefreshBoxCollider(TransformComponent& transform);
+
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};

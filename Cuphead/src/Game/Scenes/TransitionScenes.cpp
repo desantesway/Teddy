@@ -53,8 +53,7 @@ namespace Cuphead
     {
         if (!m_Scene)
         {
-            m_Scene = Teddy::CreateRef<Teddy::Scene>();
-            m_Scene->OnRuntimeStart();
+            m_Scene = Teddy::CreateRef<Teddy::Scene>(true);
 
             auto camEntt = m_Scene->CreateEntity("Camera");
             camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };

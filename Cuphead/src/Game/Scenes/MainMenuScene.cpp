@@ -18,7 +18,7 @@ namespace Cuphead
 	{
 		TED_PROFILE_FUNCTION();
 
-		m_MainMenu = Teddy::CreateRef<Teddy::Scene>(true);
+		m_MainMenu = Teddy::CreateRef<Teddy::Scene>();
 
 		auto camEntt = m_MainMenu->CreateEntity("Main Menu Camera");
 		camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };

@@ -3,6 +3,7 @@
 #include "EditorLayer.h"
 
 #include "Teddy/PostProcessing/PostProcessing.h"
+#include "../Game/Scenes/GameScenes.h"
 
 namespace Teddy
 {
@@ -18,7 +19,8 @@ namespace Teddy
         OPTICK_FRAME("MainThread");
         CupheadLayer::OnAttach();
 
-        m_Editor.Init(m_ActiveScene);
+        m_ActiveScene->OnRuntimeStop();
+        m_Editor.Init(CupheadLayer::GetActiveScene());
     }
 
     void EditorLayer::OnDetach()
@@ -31,8 +33,6 @@ namespace Teddy
     void EditorLayer::OnUpdate(Timestep ts)
     {
         TED_PROFILE_FUNCTION();
-
-        m_Editor.SetActiveScene(CupheadLayer::GetActiveScene());
 
         m_Editor.ResizeFramebuffer();
 
@@ -50,6 +50,17 @@ namespace Teddy
         }
 
         m_Editor.OnUpdate(ts);
+
+        if (m_Editor.GetState() == Editor::SceneState::Play)
+        {
+            if (Cuphead::GameScenes::OnUpdate(ts))
+            {
+                m_ActiveScene->OnRuntimeStop();
+                m_ActiveScene = Cuphead::GameScenes::InitNextScene();
+                m_ActiveScene->OnRuntimeStart();
+                Cuphead::GameScenes::FreeScenes();
+            }
+        }
 
         {
             TED_PROFILE_SCOPE("Post Processing");

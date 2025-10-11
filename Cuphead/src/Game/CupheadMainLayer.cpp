@@ -22,6 +22,7 @@ namespace Cuphead
 
 		GameScenes::Init();
 	    m_ActiveScene = GameScenes::InitNextScene();
+        m_ActiveScene->OnRuntimeStart();
         GameScenes::FreeScenes();
 
 	    Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
@@ -40,15 +41,15 @@ namespace Cuphead
 
         {
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
-
             m_ActiveScene->AlwaysOnUpdate();
             m_ActiveScene->OnUpdateRuntime(ts);
         }
 
         if (GameScenes::OnUpdate(ts))
         {
-			m_ActiveScene->OnRuntimeStop();
+            m_ActiveScene->OnRuntimeStop();
             m_ActiveScene = GameScenes::InitNextScene();
+            m_ActiveScene->OnRuntimeStart();
             GameScenes::FreeScenes();
         }
     }

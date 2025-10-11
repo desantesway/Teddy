@@ -6,8 +6,8 @@ namespace Cuphead
 {
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(unsigned int character)
 	{
-		m_Scene = Teddy::CreateRef<Teddy::Scene>(true);
-
+		m_Scene = Teddy::CreateRef<Teddy::Scene>();
+		
 		auto camEntt = m_Scene->CreateEntity("Main Menu Camera");
 		camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
 		auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
@@ -17,12 +17,24 @@ namespace Cuphead
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
+		auto floor = m_Scene->CreateEntity("Level Floor");  
+
+		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
+
+		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
+		auto& floorRigidbody = floor.AddComponent<Teddy::Rigidbody2DComponent>();
+
+		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
+		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
+		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);
+
 		InitPhase1();
+
 		if (character == 1)
 			m_Player.InitCuphead(m_Scene);
 		else
 			m_Player.InitMugman(m_Scene);
-		
+
 		return m_Scene;
 	}
 
