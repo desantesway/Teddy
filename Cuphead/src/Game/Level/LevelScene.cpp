@@ -391,4 +391,8 @@ namespace Cuphead
 		m_Player.StartIntro();
 	}
 	
+	void LevelScene::OnEvent(Teddy::Event& event)
+	{
+		m_Player.OnEvent(event);
+	}
 }

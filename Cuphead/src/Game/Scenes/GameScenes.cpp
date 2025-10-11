@@ -106,7 +106,7 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        //m_CurrentScene = 2;
+        m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:
@@ -144,13 +144,17 @@ namespace Cuphead
         TED_PROFILE_FUNCTION();
 
         Teddy::EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(GameScenes::OnKeyPressed));
 
         switch (m_CurrentScene)
         {
+        case 1:
+            dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(GameScenes::OnKeyPressed));
         case 2:
 			m_MainMenuScene.OnEvent(event);
             break;
+		case 3:
+            m_LevelScene.OnEvent(event);
+			break;
         default:
             break;
         }

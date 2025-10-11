@@ -7,7 +7,6 @@ namespace Cuphead
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
 		DeleteCookie(ts);
-
 		switch (m_State)
 		{
 		case PlayerState::Intro0:
@@ -23,6 +22,22 @@ namespace Cuphead
 				StartIdle();
 			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 95)
 				BreakCookie();
+			break;
+		case PlayerState::Running:
+			if (m_DirectionRight)
+			{
+				if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(1.0f, 0.0f, false);
+				else
+					m_State = PlayerState::Idle;
+			}
+			else
+			{
+				if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(-1.0f, 0.0f, false);
+				else
+					m_State = PlayerState::Idle;
+			}
 			break;
 		default:
 			break;
@@ -107,7 +122,6 @@ namespace Cuphead
 		indicies.Index = 84;
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Scale = glm::vec3(1.0f);
 		
 		auto& box = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
 		box.Offset = { 0.0f, -0.05f };
@@ -117,11 +131,13 @@ namespace Cuphead
 		{
 			transform.Translation -= glm::vec3(0.0f, 0.15f, 0.0f);
 			indicies.Index = 88;
+			transform.Scale = glm::vec3(1.0f);
 		}
 		else if (m_State == PlayerState::Intro0)
 		{
 			transform.Translation -= glm::vec3(0.0f, 0.2f, 0.0f);
 			indicies.Index = 87;
+			transform.Scale = glm::vec3(1.0f);
 		}
 
 		m_State = PlayerState::Idle;
@@ -259,5 +275,45 @@ namespace Cuphead
 		}
 
 		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
+	}
+
+	void Player::StartRunning()
+	{
+		if(m_DirectionRight)
+			m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = 1.0f;
+		else
+			m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = -1.0f;
+	}
+
+	bool Player::OnKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::A:
+		case Teddy::Key::Left:
+			m_DirectionRight = false;
+			m_State = PlayerState::Running;
+			StartRunning();
+			return true;
+		case Teddy::Key::D:
+		case Teddy::Key::Right:
+			m_DirectionRight = true;
+			m_State = PlayerState::Running;
+			StartRunning();
+			return true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	void Player::OnEvent(Teddy::Event& event)
+	{
+		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0)
+		{
+			Teddy::EventDispatcher dispatcher(event);
+			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
+		}
 	}
 }

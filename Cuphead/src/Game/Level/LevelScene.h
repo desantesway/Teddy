@@ -17,6 +17,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Scene> GetScene() { return m_Scene; }
 
 		void OnUpdate(Teddy::Timestep ts);
+		void OnEvent(Teddy::Event& event);
 
 		void StartIntro();
 		bool IsIntroDone() { return m_IntroDone; }

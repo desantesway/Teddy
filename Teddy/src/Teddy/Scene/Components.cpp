@@ -5,6 +5,13 @@
 
 namespace Teddy
 {
+    void Rigidbody2DComponent::ApplyForce(float forceX, float forceY, bool wake)
+    {
+        if (RuntimeBody)
+        {
+            b2Body_ApplyForceToCenter(*static_cast<b2BodyId*>(RuntimeBody), { forceX, forceY }, wake);
+        }
+    }
 
     void SpriteAnimationAtlasComponent::GenerateFrames(SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas)
     {

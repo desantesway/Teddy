@@ -101,6 +101,7 @@ namespace Teddy
     {
 		m_ActiveScene = scene;
 		m_EditorScene = m_ActiveScene;
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void Editor::ResizeFramebuffer()
@@ -133,6 +134,7 @@ namespace Teddy
             case SceneState::Play:
             {
                 m_ActiveScene->AlwaysOnUpdate();
+                m_ActiveScene->SimulatePhysics(ts);
                 m_ActiveScene->OnUpdateRuntime(ts);
                 break;
             }

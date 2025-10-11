@@ -52,6 +52,8 @@ namespace Cuphead
             m_ActiveScene->OnRuntimeStart();
             GameScenes::FreeScenes();
         }
+
+        m_ActiveScene->SimulatePhysics(ts);
     }
 
     bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)

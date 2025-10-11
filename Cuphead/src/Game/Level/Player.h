@@ -3,6 +3,7 @@
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Scene/Entity.h"
+#include "Teddy/Events/KeyEvent.h"
 
 namespace Cuphead
 {
@@ -13,6 +14,7 @@ namespace Cuphead
 		~Player() = default;
 
 		void OnUpdate(Teddy::Timestep ts);
+		void OnEvent(Teddy::Event& event);
 
 		Teddy::Entity GetEntity() { return m_Entity; }
 
@@ -22,6 +24,10 @@ namespace Cuphead
 		void StartIntro();
 
 	private:
+		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
+
+		void StartRunning();
+
 		void InitPlayer();
 		void StartIdle();
 
@@ -51,5 +57,6 @@ namespace Cuphead
 		};
 
 		PlayerState m_State = PlayerState::Idle;
+		bool m_DirectionRight = true;
 	};
 }

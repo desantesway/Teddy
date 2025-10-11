@@ -49,18 +49,19 @@ namespace Teddy
             Teddy::PostProcessing::Clear();
         }
 
-        m_Editor.OnUpdate(ts);
-
         if (m_Editor.GetState() == Editor::SceneState::Play)
         {
             if (Cuphead::GameScenes::OnUpdate(ts))
             {
                 m_ActiveScene->OnRuntimeStop();
                 m_ActiveScene = Cuphead::GameScenes::InitNextScene();
+				m_Editor.SetActiveScene(m_ActiveScene);
                 m_ActiveScene->OnRuntimeStart();
                 Cuphead::GameScenes::FreeScenes();
             }
         }
+
+        m_Editor.OnUpdate(ts);
 
         {
             TED_PROFILE_SCOPE("Post Processing");
