@@ -76,6 +76,7 @@ namespace Cuphead
 		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
 		sprite.PingPong = true;
 		sprite.Loop = true;
+		m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 84;
 
 		// Physics
 		auto& body = m_Entity.AddComponent<Teddy::Rigidbody2DComponent>();
@@ -199,6 +200,7 @@ namespace Cuphead
 		sprite.Textures = m_IntroTextures;
 		sprite.PingPong = false;
 		sprite.Loop = false;
+		sprite.Reverse = false;
 		
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 212;
