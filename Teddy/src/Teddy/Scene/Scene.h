@@ -4,6 +4,7 @@
 #include "Teddy/Core/UUID.h"
 #include "Teddy/Renderer/EditorCamera.h"
 #include "Teddy/Events/Event.h"
+#include "Teddy/Scene/Components.h"
 
 #include <entt/entt.hpp>
 
@@ -16,6 +17,7 @@ namespace Teddy
 	class Scene
 	{
 	public:
+		Scene(bool isRuntime) { OnRuntimeStart(); }
 		Scene();
 		~Scene(); 
 
@@ -39,6 +41,10 @@ namespace Teddy
 
 		void SimulatePhysics(Timestep ts);
 		void DuplicateEntity(Entity entity);
+
+		void RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform);
+		b2WorldId GetPhysicsWorld() const { return m_PhysicsWorld; }
+		void SetPhysicsWorld(b2WorldId world) { m_PhysicsWorld = world; }
 
 		template<typename... Components>
 		auto GetAllEntitiesWith()
