@@ -142,7 +142,7 @@ namespace Teddy::Atlas
                 }
 
                 int offsetX = entryX + (spriteW - drawW) / 2;
-                int offsetY = entryY + (spriteH - drawH) / 2;
+                int offsetY = entryY;
 
                 if (drawW == w && drawH == h) {
                     for (int y = 0; y < h; y++) {
