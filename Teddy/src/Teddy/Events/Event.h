@@ -16,18 +16,21 @@ namespace Teddy
 		AppTick, AppUpdate, AppRender, // Application events
 		KeyPressed, KeyReleased, KeyTyped, // Keyboard events
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled, // Mouse events
-		MidiKeyPressed, MidiKeyReleased, MidiPedalPressed, MidiPedalReleased // Midi events
+		MidiKeyPressed, MidiKeyReleased, MidiPedalPressed, MidiPedalReleased, // Midi events
+		ContactBegin, ContactEnd // Contact events
 	};
 	
 	enum EventCategory 
 	{
 		None = 0,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput       = BIT(1),
-		EventCategoryKeyboard    = BIT(2),
-		EventCategoryMouse       = BIT(3),
-		EventCategoryMouseButton = BIT(4),
-		EventCategoryMidi		 = BIT(5)
+		EventCategoryApplication	= BIT(0),
+		EventCategoryInput			= BIT(1),
+		EventCategoryKeyboard		= BIT(2),
+		EventCategoryMouse			= BIT(3),
+		EventCategoryMouseButton	= BIT(4),
+		EventCategoryMidi			= BIT(5),
+		EventCategoryContact		= BIT(6),
+		EventCategoryPhysics		= BIT(7)
 	};
 
 	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\

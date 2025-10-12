@@ -5,6 +5,7 @@
 #include "Teddy/Renderer/EditorCamera.h"
 #include "Teddy/Events/Event.h"
 #include "Teddy/Scene/Components.h"
+#include "Teddy/Physics/PhysicsEvent.h"
 
 #include <entt/entt.hpp>
 

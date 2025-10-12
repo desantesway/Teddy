@@ -133,7 +133,7 @@ namespace Teddy
             case SceneState::Play:
             {
                 m_ActiveScene->AlwaysOnUpdate();
-                m_ActiveScene->OnUpdateRuntime(ts);
+				m_ActiveScene->OnUpdateRuntime(ts); // TODO: removed simulate physics from runtime
                 break;
             }
             case SceneState::Simulate:

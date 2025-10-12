@@ -186,6 +186,14 @@ namespace Teddy
 
 		void ApplyForce(float forceX, float forceY, bool wake);
 
+		float GetGravityScale();
+		void SetGravityScale(float scale);
+
+		glm::vec2 GetVelocity();
+		void SetVelocity(float velX, float velY);
+		void SetVelocityY(float velY);
+		void SetVelocityX(float velX);
+
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};
@@ -201,8 +209,6 @@ namespace Teddy
 		float Restitution = 0.0f;
 
 		void* RuntimeFixture = nullptr;
-
-		void RefreshBoxCollider(TransformComponent& transform);
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
@@ -223,6 +229,18 @@ namespace Teddy
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
+
+	//struct SensorComponent // TODO
+	//{
+	//	glm::vec2 Offset = { 0.0f, 0.0f };
+	//	glm::vec2 Size = { 0.5f, 0.5f };
+	//	float Rotation = 0.0f;
+	//
+	//	void* RuntimeFixture = nullptr;
+	//
+	//	SensorComponent() = default;
+	//	SensorComponent(const SensorComponent&) = default;
+	//};
 
 	struct TextComponent
 	{
