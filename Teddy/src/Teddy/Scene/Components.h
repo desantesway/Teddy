@@ -230,6 +230,18 @@ namespace Teddy
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
+	//struct SensorComponent // TODO
+	//{
+	//	glm::vec2 Offset = { 0.0f, 0.0f };
+	//	glm::vec2 Size = { 0.5f, 0.5f };
+	//	float Rotation = 0.0f;
+	//
+	//	void* RuntimeFixture = nullptr;
+	//
+	//	SensorComponent() = default;
+	//	SensorComponent(const SensorComponent&) = default;
+	//};
+
 	struct TextComponent
 	{
 		std::string TextString;

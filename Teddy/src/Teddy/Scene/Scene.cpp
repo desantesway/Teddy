@@ -144,7 +144,7 @@ namespace Teddy
 			rigidBody.RuntimeBody = nullptr;
 		}
 
-		b2BodyDef bodyDef = b2DefaultBodyDef();
+		b2BodyDef bodyDef = b2DefaultBodyDef(); // TODO: Enable contact
 		bodyDef.type = Rigidbody2DTypeToBox2Body(rigidBody.Type);
 		bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
 		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
@@ -157,7 +157,7 @@ namespace Teddy
 		shapeDef.density = boxCollider.Density;
 		shapeDef.material.restitution = boxCollider.Restitution;
 		shapeDef.material.friction = boxCollider.Friction;
-
+		
 		b2Polygon box;
 
 		box = b2MakeOffsetBox(boxCollider.Size.x * transform.Scale.x,
@@ -206,6 +206,8 @@ namespace Teddy
 			transform.Translation.y = position.y;
 			transform.Rotation.z = b2Rot_GetAngle(rotation);
 		}
+
+		PhysicsEvent::OnUpdate(m_PhysicsWorld);
 	}
 
 	void FowardAtlasAnimation(Timestep ts, SpriteAnimationComponent& animation, SpriteAtlasComponent& atlas, SpriteAnimationAtlasComponent& indicies)
@@ -660,6 +662,7 @@ namespace Teddy
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 				
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
+				shapeDef.enableContactEvents = true; // TODO: see by the component
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
