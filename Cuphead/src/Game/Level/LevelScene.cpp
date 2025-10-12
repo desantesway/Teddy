@@ -391,8 +391,36 @@ namespace Cuphead
 		m_Player.StartIntro();
 	}
 	
+	bool LevelScene::OnBeginContact(Teddy::BeginContactEvent& e)
+	{
+		auto body = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		if (B2_ID_EQUALS(e.GetShapeIdA(), body) || B2_ID_EQUALS(e.GetShapeIdB(), body)) // compare with floor
+		{
+			m_Player.SetGrounded(true);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool LevelScene::OnEndContact(Teddy::EndContactEvent& e)
+	{
+		auto body = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		if (B2_ID_EQUALS(e.GetShapeIdA(), body) || B2_ID_EQUALS(e.GetShapeIdB(), body))
+		{
+			m_Player.SetGrounded(false);
+			return true;
+		}
+
+		return false;
+	}
+
 	void LevelScene::OnEvent(Teddy::Event& event)
 	{
 		m_Player.OnEvent(event);
+
+		Teddy::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Teddy::BeginContactEvent>(TED_BIND_EVENT_FN(LevelScene::OnBeginContact));
+		dispatcher.Dispatch<Teddy::EndContactEvent>(TED_BIND_EVENT_FN(LevelScene::OnEndContact));
 	}
 }

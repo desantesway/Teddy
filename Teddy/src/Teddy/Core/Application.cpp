@@ -33,6 +33,8 @@ namespace Teddy
 
 		m_ImGuiLayer = CreateRef<ImGuiLayer>();
 		PushOverlay(m_ImGuiLayer);
+
+		m_PhysicsEvent.SetEventCallback(TED_BIND_EVENT_FN(Application::OnEvent));
 	}
 
 	Application::~Application()

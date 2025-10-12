@@ -8,6 +8,9 @@ namespace Cuphead
 	{
 		DeleteCookie(ts);
 
+		if(m_ZHeld)
+			m_ZHeld = Teddy::Input::IsKeyPressed(Teddy::Key::Z);
+
 		switch (m_State)
 		{
 		case PlayerState::Intro0:
@@ -51,44 +54,73 @@ namespace Cuphead
 			}
 			break;
 		case PlayerState::Jumping:
-			Jumping();
+			Jumping(ts);
 			break;
 		default:
 			break;
 		}
 	}
 
-	void Player::Jumping()
+	void Player::Jumping(Teddy::Timestep ts) // TODO: pressing z jump always
 	{
-		bool running = false;
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
-		if (m_Jump)
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 17.5f);
-		if (m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().GetVelocity().y < 0.0f)
-			m_Falling = true;
+		bool running = false;
+		static bool falling = false;
+		static bool keyHeld = false;
+		static float time = 0.0f;
+		time += ts.GetSeconds();
+
+		if (time < 0.5f && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
+		{
+			body.SetVelocity(0.0f, body.GetVelocity().y + 0.035f * body.GetVelocity().y);
+			keyHeld = true;
+		}
+		else
+			keyHeld = false;
+
 		if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 		{
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(-5.0f);
+			body.SetVelocityX(-5.0f);
 			running = true;
 		}
+
 		if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 		{
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(5.0f);
+			body.SetVelocityX(5.0f);
 			running = true;
 		}
-		if (m_Falling && m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().GetVelocity().y >= -0.01f) // TODO: Fix landing detection
+
+		if(!running)
+			body.SetVelocityX(0.0f);
+
+		if (m_Jump)
 		{
-			m_Falling = false;
-			if (running)
+			body.SetVelocity(0.0f, 12.5f);
+			keyHeld = true;
+			m_Jump = false;
+			time = 0.0f;
+		}
+		else
+		{
+			if (m_Grounded) // TODO: Fix landing with a sensor bellow the player
 			{
-				m_State = PlayerState::DoneJumping;
-				StartRunning();
+				if(falling)
+				{
+					if (running)
+					{
+						m_State = PlayerState::DoneJumping;
+						StartRunning();
+					}
+					else
+						StartIdle();
+					falling = false;
+					body.SetVelocity(0.0f, 0.0f);
+				}
 			}
 			else
-				StartIdle();
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
+				falling = true;
 		}
-		m_Jump = false;
 	}
 
 	void Player::LoadCupheadTextures()
@@ -344,7 +376,7 @@ namespace Cuphead
 	{
 		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.0f : -1.0f;
 
-		if (m_State == PlayerState::Running || m_State == PlayerState::Jumping) return;
+		if (m_State == PlayerState::Running || m_State == PlayerState::Jumping || !m_Grounded) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -382,7 +414,9 @@ namespace Cuphead
 
 	void Player::StartJumping() // TODO: falling without jumping
 	{
-		if (m_State == PlayerState::Jumping) return;
+		if (m_State == PlayerState::Jumping && !m_Grounded) return;
+
+		if (m_ZHeld) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -390,9 +424,9 @@ namespace Cuphead
 		sprite.Loop = true;
 		sprite.Reverse = false;
 
-		sprite.FinalFrameTime = 0.04f;
-		sprite.FrameTime = 0.04f;
-		sprite.InitialFrameTime = 0.04f;
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 288;
@@ -414,10 +448,11 @@ namespace Cuphead
 		static bool firstJump = true;
 		if (firstJump)
 		{
-			boxBody.SetGravityScale(7.5f);
+			boxBody.SetGravityScale(10.0f);
 			firstJump = false;
 		}
 
+		m_ZHeld = true;
 		m_Jump = true;
 		m_State = PlayerState::Jumping;
 	}

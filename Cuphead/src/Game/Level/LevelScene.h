@@ -27,6 +27,9 @@ namespace Cuphead
 		void InitPhase1Background();
 		void InitPhase1Foreground();
 		void OnUpdatePhase1();
+
+		bool OnBeginContact(Teddy::BeginContactEvent& e);
+		bool OnEndContact(Teddy::EndContactEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
