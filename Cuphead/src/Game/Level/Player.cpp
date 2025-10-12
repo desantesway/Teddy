@@ -28,19 +28,25 @@ namespace Cuphead
 			{
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 				{
-					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(2.5f, 0.0f);
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(5.0f, 0.0f); // TODO: Verify velocity
 				}
 				else
+				{
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
 					StartIdle();
+				}
 			}
 			else
 			{
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 				{
-					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(-2.5f, 0.0f);
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(-5.0f, 0.0f);
 				}
 				else
+				{
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
 					StartIdle();
+				}
 			}
 			break;
 		default:
@@ -86,11 +92,12 @@ namespace Cuphead
 
 	void Player::InitPlayer()
 	{
-		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+		auto& sprite = m_Entity.AddComponent<Teddy::SpriteAnimationComponent>(0.1f, 0.05f, 0.1f);
 		sprite.Textures = m_MovementTextures;
 		m_Entity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 347, 192);
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f);
+		transform.Scale = glm::vec3(1.75f);
 
 		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
 		sprite.PingPong = true;
@@ -116,6 +123,9 @@ namespace Cuphead
 		sprite.PingPong = true;
 		sprite.Loop = true;
 		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
+		sprite.FinalFrameTime = 0.1f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.1f;
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 347;
@@ -134,16 +144,16 @@ namespace Cuphead
 		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 		if (m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2)
 		{
-			transform.Translation -= glm::vec3(0.0f, 0.15f, 0.0f);
+			transform.Translation -= glm::vec3(0.0f, 0.2625f, 0.0f);
 			indicies.Index = 88;
-			transform.Scale = glm::vec3(1.0f);
+			transform.Scale = glm::vec3(1.75f);
 			m_Scene->RefreshBody(boxBody, boxCollider, transform);
 		}
 		else if (m_State == PlayerState::Intro0)
 		{
-			transform.Translation -= glm::vec3(0.0f, 0.2f, 0.0f);
+			transform.Translation -= glm::vec3(0.0f, 0.35f, 0.0f);
 			indicies.Index = 87;
-			transform.Scale = glm::vec3(1.0f);
+			transform.Scale = glm::vec3(1.75f);
 			m_Scene->RefreshBody(boxBody, boxCollider, transform);
 		}
 
@@ -204,7 +214,7 @@ namespace Cuphead
 		created = true;
 	}
 
-	void Player::StartIntro()
+	void Player::StartIntro() // TODO: see timing of intro
 	{
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
@@ -280,10 +290,8 @@ namespace Cuphead
 		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
 	}
 
-	// TODO: Max velocity
-	// TODO: Bug stuck if left idle for a while
 	// TODO: Verify hit box
-	void Player::StartRunning() // TODO: is there a transition?
+	void Player::StartRunning()
 	{
 		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.0f : -1.0f;
 
@@ -294,6 +302,10 @@ namespace Cuphead
 		sprite.PingPong = false;
 		sprite.Loop = true;
 		sprite.Reverse = true;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 347;
