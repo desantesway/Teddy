@@ -22,14 +22,14 @@ namespace Cuphead
 		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
 
 		void StartIntro();
-
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
-		void StartRunning();
-
 		void InitPlayer();
 		void StartIdle();
+		void StartRunning();
+		void StartJumping();
+		void Jumping();
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -42,13 +42,14 @@ namespace Cuphead
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MovementTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_JumpTextures;
 
 		enum class PlayerState
 		{
 			Idle = 0,
 			Running,
 			Jumping,
-			Falling,
+			DoneJumping,
 			Dashing,
 			Crouching,
 			Intro0,
@@ -58,5 +59,7 @@ namespace Cuphead
 
 		PlayerState m_State = PlayerState::Idle;
 		bool m_DirectionRight = true;
+		bool m_Jump = false;
+		bool m_Falling = false;
 	};
 }
