@@ -7,6 +7,17 @@
 
 namespace Teddy
 {
+
+    float Rigidbody2DComponent::GetGravityScale()
+    {
+        return b2Body_GetGravityScale(*static_cast<b2BodyId*>(RuntimeBody));
+    }
+
+    void Rigidbody2DComponent::SetGravityScale(float scale)
+    {
+        b2Body_SetGravityScale(*static_cast<b2BodyId*>(RuntimeBody), scale);
+    }
+
     glm::vec2 Rigidbody2DComponent::GetVelocity()
     {
         b2Vec2 vec = b2Body_GetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody));
@@ -17,6 +28,16 @@ namespace Teddy
     void Rigidbody2DComponent::SetVelocity(float velX, float velY)
     {
         b2Body_SetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody), { velX, velY });
+    }
+
+    void Rigidbody2DComponent::SetVelocityY(float velY)
+    {
+        SetVelocity(GetVelocity().x, velY);
+    }
+
+    void Rigidbody2DComponent::SetVelocityX(float velX)
+    {
+        SetVelocity(velX, GetVelocity().y);
     }
 
     void Rigidbody2DComponent::ApplyForce(float forceX, float forceY, bool wake)
