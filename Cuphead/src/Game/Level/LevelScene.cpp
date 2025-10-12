@@ -24,6 +24,8 @@ namespace Cuphead
 		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
 		auto& floorRigidbody = floor.AddComponent<Teddy::Rigidbody2DComponent>();
 
+		floorCollider.Friction = 5.0f;
+
 		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
 		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
 		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);

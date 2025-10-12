@@ -186,6 +186,9 @@ namespace Teddy
 
 		void ApplyForce(float forceX, float forceY, bool wake);
 
+		glm::vec2 GetVelocity();
+		void SetVelocity(float velX, float velY);
+
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};

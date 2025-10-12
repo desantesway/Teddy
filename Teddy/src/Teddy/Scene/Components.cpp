@@ -3,8 +3,22 @@
 #include "Teddy/Renderer/MSDFData.h"
 #include <box2d/box2d.h>
 
+#include <glm/glm.hpp>
+
 namespace Teddy
 {
+    glm::vec2 Rigidbody2DComponent::GetVelocity()
+    {
+        b2Vec2 vec = b2Body_GetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody));
+
+		return glm::vec2(vec.x, vec.y);
+    }
+
+    void Rigidbody2DComponent::SetVelocity(float velX, float velY)
+    {
+        b2Body_SetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody), { velX, velY });
+    }
+
     void Rigidbody2DComponent::ApplyForce(float forceX, float forceY, bool wake)
     {
         if (RuntimeBody)

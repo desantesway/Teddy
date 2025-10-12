@@ -27,14 +27,18 @@ namespace Cuphead
 			if (m_DirectionRight)
 			{
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
-					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(1.0f, 0.0f, false);
+				{
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(2.5f, 0.0f);
+				}
 				else
 					StartIdle();
 			}
 			else
 			{
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
-					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().ApplyForce(-1.0f, 0.0f, false);
+				{
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(-2.5f, 0.0f);
+				}
 				else
 					StartIdle();
 			}
@@ -276,6 +280,7 @@ namespace Cuphead
 		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
 	}
 
+	// TODO: Max velocity
 	// TODO: Bug stuck if left idle for a while
 	// TODO: Verify hit box
 	void Player::StartRunning() // TODO: is there a transition?
