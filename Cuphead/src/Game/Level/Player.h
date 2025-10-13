@@ -33,6 +33,7 @@ namespace Cuphead
 		void StartIdle();
 
 		void StartRunning();
+		void Running();
 
 		void StartCrouching();
 		void Crouching();
