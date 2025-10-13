@@ -1,5 +1,6 @@
 #include "Teddy/Physics/PhysicsEvent.h"
 #include "Teddy/Physics/ContactEvent.h"
+#include "Teddy/Physics/SensorEvent.h"
 
 namespace Teddy
 {
@@ -29,7 +30,7 @@ namespace Teddy
 
 			if (b2Shape_IsValid(endEvent->shapeIdA) && b2Shape_IsValid(endEvent->shapeIdB))
 			{
-				EndContactEvent e(world, endEvent);
+				ContactEndEvent e(world, endEvent);
 				m_EventCallback(e);
 			}
 		}
@@ -38,26 +39,24 @@ namespace Teddy
 		{
 			b2ContactBeginTouchEvent* beginEvent = contactEvents.beginEvents + i;
 
-			BeginContactEvent e(world, beginEvent);
+			ContactBeginEvent e(world, beginEvent);
 			m_EventCallback(e);
 		}
 
+		// sensors
 		b2SensorEvents sensorEvents = b2World_GetSensorEvents(world);
 		for (int i = 0; i < sensorEvents.beginCount; ++i)
 		{
 			b2SensorBeginTouchEvent* beginTouch = sensorEvents.beginEvents + i;
-			TED_CORE_INFO("Sensor begin event");
-			// process begin event
+			SensorBeginEvent e(world, beginTouch);
+			m_EventCallback(e);
 		}
 
 		for (int i = 0; i < sensorEvents.endCount; ++i)
 		{
 			b2SensorEndTouchEvent* endTouch = sensorEvents.endEvents + i;
-			if (b2Shape_IsValid(endTouch->visitorShapeId))
-			{
-				TED_CORE_INFO("Sensor end event");
-				// process end event
-			}
+			SensorEndEvent e(world, endTouch);
+			m_EventCallback(e);
 		}
 	}
 }

@@ -842,8 +842,8 @@ namespace Teddy
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(Editor::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(Editor::OnMouseButtonPressed));
-        dispatcher.Dispatch<BeginContactEvent>(TED_BIND_EVENT_FN(Editor::OnBeginContact));
-        dispatcher.Dispatch<EndContactEvent>(TED_BIND_EVENT_FN(Editor::OnEndContact));
+        dispatcher.Dispatch<SensorBeginEvent>(TED_BIND_EVENT_FN(Editor::OnSensorBegin));
+        dispatcher.Dispatch<SensorEndEvent>(TED_BIND_EVENT_FN(Editor::OnSensorEnd));
     }
 
     bool Editor::OnKeyPressed(KeyPressedEvent& e)
@@ -948,16 +948,30 @@ namespace Teddy
         return false;
     }
 
-    bool Editor::OnBeginContact(BeginContactEvent& e)
+    bool Editor::OnSensorBegin(SensorBeginEvent& e)
     {
-        TED_CORE_INFO(e);
+        //TED_CORE_INFO(e);
 
         return false;
     }
 
-    bool Editor::OnEndContact(EndContactEvent& e)
+    bool Editor::OnSensorEnd(SensorEndEvent& e)
     {
-        TED_CORE_INFO(e);
+        //TED_CORE_INFO(e);
+
+        return false;
+    }
+
+    bool Editor::OnContactBegin(ContactBeginEvent& e)
+    {
+        //TED_CORE_INFO(e);
+
+        return false;
+    }
+
+    bool Editor::OnContactEnd(ContactEndEvent& e)
+    {
+        //TED_CORE_INFO(e);
 
         return false;
     }

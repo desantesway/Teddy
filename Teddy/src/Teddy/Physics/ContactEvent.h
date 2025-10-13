@@ -26,10 +26,10 @@ namespace Teddy
 		b2ShapeId m_B;
 	};
 
-	class BeginContactEvent : public ContactEvent
+	class ContactBeginEvent : public ContactEvent
 	{
 	public:
-		BeginContactEvent(const b2WorldId& world, b2ContactBeginTouchEvent* beginContact)
+		ContactBeginEvent(const b2WorldId& world, b2ContactBeginTouchEvent* beginContact)
 			: ContactEvent(world, beginContact->contactId, beginContact->shapeIdA, beginContact->shapeIdB)
 		{
 		}
@@ -37,17 +37,17 @@ namespace Teddy
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "BeginContactEvent -> ContactId index: " << m_Contact.index1 << " ShapeA index: " << m_A.index1 << " ShapeB index: " << m_B.index1 << " From world index: " << m_World.index1;
+			ss << "ContactBeginEvent -> ContactId index: " << m_Contact.index1 << " ShapeA index: " << m_A.index1 << " ShapeB index: " << m_B.index1 << " From world index: " << m_World.index1;
 			return ss.str();
 		}
 	
 		EVENT_CLASS_TYPE(ContactBegin)
 	};
 
-	class EndContactEvent : public ContactEvent
+	class ContactEndEvent : public ContactEvent
 	{
 	public:
-		EndContactEvent(const b2WorldId& world, b2ContactEndTouchEvent* endContact)
+		ContactEndEvent(const b2WorldId& world, b2ContactEndTouchEvent* endContact)
 			: ContactEvent(world, endContact->contactId, endContact->shapeIdA, endContact->shapeIdB)
 		{
 		}
@@ -55,7 +55,7 @@ namespace Teddy
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "EndContactEvent -> ContactId index: " << m_Contact.index1 << " ShapeA index: " << m_A.index1 << " ShapeB index: " << m_B.index1 << " From world index: " << m_World.index1;
+			ss << "ContactEndEvent -> ContactId index: " << m_Contact.index1 << " ShapeA index: " << m_A.index1 << " ShapeB index: " << m_B.index1 << " From world index: " << m_World.index1;
 			return ss.str();
 		}
 
