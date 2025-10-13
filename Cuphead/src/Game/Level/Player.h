@@ -31,7 +31,12 @@ namespace Cuphead
 		void InitPlayer();
 		
 		void StartIdle();
+
 		void StartRunning();
+
+		void StartCrouching();
+		void Crouching();
+
 		void StartJumping();
 		void Jumping(Teddy::Timestep ts);
 
@@ -58,7 +63,8 @@ namespace Cuphead
 			Crouching,
 			Intro0,
 			Intro1,
-			Intro2
+			Intro2,
+			AnimationDone
 		};
 
 		PlayerState m_State = PlayerState::Idle;

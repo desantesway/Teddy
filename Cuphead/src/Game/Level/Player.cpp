@@ -53,6 +53,9 @@ namespace Cuphead
 				}
 			}
 			break;
+		case PlayerState::Crouching:
+			Crouching();
+			break;
 		case PlayerState::Jumping:
 			Jumping(ts);
 			break;
@@ -61,11 +64,60 @@ namespace Cuphead
 		}
 	}
 
+	void Player::Crouching()
+	{
+		static bool running = false;
+		static bool transition = true;
+		
+		auto& animationAtlas = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		if (transition && animationAtlas.Index == 97)
+		{
+			auto& animation = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			animation.Loop = true;
+			animation.PingPong = true;
+			animation.Reverse = false;
+			animationAtlas.Index = 97;
+			animation.PlayableIndicies = { 97, 98, 99, 100, 101 };
+			animation.FinalFrameTime = 0.1f;
+			animation.FrameTime = 0.05f;
+			animation.InitialFrameTime = 0.1f;
+
+			transition = false;
+		}
+
+		if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+		{
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
+		}
+		else
+		{
+			if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+			{
+				running = true;
+			}
+
+			if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+			{
+				running = true;
+			}
+
+			transition = true;
+			if (running)
+			{
+				m_State = PlayerState::AnimationDone;
+				StartRunning();
+			}
+			else
+				StartIdle();
+		}
+	}
+
 	void Player::Jumping(Teddy::Timestep ts)
 	{
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
 		bool running = false;
+		bool crouching = false;
 		static bool falling = false;
 		static bool keyHeld = false;
 		static float time = 0.0f;
@@ -81,6 +133,11 @@ namespace Cuphead
 		}
 		else
 			keyHeld = false;
+
+		if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+		{
+			crouching = true;
+		}
 
 		if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 		{
@@ -110,7 +167,12 @@ namespace Cuphead
 			{
 				if(falling)
 				{
-					if (running)
+					if (crouching)
+					{
+						m_State = PlayerState::DoneJumping;
+						StartCrouching();
+					}
+					else if (running)
 					{
 						m_State = PlayerState::DoneJumping;
 						StartRunning();
@@ -382,7 +444,7 @@ namespace Cuphead
 	{
 		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.0f : -1.0f;
 
-		if (m_State == PlayerState::Running || m_State == PlayerState::Jumping || !m_Grounded) return;
+		if (m_State == PlayerState::Running || m_State == PlayerState::Jumping || !m_Grounded || m_State == PlayerState::Crouching) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -463,6 +525,47 @@ namespace Cuphead
 		m_State = PlayerState::Jumping;
 	}
 
+	void Player::StartCrouching()
+	{
+		if (m_State == PlayerState::Crouching || !m_Grounded) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_MovementTextures;
+		sprite.PingPong = true;
+		sprite.Loop = true;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 347;
+		atlas.SpriteHeight = 192;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		sprite.PlayableIndicies.clear();
+		for (int i = 97; i < 110; i++)
+			sprite.PlayableIndicies.push_back(i);
+		indicies.Index = 109;
+
+		// TODO: Update box collider 
+		auto& boxBody = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (m_State == PlayerState::DoneJumping)
+		{
+			if (transform.Scale.x >= 0)
+				transform.Scale = glm::vec3(1.75f);
+			else
+				transform.Scale = glm::vec3(-1.75f, 1.75f, 1.0f);
+		}
+
+		m_State = PlayerState::Crouching;
+	}
+
 	bool Player::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
 		switch (e.GetKeyCode())
@@ -479,6 +582,10 @@ namespace Cuphead
 			return true;
 		case Teddy::Key::Z:
 			StartJumping();
+			return true;
+		case Teddy::Key::Down:
+		case Teddy::Key::S:
+			StartCrouching();
 			return true;
 		default:
 			break;
