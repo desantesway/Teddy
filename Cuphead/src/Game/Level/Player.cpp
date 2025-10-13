@@ -61,7 +61,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::Jumping(Teddy::Timestep ts) // TODO: pressing z jump always
+	void Player::Jumping(Teddy::Timestep ts)
 	{
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
@@ -71,9 +71,12 @@ namespace Cuphead
 		static float time = 0.0f;
 		time += ts.GetSeconds();
 
-		if (time < 0.5f && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
+		static constexpr float maxJumpHoldTime = 0.5f;
+		static constexpr float jumpHoldForce = 30.0f;
+
+		if (time < maxJumpHoldTime && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
 		{
-			body.SetVelocity(0.0f, body.GetVelocity().y + 0.035f * body.GetVelocity().y);
+			body.SetVelocityY(body.GetVelocity().y + jumpHoldForce * ts.GetSeconds());
 			keyHeld = true;
 		}
 		else
@@ -103,7 +106,7 @@ namespace Cuphead
 		}
 		else
 		{
-			if (m_Grounded) // TODO: Fix landing with a sensor bellow the player
+			if (m_Grounded)
 			{
 				if(falling)
 				{
@@ -184,6 +187,9 @@ namespace Cuphead
 		auto& box = m_Entity.AddComponent<Teddy::BoxCollider2DComponent>();
 		box.Offset = {0.0f, -0.05f};
 		box.Size = {0.15f, 0.4f};
+
+		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.14f, 0.05f }, 0.0f };
 	}
 
 	void Player::StartIdle()
@@ -220,14 +226,14 @@ namespace Cuphead
 			transform.Translation -= glm::vec3(0.0f, 0.2625f, 0.0f);
 			indicies.Index = 88;
 			transform.Scale = glm::vec3(1.75f);
-			m_Scene->RefreshBody(boxBody, boxCollider, transform);
+			m_Scene->RefreshBody(m_Entity);
 		}
 		else if (m_State == PlayerState::Intro0)
 		{
 			transform.Translation -= glm::vec3(0.0f, 0.35f, 0.0f);
 			indicies.Index = 87;
 			transform.Scale = glm::vec3(1.75f);
-			m_Scene->RefreshBody(boxBody, boxCollider, transform);
+			m_Scene->RefreshBody(m_Entity);
 		}
 		else if (m_State == PlayerState::Jumping)
 		{
@@ -368,7 +374,7 @@ namespace Cuphead
 			break;
 		}
 
-		 m_Scene->RefreshBody(boxBody, boxCollider, transform);
+		 m_Scene->RefreshBody(m_Entity);
 	}
 
 	// TODO: Verify hit box

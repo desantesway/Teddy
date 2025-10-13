@@ -3,6 +3,8 @@
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Scene/Entity.h"
+#include "Teddy/Physics/ContactEvent.h"
+#include "Teddy/Physics/SensorEvent.h"
 #include "Player.h"
 
 namespace Cuphead
@@ -28,8 +30,8 @@ namespace Cuphead
 		void InitPhase1Foreground();
 		void OnUpdatePhase1();
 
-		bool OnBeginContact(Teddy::BeginContactEvent& e);
-		bool OnEndContact(Teddy::EndContactEvent& e);
+		bool OnSensorBegin(Teddy::SensorBeginEvent& e);
+		bool OnSensorEnd(Teddy::SensorEndEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 

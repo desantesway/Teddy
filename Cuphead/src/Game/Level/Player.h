@@ -27,7 +27,6 @@ namespace Cuphead
 		void SetGrounded(bool grounded) { m_Grounded = grounded; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
-		bool OnBeginContact(Teddy::BeginContactEvent& e);
 
 		void InitPlayer();
 		

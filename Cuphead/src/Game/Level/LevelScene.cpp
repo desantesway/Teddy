@@ -22,6 +22,7 @@ namespace Cuphead
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
 
 		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
+		floorCollider.EnableSensorEvents = true;
 		auto& floorRigidbody = floor.AddComponent<Teddy::Rigidbody2DComponent>();
 
 		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
@@ -391,10 +392,10 @@ namespace Cuphead
 		m_Player.StartIntro();
 	}
 	
-	bool LevelScene::OnBeginContact(Teddy::BeginContactEvent& e)
+	bool LevelScene::OnSensorBegin(Teddy::SensorBeginEvent& e)
 	{
-		auto body = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
-		if (B2_ID_EQUALS(e.GetShapeIdA(), body) || B2_ID_EQUALS(e.GetShapeIdB(), body)) // compare with floor
+		b2BodyId playerBody = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		if (B2_ID_EQUALS(e.GetSensorShape(), playerBody) || B2_ID_EQUALS(e.GetVisitorShape(), playerBody))
 		{
 			m_Player.SetGrounded(true);
 			return true;
@@ -403,10 +404,10 @@ namespace Cuphead
 		return false;
 	}
 
-	bool LevelScene::OnEndContact(Teddy::EndContactEvent& e)
+	bool LevelScene::OnSensorEnd(Teddy::SensorEndEvent& e)
 	{
-		auto body = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
-		if (B2_ID_EQUALS(e.GetShapeIdA(), body) || B2_ID_EQUALS(e.GetShapeIdB(), body))
+		b2BodyId playerBody = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		if (B2_ID_EQUALS(e.GetSensorShape(), playerBody) || B2_ID_EQUALS(e.GetVisitorShape(), playerBody))
 		{
 			m_Player.SetGrounded(false);
 			return true;
@@ -420,7 +421,7 @@ namespace Cuphead
 		m_Player.OnEvent(event);
 
 		Teddy::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Teddy::BeginContactEvent>(TED_BIND_EVENT_FN(LevelScene::OnBeginContact));
-		dispatcher.Dispatch<Teddy::EndContactEvent>(TED_BIND_EVENT_FN(LevelScene::OnEndContact));
+		dispatcher.Dispatch<Teddy::SensorBeginEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorBegin));
+		dispatcher.Dispatch<Teddy::SensorEndEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorEnd));
 	}
 }
