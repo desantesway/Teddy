@@ -68,31 +68,26 @@ namespace Teddy
             glm::vec4 m_Color = glm::vec4(1.0f);
         };
 
-		//auto test = m_ActiveScene->CreateEntity("Mugman Animation");
-        //auto& cupheadSprite = test.AddComponent<Teddy::SpriteAnimationComponent>();
-        //cupheadSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
-        //cupheadSprite.Loop = true;
-        //cupheadSprite.Textures.push_back(assets.Load<Teddy::Texture2D>("assets/textures/Cuphead_143x171_1024x1024_0.png", Teddy::Boolean::True));
-        //test.AddComponent<Teddy::SpriteAtlasComponent>(4, 1, 143, 171);
-        //auto& cupheadTransform = test.GetComponent<Teddy::TransformComponent>();
-        //cupheadTransform.Translation = glm::vec3(0.4f, 0.24f, 1.0f);
-        //cupheadTransform.Scale *= 1.3f;
-        //
-        //auto cupheadAnimation = m_ActiveScene->CreateEntity("Main Title Animation Title");
-        //cupheadAnimation.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1013, 552);
-        //auto& spriteAnimation = cupheadAnimation.AddComponent<Teddy::SpriteAnimationComponent>(0.25f, 0.05f, 0.25f);
-        //spriteAnimation.PingPong = true;
-        //spriteAnimation.Textures = assets.LoadMultiple<Teddy::Texture2D>(
-        //    {
-        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_0.png",
-        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_1.png",
-        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_2.png",
-        //        "assets/textures/Cuphead_And_Mugman_TitleScreen_1013x552_2048x2048_3.png"
-        //    });
-        //auto& animationTransform = cupheadAnimation.GetComponent<Teddy::TransformComponent>();
-        //animationTransform.Translation = glm::vec3(0.2f, -0.55f, 1.0f);
-        //animationTransform.Scale = glm::vec3(0.0f, 0.75f, 1.0f);
-        //spriteAnimation.IsBackground = true;
+		auto test = m_ActiveScene->CreateEntity("Physics with sensor test");
+		test.AddComponent<Teddy::SpriteRendererComponent>();
+        auto& body = test.AddComponent<Teddy::Rigidbody2DComponent>();
+        body.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
+        body.FixedRotation = true;
+        auto& box = test.AddComponent<Teddy::BoxCollider2DComponent>();
+
+        auto& sensor = test.AddComponent<Teddy::Sensor2DComponent>();
+        sensor.Offset = { 0.0f, -2.0f };
+        sensor.Size = { 0.5f, 0.1f };
+
+        auto floor = m_ActiveScene->CreateEntity("Physics floor test");
+        floor.AddComponent<Teddy::SpriteRendererComponent>();
+        auto& floorBody = floor.AddComponent<Teddy::Rigidbody2DComponent>();
+        floorBody.Type = Teddy::Rigidbody2DComponent::BodyType::Static;
+        floorBody.FixedRotation = true;
+        auto& floorBox = floor.AddComponent<Teddy::BoxCollider2DComponent>();
+		floorBox.EnableSensorEvents = true;
+		auto& transform = floor.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = { 0.0f, -2.0f, 0.0f };
 
         Renderer2D::SetLineWidth(4.0f);
     }
@@ -133,6 +128,7 @@ namespace Teddy
             case SceneState::Play:
             {
                 m_ActiveScene->AlwaysOnUpdate();
+                m_ActiveScene->SimulatePhysics(ts);
 				m_ActiveScene->OnUpdateRuntime(ts); // TODO: removed simulate physics from runtime
                 break;
             }
@@ -275,7 +271,18 @@ namespace Teddy
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
                 }
 
+                if (ent.HasComponent<Sensor2DComponent>())
+                {
+                    auto& sensor = ent.GetComponent<Sensor2DComponent>();
+                    glm::vec3 scale = tc.Scale * glm::vec3(sensor.Size * 2.0f, 1.0f);
 
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                        * glm::translate(glm::mat4(1.0f), glm::vec3(sensor.Offset, 0.001f))
+                        * glm::scale(glm::mat4(1.0f), scale);
+
+                    Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+                }
             }
         }
 
@@ -835,6 +842,8 @@ namespace Teddy
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TED_BIND_EVENT_FN(Editor::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(TED_BIND_EVENT_FN(Editor::OnMouseButtonPressed));
+        dispatcher.Dispatch<BeginContactEvent>(TED_BIND_EVENT_FN(Editor::OnBeginContact));
+        dispatcher.Dispatch<EndContactEvent>(TED_BIND_EVENT_FN(Editor::OnEndContact));
     }
 
     bool Editor::OnKeyPressed(KeyPressedEvent& e)
@@ -936,6 +945,20 @@ namespace Teddy
                 m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
             }
         }
+        return false;
+    }
+
+    bool Editor::OnBeginContact(BeginContactEvent& e)
+    {
+        TED_CORE_INFO(e);
+
+        return false;
+    }
+
+    bool Editor::OnEndContact(EndContactEvent& e)
+    {
+        TED_CORE_INFO(e);
+
         return false;
     }
 }

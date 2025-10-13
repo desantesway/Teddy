@@ -4,6 +4,7 @@
 #include "../Panels/ContentBrowserPanel.h"
 #include "Teddy/Renderer/Framebuffer.h"
 #include "Teddy/Scene/Scene.h"
+#include "Teddy/Physics/ContactEvent.h"
 
 namespace Teddy
 {
@@ -30,6 +31,8 @@ namespace Teddy
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnBeginContact(BeginContactEvent& e);
+		bool OnEndContact(EndContactEvent& e);
 
 		void OnOverlayRender();
 

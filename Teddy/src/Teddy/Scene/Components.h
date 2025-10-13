@@ -208,6 +208,9 @@ namespace Teddy
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 
+		bool EnableContactEvents = false;
+		bool EnableSensorEvents = false;
+
 		void* RuntimeFixture = nullptr;
 
 		BoxCollider2DComponent() = default;
@@ -224,23 +227,26 @@ namespace Teddy
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 
+		bool EnableContactEvents = false;
+		bool EnableSensorEvents = false;
+
 		void* RuntimeFixture = nullptr;
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	//struct SensorComponent // TODO
-	//{
-	//	glm::vec2 Offset = { 0.0f, 0.0f };
-	//	glm::vec2 Size = { 0.5f, 0.5f };
-	//	float Rotation = 0.0f;
-	//
-	//	void* RuntimeFixture = nullptr;
-	//
-	//	SensorComponent() = default;
-	//	SensorComponent(const SensorComponent&) = default;
-	//};
+	struct Sensor2DComponent // TODO: make a list // Serialization
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+		float Rotation = 0.0f;
+	
+		void* RuntimeFixture = nullptr;
+	
+		Sensor2DComponent() = default;
+		Sensor2DComponent(const Sensor2DComponent&) = default;
+	};
 
 	struct TextComponent
 	{
@@ -283,6 +289,6 @@ namespace Teddy
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
 		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
-		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, Sensor2DComponent,
 		TextComponent, ButtonComponent, SpriteAnimationAtlasComponent>;
 }
