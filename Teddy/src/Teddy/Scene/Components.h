@@ -180,6 +180,7 @@ namespace Teddy
 		enum class BodyType { Static = 0, Kinematic, Dynamic };
 		BodyType Type = BodyType::Static;
 
+		float GravityScale = 1.0f;
 		bool FixedRotation = false;
 
 		void* RuntimeBody = nullptr;
