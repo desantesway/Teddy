@@ -5,6 +5,7 @@
 #include "Teddy/Renderer/Framebuffer.h"
 #include "Teddy/Scene/Scene.h"
 #include "Teddy/Physics/ContactEvent.h"
+#include "Teddy/Physics/SensorEvent.h"
 
 namespace Teddy
 {
@@ -31,8 +32,10 @@ namespace Teddy
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-		bool OnBeginContact(BeginContactEvent& e);
-		bool OnEndContact(EndContactEvent& e);
+		bool OnContactBegin(ContactBeginEvent& e);
+		bool OnContactEnd(ContactEndEvent& e);
+		bool OnSensorBegin(SensorBeginEvent& e);
+		bool OnSensorEnd(SensorEndEvent& e);
 
 		void OnOverlayRender();
 

@@ -17,7 +17,7 @@ namespace Teddy
 		KeyPressed, KeyReleased, KeyTyped, // Keyboard events
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled, // Mouse events
 		MidiKeyPressed, MidiKeyReleased, MidiPedalPressed, MidiPedalReleased, // Midi events
-		ContactBegin, ContactEnd // Contact events
+		ContactBegin, ContactEnd, SensorBegin, SensorEnd // Contact events
 	};
 	
 	enum EventCategory 
@@ -30,7 +30,8 @@ namespace Teddy
 		EventCategoryMouseButton	= BIT(4),
 		EventCategoryMidi			= BIT(5),
 		EventCategoryContact		= BIT(6),
-		EventCategoryPhysics		= BIT(7)
+		EventCategorySensor			= BIT(7),
+		EventCategoryPhysics		= BIT(8)
 	};
 
 	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\

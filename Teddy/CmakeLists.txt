@@ -234,7 +234,7 @@ add_library(Teddy STATIC
 
     # Physics
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Physics/ContactEvent.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Physics/ContactEvent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Physics/SensorEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Physics/PhysicsEvent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Teddy/Physics/PhysicsEvent.cpp
 
