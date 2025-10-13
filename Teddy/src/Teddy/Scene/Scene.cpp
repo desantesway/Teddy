@@ -619,6 +619,7 @@ namespace Teddy
 		bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
 		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
 		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
+		bodyDef.gravityScale = rigidBody.GravityScale;
 
 		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 		rigidBody.RuntimeBody = new b2BodyId(bodyId);
@@ -631,7 +632,7 @@ namespace Teddy
 				footSensorDef.isSensor = true;
 				footSensorDef.enableSensorEvents = true;
 
-				b2Polygon footBox = b2MakeOffsetBox(value.Size.x * transform.Scale.x, value.Size.y * transform.Scale.y,
+				b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 					{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
 				b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &footSensorDef, &footBox);
 				value.RuntimeFixture = new b2ShapeId(footSensor);
@@ -644,6 +645,7 @@ namespace Teddy
 
 			b2ShapeDef shapeDef = b2DefaultShapeDef();
 			shapeDef.enableContactEvents = boxCollider.EnableContactEvents;
+			shapeDef.enableSensorEvents = boxCollider.EnableSensorEvents;
 			shapeDef.density = boxCollider.Density;
 			shapeDef.material.restitution = boxCollider.Restitution;
 			shapeDef.material.friction = boxCollider.Friction;
@@ -679,6 +681,124 @@ namespace Teddy
 		}
 	}
 
+	void Scene::ShowPhysicsColliders()
+	{
+		Camera* activeCamera = nullptr;
+		TransformComponent cameraTransform;
+		{
+			auto view = m_Registry.view<CameraComponent>();
+			for (auto entity : view)
+			{
+				auto& camera = view.get<CameraComponent>(entity);
+				auto& transform = m_Registry.get<TransformComponent>(entity);
+
+				if (camera.Primary)
+				{
+					activeCamera = &camera.Camera;
+					cameraTransform = transform;
+					break;
+				}
+			}
+		}
+
+		if (!activeCamera) return;
+		Renderer2D::BeginScene(*activeCamera, cameraTransform.GetTransform());
+
+		ShowPhysicsColliders(true);
+
+		Renderer2D::EndScene();
+	}
+
+	void Scene::ShowPhysicsColliders(bool show)
+	{
+		auto viewCircle = GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+		for (auto [entity, tc, cc2d] : viewCircle.each())
+		{
+			float sx = std::abs(tc.Scale.x);
+			float sy = std::abs(tc.Scale.y);
+			float maxScale = glm::max(sx, sy) * cc2d.Radius;
+			glm::vec3 scale = glm::vec3(maxScale * 2, maxScale * 2, 1.0f);
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+				* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+				* glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, 0.001f))
+				* glm::scale(glm::mat4(1.0f), scale);
+
+			Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth() / 100);
+		}
+
+		auto viewBox = GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+		for (auto [entity, tc, bc2d] : viewBox.each())
+		{
+			Entity ent = Entity{ entity, this };
+			if (ent.HasComponent<TextComponent>())
+			{
+				auto& text = ent.GetComponent<TextComponent>();
+				TransformComponent textQuad{ text.TextQuad };
+				switch (text.TextAlignment) // TODO: FIX THIS COMPLETELY (Scale/rotation) and then fix physics actual location
+				{
+				case TextComponent::AlignmentType::Center:
+				{
+					textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x / 2,
+						text.TextQuad.Scale.y / 2,
+						0.0f);
+					break;
+				}
+				case TextComponent::AlignmentType::LeftCenter:
+				{
+					textQuad.Translation -= glm::vec3(text.TextQuad.Scale.x,
+						text.TextQuad.Scale.y / 2,
+						0.0f);
+					break;
+				}
+				case TextComponent::AlignmentType::RightCenter:
+				{
+					textQuad.Translation -= glm::vec3(0.0f,
+						text.TextQuad.Scale.y / 2,
+						0.0f);
+					break;
+				}
+				default:
+					break;
+				}
+
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+					* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+					* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
+					* glm::scale(glm::mat4(1.0f), tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f))
+					//* ent.GetComponent<TransformComponent>().GetTransform() // Collisions are only 2D
+					* textQuad.GetTransform();
+
+				Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+			}
+			else
+			{
+				glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+					* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+					* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
+					* glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+			}
+
+			if (ent.HasComponent<Sensor2DComponent>())
+			{
+				for (auto& [_, sensorData] : ent.GetComponent<Sensor2DComponent>().Sensors)
+				{
+					glm::vec3 scale = glm::vec3(sensorData.Size * 2.0f, 1.0f);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawRect(transform, glm::vec4(0, 0, 1, 1));
+				}
+			}
+		}
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);
@@ -700,6 +820,8 @@ namespace Teddy
 			bodyDef.rotation = b2MakeRot(transform.Rotation.z);
 			bodyDef.motionLocks.angularZ = rb2d.FixedRotation;
 			bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
+			bodyDef.gravityScale = rb2d.GravityScale;
+
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
 
@@ -711,7 +833,7 @@ namespace Teddy
 					footSensorDef.isSensor = true;
 					footSensorDef.enableSensorEvents = true;
 
-					b2Polygon footBox = b2MakeOffsetBox(value.Size.x * transform.Scale.x, value.Size.y * transform.Scale.y,
+					b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
 					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
 					value.RuntimeFixture = new b2ShapeId(footSensor);

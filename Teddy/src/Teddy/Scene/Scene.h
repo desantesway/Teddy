@@ -36,6 +36,8 @@ namespace Teddy
 		void AlwaysOnUpdate();
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
+		void ShowPhysicsColliders();
+		void ShowPhysicsColliders(bool show);
 
 		void OnEvent(Event& event);
 		void OnViewportResize(uint32_t width, uint32_t height);
