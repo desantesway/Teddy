@@ -400,6 +400,7 @@ namespace Teddy
 			DisplayAddComponentEntry<Rigidbody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DisplayAddComponentEntry<Sensor2DComponent>("Sensor 2D");
 
 			ImGui::EndPopup();
 		}
@@ -579,19 +580,22 @@ namespace Teddy
 
 				ImGui::SameLine();
 				static bool openInputPopup = false;
+				static bool invalidIndices = false;
 				static char buf[256] = { 0 };
 
 				if (ImGui::Button("Remove Texture")) {
 					openInputPopup = true;
-					ImGui::OpenPopup("RemoveTexturePopup");
+					ImGui::OpenPopup("Remove Texture Popup");
 				}
 
 				if (openInputPopup) {
 					ImGui::SetNextWindowSize(ImVec2(300, 0));
-					if (ImGui::BeginPopupModal("RemoveTexturePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+					if (ImGui::BeginPopupModal("Remove Texture Popup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 						ImGui::Text("Enter texture indices to remove:");
 						ImGui::Separator();
 						ImGui::SetKeyboardFocusHere();
+						if (invalidIndices)
+							ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid indices input!");
 						if (ImGui::InputText("##indices", buf, sizeof(buf), ImGuiInputTextFlags_EnterReturnsTrue)) {
 							bool validIndices = true;
 							auto parsed = ParseIndicesString(component.Textures.size(), std::string(buf), validIndices);
@@ -599,14 +603,15 @@ namespace Teddy
 								int toRemove = parsed[0];
 								component.Textures.erase(component.Textures.begin() + toRemove);
 								component.TextureIndex = 0;
+								invalidIndices = false;
+								openInputPopup = false;
+								ImGui::CloseCurrentPopup();
 							}
 							else {
-								ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid indices input!");
+								invalidIndices = true;
 							}
-							openInputPopup = false;
-							ImGui::CloseCurrentPopup();
 						}
-						if (ImGui::Button("Cancel")) {
+						if (ImGui::Button("Cancel##TexturesRemove")) {
 							openInputPopup = false;
 							ImGui::CloseCurrentPopup();
 						}
@@ -720,6 +725,8 @@ namespace Teddy
 				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::Checkbox("Is Contact Enabled", &component.EnableContactEvents);
+				ImGui::Checkbox("Is Sensor", &component.EnableSensorEvents);
 			});
 	
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", true, entity, [](auto& component)
@@ -729,6 +736,63 @@ namespace Teddy
 				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::Checkbox("Is Contact Enabled", &component.EnableContactEvents);
+				ImGui::Checkbox("Is Sensor", &component.EnableSensorEvents);
+			});
+
+		DrawComponent<Sensor2DComponent>("Sensors 2D", true, entity, [](auto& component)
+			{
+				if (ImGui::Button("Add Sensor", ImVec2(100.0f, 0.0f)))
+				{
+					component.Sensors["Sensor" + std::to_string(component.Sensors.size())] = Sensor2DComponent::SensorData();
+				}
+
+				ImGui::SameLine();
+				static bool openInputPopup = false;
+				static bool validSensor = true;
+				static char buf[256] = { 0 };
+
+				if (ImGui::Button("Remove Sensor")) {
+					openInputPopup = true;
+					ImGui::OpenPopup("Remove Sensor Popup");
+				}
+
+				if (openInputPopup) {
+					ImGui::SetNextWindowSize(ImVec2(300, 0));
+					if (ImGui::BeginPopupModal("Remove Sensor Popup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+						ImGui::Text("Enter Sensor name to remove:");
+						ImGui::Separator();
+						ImGui::SetKeyboardFocusHere();
+						if (ImGui::InputText("##sensorName", buf, sizeof(buf), ImGuiInputTextFlags_EnterReturnsTrue)) {
+							
+							if (component.Sensors.contains(std::string(buf))) {
+								component.Sensors.erase(std::string(buf));
+								openInputPopup = false;
+								validSensor = true;
+								ImGui::CloseCurrentPopup();
+							}
+							else {
+								validSensor = false;
+							}
+						}
+						if (ImGui::Button("Cancel")) { // TODO: not working
+							openInputPopup = false;
+							ImGui::CloseCurrentPopup();
+						}
+						if (!validSensor)
+							ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid sensor name!");
+						ImGui::EndPopup();
+					}
+				}
+
+				for (auto& [name, sensorData] : component.Sensors)
+				{
+					ImGui::Text(name.c_str());
+					ImGui::DragFloat2(("Offset##" + name).c_str(), glm::value_ptr(sensorData.Offset));
+					ImGui::DragFloat2(("Size##" + name).c_str(), glm::value_ptr(sensorData.Size));
+					ImGui::DragFloat(("Rotation##" + name).c_str(), &sensorData.Rotation);
+					ImGui::Separator();
+				}
 			});
 
 		DrawComponent<TextComponent>("Text", true, entity, [](auto& component)

@@ -334,9 +334,11 @@ namespace Teddy
 			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << bc2dComponent.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
+			out << YAML::Key << "EnableContactEvents" << YAML::Value << bc2dComponent.EnableContactEvents;
+			out << YAML::Key << "EnableSensorEvents" << YAML::Value << bc2dComponent.EnableSensorEvents;
 			out << YAML::EndMap; // BoxCollider2DComponent
 		}
-
+		
 		if (entity.HasComponent<CircleCollider2DComponent>())
 		{
 			out << YAML::Key << "CircleCollider2DComponent";
@@ -348,7 +350,31 @@ namespace Teddy
 			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << bc2dComponent.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
+			out << YAML::Key << "EnableContactEvents" << YAML::Value << bc2dComponent.EnableContactEvents;
+			out << YAML::Key << "EnableSensorEvents" << YAML::Value << bc2dComponent.EnableSensorEvents;
 			out << YAML::EndMap; // CircleCollider2DComponent
+		}
+
+		if (entity.HasComponent<Sensor2DComponent>())
+		{
+			out << YAML::Key << "Sensor2DComponent";
+			out << YAML::BeginMap;
+			auto& sensor2DComponent = entity.GetComponent<Sensor2DComponent>();
+			out << YAML::Key << "Sensors" << YAML::Value;
+
+			out << YAML::BeginSeq;
+			for (auto& [name, sensor] : sensor2DComponent.Sensors)
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << "Name" << YAML::Value << name;
+				out << YAML::Key << "Offset" << YAML::Value << sensor.Offset;
+				out << YAML::Key << "Size" << YAML::Value << sensor.Size;
+				out << YAML::Key << "Rotation" << YAML::Value << sensor.Rotation;
+				out << YAML::EndMap;
+			}
+			out << YAML::EndSeq;
+
+			out << YAML::EndMap;
 		}
 
 		out << YAML::EndMap; // Entity
@@ -606,18 +632,46 @@ namespace Teddy
 						bc2d.Density = boxCollider2DComponent["Density"].as<float>();
 						bc2d.Friction = boxCollider2DComponent["Friction"].as<float>();
 						bc2d.Restitution = boxCollider2DComponent["Restitution"].as<float>();
+						if(boxCollider2DComponent["EnableContactEvents"])
+							bc2d.EnableContactEvents = boxCollider2DComponent["EnableContactEvents"].as<bool>();
+						if(boxCollider2DComponent["EnableSensorEvents"])
+							bc2d.EnableSensorEvents = boxCollider2DComponent["EnableSensorEvents"].as<bool>();
 					}
 
 					auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
 
 					if (circleCollider2DComponent)
 					{
-						auto& bc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
-						bc2d.Offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
-						bc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
-						bc2d.Density = circleCollider2DComponent["Density"].as<float>();
-						bc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
-						bc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
+						auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
+						cc2d.Offset = circleCollider2DComponent["Offset"].as<glm::vec2>();
+						cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
+						cc2d.Density = circleCollider2DComponent["Density"].as<float>();
+						cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
+						cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
+						if (circleCollider2DComponent["EnableContactEvents"])
+							cc2d.EnableContactEvents = circleCollider2DComponent["EnableContactEvents"].as<bool>();
+						if (circleCollider2DComponent["EnableSensorEvents"])
+							cc2d.EnableSensorEvents = circleCollider2DComponent["EnableSensorEvents"].as<bool>();
+					}
+
+					auto sensor2DComponent = entity["Sensor2DComponent"];
+
+					if (sensor2DComponent)
+					{
+						auto& s2d = deserializedEntity.AddComponent<Sensor2DComponent>();
+						auto sensors = sensor2DComponent["Sensors"];
+						if (sensors)
+						{
+							for (auto sensor : sensors)
+							{
+								std::string name = sensor["Name"].as<std::string>();
+								Sensor2DComponent::SensorData data;
+								data.Offset = sensor["Offset"].as<glm::vec2>();
+								data.Size = sensor["Size"].as<glm::vec2>();
+								data.Rotation = sensor["Rotation"].as<float>();
+								s2d.Sensors[name] = data;
+							}
+						}
 					}
 				}
 

@@ -22,6 +22,7 @@ namespace Teddy
 	{
 		b2ContactEvents contactEvents = b2World_GetContactEvents(world);
 
+		// contacts
 		for (int i = 0; i < contactEvents.endCount; ++i)
 		{
 			b2ContactEndTouchEvent* endEvent = contactEvents.endEvents + i;
@@ -39,6 +40,24 @@ namespace Teddy
 
 			BeginContactEvent e(world, beginEvent);
 			m_EventCallback(e);
+		}
+
+		b2SensorEvents sensorEvents = b2World_GetSensorEvents(world);
+		for (int i = 0; i < sensorEvents.beginCount; ++i)
+		{
+			b2SensorBeginTouchEvent* beginTouch = sensorEvents.beginEvents + i;
+			TED_CORE_INFO("Sensor begin event");
+			// process begin event
+		}
+
+		for (int i = 0; i < sensorEvents.endCount; ++i)
+		{
+			b2SensorEndTouchEvent* endTouch = sensorEvents.endEvents + i;
+			if (b2Shape_IsValid(endTouch->visitorShapeId))
+			{
+				TED_CORE_INFO("Sensor end event");
+				// process end event
+			}
 		}
 	}
 }

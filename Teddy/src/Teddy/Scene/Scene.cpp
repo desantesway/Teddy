@@ -135,38 +135,6 @@ namespace Teddy
 			});
 	}
 
-	void Scene::RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform) // TODO: circle
-	{
-		if (rigidBody.RuntimeBody)
-		{
-			b2DestroyBody(*static_cast<b2BodyId*>(rigidBody.RuntimeBody));
-			delete static_cast<b2BodyId*>(rigidBody.RuntimeBody);
-			rigidBody.RuntimeBody = nullptr;
-		}
-
-		b2BodyDef bodyDef = b2DefaultBodyDef(); // TODO: Enable contact
-		bodyDef.type = Rigidbody2DTypeToBox2Body(rigidBody.Type);
-		bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
-		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
-		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
-
-		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
-		rigidBody.RuntimeBody = new b2BodyId(bodyId);
-
-		b2ShapeDef shapeDef = b2DefaultShapeDef();
-		shapeDef.density = boxCollider.Density;
-		shapeDef.material.restitution = boxCollider.Restitution;
-		shapeDef.material.friction = boxCollider.Friction;
-		
-		b2Polygon box;
-
-		box = b2MakeOffsetBox(boxCollider.Size.x * transform.Scale.x,
-			boxCollider.Size.y * transform.Scale.y, { boxCollider.Offset.x, boxCollider.Offset.y },
-			b2MakeRot(0));
-
-		b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &shapeDef, &box);
-	}
-
 	void Scene::SimulatePhysics(Timestep ts)
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Physics);
@@ -632,6 +600,40 @@ namespace Teddy
 		}
 	}
 
+	void Scene::RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform) // TODO: circle + sensors
+	{
+		if (rigidBody.RuntimeBody)
+		{
+			b2DestroyBody(*static_cast<b2BodyId*>(rigidBody.RuntimeBody));
+			delete static_cast<b2BodyId*>(rigidBody.RuntimeBody);
+			rigidBody.RuntimeBody = nullptr;
+		}
+
+		b2BodyDef bodyDef = b2DefaultBodyDef();
+		bodyDef.type = Rigidbody2DTypeToBox2Body(rigidBody.Type);
+		bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
+		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
+		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
+
+		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
+		rigidBody.RuntimeBody = new b2BodyId(bodyId);
+
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.enableContactEvents = boxCollider.EnableContactEvents;
+		shapeDef.density = boxCollider.Density;
+		shapeDef.material.restitution = boxCollider.Restitution;
+		shapeDef.material.friction = boxCollider.Friction;
+
+		b2Polygon box;
+
+		box = b2MakeOffsetBox(boxCollider.Size.x * transform.Scale.x,
+			boxCollider.Size.y * transform.Scale.y, { boxCollider.Offset.x, boxCollider.Offset.y },
+			b2MakeRot(0));
+
+		b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &shapeDef, &box);
+		boxCollider.RuntimeFixture = new b2ShapeId(myShapeId);
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		TED_PROFILE_CAT(InstrumentorCategory::Scene);
@@ -656,13 +658,28 @@ namespace Teddy
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
 
+			if (entity.HasComponent<Sensor2DComponent>())
+			{
+				for (auto [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
+				{
+					b2ShapeDef footSensorDef = b2DefaultShapeDef();
+					footSensorDef.isSensor = true;
+					footSensorDef.enableSensorEvents = true;
+
+					b2Polygon footBox = b2MakeOffsetBox(value.Size.x * transform.Scale.x, value.Size.y * transform.Scale.y,
+						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
+					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
+					value.RuntimeFixture = new b2ShapeId(footSensor);
+				}
+			}
 			
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 				
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
-				shapeDef.enableContactEvents = true; // TODO: see by the component
+				shapeDef.enableContactEvents = bc2d.EnableContactEvents;
+				shapeDef.enableSensorEvents = bc2d.EnableSensorEvents;
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
@@ -688,6 +705,8 @@ namespace Teddy
 				}
 
 				b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &box);
+				bc2d.RuntimeFixture = new b2ShapeId(myShapeId);
+
 			}
 
 			if (entity.HasComponent<CircleCollider2DComponent>())
@@ -695,6 +714,8 @@ namespace Teddy
 				auto& bc2d = entity.GetComponent<CircleCollider2DComponent>();
 
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
+				shapeDef.enableContactEvents = bc2d.EnableContactEvents;
+				shapeDef.enableSensorEvents = bc2d.EnableSensorEvents;
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
