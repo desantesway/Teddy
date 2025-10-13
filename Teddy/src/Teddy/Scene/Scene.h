@@ -43,7 +43,7 @@ namespace Teddy
 		void SimulatePhysics(Timestep ts);
 		void DuplicateEntity(Entity entity);
 
-		void RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform);
+		void RefreshBody(Entity& ent);
 		b2WorldId GetPhysicsWorld() const { return m_PhysicsWorld; }
 		void SetPhysicsWorld(b2WorldId world) { m_PhysicsWorld = world; }
 
