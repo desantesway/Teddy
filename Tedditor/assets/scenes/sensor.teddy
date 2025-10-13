@@ -1,0 +1,56 @@
+Scene: Untitled
+Entities:
+  - Entity: 11152813207449575358
+    TagComponent:
+      Tag: Physics floor test
+    TransformComponent:
+      Translation: [0, -2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      OriginalAspectRatio: true
+      Background: false
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      BlendingMode: 0
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      EnableContactEvents: false
+      EnableSensorEvents: true
+  - Entity: 12375162013247581663
+    TagComponent:
+      Tag: Physics with sensor test
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      OriginalAspectRatio: true
+      Background: false
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      BlendingMode: 0
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      EnableContactEvents: false
+      EnableSensorEvents: false
+    Sensor2DComponent:
+      Sensors:
+        - Name: BottomSensor
+          Offset: [0, -2]
+          Size: [0.5, 0.1]
+          Rotation: 0
