@@ -76,8 +76,7 @@ namespace Teddy
         auto& box = test.AddComponent<Teddy::BoxCollider2DComponent>();
 
         auto& sensor = test.AddComponent<Teddy::Sensor2DComponent>();
-        sensor.Offset = { 0.0f, -2.0f };
-        sensor.Size = { 0.5f, 0.1f };
+        sensor.Sensors["BottomSensor"] = { { 0.0f, -2.0f }, { 0.5f, 0.1f }, 0.0f };
 
         auto floor = m_ActiveScene->CreateEntity("Physics floor test");
         floor.AddComponent<Teddy::SpriteRendererComponent>();
@@ -273,15 +272,16 @@ namespace Teddy
 
                 if (ent.HasComponent<Sensor2DComponent>())
                 {
-                    auto& sensor = ent.GetComponent<Sensor2DComponent>();
-                    glm::vec3 scale = tc.Scale * glm::vec3(sensor.Size * 2.0f, 1.0f);
+                    for (auto& [_, sensorData] : ent.GetComponent<Sensor2DComponent>().Sensors)
+                    {
+                        glm::vec3 scale = tc.Scale * glm::vec3(sensorData.Size * 2.0f, 1.0f);
+                        glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+                            * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                            * glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
+                            * glm::scale(glm::mat4(1.0f), scale);
 
-                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                        * glm::translate(glm::mat4(1.0f), glm::vec3(sensor.Offset, 0.001f))
-                        * glm::scale(glm::mat4(1.0f), scale);
-
-                    Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+                        Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+                    }
                 }
             }
         }

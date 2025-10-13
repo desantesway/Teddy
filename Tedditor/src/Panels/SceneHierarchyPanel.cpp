@@ -720,6 +720,8 @@ namespace Teddy
 				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::Checkbox("Is Contact Enabled", &component.EnableContactEvents);
+				ImGui::Checkbox("Is Sensor", &component.EnableSensorEvents);
 			});
 	
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", true, entity, [](auto& component)
@@ -729,6 +731,20 @@ namespace Teddy
 				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::Checkbox("Is Contact Enabled", &component.EnableContactEvents);
+				ImGui::Checkbox("Is Sensor", &component.EnableSensorEvents);
+			});
+
+		DrawComponent<Sensor2DComponent>("Sensors 2D", true, entity, [](auto& component)
+			{
+				for (auto& [name, sensorData] : component.Sensors)
+				{
+					ImGui::Text(name.c_str());
+					ImGui::DragFloat2(("Offset##" + name).c_str(), glm::value_ptr(sensorData.Offset));
+					ImGui::DragFloat2(("Size##" + name).c_str(), glm::value_ptr(sensorData.Size));
+					ImGui::DragFloat(("Rotation##" + name).c_str(), &sensorData.Rotation);
+					ImGui::Separator();
+				}
 			});
 
 		DrawComponent<TextComponent>("Text", true, entity, [](auto& component)

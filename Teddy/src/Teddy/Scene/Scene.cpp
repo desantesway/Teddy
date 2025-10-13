@@ -600,7 +600,7 @@ namespace Teddy
 		}
 	}
 
-	void Scene::RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform) // TODO: circle
+	void Scene::RefreshBody(Rigidbody2DComponent& rigidBody, BoxCollider2DComponent& boxCollider, TransformComponent& transform) // TODO: circle + sensors
 	{
 		if (rigidBody.RuntimeBody)
 		{
@@ -658,6 +658,20 @@ namespace Teddy
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
 
+			if (entity.HasComponent<Sensor2DComponent>())
+			{
+				for (auto [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
+				{
+					b2ShapeDef footSensorDef = b2DefaultShapeDef();
+					footSensorDef.isSensor = true;
+					footSensorDef.enableSensorEvents = true;
+
+					b2Polygon footBox = b2MakeOffsetBox(value.Size.x * transform.Scale.x, value.Size.y * transform.Scale.y,
+						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
+					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
+					value.RuntimeFixture = new b2ShapeId(footSensor);
+				}
+			}
 			
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
@@ -693,19 +707,6 @@ namespace Teddy
 				b2ShapeId myShapeId = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &shapeDef, &box);
 				bc2d.RuntimeFixture = new b2ShapeId(myShapeId);
 
-				if (entity.HasComponent<Sensor2DComponent>())
-				{
-					auto& sensor = entity.GetComponent<Sensor2DComponent>();
-
-					b2ShapeDef footSensorDef = b2DefaultShapeDef();
-					footSensorDef.isSensor = true;           
-					footSensorDef.enableSensorEvents = true; 
-
-					b2Polygon footBox = b2MakeOffsetBox(sensor.Size.x * transform.Scale.x, sensor.Size.y * transform.Scale.y, 
-						{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(0));
-					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
-					sensor.RuntimeFixture = new b2ShapeId(footSensor);
-				}
 			}
 
 			if (entity.HasComponent<CircleCollider2DComponent>())

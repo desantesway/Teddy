@@ -236,14 +236,25 @@ namespace Teddy
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct Sensor2DComponent // TODO: make a list // Serialization
+	struct Sensor2DComponent // TODO: Serialization
 	{
-		glm::vec2 Offset = { 0.0f, 0.0f };
-		glm::vec2 Size = { 0.5f, 0.5f };
-		float Rotation = 0.0f;
-	
-		void* RuntimeFixture = nullptr;
-	
+		struct SensorData
+		{
+			glm::vec2 Offset = { 0.0f, 0.0f };
+			glm::vec2 Size = { 0.5f, 0.5f };
+			float Rotation = 0.0f;
+
+			void* RuntimeFixture = nullptr;
+
+			SensorData() = default;
+			SensorData(const SensorData&) = default;
+			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation)
+				: Offset(offset), Size(size), Rotation(rotation) {
+			}
+		};
+		
+		std::unordered_map<std::string, SensorData> Sensors;
+
 		Sensor2DComponent() = default;
 		Sensor2DComponent(const Sensor2DComponent&) = default;
 	};
