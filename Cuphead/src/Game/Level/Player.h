@@ -19,6 +19,8 @@ namespace Cuphead
 
 		Teddy::Entity GetEntity() { return m_Entity; }
 
+		glm::vec3 GetPosition() { return m_Entity.GetComponent<Teddy::TransformComponent>().Translation; }
+
 		void InitCuphead(Teddy::Ref<Teddy::Scene> scene);
 		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
 

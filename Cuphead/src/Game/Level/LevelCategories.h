@@ -1,0 +1,13 @@
+#pragma once
+
+namespace Cuphead
+{
+	enum LevelCategories
+	{
+		PLAYER = 0x00000002,
+		INVISIBLEWALLS = 0x00000004,
+		ENEMY = 0x00000006,
+		CLOUDPLATFORMON = 0x00000008,
+		CLOUDPLATFORMOFF = 0x00000010
+	};
+}

@@ -1,7 +1,9 @@
 #include "Player.h"
 
 #include <Teddy.h>
-//TODO: lil cloud plat // intro 2 on the cloud // ovaerall movement speed //hitboxs // parry animations // parry object
+
+#include "LevelCategories.h"
+//TODO: lil cloud plat // improve player sensor // intro 2 on the cloud // ovaerall movement speed //hitboxs // parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -224,6 +226,10 @@ namespace Cuphead
 
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.3f, 0.1f }, 0.0f };
+
+		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::PLAYER;
+		filter.MaskBits = LevelCategories::INVISIBLEWALLS | LevelCategories::CLOUDPLATFORMON | LevelCategories::ENEMY;
 	}
 
 	void Player::StartIdle()

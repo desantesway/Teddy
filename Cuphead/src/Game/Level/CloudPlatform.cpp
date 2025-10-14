@@ -1,4 +1,5 @@
 #include "CloudPlatform.h"
+#include "LevelCategories.h"
 
 namespace Cuphead
 {
@@ -45,6 +46,17 @@ namespace Cuphead
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(X, Y, 1.999f);
 		transform.Scale *= 0.75f;
+
+		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
+		collider.Friction = 0.0f;
+		collider.Size = { 1.0f, 0.2f };
+		collider.Offset = { 0.0f, -0.2f };
+		collider.EnableSensorEvents = true;
+		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+
+		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON; // TODO: Compare if it is bellow player or not
+		filter.MaskBits = LevelCategories::PLAYER;
 	}
 
 	void CloudPlatform::StartCloudB(float X, float Y)
@@ -61,6 +73,17 @@ namespace Cuphead
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(X, Y, 1.999f);
 		transform.Scale *= 0.75f;
+
+		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
+		collider.Friction = 0.0f;
+		collider.Size = { 1.0f, 0.2f };
+		collider.Offset = { 0.0f, -0.2f };
+		collider.EnableSensorEvents = true;
+		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+
+		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON; // TODO: Compare if it is bellow player or not
+		filter.MaskBits = LevelCategories::PLAYER;
 	}
 
 	void CloudPlatform::StartCloudC(float X, float Y)
@@ -77,5 +100,16 @@ namespace Cuphead
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(X, Y, 1.999f);
 		transform.Scale *= 0.75f;
+
+		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
+		collider.Friction = 0.0f;
+		collider.Size = { 1.0f, 0.2f };
+		collider.Offset = { 0.0f, -0.2f };
+		collider.EnableSensorEvents = true;
+		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+
+		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON; // TODO: Compare if it is bellow player or not
+		filter.MaskBits = LevelCategories::PLAYER;
 	}
 }

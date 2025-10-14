@@ -10,6 +10,7 @@
 
 namespace Cuphead
 {
+
 	class LevelScene
 	{
 	public:

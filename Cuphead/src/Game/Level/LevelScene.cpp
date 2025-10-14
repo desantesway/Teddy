@@ -2,6 +2,8 @@
 
 #include <Teddy.h>
 
+#include "LevelCategories.h"
+
 namespace Cuphead
 {
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(unsigned int character)
@@ -25,6 +27,9 @@ namespace Cuphead
 		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
 		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
 		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);
+		auto& filter = floor.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::INVISIBLEWALLS;
+		filter.MaskBits = LevelCategories::PLAYER;
 
 		auto lWall = m_Scene->CreateEntity("Level Left Wall"); 
 		//lWall.AddComponent<Teddy::SpriteRendererComponent>();
@@ -34,6 +39,9 @@ namespace Cuphead
 		auto& lWallTransform = lWall.GetComponent<Teddy::TransformComponent>();
 		lWallTransform.Translation = glm::vec3(-5.75f,0.0f, 2.0f);
 		lWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
+		auto& lWallfilter = lWall.AddComponent<Teddy::CollisionFilter2DComponent>();
+		lWallfilter.CategoryBits = LevelCategories::INVISIBLEWALLS;
+		lWallfilter.MaskBits = LevelCategories::PLAYER;
 
 		auto rWall = m_Scene->CreateEntity("Level Right Wall");
 		//rWall.AddComponent<Teddy::SpriteRendererComponent>();
@@ -43,6 +51,9 @@ namespace Cuphead
 		auto& rWallTransform = rWall.GetComponent<Teddy::TransformComponent>();
 		rWallTransform.Translation = glm::vec3(5.75f, 0.0f, 2.0f);
 		rWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
+		auto& rWallfilter = rWall.AddComponent<Teddy::CollisionFilter2DComponent>();
+		rWallfilter.CategoryBits = LevelCategories::INVISIBLEWALLS;
+		rWallfilter.MaskBits = LevelCategories::PLAYER;
 
 		m_Clouds.Init(m_Scene);
 
@@ -266,6 +277,7 @@ namespace Cuphead
 		switch (m_Phase)
 		{
 		case 1:
+			m_Clouds.OnUpdate(ts);
 			OnUpdatePhase1();
 			break;
 		default:
