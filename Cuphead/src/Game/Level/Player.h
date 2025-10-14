@@ -31,6 +31,7 @@ namespace Cuphead
 		void InitPlayer();
 		
 		void Move();
+		void BlockMove();
 
 		void StartIdle();
 
@@ -80,6 +81,7 @@ namespace Cuphead
 		};
 
 		PlayerState m_State = PlayerState::Idle;
+
 		bool m_DirectionRight = true;
 		bool m_Grounded = false;
 

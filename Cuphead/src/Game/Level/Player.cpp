@@ -37,6 +37,7 @@ namespace Cuphead
 		case PlayerState::Running:
 			Move();
 			Running();
+			BlockMove();
 			break;
 		case PlayerState::Crouching:
 			Crouching();
@@ -44,6 +45,7 @@ namespace Cuphead
 		case PlayerState::Jumping:
 			Move();
 			Jumping(ts);
+			BlockMove();
 			break;
 		case PlayerState::Dashing:
 			Dashing(ts);
@@ -51,11 +53,33 @@ namespace Cuphead
 		case PlayerState::Falling:
 			Move();
 			Falling();
+			BlockMove();
 			break;
 		case PlayerState::Idle:
+			BlockMove();
 			break;
 		default:
 			break;
+		}
+	}
+
+	void Player::BlockMove()
+	{
+		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
+		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
+
+		if (leftPressed && rightPressed)
+		{
+			if(m_State != PlayerState::Dashing) m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(0.0f);
+			if (m_State == PlayerState::Running) StartIdle();
+			return;
+		}
+		else
+		{
+			if (leftPressed)
+				StartRunning(false);
+			if (rightPressed)
+				StartRunning(true);
 		}
 	}
 
@@ -134,6 +158,8 @@ namespace Cuphead
 
 	void Player::StartIdle()
 	{
+		if (m_State == PlayerState::Idle) return;
+
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
 
@@ -321,17 +347,20 @@ namespace Cuphead
 
 	void Player::Move()
 	{
-		if (Teddy::Input::IsKeyPressed(Teddy::Key::A) ||  Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
+		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
+
+		if (leftPressed)
 		{
 			m_Moving = true;
-			m_DirectionRight = false;
-			float velocity = m_Grounded ? 5.0f : 7.5f; // TODO: Adjust air speed
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(-velocity);
+			//m_DirectionRight = false;
+			float velocity = m_Grounded ? -5.0f : -7.5f; // TODO: Adjust air speed
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
-		else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+		else if (rightPressed)
 		{
 			m_Moving = true;
-			m_DirectionRight = true;
+			//m_DirectionRight = true;
 			float velocity = m_Grounded ? 5.0f : 7.5f; // TODO: Adjust air speed
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
@@ -346,6 +375,10 @@ namespace Cuphead
 	void Player::StartRunning(bool isRight)
 	{
 		if (m_State == PlayerState::Dashing) return;
+
+		if ((isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))) ||
+			(!isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))))
+			return;
 
 		m_DirectionRight = isRight;
 		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.75f : -1.75f;
@@ -387,13 +420,13 @@ namespace Cuphead
 
 	void Player::Running()
 	{
-		if (!m_Moving)
+		if(!m_Moving)
 		{
 			StartIdle();
 		}
 	}
 
-	void Player::Falling() // TODO: if z pressed, do the parry animation
+	void Player::Falling() 
 	{
 		if (m_Grounded)
 		{
@@ -402,12 +435,12 @@ namespace Cuphead
 				m_State = PlayerState::DoneJumping;
 				StartCrouching();
 			}
-			else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)))
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRunning(true);
 			}
-			else if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)))
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRunning(false);
@@ -673,7 +706,7 @@ namespace Cuphead
 					m_State = PlayerState::AnimationDone;
 					StartCrouching();
 				}
-				else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) // TODO: right cancels left
+				else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 				{
 					m_State = PlayerState::AnimationDone;
 					StartRunning(true);
