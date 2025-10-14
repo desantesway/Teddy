@@ -49,6 +49,8 @@ namespace Cuphead
 		void StartDashing();
 		void Dashing(Teddy::Timestep ts);
 
+		void StartParry();
+
 		void LoadCupheadTextures();
 		void BreakCookie();
 		void DeleteCookie(Teddy::Timestep ts);

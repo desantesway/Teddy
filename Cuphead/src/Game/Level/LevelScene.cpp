@@ -17,17 +17,32 @@ namespace Cuphead
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
-		auto floor = m_Scene->CreateEntity("Level Floor");  
-
+		auto floor = m_Scene->CreateEntity("Level Floor");  // Turn this into a sensor later // or contact and when on contact give damage to player
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
-
 		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
 		floorCollider.EnableSensorEvents = true;
-		auto& floorRigidbody = floor.AddComponent<Teddy::Rigidbody2DComponent>();
-
+		floor.AddComponent<Teddy::Rigidbody2DComponent>();
 		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
 		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
 		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);
+
+		auto lWall = m_Scene->CreateEntity("Level Left Wall"); 
+		//lWall.AddComponent<Teddy::SpriteRendererComponent>();
+		auto& body = lWall.AddComponent<Teddy::BoxCollider2DComponent>();
+		body.Friction = 0.0f;
+		lWall.AddComponent<Teddy::Rigidbody2DComponent>();
+		auto& lWallTransform = lWall.GetComponent<Teddy::TransformComponent>();
+		lWallTransform.Translation = glm::vec3(-5.75f,0.0f, 2.0f);
+		lWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
+
+		auto rWall = m_Scene->CreateEntity("Level Right Wall");
+		//rWall.AddComponent<Teddy::SpriteRendererComponent>();
+		auto& rBody = rWall.AddComponent<Teddy::BoxCollider2DComponent>();
+		rBody.Friction = 0.0f;
+		rWall.AddComponent<Teddy::Rigidbody2DComponent>();
+		auto& rWallTransform = rWall.GetComponent<Teddy::TransformComponent>();
+		rWallTransform.Translation = glm::vec3(5.75f, 0.0f, 2.0f);
+		rWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
 
 		InitPhase1();
 

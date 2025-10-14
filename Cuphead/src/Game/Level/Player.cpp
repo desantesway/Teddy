@@ -393,7 +393,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::Falling()
+	void Player::Falling() // TODO: if z pressed, do the parry animation
 	{
 		if (m_Grounded)
 		{
@@ -714,6 +714,11 @@ namespace Cuphead
 		}
 	}
 
+	void Player::StartParry() // TODO: implement clouds platform first
+	{
+		{ TED_CORE_INFO("Parry"); }
+	}
+
 	bool Player::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
 		switch (e.GetKeyCode())
@@ -727,7 +732,10 @@ namespace Cuphead
 			StartRunning(true);
 			return true;
 		case Teddy::Key::Z:
-			StartJumping();
+			if (m_State != PlayerState::Falling)
+				StartJumping();
+			else
+				StartParry();
 			return true;
 		case Teddy::Key::Down:
 		case Teddy::Key::S:
