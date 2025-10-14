@@ -215,7 +215,7 @@ namespace Teddy
 				}
 				else if (indicies.Index == animation.PlayableIndicies.back()) {
 					if (animation.Timer >= animation.FinalFrameTime) {
-						if (animation.Loop)
+						if (animation.Loop || animation.Reverse)
 						{
 							if (animation.PingPong || animation.Reverse)
 							{
@@ -632,6 +632,14 @@ namespace Teddy
 				footSensorDef.isSensor = true;
 				footSensorDef.enableSensorEvents = true;
 
+				if (ent.HasComponent<CollisionFilter2DComponent>())
+				{
+					auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
+					footSensorDef.filter.categoryBits = filter.CategoryBits;
+					footSensorDef.filter.maskBits = filter.MaskBits;
+					//shapeDef.filter.groupIndex = filter.GroupIndex;
+				}
+
 				b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 					{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
 				b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &footSensorDef, &footBox);
@@ -649,6 +657,14 @@ namespace Teddy
 			shapeDef.density = boxCollider.Density;
 			shapeDef.material.restitution = boxCollider.Restitution;
 			shapeDef.material.friction = boxCollider.Friction;
+
+			if (ent.HasComponent<CollisionFilter2DComponent>())
+			{
+				auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
+				shapeDef.filter.categoryBits = filter.CategoryBits;
+				shapeDef.filter.maskBits = filter.MaskBits;
+				//shapeDef.filter.groupIndex = filter.GroupIndex;
+			}
 
 			b2Polygon box;
 
@@ -670,6 +686,14 @@ namespace Teddy
 			shapeDef.density = bc2d.Density;
 			shapeDef.material.restitution = bc2d.Restitution;
 			shapeDef.material.friction = bc2d.Friction;
+
+			if (ent.HasComponent<CollisionFilter2DComponent>())
+			{
+				auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
+				shapeDef.filter.categoryBits = filter.CategoryBits;
+				shapeDef.filter.maskBits = filter.MaskBits;
+				//shapeDef.filter.groupIndex = filter.GroupIndex;
+			}
 
 			b2Circle circle;
 			circle.center = { bc2d.Offset.x, bc2d.Offset.y };
@@ -833,6 +857,14 @@ namespace Teddy
 					footSensorDef.isSensor = true;
 					footSensorDef.enableSensorEvents = true;
 
+					if (entity.HasComponent<CollisionFilter2DComponent>())
+					{
+						auto& filter = entity.GetComponent<CollisionFilter2DComponent>();
+						footSensorDef.filter.categoryBits = filter.CategoryBits;
+						footSensorDef.filter.maskBits = filter.MaskBits;
+						//shapeDef.filter.groupIndex = filter.GroupIndex;
+					}
+
 					b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
 					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
@@ -850,6 +882,14 @@ namespace Teddy
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
+
+				if (entity.HasComponent<CollisionFilter2DComponent>())
+				{
+					auto& filter = entity.GetComponent<CollisionFilter2DComponent>();
+					shapeDef.filter.categoryBits = filter.CategoryBits;
+					shapeDef.filter.maskBits = filter.MaskBits;
+					//shapeDef.filter.groupIndex = filter.GroupIndex;
+				}
 
 				b2CosSin cs = b2ComputeCosSin(transform.Rotation.z);
 				b2Polygon box;
@@ -886,6 +926,14 @@ namespace Teddy
 				shapeDef.density = bc2d.Density;
 				shapeDef.material.restitution = bc2d.Restitution;
 				shapeDef.material.friction = bc2d.Friction;
+
+				if (entity.HasComponent<CollisionFilter2DComponent>())
+				{
+					auto& filter = entity.GetComponent<CollisionFilter2DComponent>();
+					shapeDef.filter.categoryBits = filter.CategoryBits;
+					shapeDef.filter.maskBits = filter.MaskBits;
+					//shapeDef.filter.groupIndex = filter.GroupIndex;
+				}
 
 				b2Circle circle;
 				circle.center = { bc2d.Offset.x, bc2d.Offset.y};

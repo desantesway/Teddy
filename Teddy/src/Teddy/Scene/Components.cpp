@@ -7,6 +7,50 @@
 
 namespace Teddy
 {
+    uint64_t CollisionFilter2DComponent::GetFilterCategory(BoxCollider2DComponent& collider)
+    {
+        return b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture)).categoryBits;
+    }
+
+    uint64_t CollisionFilter2DComponent::GetFilterMask(BoxCollider2DComponent& collider)
+    {
+        return b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture)).maskBits;
+    }
+
+    uint64_t CollisionFilter2DComponent::GetFilterGroupIndex(BoxCollider2DComponent& collider)
+    {
+        return b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture)).groupIndex;
+    }
+
+    void CollisionFilter2DComponent::SetFilterCategory(BoxCollider2DComponent& collider, uint64_t filter)
+    {
+        if (collider.RuntimeFixture)
+        {
+            b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture));
+            f.categoryBits = filter;
+            b2Shape_SetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture), f);
+		}
+    }
+
+    void CollisionFilter2DComponent::SetFilterMask(BoxCollider2DComponent& collider, uint64_t filter)
+    {
+        if (collider.RuntimeFixture)
+        {
+            b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture));
+            f.maskBits = filter;
+            b2Shape_SetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture), f);
+        }
+    }
+
+    void CollisionFilter2DComponent::SetFilterGroupIndex(BoxCollider2DComponent& collider, uint64_t filter)
+    {
+        if (collider.RuntimeFixture)
+        {
+            b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture));
+            f.groupIndex = filter;
+            b2Shape_SetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture), f);
+        }
+    }
 
     float Rigidbody2DComponent::GetGravityScale()
     {
