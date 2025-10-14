@@ -18,14 +18,21 @@ namespace Cuphead
 		void InitPhase1();
 
 		void OnUpdate(Teddy::Timestep ts);
-	private:
-		void StartCloudA(float X, float Y);
-		void StartCloudB(float X, float Y);
-		void StartCloudC(float X, float Y);
 
+		void SetPlayerY(float y) { m_PlayerY = y; }
+	private:
+		void StartCloudA(float x, float y);
+		void StartCloudB(float x, float y);
+		void StartCloudC(float x, float y);
+
+		void UpdateCollisionFilters();
+
+	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
 		std::vector<Teddy::Entity> m_Clouds;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_CloudTextures;
+
+		float m_PlayerY = 0.0f;
 	};
 }

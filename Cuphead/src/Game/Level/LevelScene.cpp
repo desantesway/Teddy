@@ -29,7 +29,7 @@ namespace Cuphead
 		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);
 		auto& filter = floor.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::INVISIBLEWALLS;
-		filter.MaskBits = LevelCategories::PLAYER;
+		filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PLAYERGHOST;
 
 		auto lWall = m_Scene->CreateEntity("Level Left Wall"); 
 		//lWall.AddComponent<Teddy::SpriteRendererComponent>();
@@ -41,7 +41,7 @@ namespace Cuphead
 		lWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
 		auto& lWallfilter = lWall.AddComponent<Teddy::CollisionFilter2DComponent>();
 		lWallfilter.CategoryBits = LevelCategories::INVISIBLEWALLS;
-		lWallfilter.MaskBits = LevelCategories::PLAYER;
+		lWallfilter.MaskBits = LevelCategories::PLAYER | LevelCategories::PLAYERGHOST;
 
 		auto rWall = m_Scene->CreateEntity("Level Right Wall");
 		//rWall.AddComponent<Teddy::SpriteRendererComponent>();
@@ -53,7 +53,7 @@ namespace Cuphead
 		rWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
 		auto& rWallfilter = rWall.AddComponent<Teddy::CollisionFilter2DComponent>();
 		rWallfilter.CategoryBits = LevelCategories::INVISIBLEWALLS;
-		rWallfilter.MaskBits = LevelCategories::PLAYER;
+		rWallfilter.MaskBits = LevelCategories::PLAYER | LevelCategories::PLAYERGHOST;
 
 		m_Clouds.Init(m_Scene);
 
@@ -274,6 +274,9 @@ namespace Cuphead
 	{
 		m_MovementSpeed = m_MovementVelocity * ts;
 
+		m_Player.OnUpdate(ts);
+		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
+
 		switch (m_Phase)
 		{
 		case 1:
@@ -283,9 +286,6 @@ namespace Cuphead
 		default:
 			break;
 		}
-		
-		m_Player.OnUpdate(ts);
-
 	}
 
 	void LevelScene::OnUpdatePhase1()

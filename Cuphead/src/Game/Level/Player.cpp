@@ -228,7 +228,7 @@ namespace Cuphead
 		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.3f, 0.1f }, 0.0f };
 
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::PLAYER;
+		filter.CategoryBits = LevelCategories::PLAYER; // TODO: if z and down change to playerghost
 		filter.MaskBits = LevelCategories::INVISIBLEWALLS | LevelCategories::CLOUDPLATFORMON | LevelCategories::ENEMY;
 	}
 
