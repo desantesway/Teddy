@@ -24,13 +24,18 @@ namespace Cuphead
 
 		void StartIntro();
 
-		void SetGrounded(bool grounded) { m_Grounded = grounded; }
+		void SetGrounded(bool grounded) { m_Grounded = grounded; StartFalling(); }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void InitPlayer();
 		
+		void Move();
+
 		void StartIdle();
+
+		void StartFalling();
+		void Falling();
 
 		void StartRunning();
 		void Running();
@@ -40,6 +45,9 @@ namespace Cuphead
 
 		void StartJumping();
 		void Jumping(Teddy::Timestep ts);
+
+		void StartDashing();
+		void Dashing(Teddy::Timestep ts);
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -57,6 +65,7 @@ namespace Cuphead
 		enum class PlayerState
 		{
 			Idle = 0,
+			Falling,
 			Running,
 			Jumping,
 			DoneJumping,
@@ -70,9 +79,12 @@ namespace Cuphead
 
 		PlayerState m_State = PlayerState::Idle;
 		bool m_DirectionRight = true;
-		bool m_Jump = false;
 		bool m_Grounded = false;
 
+		bool m_StartDash = false;
+
+		bool m_StartJump = false;
 		bool m_ZHeld = false;
+		bool m_Moving = false;
 	};
 }

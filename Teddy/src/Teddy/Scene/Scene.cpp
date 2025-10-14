@@ -215,7 +215,7 @@ namespace Teddy
 				}
 				else if (indicies.Index == animation.PlayableIndicies.back()) {
 					if (animation.Timer >= animation.FinalFrameTime) {
-						if (animation.Loop)
+						if (animation.Loop || animation.Reverse)
 						{
 							if (animation.PingPong || animation.Reverse)
 							{
