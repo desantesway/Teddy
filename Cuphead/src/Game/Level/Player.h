@@ -30,6 +30,10 @@ namespace Cuphead
 
 		void InitPlayer();
 		
+		void Intro0();
+		void Intro1();
+		void Intro2();
+
 		void Move();
 		void BlockMove();
 

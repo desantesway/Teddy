@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #include <Teddy.h>
-
+//TODO: lil cloud plat // intro 2 on the cloud // ovaerall movement speed //hitboxs // parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -20,19 +20,13 @@ namespace Cuphead
 		switch (m_State)
 		{
 		case PlayerState::Intro0:
-			
-			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 27)
-				StartIdle();
+			Intro0();
 			break;
 		case PlayerState::Intro1:
-			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 73)
-				StartIdle();
+			Intro1();
 			break;
 		case PlayerState::Intro2:
-			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 106)
-				StartIdle();
-			if (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 95)
-				BreakCookie();
+			Intro2();
 			break;
 		case PlayerState::Running:
 			Move();
@@ -61,6 +55,82 @@ namespace Cuphead
 		default:
 			break;
 		}
+	}
+
+	void Player::Intro0()
+	{
+		static int count = 0;
+		static int lastIndex = 0; 
+		int index = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index;
+		if (count == 0 && index != lastIndex && index >= 18)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.PingPong = true;
+			sprite.Loop = true;
+			sprite.Reverse = true;
+			sprite.FrameTime = 0.04f;
+			sprite.InitialFrameTime = 0.05f;
+			sprite.FinalFrameTime = 0.05f;
+			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			sprite.PlayableIndicies.clear();
+			for (int i = 11; i < 19; i++)
+				sprite.PlayableIndicies.push_back(i);
+			indicies.Index = 18;
+			count++;
+		}
+		else if (count <= 2 && index >= 18 && index != lastIndex)
+		{
+			if (count == 2)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PingPong = false;
+				sprite.Loop = false;
+				sprite.Reverse = false;
+				sprite.FrameTime = 0.05f;
+				sprite.InitialFrameTime = 0.05f;
+				sprite.FinalFrameTime = 0.05f;
+				auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				sprite.PlayableIndicies.clear();
+				for (int i = 18; i < 28; i++)
+					sprite.PlayableIndicies.push_back(i);
+				indicies.Index = 18;
+			}
+			count++;
+		}
+		else if (index == 27)
+			StartIdle();
+
+		lastIndex = index;
+	}
+
+	void Player::Intro1()
+	{
+		int index = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index;
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (index == 73)
+		{
+			StartIdle();
+		}
+		if (index >= 64)
+		{
+			transform.Translation.x = 0.0f;
+			m_Scene->RefreshBody(m_Entity);
+		}
+		else if (index >= 58)
+		{
+			transform.Translation.x = -0.075f;
+			m_Scene->RefreshBody(m_Entity);
+		}
+	}
+
+	void Player::Intro2()
+	{
+		int index = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index;
+		if (index == 106)
+			StartIdle();
+		if (index == 95)
+			BreakCookie();
 	}
 
 	void Player::BlockMove()
@@ -263,14 +333,14 @@ namespace Cuphead
 		sprite.PlayableIndicies = {107, 108, 109, 110, 111, 112, 113};
 
 		auto& transform = m_Cookie.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(0.2f, -0.15f, 0.01f);
+		transform.Translation = glm::vec3(0.5f, -0.55f, 0.01f);
 
 		transform.Translation += m_Entity.GetComponent<Teddy::TransformComponent>().Translation;
 
 		created = true;
 	}
 
-	void Player::StartIntro() // TODO: see timing of intro
+	void Player::StartIntro()
 	{
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
@@ -278,9 +348,8 @@ namespace Cuphead
 		static std::random_device rd;
 		static std::mt19937 gen(rd());
 		static std::uniform_int_distribution<> distr(0, 2);
+		int choice = distr(gen);
 
-		int choice = distr(gen); // TODO: Fix intro 1, x axis is shaken in the atlas
-		choice = 0;
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
 		sprite.PingPong = false;
@@ -353,14 +422,12 @@ namespace Cuphead
 		if (leftPressed)
 		{
 			m_Moving = true;
-			//m_DirectionRight = false;
 			float velocity = m_Grounded ? -5.0f : -7.5f; // TODO: Adjust air speed
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 		else if (rightPressed)
 		{
 			m_Moving = true;
-			//m_DirectionRight = true;
 			float velocity = m_Grounded ? 5.0f : 7.5f; // TODO: Adjust air speed
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
@@ -426,30 +493,6 @@ namespace Cuphead
 		}
 	}
 
-	void Player::Falling() 
-	{
-		if (m_Grounded)
-		{
-			if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
-			{
-				m_State = PlayerState::DoneJumping;
-				StartCrouching();
-			}
-			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)))
-			{
-				m_State = PlayerState::AnimationDone;
-				StartRunning(true);
-			}
-			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)))
-			{
-				m_State = PlayerState::AnimationDone;
-				StartRunning(false);
-			}
-			else
-				StartIdle();
-		}
-	}
-
 	void Player::StartFalling()
 	{			
 		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded || m_State == PlayerState::Dashing) return;
@@ -483,6 +526,30 @@ namespace Cuphead
 		indicies.Index = 0;
 
 		m_State = PlayerState::Falling;
+	}
+
+	void Player::Falling()
+	{
+		if (m_Grounded)
+		{
+			if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+			{
+				m_State = PlayerState::DoneJumping;
+				StartCrouching();
+			}
+			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)))
+			{
+				m_State = PlayerState::AnimationDone;
+				StartRunning(true);
+			}
+			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)))
+			{
+				m_State = PlayerState::AnimationDone;
+				StartRunning(false);
+			}
+			else
+				StartIdle();
+		}
 	}
 
 	void Player::StartJumping()
