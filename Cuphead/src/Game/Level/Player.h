@@ -24,7 +24,7 @@ namespace Cuphead
 
 		void StartIntro();
 
-		void SetGrounded(bool grounded) { m_Grounded = grounded; StartFalling(); }
+		void SetGrounded(bool grounded);
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
@@ -37,7 +37,7 @@ namespace Cuphead
 		void StartFalling();
 		void Falling();
 
-		void StartRunning();
+		void StartRunning(bool isRight);
 		void Running();
 
 		void StartCrouching();
@@ -82,6 +82,10 @@ namespace Cuphead
 		bool m_Grounded = false;
 
 		bool m_StartDash = false;
+		bool m_DashReset = true;
+		bool m_ShiftHeld = false;
+
+		bool m_StartCrouch = false;
 
 		bool m_StartJump = false;
 		bool m_ZHeld = false;
