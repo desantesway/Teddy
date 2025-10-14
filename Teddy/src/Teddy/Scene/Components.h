@@ -237,7 +237,7 @@ namespace Teddy
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct Sensor2DComponent // TODO: Serialization
+	struct Sensor2DComponent
 	{
 		struct SensorData
 		{
@@ -257,6 +257,23 @@ namespace Teddy
 
 		Sensor2DComponent() = default;
 		Sensor2DComponent(const Sensor2DComponent&) = default;
+	};
+
+	struct CollisionFilter2DComponent
+	{
+		uint64_t CategoryBits = 0x0001;
+		uint64_t MaskBits = 0xFFFF;
+
+		uint64_t GetFilterCategory(BoxCollider2DComponent& collider);
+		uint64_t GetFilterMask(BoxCollider2DComponent& collider);
+		uint64_t GetFilterGroupIndex(BoxCollider2DComponent& collider);
+
+		void SetFilterCategory(BoxCollider2DComponent& collider, uint64_t filter);
+		void SetFilterMask(BoxCollider2DComponent& collider, uint64_t filter);
+		void SetFilterGroupIndex(BoxCollider2DComponent& collider, uint64_t filter);
+
+		CollisionFilter2DComponent() = default;
+		CollisionFilter2DComponent(const CollisionFilter2DComponent&) = default;
 	};
 
 	struct TextComponent
@@ -300,6 +317,6 @@ namespace Teddy
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent, SpriteAtlasComponent, 
 		SpriteAnimationComponent,CircleRendererComponent, CameraComponent, NativeScriptComponent,
-		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, Sensor2DComponent,
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, Sensor2DComponent, CollisionFilter2DComponent,
 		TextComponent, ButtonComponent, SpriteAnimationAtlasComponent>;
 }
