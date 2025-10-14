@@ -6,6 +6,7 @@
 #include "Teddy/Physics/ContactEvent.h"
 #include "Teddy/Physics/SensorEvent.h"
 #include "Player.h"
+#include "CloudPlatform.h"
 
 namespace Cuphead
 {
@@ -71,6 +72,7 @@ namespace Cuphead
 		Foreground m_Foreground;
 
 		Player m_Player;
+		CloudPlatform m_Clouds;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;

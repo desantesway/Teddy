@@ -49,6 +49,8 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/LevelScene.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Player.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Player.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/CloudPlatform.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/CloudPlatform.cpp
 )
 
 target_include_directories(Cuphead PUBLIC

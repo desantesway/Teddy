@@ -44,6 +44,8 @@ namespace Cuphead
 		rWallTransform.Translation = glm::vec3(5.75f, 0.0f, 2.0f);
 		rWallTransform.Scale = glm::vec3(1.0f, 15.0f, 1.0f);
 
+		m_Clouds.Init(m_Scene);
+
 		InitPhase1();
 
 		if (character == 1)
@@ -58,6 +60,7 @@ namespace Cuphead
 	{
 		InitPhase1Background();
 		InitPhase1Foreground();
+		m_Clouds.InitPhase1();
 	}
 
 	void LevelScene::InitPhase1Background()
@@ -83,7 +86,7 @@ namespace Cuphead
 
 		// Spire
 		{
-			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire");
+			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire"); // TODO: sync up the animation speed with the movement speed
 			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
 
 			std::vector<std::string> paths;
@@ -93,8 +96,8 @@ namespace Cuphead
 			spireSprite.Textures = assets.LoadMultiple<Teddy::Texture2D>(paths);
 			m_Background.Spire.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 402, 1026);
 			auto& spireTransform = m_Background.Spire.GetComponent<Teddy::TransformComponent>();
-			spireTransform.Translation = glm::vec3(0.0f, -0.25f, 1.0f);
-			spireTransform.Scale *= 9.0f;
+			spireTransform.Translation = glm::vec3(0.0f, -0.5f, 1.0f);
+			spireTransform.Scale *= 9.5f;
 		}
 
 		// Background cloud 1
