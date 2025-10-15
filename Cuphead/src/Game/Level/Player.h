@@ -36,7 +36,7 @@ namespace Cuphead
 		void Intro1();
 		void Intro2();
 
-		void Move();
+		void Move(Teddy::Timestep ts);
 		void BlockMove();
 
 		void StartIdle();

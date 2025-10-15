@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: overall movement speed // use timestep on velocity // hitboxs // parry animations // parry object
+//TODO: hitboxs // parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -31,7 +31,7 @@ namespace Cuphead
 			Intro2();
 			break;
 		case PlayerState::Running:
-			Move();
+			Move(ts);
 			Running();
 			BlockMove();
 			break;
@@ -39,7 +39,7 @@ namespace Cuphead
 			Crouching();
 			break;
 		case PlayerState::Jumping:
-			Move();
+			Move(ts);
 			Jumping(ts);
 			BlockMove();
 			break;
@@ -47,7 +47,7 @@ namespace Cuphead
 			Dashing(ts);
 			break;
 		case PlayerState::Falling:
-			Move();
+			Move(ts);
 			Falling();
 			BlockMove();
 			break;
@@ -421,27 +421,28 @@ namespace Cuphead
 		 m_Scene->RefreshBody(m_Entity);
 	}
 
-	void Player::Move()
+	void Player::Move(Teddy::Timestep ts)
 	{
 		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
 		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
 
+		float velocity = 0;
 		if (leftPressed)
 		{
 			m_Moving = true;
-			float velocity = m_Grounded ? -5.0f : -5.0f; // TODO: Adjust air speed
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
+			velocity = -750.0f;
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity * ts);
 		}
 		else if (rightPressed)
 		{
 			m_Moving = true;
-			float velocity = m_Grounded ? 5.0f : 5.0f; // TODO: Adjust air speed
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
+			velocity = 750.0f;
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity * ts);
 		}
 		else
 		{
 			m_Moving = false;
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(0.0f);
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 	}
 
@@ -609,8 +610,8 @@ namespace Cuphead
 		static float time = 0.0f;
 		time += ts.GetSeconds();
 
-		static constexpr float maxJumpHoldTime = 1.0f;
-		static constexpr float jumpHoldForce = 47.5f; // TODO: see this vals
+		static constexpr float maxJumpHoldTime = 0.25f;
+		static constexpr float jumpHoldForce = 47.5f;
 
 		if (m_StartJump)
 		{
@@ -819,7 +820,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::StartParry() // TODO: implement clouds platform first
+	void Player::StartParry()
 	{
 		if (m_ZHeld) return;
 		{ TED_CORE_INFO("Parry"); }
