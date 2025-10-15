@@ -168,7 +168,7 @@ namespace Cuphead
 		m_PlayerY = y;
 	}
 
-	void CloudPlatform::CloudContactBegin(const b2ShapeId& cloudShape) // TODO: create entity overlay
+	void CloudPlatform::CloudContactBegin(const b2ShapeId& cloudShape)
 	{
 		for (auto& cloud : m_Clouds)
 		{
@@ -211,7 +211,33 @@ namespace Cuphead
 								break;
 							}
 						}
-						
+
+						if (!cloud.Overlay)
+						{
+							cloud.Overlay = m_Scene->CreateEntity("Cloud Overlay" + std::to_string(cloud.Type) + "#" + std::to_string(m_Clouds.size()));
+							cloud.Overlay.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 242, 90);
+							auto& spriteOverlay = cloud.Overlay.AddComponent<Teddy::SpriteAnimationComponent>(0.1f, 0.025f, 0.1f);
+							spriteOverlay.Textures = m_CloudTextures;
+							std::vector<int> overlayIndicies;
+							for (int i: sprite.PlayableIndicies)
+								overlayIndicies.push_back(i + 10);
+							spriteOverlay.PlayableIndicies = overlayIndicies;
+							spriteOverlay.Loop = false;
+							spriteOverlay.PingPong = false;
+							spriteOverlay.Reverse = false;
+							auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+							aAOverlay.Index = aA.Index + 10;
+							auto& transform = cloud.Overlay.GetComponent<Teddy::TransformComponent>();
+							auto& originalTransform = cloud.Entity.GetComponent<Teddy::TransformComponent>();
+							transform.Translation = glm::vec3(originalTransform.Translation.x, originalTransform.Translation.y, 2.001f);
+							transform.Scale *= 0.75f;
+						}
+						else
+						{
+							sprite.FrameTime = 0.025f;
+							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteOverlay.Reverse = false;
+						}
 					}
 				}
 			}
@@ -239,6 +265,15 @@ namespace Cuphead
 						sprite.Reverse = true;
 						auto& aA = cloud.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 
+						if (cloud.Overlay)
+						{
+							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteOverlay.Textures = m_CloudTextures;
+							spriteOverlay.Loop = false;
+							spriteOverlay.PingPong = false;
+							spriteOverlay.Reverse = true;
+						}
+
 						if (sprite.PlayableIndicies.size() < 4)
 						{
 							sprite.FrameTime = 0.05f;
@@ -260,7 +295,22 @@ namespace Cuphead
 								break;
 							}
 							}
+
+							if (cloud.Overlay)
+							{
+								auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+								spriteOverlay.Textures = m_CloudTextures;
+								spriteOverlay.FrameTime = 0.05f;
+
+								auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+								std::vector<int> overlayIndicies;
+								for (int i : sprite.PlayableIndicies)
+									overlayIndicies.push_back(i + 10);
+								spriteOverlay.PlayableIndicies = overlayIndicies;
+							}
 						}
+
+						
 					}
 				}
 			}
@@ -274,64 +324,93 @@ namespace Cuphead
 			auto& sprite = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 			auto& aA = cloud.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			
-			if (cloud.Active)
+			if (sprite.PlayableIndicies.size() > 3)
 			{
-				int maxIndex = (cloud.Type == 0) ? 10 : (cloud.Type == 1) ? 33 : 56;
-				if (aA.Index >= maxIndex)
+				if (cloud.Active)
 				{
-					sprite.Loop = true;
-					sprite.PingPong = false;
-					sprite.Reverse = false;
-					sprite.FrameTime = 0.1f;
-					switch (cloud.Type)
+					int maxIndex = (cloud.Type == 0) ? 10 : (cloud.Type == 1) ? 33 : 56;
+					if (aA.Index >= maxIndex)
 					{
-					case 0:
-					{
-						sprite.PlayableIndicies = { 10, 11, 12 };
-						break;
-					}
-					case 1:
-					{
-						sprite.PlayableIndicies = { 33, 34, 35 };
-						break;
-					}
-					case 2:
-					{
-						sprite.PlayableIndicies = { 56, 57, 58 };
-						break;
-					}
+						sprite.Loop = true;
+						sprite.PingPong = false;
+						sprite.Reverse = false;
+						sprite.FrameTime = 0.1f;
+
+						switch (cloud.Type)
+						{
+						case 0:
+						{
+							sprite.PlayableIndicies = { 10, 11, 12 };
+							break;
+						}
+						case 1:
+						{
+							sprite.PlayableIndicies = { 33, 34, 35 };
+							break;
+						}
+						case 2:
+						{
+							sprite.PlayableIndicies = { 56, 57, 58 };
+							break;
+						}
+						}
+
+						if (cloud.Overlay)
+						{
+							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteOverlay.Textures = m_CloudTextures;
+							spriteOverlay.FrameTime = 0.1f;
+							spriteOverlay.InitialFrameTime = 0.1f;
+							spriteOverlay.FinalFrameTime = 0.1f;
+							spriteOverlay.Loop = true;
+							spriteOverlay.PingPong = false;
+							spriteOverlay.Reverse = false;
+
+							std::vector<int> overlayIndicies;
+							for (int i : sprite.PlayableIndicies)
+								overlayIndicies.push_back(i + 10);
+							spriteOverlay.PlayableIndicies = overlayIndicies;
+							auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+							aAOverlay.Index = aA.Index + 10;
+						}
 					}
 				}
-			}
-			else
-			{
-				int minIndex = (cloud.Type == 0) ? 3 : (cloud.Type == 1) ? 26 : 49;
-				if (aA.Index <= minIndex && sprite.PlayableIndicies.size() > 3)
+				else
 				{
-					sprite.Loop = true;
-					sprite.PingPong = false;
-					sprite.Reverse = false;
-					sprite.FrameTime = 0.1f;
-					switch (cloud.Type)
+					int minIndex = (cloud.Type == 0) ? 3 : (cloud.Type == 1) ? 26 : 49;
+					if (aA.Index <= minIndex && sprite.PlayableIndicies.size() > 3)
 					{
-					case 0:
-					{
-						sprite.PlayableIndicies = { 0, 1, 2 };
-						aA.Index = 0;
-						break;
-					}
-					case 1:
-					{
-						sprite.PlayableIndicies = { 23, 24, 25 };
-						aA.Index = 23;
-						break;
-					}
-					case 2:
-					{
-						sprite.PlayableIndicies = { 46, 47, 48 };
-						aA.Index = 46;
-						break;
-					}
+						sprite.Loop = true;
+						sprite.PingPong = false;
+						sprite.Reverse = false;
+						sprite.FrameTime = 0.1f;
+						switch (cloud.Type)
+						{
+						case 0:
+						{
+							sprite.PlayableIndicies = { 0, 1, 2 };
+							aA.Index = 0;
+							break;
+						}
+						case 1:
+						{
+							sprite.PlayableIndicies = { 23, 24, 25 };
+							aA.Index = 23;
+							break;
+						}
+						case 2:
+						{
+							sprite.PlayableIndicies = { 46, 47, 48 };
+							aA.Index = 46;
+							break;
+						}
+						}
+
+						if (cloud.Overlay)
+						{
+							m_Scene->DestroyEntity(cloud.Overlay);
+							cloud.Overlay = {};
+						}
 					}
 				}
 			}
