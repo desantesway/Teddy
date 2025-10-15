@@ -759,18 +759,41 @@ namespace Cuphead
 	void Player::Dashing(Teddy::Timestep ts)
 	{
 		static float timer = 0.0f;
+		static float initialDistance = 0;
 		timer += ts.GetSeconds();
 		if (m_StartDash)
 		{
 			float velocity = m_DirectionRight ? 10.0f : -10.0f;
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(velocity, 0.0f);
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetGravityScale(0.0f);
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(velocity, 0.0f);
 			m_StartDash = false;
 			timer = 0.0f;
+			initialDistance = m_Entity.GetComponent<Teddy::TransformComponent>().Translation.x;
 		}
-		else if (timer > 0.25f)
+		else if (m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.size() < 4)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.PingPong = true;
+			sprite.Loop = true;
+			sprite.Reverse = true;
+			sprite.InitialFrameTime = 1.0f;
+			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+			if (m_Grounded)
+			{
+				sprite.PlayableIndicies = { 120, 121, 122, 123, 124, 125 };
+				indicies.Index = 125;
+			}
+			else
+			{
+				sprite.PlayableIndicies = { 114, 115, 116, 117, 118, 119 };
+				indicies.Index = 119;
+			}
+		}
+		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.x) >= 2.5f || timer > 0.35f)
 		{
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetGravityScale(10.0f);
+			m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.5f;
 			if(m_Grounded)
 			{
 				m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
@@ -798,26 +821,24 @@ namespace Cuphead
 				StartFalling();
 			}
 		}
-		else if (m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.size() < 4)
+		else
 		{
 			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-			sprite.PingPong = false;
-			sprite.Loop = false;
-			sprite.Reverse = true;
-
 			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-
 			if (m_Grounded)
 			{
-				sprite.PlayableIndicies = { 111, 110, 120, 121, 122, 123, 124, 125 };
-				indicies.Index = 125;
+				sprite.PlayableIndicies = { 120, 121, 122, 123, 124, 125 };
+				if(indicies.Index < 120)
+					indicies.Index = indicies.Index + 6;
 			}
 			else
 			{
-				sprite.PlayableIndicies = { 113, 112, 114, 115, 116, 117, 118, 119 };
-				indicies.Index = 119;
+				sprite.PlayableIndicies = { 114, 115, 116, 117, 118, 119 };
+				if (indicies.Index >= 120)
+					indicies.Index = indicies.Index - 6;
 			}
 		}
+		
 	}
 
 	void Player::StartParry()

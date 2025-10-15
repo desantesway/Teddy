@@ -132,7 +132,7 @@ namespace Cuphead
 			auto& filter = cloud.GetComponent<Teddy::CollisionFilter2DComponent>();
 			auto& collider = cloud.GetComponent<Teddy::BoxCollider2DComponent>();
 
-			if (transform.Translation.y < m_PlayerY - 0.75f)
+			if (transform.Translation.y < m_PlayerY - 0.8f)
 			{
 				if (filter.CategoryBits != LevelCategories::CLOUDPLATFORMON)
 				{

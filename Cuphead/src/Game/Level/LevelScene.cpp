@@ -23,6 +23,7 @@ namespace Cuphead
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
 		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
 		floorCollider.EnableSensorEvents = true;
+		floorCollider.Friction = 0.0f;
 		floor.AddComponent<Teddy::Rigidbody2DComponent>();
 		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
 		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
