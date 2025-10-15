@@ -212,6 +212,7 @@ namespace Cuphead
 							}
 						}
 
+						sprite.Timer = 0.0f;
 						if (!cloud.Overlay)
 						{
 							cloud.Overlay = m_Scene->CreateEntity("Cloud Overlay" + std::to_string(cloud.Type) + "#" + std::to_string(m_Clouds.size()));
@@ -229,7 +230,7 @@ namespace Cuphead
 							aAOverlay.Index = aA.Index + 10;
 							auto& transform = cloud.Overlay.GetComponent<Teddy::TransformComponent>();
 							auto& originalTransform = cloud.Entity.GetComponent<Teddy::TransformComponent>();
-							transform.Translation = glm::vec3(originalTransform.Translation.x, originalTransform.Translation.y, 2.001f);
+							transform.Translation = glm::vec3(originalTransform.Translation.x, originalTransform.Translation.y, 2.01f);
 							transform.Scale *= 0.75f;
 						}
 						else
@@ -267,6 +268,7 @@ namespace Cuphead
 
 						if (cloud.Overlay)
 						{
+							sprite.Timer = 0.0f;
 							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
 							spriteOverlay.Textures = m_CloudTextures;
 							spriteOverlay.Loop = false;
@@ -307,6 +309,7 @@ namespace Cuphead
 								for (int i : sprite.PlayableIndicies)
 									overlayIndicies.push_back(i + 10);
 								spriteOverlay.PlayableIndicies = overlayIndicies;
+								aAOverlay.Index = aA.Index + 10;
 							}
 						}
 
@@ -357,6 +360,7 @@ namespace Cuphead
 
 						if (cloud.Overlay)
 						{
+							sprite.Timer = 0.0f;
 							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
 							spriteOverlay.Textures = m_CloudTextures;
 							spriteOverlay.FrameTime = 0.1f;

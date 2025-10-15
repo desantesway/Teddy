@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: lil cloud plat // improve player sensor // intro 2 on the cloud // ovaerall movement speed //hitboxs // parry animations // parry object
+//TODO: overall movement speed // hitboxs // parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -110,18 +110,19 @@ namespace Cuphead
 		int index = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index;
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		static float x = transform.Translation.x;
 		if (index == 73)
 		{
 			StartIdle();
 		}
 		if (index >= 64)
 		{
-			transform.Translation.x = 0.0f;
+			transform.Translation.x = x;
 			m_Scene->RefreshBody(m_Entity);
 		}
 		else if (index >= 58)
 		{
-			transform.Translation.x = -0.075f;
+			transform.Translation.x = x - 0.075f;
 			m_Scene->RefreshBody(m_Entity);
 		}
 	}
@@ -207,7 +208,7 @@ namespace Cuphead
 		sprite.Textures = m_MovementTextures;
 		m_Entity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 347, 192);
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(0.0f, 0.0f, 2.0f);
+		transform.Translation = glm::vec3(-4.0f, 0.0f, 2.0f);
 		transform.Scale = glm::vec3(1.75f, 1.75f, 1.0f);
 
 		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
@@ -327,21 +328,20 @@ namespace Cuphead
 		sprite.Textures = m_IntroTextures;
 		sprite.PingPong = false;
 		sprite.Loop = false;
-
-		auto& atlas = m_Cookie.AddComponent<Teddy::SpriteAtlasComponent>();
-		atlas.SpriteWidth = 212;
-		atlas.SpriteHeight = 270;
+		sprite.Reverse = false;
+		sprite.TextureIndex = 1;
+		auto& atlas = m_Cookie.AddComponent<Teddy::SpriteAtlasComponent>(8, 4, 212, 270);
 
 		auto& indicies = m_Cookie.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-		indicies.GenerateFrames(sprite, atlas);
 		indicies.Index = 107;
 		
 		sprite.PlayableIndicies = {107, 108, 109, 110, 111, 112, 113};
 
 		auto& transform = m_Cookie.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(0.5f, -0.55f, 0.01f);
+		transform.Translation = glm::vec3(0.5f, -0.1f, -0.001f);
 
 		transform.Translation += m_Entity.GetComponent<Teddy::TransformComponent>().Translation;
+		transform.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
 		created = true;
 	}
