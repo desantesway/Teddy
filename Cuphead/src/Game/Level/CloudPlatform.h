@@ -29,10 +29,22 @@ namespace Cuphead
 		void StartCloudC(float x, float y);
 
 		void UpdateCollisionFilters();
+		void UpdateAnimations();
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
-		std::vector<Teddy::Entity> m_Clouds;
+		struct Cloud
+		{
+			Teddy::Entity Entity;
+			Teddy::Entity Overlay;
+			int Type; // 0 = A, 1 = B, 2 = C
+			bool Active = false;
+
+			Cloud(Teddy::Entity entity, int type)
+				: Entity(entity), Type(type) {}
+		};
+
+		std::vector<Cloud> m_Clouds;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_CloudTextures;
 
 		float m_PlayerY = 0.0f;
