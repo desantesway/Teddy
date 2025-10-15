@@ -3,11 +3,12 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: hitboxs // parry animations // parry object
+//TODO: adjust velocities (run, falling/jumping, dash) // parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
+		TED_CORE_INFO("{}", m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().GetGravityScale());
 		DeleteCookie(ts);
 
 		if(m_ZHeld)
@@ -225,6 +226,7 @@ namespace Cuphead
 		box.Offset = { 0.0f, -0.25f };
 		box.Size = { 0.2f, 0.3f };
 		box.EnableContactEvents = true;
+		box.Friction = 0.0f;
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f };
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
@@ -287,9 +289,10 @@ namespace Cuphead
 		{
 			indicies.Index = 88;
 		}
-		else if (m_State == PlayerState::Crouching)
-		{// TODO: Refresh hitbox only
-		}
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Idle;
 	}
@@ -419,7 +422,7 @@ namespace Cuphead
 			break;
 		}
 
-		 m_Scene->RefreshBody(m_Entity);
+		 //m_Scene->RefreshBody(m_Entity);
 	}
 
 	void Player::Move(Teddy::Timestep ts)
@@ -431,14 +434,14 @@ namespace Cuphead
 		if (leftPressed)
 		{
 			m_Moving = true;
-			velocity = -750.0f;
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity * ts);
+			velocity = -7.5f;
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 		else if (rightPressed)
 		{
 			m_Moving = true;
-			velocity = 750.0f;
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity * ts);
+			velocity = 7.5f;
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 		else
 		{
@@ -447,7 +450,6 @@ namespace Cuphead
 		}
 	}
 
-	// TODO: Verify hit box
 	void Player::StartRunning(bool isRight)
 	{
 		if (m_State == PlayerState::Dashing) return;
@@ -489,6 +491,10 @@ namespace Cuphead
 			transform.Scale = glm::vec3(1.75f);
 		else
 			transform.Scale = glm::vec3(-1.75f, 1.75f, 1.0f);
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_Moving = true;
 		m_State = PlayerState::Running;
@@ -533,6 +539,10 @@ namespace Cuphead
 		for (int i = 0; i < 8; i++)
 			sprite.PlayableIndicies.push_back(i);
 		indicies.Index = 0;
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Falling;
 	}
@@ -594,6 +604,10 @@ namespace Cuphead
 		for (int i = 0; i < 8; i++)
 			sprite.PlayableIndicies.push_back(i);
 		indicies.Index = 0;
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_ZHeld = true;
 		m_StartJump = true;
@@ -667,6 +681,10 @@ namespace Cuphead
 			transform.Scale = glm::vec3(-1.75f, 1.75f, 1.0f);
 
 		m_StartCrouch = true; 
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Crouching;
 	}
@@ -753,6 +771,10 @@ namespace Cuphead
 		m_StartDash = true;
 		m_DashReset = false;
 		m_ShiftHeld = true;
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { m_DirectionRight ? 0.25f : -0.25f, -0.25f }, { 0.4f, 0.45f }, 0.0f };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Dashing;
 	}
