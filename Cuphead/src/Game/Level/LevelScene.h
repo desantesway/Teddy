@@ -34,6 +34,8 @@ namespace Cuphead
 
 		bool OnSensorBegin(Teddy::SensorBeginEvent& e);
 		bool OnSensorEnd(Teddy::SensorEndEvent& e);
+		bool OnContactBegin(Teddy::ContactBeginEvent& e);
+		bool OnContactEnd(Teddy::ContactEndEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 

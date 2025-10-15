@@ -19,14 +19,16 @@ namespace Cuphead
 
 		void OnUpdate(Teddy::Timestep ts);
 
-		void SetPlayerY(float y) { m_PlayerY = y; }
+		void SetPlayerY(float y);
+
+		void CloudContactBegin(const b2ShapeId& cloudShape);
+		void CloudContactEnd(const b2ShapeId& cloudShape);
 	private:
 		void StartCloudA(float x, float y);
 		void StartCloudB(float x, float y);
 		void StartCloudC(float x, float y);
 
 		void UpdateCollisionFilters();
-
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 

@@ -9,9 +9,9 @@ namespace Teddy
 	class ContactEvent : public Event
 	{
 	public:
-		b2ContactId GetContactId() const { return m_Contact; }
-		b2ShapeId GetShapeIdA() const { return m_A; }
-		b2ShapeId GetShapeIdB() const { return m_B; }
+		b2ContactId GetContact() const { return m_Contact; }
+		b2ShapeId GetShapeA() const { return m_A; }
+		b2ShapeId GetShapeB() const { return m_B; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryContact | EventCategoryPhysics)
 	protected:

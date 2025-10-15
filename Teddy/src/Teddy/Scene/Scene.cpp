@@ -626,7 +626,7 @@ namespace Teddy
 
 		if (ent.HasComponent<Sensor2DComponent>())
 		{
-			for (auto [_, value] : ent.GetComponent<Sensor2DComponent>().Sensors)
+			for (auto& [_, value] : ent.GetComponent<Sensor2DComponent>().Sensors)
 			{
 				b2ShapeDef footSensorDef = b2DefaultShapeDef();
 				footSensorDef.isSensor = true;
@@ -851,7 +851,7 @@ namespace Teddy
 
 			if (entity.HasComponent<Sensor2DComponent>())
 			{
-				for (auto [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
+				for (auto& [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
 				{
 					b2ShapeDef footSensorDef = b2DefaultShapeDef();
 					footSensorDef.isSensor = true;

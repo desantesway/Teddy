@@ -223,9 +223,9 @@ namespace Cuphead
 		auto& box = m_Entity.AddComponent<Teddy::BoxCollider2DComponent>();
 		box.Offset = { 0.0f, -0.25f };
 		box.Size = { 0.2f, 0.3f };
-
+		box.EnableContactEvents = true;
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.3f, 0.1f }, 0.0f };
+		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f };
 
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::PLAYER; // TODO: if z and down change to playerghost
@@ -599,6 +599,7 @@ namespace Cuphead
 
 	void Player::Jumping(Teddy::Timestep ts)
 	{
+		
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
 		bool running = false;
@@ -608,7 +609,15 @@ namespace Cuphead
 		time += ts.GetSeconds();
 
 		static constexpr float maxJumpHoldTime = 0.45f;
-		static constexpr float jumpHoldForce = 35.0f;
+		static constexpr float jumpHoldForce = 35.0f; // TODO: see this vals
+
+		if (m_StartJump)
+		{
+			body.SetVelocity(0.0f, 12.5f);
+			keyHeld = true;
+			m_StartJump = false;
+			time = 0.0f;
+		}
 
 		if (time < maxJumpHoldTime && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
 		{
@@ -618,18 +627,7 @@ namespace Cuphead
 		else
 		{
 			keyHeld = false;
-			if (!m_Grounded)
-			{
-				m_State = PlayerState::Falling;
-			}
-		}
-
-		if (m_StartJump)
-		{
-			body.SetVelocity(0.0f, 12.5f);
-			keyHeld = true;
-			m_StartJump = false;
-			time = 0.0f;
+			m_State = PlayerState::Falling;
 		}
 	}
 

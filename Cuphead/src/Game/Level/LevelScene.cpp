@@ -422,9 +422,45 @@ namespace Cuphead
 		m_Player.StartIntro();
 	}
 	
+	bool LevelScene::OnContactBegin(Teddy::ContactBeginEvent& e)
+	{
+		TED_CORE_INFO(e);
+		b2ShapeId playerBody = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
+		if (B2_ID_EQUALS(e.GetShapeA(), playerBody))
+		{
+			m_Clouds.CloudContactBegin(e.GetShapeA());
+			return true;
+		}
+		else if (B2_ID_EQUALS(e.GetShapeB(), playerBody))
+		{
+			m_Clouds.CloudContactBegin(e.GetShapeB());
+			return true;
+		}
+
+		return false;
+	}
+
+	bool LevelScene::OnContactEnd(Teddy::ContactEndEvent& e)
+	{
+		TED_CORE_INFO(e);
+		b2BodyId playerBody = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		if (B2_ID_EQUALS(e.GetShapeA(), playerBody))
+		{
+			m_Clouds.CloudContactEnd(e.GetShapeA());
+			return true;
+		}
+		else if (B2_ID_EQUALS(e.GetShapeB(), playerBody))
+		{
+			m_Clouds.CloudContactEnd(e.GetShapeB());
+			return true;
+		}
+
+		return false;
+	}
+
 	bool LevelScene::OnSensorBegin(Teddy::SensorBeginEvent& e)
 	{
-		b2BodyId playerBody = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
+		b2ShapeId playerBody = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture);
 		if (B2_ID_EQUALS(e.GetSensorShape(), playerBody) || B2_ID_EQUALS(e.GetVisitorShape(), playerBody))
 		{
 			m_Player.SetGrounded(true);
@@ -436,11 +472,14 @@ namespace Cuphead
 
 	bool LevelScene::OnSensorEnd(Teddy::SensorEndEvent& e)
 	{
-		b2BodyId playerBody = *static_cast<b2BodyId*>(m_Player.GetEntity().GetComponent<Teddy::Rigidbody2DComponent>().RuntimeBody);
-		if (B2_ID_EQUALS(e.GetSensorShape(), playerBody) || B2_ID_EQUALS(e.GetVisitorShape(), playerBody))
+		if (m_Player.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture)
 		{
-			m_Player.SetGrounded(false);
-			return true;
+			b2ShapeId playerBody = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture);
+			if (B2_ID_EQUALS(e.GetSensorShape(), playerBody) || B2_ID_EQUALS(e.GetVisitorShape(), playerBody))
+			{
+				m_Player.SetGrounded(false);
+				return true;
+			}
 		}
 
 		return false;
@@ -453,5 +492,7 @@ namespace Cuphead
 		Teddy::EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<Teddy::SensorBeginEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorBegin));
 		dispatcher.Dispatch<Teddy::SensorEndEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorEnd));
+		dispatcher.Dispatch<Teddy::ContactBeginEvent>(TED_BIND_EVENT_FN(LevelScene::OnContactBegin));
+		dispatcher.Dispatch<Teddy::ContactEndEvent>(TED_BIND_EVENT_FN(LevelScene::OnContactEnd));
 	}
 }

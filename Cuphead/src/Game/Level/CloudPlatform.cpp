@@ -52,6 +52,7 @@ namespace Cuphead
 		collider.Size = { 1.0f, 0.2f };
 		collider.Offset = { 0.0f, -0.2f };
 		collider.EnableSensorEvents = true;
+		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
@@ -156,5 +157,20 @@ namespace Cuphead
 				}
 			}
 		}
+	}
+
+	void CloudPlatform::SetPlayerY(float y)
+	{
+		m_PlayerY = y;
+	}
+
+	void CloudPlatform::CloudContactBegin(const b2ShapeId& cloudShape)
+	{
+		TED_CORE_INFO("begin");
+	}
+
+	void CloudPlatform::CloudContactEnd(const b2ShapeId& cloudShape)
+	{
+		TED_CORE_INFO("end");
 	}
 }
