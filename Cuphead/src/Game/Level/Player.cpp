@@ -227,6 +227,7 @@ namespace Cuphead
 		box.EnableContactEvents = true;
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
 
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::PLAYER; // TODO: if z and down change to playerghost
