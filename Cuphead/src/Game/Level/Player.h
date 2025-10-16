@@ -41,20 +41,23 @@ namespace Cuphead
 
 		void StartIdle();
 
-		void StartFalling();
+		void StartFall();
 		void Falling();
 
-		void StartRunning(bool isRight);
+		void StartRun(bool isRight);
 		void Running();
 
-		void StartCrouching();
+		void StartCrouch();
 		void Crouching();
 
-		void StartJumping();
+		void StartJump();
 		void Jumping(Teddy::Timestep ts);
 
-		void StartDashing();
+		void StartDash();
 		void Dashing(Teddy::Timestep ts);
+
+		void StartDrop();
+		void Dropping(Teddy::Timestep ts);
 
 		void StartParry();
 
@@ -80,6 +83,7 @@ namespace Cuphead
 			DoneJumping,
 			Dashing,
 			Crouching,
+			Dropping,
 			Intro0,
 			Intro1,
 			Intro2,
@@ -100,5 +104,6 @@ namespace Cuphead
 		bool m_StartJump = false;
 		bool m_ZHeld = false;
 		bool m_Moving = false;
+		bool m_Dropping = false;
 	};
 }

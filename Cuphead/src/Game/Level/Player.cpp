@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: parry animations // parry object
+//TODO: parry animations // parry object // cloud movement //
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -18,6 +18,7 @@ namespace Cuphead
 
 		if (!m_DashReset)
 			m_DashReset = m_Grounded;
+
 
 		switch (m_State)
 		{
@@ -50,6 +51,9 @@ namespace Cuphead
 			Move(ts);
 			Falling();
 			BlockMove();
+			break;
+		case PlayerState::Dropping:
+			Dropping(ts);
 			break;
 		case PlayerState::Idle:
 			BlockMove();
@@ -150,16 +154,16 @@ namespace Cuphead
 		else
 		{
 			if (leftPressed)
-				StartRunning(false);
+				StartRun(false);
 			if (rightPressed)
-				StartRunning(true);
+				StartRun(true);
 		}
 	}
 
 	void Player::SetGrounded(bool grounded)
 	{
 		m_Grounded = grounded; 
-		StartFalling(); 
+		StartFall(); 
 	}
 
 	void Player::LoadCupheadTextures()
@@ -231,7 +235,7 @@ namespace Cuphead
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
 
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::PLAYER; // TODO: if z and down change to playerghost
+		filter.CategoryBits = LevelCategories::PLAYER;
 		filter.MaskBits = LevelCategories::INVISIBLEWALLS | LevelCategories::CLOUDPLATFORMON | LevelCategories::ENEMY;
 	}
 
@@ -448,7 +452,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::StartRunning(bool isRight)
+	void Player::StartRun(bool isRight)
 	{
 		if (m_State == PlayerState::Dashing) return;
 
@@ -506,7 +510,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::StartFalling()
+	void Player::StartFall()
 	{			
 		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded || 
 			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
@@ -543,34 +547,43 @@ namespace Cuphead
 		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
-		m_State = PlayerState::Falling;
+		if(m_State != PlayerState::Dropping)
+			m_State = PlayerState::Falling;
 	}
 
 	void Player::Falling()
 	{
 		if (m_Grounded)
 		{
+			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			auto& box = m_Entity.GetComponent<Teddy::BoxCollider2DComponent>();
+			if (filter.CategoryBits != LevelCategories::PLAYER)
+			{
+				filter.CategoryBits = LevelCategories::PLAYER;
+				filter.SetFilterCategory(box, filter.CategoryBits);
+			}
+
 			if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
 			{
 				m_State = PlayerState::DoneJumping;
-				StartCrouching();
+				StartCrouch();
 			}
 			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)))
 			{
 				m_State = PlayerState::AnimationDone;
-				StartRunning(true);
+				StartRun(true);
 			}
 			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)))
 			{
 				m_State = PlayerState::AnimationDone;
-				StartRunning(false);
+				StartRun(false);
 			}
 			else
 				StartIdle();
 		}
 	}
 
-	void Player::StartJumping()
+	void Player::StartJump()
 	{
 		if (m_State == PlayerState::Jumping || m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
 
@@ -650,7 +663,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::StartCrouching()
+	void Player::StartCrouch()
 	{
 		if (m_State == PlayerState::Crouching || !m_Grounded || m_State == PlayerState::Jumping || m_State == PlayerState::Dashing) return;
 
@@ -720,19 +733,19 @@ namespace Cuphead
 			if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 			{
 				m_State = PlayerState::AnimationDone;
-				StartRunning(true);
+				StartRun(true);
 			}
 			else if(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 			{
 				m_State = PlayerState::AnimationDone;
-				StartRunning(false);
+				StartRun(false);
 			}
 			else
 				StartIdle();
 		}
 	}
 
-	void Player::StartDashing()
+	void Player::StartDash()
 	{
 		if (m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld) return;
 
@@ -826,17 +839,17 @@ namespace Cuphead
 				if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
 				{
 					m_State = PlayerState::AnimationDone;
-					StartCrouching();
+					StartCrouch();
 				}
 				else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
 				{
 					m_State = PlayerState::AnimationDone;
-					StartRunning(true);
+					StartRun(true);
 				}
 				else if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
 				{
 					m_State = PlayerState::AnimationDone;
-					StartRunning(false);
+					StartRun(false);
 				}
 				else
 					StartIdle();
@@ -844,7 +857,7 @@ namespace Cuphead
 			else
 			{
 				m_State = PlayerState::AnimationDone;
-				StartFalling();
+				StartFall();
 			}
 		}
 		else
@@ -877,30 +890,78 @@ namespace Cuphead
 		{ TED_CORE_INFO("Parry"); }
 	}
 
+	void Player::StartDrop()
+	{
+		if (m_State != PlayerState::Crouching) return;
+
+		auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::PLAYERGHOST;
+		
+		filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+		
+		m_State = PlayerState::Dropping;
+
+		m_Dropping = true;
+
+		StartFall();
+	}
+
+	void Player::Dropping(Teddy::Timestep ts)
+	{
+		static float initialDistance = 0.0f;
+		static float timer = 0.0f;
+		timer += ts;
+
+		if(m_Dropping)
+		{
+			m_Dropping = false;
+			initialDistance = m_Entity.GetComponent<Teddy::TransformComponent>().Translation.y;
+			timer = 0.0f;
+		}
+		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.y) > 0.25f)
+		{
+			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PLAYER;
+
+			filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+			m_State = PlayerState::Falling;
+		}
+		else if (timer > 0.25f)
+		{
+			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PLAYER;
+
+			filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+			m_State = PlayerState::Crouching;
+		}
+	}
+
 	bool Player::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
 		switch (e.GetKeyCode())
 		{
 		case Teddy::Key::A:
 		case Teddy::Key::Left:
-			StartRunning(false);
+			StartRun(false);
 			return true;
 		case Teddy::Key::D:
 		case Teddy::Key::Right:
-			StartRunning(true);
+			StartRun(true);
 			return true;
 		case Teddy::Key::Z:
-			if (m_State != PlayerState::Falling)
-				StartJumping();
-			else
+			if (m_State != PlayerState::Falling && m_State != PlayerState::Crouching)
+				StartJump();
+			else if (m_State == PlayerState::Falling)
 				StartParry();
+			else
+				StartDrop();
 			return true;
 		case Teddy::Key::Down:
 		case Teddy::Key::S:
-			StartCrouching();
+			StartCrouch();
 			return true;
 		case Teddy::Key::LShift:
-			StartDashing();
+			StartDash();
 			return true;
 		default:
 			break;
