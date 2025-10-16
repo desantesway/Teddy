@@ -47,6 +47,7 @@ namespace Teddy
 
 		void RefreshBody(Entity& ent);
 		void RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor);
+		void DeleteSensor(Sensor2DComponent::SensorData& sensor);
 		b2WorldId GetPhysicsWorld() const { return m_PhysicsWorld; }
 		void SetPhysicsWorld(b2WorldId world) { m_PhysicsWorld = world; }
 

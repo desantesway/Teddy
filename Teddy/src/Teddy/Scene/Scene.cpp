@@ -597,6 +597,16 @@ namespace Teddy
 		}
 	}
 
+	void Scene::DeleteSensor(Sensor2DComponent::SensorData& sensor)
+	{ 
+		if (sensor.RuntimeFixture)
+		{
+			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), true);
+			delete static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+			sensor.RuntimeFixture = nullptr;
+		}
+	}
+
 	void Scene::RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor)
 	{
 		if (!ent.HasComponent<Rigidbody2DComponent>() && !ent.HasComponent<TransformComponent>()) return;

@@ -19,6 +19,8 @@ namespace Cuphead
 		if (!m_DashReset)
 			m_DashReset = m_Grounded;
 
+		if (!m_ParryReset)
+			m_ParryReset = m_Grounded;
 
 		switch (m_State)
 		{
@@ -54,6 +56,11 @@ namespace Cuphead
 			break;
 		case PlayerState::Dropping:
 			Dropping(ts);
+			break;
+		case PlayerState::Parrying:
+			Move(ts);
+			Parrying();
+			BlockMove();
 			break;
 		case PlayerState::Idle:
 			BlockMove();
@@ -512,7 +519,7 @@ namespace Cuphead
 
 	void Player::StartFall()
 	{			
-		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded || 
+		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
 			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -595,9 +602,9 @@ namespace Cuphead
 		sprite.Loop = true;
 		sprite.Reverse = false;
 
-		sprite.FinalFrameTime = 0.05f;
-		sprite.FrameTime = 0.05f;
-		sprite.InitialFrameTime = 0.05f;
+		sprite.FinalFrameTime = 0.04f;
+		sprite.FrameTime = 0.04f;
+		sprite.InitialFrameTime = 0.04f;
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 288;
@@ -884,10 +891,58 @@ namespace Cuphead
 		
 	}
 
-	void Player::StartParry()
+	void Player::StartParry() // TODO: if hit change to pink animation + lil jump
 	{
-		if (m_ZHeld) return;
-		{ TED_CORE_INFO("Parry"); }
+		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_JumpTextures;
+		sprite.PingPong = false;
+		sprite.Loop = true;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.025f;
+		sprite.FrameTime = 0.025f;
+		sprite.InitialFrameTime = 0.025f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 288;
+		atlas.SpriteHeight = 152;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (transform.Scale.x >= 0)
+			transform.Scale = glm::vec3(1.35f);
+		else
+			transform.Scale = glm::vec3(-1.35f, 1.35f, 1.0f);
+
+		sprite.PlayableIndicies.clear();
+		for (int i = 36; i < 44; i++)
+			sprite.PlayableIndicies.push_back(i);
+		indicies.Index = indicies.Index + 36;
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f };
+
+		m_State = PlayerState::Parrying;
+		m_ParryReset = false;
+	}
+
+	void Player::Parrying()
+	{
+		Falling();
+
+		if (m_State != PlayerState::Parrying)
+		{
+			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+			if (sensor.Sensors.contains("ParryHitBox"))
+			{
+				m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
+				sensor.Sensors.erase("ParryHitBox");
+			}
+		}
 	}
 
 	void Player::StartDrop()

@@ -60,6 +60,7 @@ namespace Cuphead
 		void Dropping(Teddy::Timestep ts);
 
 		void StartParry();
+		void Parrying();
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -84,6 +85,7 @@ namespace Cuphead
 			Dashing,
 			Crouching,
 			Dropping,
+			Parrying,
 			Intro0,
 			Intro1,
 			Intro2,
@@ -101,9 +103,12 @@ namespace Cuphead
 
 		bool m_StartCrouch = false;
 
+		bool m_Dropping = false;
+
 		bool m_StartJump = false;
 		bool m_ZHeld = false;
 		bool m_Moving = false;
-		bool m_Dropping = false;
+
+		bool m_ParryReset = true;
 	};
 }
