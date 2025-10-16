@@ -8,5 +8,5 @@ public:
 	EndLayer();
 	virtual ~EndLayer() = default;
 
-	void OnUpdate(Teddy::Timestep ts) override;
+	void OnUpdate(Teddy::Timestep& ts) override;
 };

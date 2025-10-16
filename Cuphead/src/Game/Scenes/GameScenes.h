@@ -17,7 +17,7 @@ namespace Cuphead
 		static GameScenes* Get() { return instance; }
 
 		static void Init();
-		static bool OnUpdate(Teddy::Timestep ts);
+		static bool OnUpdate(Teddy::Timestep& ts);
 
 		void OnEvent(Teddy::Event& event);
 

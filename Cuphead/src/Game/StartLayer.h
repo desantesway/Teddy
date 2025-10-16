@@ -8,7 +8,7 @@ public:
 	StartLayer();
 	virtual ~StartLayer() = default;
 
-	void OnUpdate(Teddy::Timestep ts) override;
+	void OnUpdate(Teddy::Timestep& ts) override;
 
 	void OnEvent(Teddy::Event& event) override;
 private:

@@ -30,7 +30,7 @@ namespace Teddy
         TED_PROFILE_FUNCTION();
     }
 
-    void EditorLayer::OnUpdate(Timestep ts)
+    void EditorLayer::OnUpdate(Timestep& ts)
     {
         TED_PROFILE_FUNCTION();
 

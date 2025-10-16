@@ -8,7 +8,7 @@ EndLayer::EndLayer()
 	TED_PROFILE_FUNCTION();
 }
 
-void EndLayer::OnUpdate(Teddy::Timestep ts)
+void EndLayer::OnUpdate(Teddy::Timestep& ts)
 {
 	TED_PROFILE_FUNCTION();
 

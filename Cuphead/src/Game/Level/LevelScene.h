@@ -24,6 +24,7 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 		void StartIntro();
+		void LoadIntro();
 		bool IsIntroDone() { return m_IntroDone; }
 		bool HasIntroStarted() { return m_StartIntro; }
 	private:

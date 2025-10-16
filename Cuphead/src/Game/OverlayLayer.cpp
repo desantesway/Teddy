@@ -53,7 +53,7 @@ void OverlayLayer::OnDetach()
 
 }
 
-void OverlayLayer::OnUpdate(Teddy::Timestep ts)
+void OverlayLayer::OnUpdate(Teddy::Timestep& ts)
 {
     TED_PROFILE_FUNCTION();
 

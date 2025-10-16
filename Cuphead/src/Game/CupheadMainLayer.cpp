@@ -35,7 +35,7 @@ namespace Cuphead
 	    TED_PROFILE_FUNCTION();
     }
 
-    void CupheadLayer::OnUpdate(Teddy::Timestep ts)
+    void CupheadLayer::OnUpdate(Teddy::Timestep& ts)
     {
 	    TED_PROFILE_FUNCTION();
 

@@ -8,7 +8,7 @@ StartLayer::StartLayer()
 	TED_PROFILE_FUNCTION();
 }
 
-void StartLayer::OnUpdate(Teddy::Timestep ts)
+void StartLayer::OnUpdate(Teddy::Timestep& ts)
 {
 	TED_PROFILE_FUNCTION();
 

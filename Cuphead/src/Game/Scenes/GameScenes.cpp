@@ -25,7 +25,7 @@ namespace Cuphead
         m_TransitionScenes.Init();
     }
 
-    bool GameScenes::OnUpdate(Teddy::Timestep ts)
+    bool GameScenes::OnUpdate(Teddy::Timestep& ts)
     {
         {
             TED_PROFILE_SCOPE("Game Scene Preparation");
@@ -48,6 +48,7 @@ namespace Cuphead
                     if (!m_TransitionScenes.IsCircleOut())
                     {
                         m_TransitionScenes.CircleOut();
+                        m_LevelScene.LoadIntro();
                     }
                     else if (!m_LevelScene.HasIntroStarted())
                     {
@@ -106,7 +107,7 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        //m_CurrentScene = 2;
+        m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:

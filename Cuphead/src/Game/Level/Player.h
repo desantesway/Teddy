@@ -27,6 +27,7 @@ namespace Cuphead
 		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
 
 		void StartIntro();
+		void LoadIntro();
 
 		void SetGrounded(bool grounded);
 	private:

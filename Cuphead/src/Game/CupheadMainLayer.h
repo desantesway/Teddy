@@ -12,7 +12,7 @@ namespace Cuphead
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		void OnUpdate(Teddy::Timestep ts) override;
+		void OnUpdate(Teddy::Timestep& ts) override;
 		void OnEvent(Teddy::Event& event) override;
 		virtual void OnImGuiRender() override;
 

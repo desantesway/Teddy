@@ -15,7 +15,7 @@ namespace Teddy
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		void OnUpdate(Timestep ts) override;
+		void OnUpdate(Timestep& ts) override;
 		void OnEvent(Event& event) override;
 		virtual void OnImGuiRender() override;
 	private:

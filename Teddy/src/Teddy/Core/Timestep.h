@@ -13,6 +13,8 @@ namespace Teddy
 		float GetMilliseconds() const { return m_Time; }
 		float GetSeconds() const { return m_Time / 1000.0f; }
 
+		void Reset() { m_Time = 0.0f; }
+
 		operator float() const { return GetSeconds(); }
 	private:
 		float m_Time;

@@ -99,8 +99,8 @@ namespace Cuphead
 		// Spire
 		{
 			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire");
-			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(100.125f, 100.125f, 10.125f);
-
+			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
+			spireSprite.Pause = true;
 			std::vector<std::string> paths;
 			for (int i = 0; i <= 35; i++)
 				paths.push_back("assets/Textures/Dragon/Spire/Spire_402x1026_2048x2048_" + std::to_string(i) + ".png");
@@ -295,23 +295,16 @@ namespace Cuphead
 
 		if (increasingSpeed)
 		{
-			static bool firstTime = true;
 			auto& spireSprite = m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>();
 
 			constexpr float maxFrameTime = 0.3f;
 			constexpr float minFrameTime = 0.125f;
 
-			spireSprite.FrameTime = maxFrameTime - (m_MovementVelocity / 1.1f) * (maxFrameTime - minFrameTime);
-			spireSprite.FrameTime = std::max(spireSprite.FrameTime, minFrameTime);
+			float frameT = maxFrameTime - (m_MovementVelocity / 1.1f) * (maxFrameTime - minFrameTime);
+			spireSprite.FrameTime = std::max(frameT, minFrameTime);
 			spireSprite.InitialFrameTime = spireSprite.FrameTime;
 			spireSprite.FinalFrameTime = spireSprite.FrameTime;
-
-			if (firstTime)
-			{
-				auto& spireAA = m_Background.Spire.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-				spireAA.Index = 0.0f;
-				firstTime = false;
-			}
+			spireSprite.Pause = false;
 		}
 
 		m_Player.OnUpdate(ts);
@@ -320,8 +313,9 @@ namespace Cuphead
 		switch (m_Phase)
 		{
 		case 1:
-			m_Clouds.OnUpdate(ts);
 			OnUpdatePhase1();
+			m_Clouds.OnUpdate(ts);
+			//m_Clouds.OnUpdatePhase1(ts);
 			break;
 		default:
 			break;
@@ -460,6 +454,11 @@ namespace Cuphead
 		m_StartIntro = true;
 
 		m_Player.StartIntro();
+	}
+
+	void LevelScene::LoadIntro()
+	{
+		m_Player.LoadIntro();
 	}
 	
 	bool LevelScene::OnContactBegin(Teddy::ContactBeginEvent& e)
