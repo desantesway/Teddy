@@ -106,7 +106,7 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        m_CurrentScene = 2;
+        //m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:
@@ -125,18 +125,10 @@ namespace Cuphead
     {
         TED_PROFILE_FUNCTION();
 
-        switch (m_CurrentScene)
-        {
-        case 1:
-            m_TransitionScenes.FadeIn();
-            m_TransitionScenes.CircleIn();
-            return true;
-        default:
-            //TED_CORE_INFO("No scene found for index {0}", m_CurrentScene);
-            return false;
-        }
+        m_TransitionScenes.FadeIn();
+        m_TransitionScenes.CircleIn();
 
-        return false;
+        return true;
     }
 
     void GameScenes::OnEvent(Teddy::Event& event)

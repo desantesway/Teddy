@@ -21,6 +21,8 @@ namespace Cuphead
 
 		glm::vec3 GetPosition() { return m_Entity.GetComponent<Teddy::TransformComponent>().Translation; }
 
+		bool IsIntroDone() { return m_State != PlayerState::Intro0 && m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2; }
+
 		void InitCuphead(Teddy::Ref<Teddy::Scene> scene);
 		void InitMugman(Teddy::Ref<Teddy::Scene> scene);
 

@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: parry animations // parry object // cloud movement //
+//TODO: cloud movement // parry object //
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -231,7 +231,7 @@ namespace Cuphead
 		auto& body = m_Entity.AddComponent<Teddy::Rigidbody2DComponent>();
 		body.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
 		body.FixedRotation = true;
-		body.GravityScale = 7.5f; // TODO !!
+		body.GravityScale = 7.5f;
 		auto& box = m_Entity.AddComponent<Teddy::BoxCollider2DComponent>();
 		box.Offset = { 0.0f, -0.25f };
 		box.Size = { 0.2f, 0.3f };
@@ -244,6 +244,8 @@ namespace Cuphead
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::PLAYER;
 		filter.MaskBits = LevelCategories::INVISIBLEWALLS | LevelCategories::CLOUDPLATFORMON | LevelCategories::ENEMY;
+
+		m_State = PlayerState::Intro0;
 	}
 
 	void Player::StartIdle()
@@ -891,7 +893,7 @@ namespace Cuphead
 		
 	}
 
-	void Player::StartParry() // TODO: if hit change to pink animation + lil jump
+	void Player::StartParry() // TODO: observer if the parry animation happens until he is on the ground// if hit change to pink animation + lil jump
 	{
 		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded) return;
 

@@ -98,8 +98,8 @@ namespace Cuphead
 
 		// Spire
 		{
-			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire"); // TODO: sync up the animation speed with the movement speed
-			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
+			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire");
+			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(100.125f, 100.125f, 10.125f);
 
 			std::vector<std::string> paths;
 			for (int i = 0; i <= 35; i++)
@@ -273,7 +273,46 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
-		m_MovementSpeed = m_MovementVelocity * ts;
+		static bool increasingSpeed = false;
+		if (m_Player.IsIntroDone())
+		{
+			static float timer = 0.0f;
+			timer += ts;
+			m_MovementSpeed = m_MovementVelocity * ts;
+			m_MovementVelocity = 0.25f * timer;
+			increasingSpeed = true;
+			if (m_MovementVelocity > 1.1f)
+			{
+				m_MovementVelocity = 1.1f;
+				increasingSpeed = false;
+			}
+		}
+		else
+		{
+			m_MovementSpeed = 0.0f;
+			increasingSpeed = false;
+		}
+
+		if (increasingSpeed)
+		{
+			static bool firstTime = true;
+			auto& spireSprite = m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>();
+
+			constexpr float maxFrameTime = 0.3f;
+			constexpr float minFrameTime = 0.125f;
+
+			spireSprite.FrameTime = maxFrameTime - (m_MovementVelocity / 1.1f) * (maxFrameTime - minFrameTime);
+			spireSprite.FrameTime = std::max(spireSprite.FrameTime, minFrameTime);
+			spireSprite.InitialFrameTime = spireSprite.FrameTime;
+			spireSprite.FinalFrameTime = spireSprite.FrameTime;
+
+			if (firstTime)
+			{
+				auto& spireAA = m_Background.Spire.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				spireAA.Index = 0.0f;
+				firstTime = false;
+			}
+		}
 
 		m_Player.OnUpdate(ts);
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);

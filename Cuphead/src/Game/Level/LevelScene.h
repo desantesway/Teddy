@@ -39,7 +39,7 @@ namespace Cuphead
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
-		const float m_MovementVelocity = 1.1f;
+		float m_MovementVelocity = 0.0f;
 		float m_MovementSpeed = 0.0f;
 
 		struct Background

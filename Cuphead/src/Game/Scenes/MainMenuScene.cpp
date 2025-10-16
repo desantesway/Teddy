@@ -101,8 +101,11 @@ namespace Cuphead
 	{
 		TED_PROFILE_FUNCTION();
 
-		Teddy::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(MainMenuScene::OnKeyPressed));
+		if (m_MainMenu)
+		{
+			Teddy::EventDispatcher dispatcher(event);
+			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(MainMenuScene::OnKeyPressed));
+		}
 	}
 
 	void MainMenuScene::UpdateMainMenuButtonColors()
