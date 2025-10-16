@@ -150,12 +150,9 @@ namespace Teddy
 
 		accumulator += frameDelta;
 
-		if (accumulator < fixedTimeStep)
-		{
-			b2World_Step(m_PhysicsWorld, accumulator, subStepCount);
-		}
 		while (accumulator >= fixedTimeStep)
 		{
+			b2World_Step(m_PhysicsWorld, fixedTimeStep, subStepCount);
 			accumulator -= fixedTimeStep;
 		}
 
@@ -600,6 +597,48 @@ namespace Teddy
 		}
 	}
 
+	void Scene::DeleteSensor(Sensor2DComponent::SensorData& sensor)
+	{ 
+		if (sensor.RuntimeFixture)
+		{
+			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), true);
+			delete static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+			sensor.RuntimeFixture = nullptr;
+		}
+	}
+
+	void Scene::RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor)
+	{
+		if (!ent.HasComponent<Rigidbody2DComponent>() && !ent.HasComponent<TransformComponent>()) return;
+
+		Rigidbody2DComponent& rigidBody = ent.GetComponent<Rigidbody2DComponent>();
+		TransformComponent& transform = ent.GetComponent<TransformComponent>();
+
+		if (sensor.RuntimeFixture)
+		{
+			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), true);
+			delete static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+			sensor.RuntimeFixture = nullptr;
+		}
+
+		b2ShapeDef sensorDef = b2DefaultShapeDef();
+		sensorDef.isSensor = true;
+		sensorDef.enableSensorEvents = true;
+
+		if (ent.HasComponent<CollisionFilter2DComponent>())
+		{
+			auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
+			sensorDef.filter.categoryBits = filter.CategoryBits;
+			sensorDef.filter.maskBits = filter.MaskBits;
+			//shapeDef.filter.groupIndex = filter.GroupIndex;
+		}
+
+		b2Polygon box = b2MakeOffsetBox(sensor.Size.x, sensor.Size.y,
+			{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(0));
+		b2ShapeId sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &box);
+		sensor.RuntimeFixture = new b2ShapeId(sensorShape);
+	}
+
 	void Scene::RefreshBody(Entity& ent)
 	{
 		if (!ent.HasComponent<Rigidbody2DComponent>() && !ent.HasComponent<TransformComponent>()) return;
@@ -626,24 +665,24 @@ namespace Teddy
 
 		if (ent.HasComponent<Sensor2DComponent>())
 		{
-			for (auto [_, value] : ent.GetComponent<Sensor2DComponent>().Sensors)
+			for (auto& [_, value] : ent.GetComponent<Sensor2DComponent>().Sensors)
 			{
-				b2ShapeDef footSensorDef = b2DefaultShapeDef();
-				footSensorDef.isSensor = true;
-				footSensorDef.enableSensorEvents = true;
+				b2ShapeDef sensorDef = b2DefaultShapeDef();
+				sensorDef.isSensor = true;
+				sensorDef.enableSensorEvents = true;
 
 				if (ent.HasComponent<CollisionFilter2DComponent>())
 				{
 					auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
-					footSensorDef.filter.categoryBits = filter.CategoryBits;
-					footSensorDef.filter.maskBits = filter.MaskBits;
+					sensorDef.filter.categoryBits = filter.CategoryBits;
+					sensorDef.filter.maskBits = filter.MaskBits;
 					//shapeDef.filter.groupIndex = filter.GroupIndex;
 				}
 
-				b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
+				b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 					{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-				b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &footSensorDef, &footBox);
-				value.RuntimeFixture = new b2ShapeId(footSensor);
+				b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
+				value.RuntimeFixture = new b2ShapeId(sensor);
 			}
 		}
 
@@ -851,24 +890,24 @@ namespace Teddy
 
 			if (entity.HasComponent<Sensor2DComponent>())
 			{
-				for (auto [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
+				for (auto& [_, value] : entity.GetComponent<Sensor2DComponent>().Sensors)
 				{
-					b2ShapeDef footSensorDef = b2DefaultShapeDef();
-					footSensorDef.isSensor = true;
-					footSensorDef.enableSensorEvents = true;
+					b2ShapeDef sensorDef = b2DefaultShapeDef();
+					sensorDef.isSensor = true;
+					sensorDef.enableSensorEvents = true;
 
 					if (entity.HasComponent<CollisionFilter2DComponent>())
 					{
 						auto& filter = entity.GetComponent<CollisionFilter2DComponent>();
-						footSensorDef.filter.categoryBits = filter.CategoryBits;
-						footSensorDef.filter.maskBits = filter.MaskBits;
+						sensorDef.filter.categoryBits = filter.CategoryBits;
+						sensorDef.filter.maskBits = filter.MaskBits;
 						//shapeDef.filter.groupIndex = filter.GroupIndex;
 					}
 
-					b2Polygon footBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
+					b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-					b2ShapeId footSensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &footSensorDef, &footBox);
-					value.RuntimeFixture = new b2ShapeId(footSensor);
+					b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
+					value.RuntimeFixture = new b2ShapeId(sensor);
 				}
 			}
 			
