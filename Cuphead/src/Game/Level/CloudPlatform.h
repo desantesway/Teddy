@@ -29,6 +29,8 @@ namespace Cuphead
 		void StartCloudB(float x, float y);
 		void StartCloudC(float x, float y);
 
+		void GeneratePattern(int cloudNum);
+
 		void UpdatePostions();
 		void UpdateCollisionFilters();
 		void UpdateAnimations();
@@ -46,10 +48,28 @@ namespace Cuphead
 				: Entity(entity), Type(type) {}
 		};
 
+		struct CloudToSpawn
+		{
+			float X;
+			float Y;
+			bool Type; // 0 = A, 1 = C
+
+			CloudToSpawn(float x, float y, bool type)
+				: X(x), Y(y), Type(type) {}
+		};
+
 		std::vector<Cloud> m_Clouds;
+		std::vector<CloudToSpawn> m_CloudsToSpawn;
+		std::vector<CloudToSpawn> m_CurrentCloudsSpawning;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_CloudTextures;
 
 		float m_PlayerY = 0.0f;
 		float m_MovementSpeed = 0.0f;
+
+		glm::vec2 m_LastSpawn;
+		std::mt19937 m_Rng;
+		std::uniform_real_distribution<float> m_XDistribution;
+		std::uniform_real_distribution<float> m_YDistribution;	   // TODO: change this to levelScenes
+		std::bernoulli_distribution m_TypeDistribution;	   // TODO: change this to levelScenes
 	};
 }

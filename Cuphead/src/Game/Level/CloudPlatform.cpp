@@ -20,6 +20,12 @@ namespace Cuphead
 			"assets/Textures/Dragon/Platforms/Cloud_Platform_242x90_1024x1024_0.png",
 			"assets/Textures/Dragon/Platforms/Cloud_Platform_242x90_1024x1024_1.png"
 			});
+
+		std::random_device rd;
+		m_Rng = std::mt19937(rd());
+		m_XDistribution = std::uniform_real_distribution<float>(0.1f, 2.0f);
+		m_YDistribution = std::uniform_real_distribution<float>(-2.0f, 2.0f);
+		m_TypeDistribution = std::bernoulli_distribution(0.5f);
 	}
 
 	void CloudPlatform::InitPhase1()
@@ -34,6 +40,60 @@ namespace Cuphead
 
 		StartCloudC(4.5f, 2.0f);
 		StartCloudC(-1.75f, 0.25f);
+
+		StartCloudC(6.0f, 0.25f);
+
+		m_LastSpawn = glm::vec2(6.0f, 0.25f);
+
+		GeneratePattern(50);
+	}
+
+	void CloudPlatform::GeneratePattern(int cloudNum)
+	{
+		static constexpr float kMaxUp = 1.5f;     
+		static constexpr float kMaxDown = 4.0f;   
+		static constexpr float kYMin = -2.0f;     
+		static constexpr float kYMax = 2.0f;
+		static constexpr float kDxMin = 0.25f;    
+		static constexpr float kDxMaxBase = 2.00f;
+
+		glm::vec2 last = m_LastSpawn;
+
+		for (int i = 0; i < cloudNum; i+=3)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				std::uniform_real_distribution<float> dYrand(-2.5f, 2.5f);
+
+				float proposedY = dYrand(m_Rng);
+
+				while (proposedY > kYMax || proposedY < kYMin || (proposedY < (last.y + 2.0f) && proposedY > (last.y - 2.0f)))
+				{
+					proposedY = dYrand(m_Rng);
+				}
+
+				if (proposedY > last.y + kMaxUp)   proposedY = last.y + kMaxUp;
+				if (proposedY < last.y - kMaxDown) proposedY = last.y - kMaxDown;
+
+				const float dy = proposedY - last.y;
+
+				float dxMax = kDxMaxBase - 0.35f * std::max(0.0f, dy);
+				dxMax = std::clamp(dxMax, 0.25f, kDxMaxBase);
+
+				std::uniform_real_distribution<float> dXrand(kDxMin, dxMax);
+				float proposedX = last.x + dXrand(m_Rng);
+
+				bool typeIsC = m_TypeDistribution(m_Rng);
+
+				m_CloudsToSpawn.emplace_back(proposedX, proposedY, typeIsC);
+
+				last = glm::vec2(proposedX, proposedY);
+			}
+
+			last.x += 0.5f;
+		}
+
+		m_LastSpawn = last;
 	}
 
 	void CloudPlatform::StartCloudA(float x, float y)
@@ -127,6 +187,9 @@ namespace Cuphead
 	void CloudPlatform::UpdatePostions()
 	{
 		std::vector<Cloud> newClouds;
+		float movedDistance = 0.0f;
+		float prevDistance = 0.0f;
+
 		for (auto& plats : m_Clouds)
 		{
 			if (plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x < -6.5)
@@ -140,6 +203,7 @@ namespace Cuphead
 			auto& cloud = plats.Entity;
 			auto& body = cloud.GetComponent<Teddy::Rigidbody2DComponent>();
 			body.SetVelocityX(-m_MovementSpeed*200);
+
 			if (plats.Overlay)
 			{
 				auto& transform = plats.Overlay.GetComponent<Teddy::TransformComponent>();
@@ -150,6 +214,32 @@ namespace Cuphead
 		}
 
 		m_Clouds = newClouds;
+
+		std::vector<CloudToSpawn> newCloudsToSpawn;
+		if (m_CurrentCloudsSpawning.size() <= 0) 
+			m_CurrentCloudsSpawning = m_CloudsToSpawn;
+		for (auto& toSpawn : m_CurrentCloudsSpawning)
+		{
+			toSpawn.X -= m_MovementSpeed * 1;
+		
+			if (toSpawn.X <= 6.00f)
+			{
+				if (toSpawn.Type)
+				{
+					StartCloudC(toSpawn.X, toSpawn.Y);
+					m_Scene->RefreshBody(m_Clouds.back().Entity);
+				}
+				else
+				{
+					StartCloudA(toSpawn.X, toSpawn.Y);
+					m_Scene->RefreshBody(m_Clouds.back().Entity);
+				}
+			}
+			else
+				newCloudsToSpawn.push_back(toSpawn);
+		}
+
+		m_CurrentCloudsSpawning = newCloudsToSpawn;
 	}
 
 	void CloudPlatform::UpdateCollisionFilters()
