@@ -89,7 +89,7 @@ namespace Cuphead
 		PlayerState m_State = PlayerState::Idle;
 
 		bool m_DirectionRight = true;
-		bool m_Grounded = false;
+		bool m_Grounded = true;
 
 		bool m_StartDash = false;
 		bool m_DashReset = true;

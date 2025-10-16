@@ -3,12 +3,11 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: adjust velocities (run, falling/jumping, dash) // parry animations // parry object
+//TODO: parry animations // parry object
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
-		TED_CORE_INFO("{}", m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().GetGravityScale());
 		DeleteCookie(ts);
 
 		if(m_ZHeld)
@@ -221,7 +220,7 @@ namespace Cuphead
 		auto& body = m_Entity.AddComponent<Teddy::Rigidbody2DComponent>();
 		body.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
 		body.FixedRotation = true;
-		body.GravityScale = 10.0f;
+		body.GravityScale = 7.5f; // TODO !!
 		auto& box = m_Entity.AddComponent<Teddy::BoxCollider2DComponent>();
 		box.Offset = { 0.0f, -0.25f };
 		box.Size = { 0.2f, 0.3f };
@@ -359,7 +358,6 @@ namespace Cuphead
 		static std::mt19937 gen(rd());
 		static std::uniform_int_distribution<> distr(0, 2);
 		int choice = distr(gen);
-		choice = 2;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
@@ -422,7 +420,7 @@ namespace Cuphead
 			break;
 		}
 
-		 //m_Scene->RefreshBody(m_Entity);
+		 m_Scene->RefreshBody(m_Entity);
 	}
 
 	void Player::Move(Teddy::Timestep ts)
@@ -434,13 +432,13 @@ namespace Cuphead
 		if (leftPressed)
 		{
 			m_Moving = true;
-			velocity = -7.5f;
+			velocity = -3.75f;
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 		else if (rightPressed)
 		{
 			m_Moving = true;
-			velocity = 7.5f;
+			velocity = 3.75f;
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
 		else
@@ -510,7 +508,8 @@ namespace Cuphead
 
 	void Player::StartFalling()
 	{			
-		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded || 
+			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -616,7 +615,6 @@ namespace Cuphead
 
 	void Player::Jumping(Teddy::Timestep ts)
 	{
-		
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 
 		bool running = false;
@@ -626,7 +624,8 @@ namespace Cuphead
 		time += ts.GetSeconds();
 
 		static constexpr float maxJumpHoldTime = 0.25f;
-		static constexpr float jumpHoldForce = 47.5f;
+		static constexpr float minJumpHoldTime = 0.1f;
+		static constexpr float jumpHoldForce = 70.0f;
 
 		if (m_StartJump)
 		{
@@ -636,10 +635,13 @@ namespace Cuphead
 			time = 0.0f;
 		}
 
-		if (time < maxJumpHoldTime && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
+		if (time <= maxJumpHoldTime && keyHeld && m_ZHeld && body.GetVelocity().y > 0)
 		{
-			body.SetVelocityY(body.GetVelocity().y + jumpHoldForce * ts.GetSeconds());
-			keyHeld = true;
+			if (time > minJumpHoldTime)
+			{
+				body.SetVelocityY(body.GetVelocity().y + ts * jumpHoldForce);
+				keyHeld = true;
+			}
 		}
 		else
 		{
@@ -779,7 +781,7 @@ namespace Cuphead
 		m_State = PlayerState::Dashing;
 	}
 
-	void Player::Dashing(Teddy::Timestep ts)
+	void Player::Dashing(Teddy::Timestep ts) // TODO: fix sprite position
 	{
 		static float timer = 0.0f;
 		static float initialDistance = 0;
@@ -796,26 +798,27 @@ namespace Cuphead
 		else if (m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.size() < 4)
 		{
 			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-			sprite.PingPong = true;
-			sprite.Loop = true;
+			sprite.PingPong = false;
+			sprite.Loop = false;
 			sprite.Reverse = true;
 			sprite.InitialFrameTime = 1.0f;
 			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 
 			if (m_Grounded)
 			{
-				sprite.PlayableIndicies = { 120, 121, 122, 123, 124, 125 };
+				sprite.PlayableIndicies = { 111, 110, 120, 121, 122, 123, 124, 125 };
 				indicies.Index = 125;
 			}
 			else
 			{
-				sprite.PlayableIndicies = { 114, 115, 116, 117, 118, 119 };
+				sprite.PlayableIndicies = { 113, 112, 114, 115, 116, 117, 118, 119 };
 				indicies.Index = 119;
 			}
 		}
-		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.x) >= 2.5f || timer > 0.35f)
+		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.x) >= 2.75f || 
+			(abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.x) < 1.0f && timer > 0.5f) || timer > 0.3f)
 		{
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetGravityScale(10.0f);
+			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetGravityScale(7.5f);
 			m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.5f;
 			if(m_Grounded)
 			{
@@ -850,14 +853,18 @@ namespace Cuphead
 			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (m_Grounded)
 			{
-				sprite.PlayableIndicies = { 120, 121, 122, 123, 124, 125 };
-				if(indicies.Index < 120)
+				sprite.PlayableIndicies = { 111, 110, 120, 121, 122, 123, 124, 125 };
+				if(indicies.Index > 111 && indicies.Index < 114)
+					indicies.Index = indicies.Index - 2;
+				else if(indicies.Index < 120)
 					indicies.Index = indicies.Index + 6;
 			}
 			else
 			{
-				sprite.PlayableIndicies = { 114, 115, 116, 117, 118, 119 };
-				if (indicies.Index >= 120)
+				sprite.PlayableIndicies = { 113, 112, 114, 115, 116, 117, 118, 119 };
+				if (indicies.Index < 112)
+					indicies.Index = indicies.Index + 2;
+				else if (indicies.Index >= 120)
 					indicies.Index = indicies.Index - 6;
 			}
 		}
