@@ -20,6 +20,7 @@ namespace Cuphead
 		void OnUpdate(Teddy::Timestep ts);
 
 		void SetPlayerY(float y);
+		void SetMovementSpeed(float speed) { m_MovementSpeed = speed; }
 
 		void CloudContactBegin(const b2ShapeId& cloudShape);
 		void CloudContactEnd(const b2ShapeId& cloudShape);
@@ -28,6 +29,7 @@ namespace Cuphead
 		void StartCloudB(float x, float y);
 		void StartCloudC(float x, float y);
 
+		void UpdatePostions();
 		void UpdateCollisionFilters();
 		void UpdateAnimations();
 	private:
@@ -48,5 +50,6 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_CloudTextures;
 
 		float m_PlayerY = 0.0f;
+		float m_MovementSpeed = 0.0f;
 	};
 }

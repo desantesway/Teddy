@@ -233,7 +233,6 @@ namespace Cuphead
 		box.Offset = { 0.0f, -0.25f };
 		box.Size = { 0.2f, 0.3f };
 		box.EnableContactEvents = true;
-		box.Friction = 0.0f;
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f };
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };

@@ -5,6 +5,7 @@ namespace Cuphead
 {
 	void CloudPlatform::OnUpdate(Teddy::Timestep ts)
 	{
+		UpdatePostions();
 		UpdateCollisionFilters();
 		UpdateAnimations();
 	}
@@ -49,12 +50,12 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Friction = 0.0f;
 		collider.Size = { 1.0f, 0.2f };
 		collider.Offset = { 0.0f, -0.075f };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
@@ -79,12 +80,12 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Friction = 0.0f;
 		collider.Size = { 0.75f, 0.2f };
 		collider.Offset = { 0.0f, -0.1f };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
@@ -109,18 +110,46 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Friction = 0.0f;
 		collider.Size = { 1.0f, 0.2f };
 		collider.Offset = { 0.0f, -0.075f };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
 		filter.MaskBits = LevelCategories::PLAYER;
 
 		m_Clouds.push_back({ cloud, 2 });
+	}
+
+	void CloudPlatform::UpdatePostions()
+	{
+		std::vector<Cloud> newClouds;
+		for (auto& plats : m_Clouds)
+		{
+			if (plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x < -6.5)
+			{
+				m_Scene->DestroyEntity(plats.Entity);
+				if (plats.Overlay)
+					m_Scene->DestroyEntity(plats.Overlay);
+				continue;
+			}
+
+			auto& cloud = plats.Entity;
+			auto& body = cloud.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocityX(-m_MovementSpeed*200);
+			if (plats.Overlay)
+			{
+				auto& transform = plats.Overlay.GetComponent<Teddy::TransformComponent>();
+				transform.Translation.x = plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x;
+			}
+
+			newClouds.push_back(plats);
+		}
+
+		m_Clouds = newClouds;
 	}
 
 	void CloudPlatform::UpdateCollisionFilters()
@@ -132,7 +161,7 @@ namespace Cuphead
 			auto& filter = cloud.GetComponent<Teddy::CollisionFilter2DComponent>();
 			auto& collider = cloud.GetComponent<Teddy::BoxCollider2DComponent>();
 
-			if (transform.Translation.y < m_PlayerY - 0.8f)
+			if (transform.Translation.y < m_PlayerY - 0.5f)
 			{
 				if (filter.CategoryBits != LevelCategories::CLOUDPLATFORMON)
 				{

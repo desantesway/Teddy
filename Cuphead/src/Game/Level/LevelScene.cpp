@@ -286,13 +286,14 @@ namespace Cuphead
 				m_MovementVelocity = 1.1f;
 				increasingSpeed = false;
 			}
+
+			m_Clouds.SetMovementSpeed(m_MovementSpeed);
 		}
 		else
 		{
 			m_MovementSpeed = 0.0f;
 			increasingSpeed = false;
 		}
-
 		if (increasingSpeed)
 		{
 			auto& spireSprite = m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -314,12 +315,12 @@ namespace Cuphead
 		{
 		case 1:
 			OnUpdatePhase1();
-			m_Clouds.OnUpdate(ts);
-			//m_Clouds.OnUpdatePhase1(ts);
 			break;
 		default:
 			break;
 		}
+
+		m_Clouds.OnUpdate(ts);
 	}
 
 	void LevelScene::OnUpdatePhase1()
@@ -447,6 +448,8 @@ namespace Cuphead
 				cloud3LeftTransform.Translation.x = 0.0f;
 			}
 		}
+
+		//m_Clouds.OnUpdatePhase1(ts);
 	}
 
 	void LevelScene::StartIntro()
