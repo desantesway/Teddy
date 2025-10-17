@@ -29,7 +29,7 @@ namespace Cuphead
 
 	void CloudPlatform::InitPhase1()
 	{
-		StartCloudA(-4.0f, -1.25f);
+		StartCloudA(-4.0f, -1.25f, true);
 		StartCloudA(-3.75f, 1.6f);
 		StartCloudA(0.3f, 1.25f);
 		StartCloudA(1.35f, -1.5f);
@@ -98,6 +98,83 @@ namespace Cuphead
 		
 		m_LastSpawn = last;
 		m_CurrentCloudsSpawning = m_CloudsToSpawn;
+	}
+
+	void CloudPlatform::ActivateCloud(Cloud& cloud)
+	{
+		if (!cloud.Active)
+		{
+			cloud.Active = true;
+
+			auto& sprite = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Textures = m_CloudTextures;
+			sprite.Loop = false;
+			sprite.PingPong = false;
+			sprite.Reverse = false;
+			sprite.FrameTime = 0.025f;
+			auto& aA = cloud.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+			switch (cloud.Type)
+			{
+			case 0:
+			{
+				sprite.PlayableIndicies = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+				aA.Index = 3;
+				break;
+			}
+			case 1:
+			{
+				sprite.PlayableIndicies = { 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
+				aA.Index = 26;
+				break;
+			}
+			case 2:
+			{
+				sprite.PlayableIndicies = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
+				aA.Index = 49;
+				break;
+			}
+			}
+
+			sprite.Timer = 0.0f;
+			if (!cloud.Overlay)
+			{
+				cloud.Overlay = m_Scene->CreateEntity("Cloud Overlay" + std::to_string(cloud.Type) + "#" + std::to_string(m_Clouds.size()));
+				cloud.Overlay.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 242, 90);
+				auto& spriteOverlay = cloud.Overlay.AddComponent<Teddy::SpriteAnimationComponent>(0.1f, 0.025f, 0.1f);
+				spriteOverlay.Textures = m_CloudTextures;
+				std::vector<int> overlayIndicies;
+				for (int i : sprite.PlayableIndicies)
+					overlayIndicies.push_back(i + 10);
+				spriteOverlay.PlayableIndicies = overlayIndicies;
+				spriteOverlay.Loop = false;
+				spriteOverlay.PingPong = false;
+				spriteOverlay.Reverse = false;
+				auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				aAOverlay.Index = aA.Index + 10;
+				auto& transform = cloud.Overlay.GetComponent<Teddy::TransformComponent>();
+				auto& originalTransform = cloud.Entity.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = glm::vec3(originalTransform.Translation.x, originalTransform.Translation.y, 2.01f);
+				transform.Scale *= 0.75f;
+			}
+			else
+			{
+				sprite.FrameTime = 0.025f;
+				auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+				spriteOverlay.Reverse = false;
+			}
+		}
+	}
+
+	void CloudPlatform::StartCloudA(float x, float y, bool isActivate)
+	{
+		StartCloudA(x, y);
+
+		if (!isActivate) return;
+
+		auto& cloud = m_Clouds.back();
+
+		ActivateCloud(cloud);
 	}
 
 	void CloudPlatform::StartCloudA(float x, float y)
@@ -304,68 +381,7 @@ namespace Cuphead
 				auto shapeId = *static_cast<b2ShapeId*>(collider.RuntimeFixture);
 				if (B2_ID_EQUALS(shapeId, cloudShape))
 				{
-					if (!cloud.Active)
-					{
-						cloud.Active = true;
-
-						auto& sprite = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-						sprite.Textures = m_CloudTextures;
-						sprite.Loop = false;
-						sprite.PingPong = false;
-						sprite.Reverse = false;
-						sprite.FrameTime = 0.025f;
-						auto& aA = cloud.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-
-						switch (cloud.Type)
-						{
-							case 0:
-							{
-								sprite.PlayableIndicies = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-								aA.Index = 3;
-								break;
-							}
-							case 1:
-							{
-								sprite.PlayableIndicies = { 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
-								aA.Index = 26;
-								break;
-							}
-							case 2:
-							{
-								sprite.PlayableIndicies = { 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
-								aA.Index = 49;
-								break;
-							}
-						}
-
-						sprite.Timer = 0.0f;
-						if (!cloud.Overlay)
-						{
-							cloud.Overlay = m_Scene->CreateEntity("Cloud Overlay" + std::to_string(cloud.Type) + "#" + std::to_string(m_Clouds.size()));
-							cloud.Overlay.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 242, 90);
-							auto& spriteOverlay = cloud.Overlay.AddComponent<Teddy::SpriteAnimationComponent>(0.1f, 0.025f, 0.1f);
-							spriteOverlay.Textures = m_CloudTextures;
-							std::vector<int> overlayIndicies;
-							for (int i: sprite.PlayableIndicies)
-								overlayIndicies.push_back(i + 10);
-							spriteOverlay.PlayableIndicies = overlayIndicies;
-							spriteOverlay.Loop = false;
-							spriteOverlay.PingPong = false;
-							spriteOverlay.Reverse = false;
-							auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-							aAOverlay.Index = aA.Index + 10;
-							auto& transform = cloud.Overlay.GetComponent<Teddy::TransformComponent>();
-							auto& originalTransform = cloud.Entity.GetComponent<Teddy::TransformComponent>();
-							transform.Translation = glm::vec3(originalTransform.Translation.x, originalTransform.Translation.y, 2.01f);
-							transform.Scale *= 0.75f;
-						}
-						else
-						{
-							sprite.FrameTime = 0.025f;
-							auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
-							spriteOverlay.Reverse = false;
-						}
-					}
+					ActivateCloud(cloud);
 				}
 			}
 		}

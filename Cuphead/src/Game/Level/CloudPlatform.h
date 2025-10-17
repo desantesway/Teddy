@@ -25,18 +25,6 @@ namespace Cuphead
 		void CloudContactBegin(const b2ShapeId& cloudShape);
 		void CloudContactEnd(const b2ShapeId& cloudShape);
 	private:
-		void StartCloudA(float x, float y);
-		void StartCloudB(float x, float y);
-		void StartCloudC(float x, float y);
-
-		void GeneratePattern(int cloudNum);
-
-		void UpdatePostions();
-		void UpdateCollisionFilters();
-		void UpdateAnimations();
-	private:
-		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
-
 		struct Cloud
 		{
 			Teddy::Entity Entity;
@@ -45,8 +33,23 @@ namespace Cuphead
 			bool Active = false;
 
 			Cloud(Teddy::Entity entity, int type)
-				: Entity(entity), Type(type) {}
+				: Entity(entity), Type(type) {
+			}
 		};
+
+		void StartCloudA(float x, float y);
+		void StartCloudB(float x, float y);
+		void StartCloudC(float x, float y);
+		void StartCloudA(float x, float y, bool isActivate);
+		void ActivateCloud(Cloud& cloud);
+
+		void GeneratePattern(int cloudNum);
+
+		void UpdatePostions();
+		void UpdateCollisionFilters();
+		void UpdateAnimations();
+	private:
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
 		struct CloudToSpawn
 		{

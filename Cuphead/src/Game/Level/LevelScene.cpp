@@ -273,6 +273,22 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
+		CameraShake(ts);
+
+		if (m_Player.IsDead())
+		{
+			if (m_FloorHitContact)
+			{
+				m_CameraShake = true;
+			}
+
+			m_Player.OnUpdate(ts);
+			m_Clouds.SetMovementSpeed(0.0f);
+			m_Clouds.OnUpdate(ts);
+
+			return;
+		}
+
 		static bool increasingSpeed = false;
 		if (m_Player.IsIntroDone())
 		{
@@ -315,7 +331,7 @@ namespace Cuphead
 		if (m_FloorHitContact)
 		{
 			m_CameraShake = true;
-			m_Player.FloorHit(); // TODO: Camera shake
+			m_Player.FloorHit();
 		}
 
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
@@ -472,7 +488,7 @@ namespace Cuphead
 		static float s_Timer = 0.0f;
 		static glm::vec3 s_BasePos{ 0.0f, 0.0f, 0.0f };
 
-		constexpr float kDurationSec = 1.0f;
+		constexpr float kDurationSec = 0.5f;
 		constexpr float kAmplitude = 0.06f;  // world units (x/y)
 		constexpr float kFrequency = 24.0f;  // Hz
 		constexpr float kYScale = 0.65f;
