@@ -21,8 +21,7 @@ namespace Cuphead
 			"assets/Textures/Dragon/Platforms/Cloud_Platform_242x90_1024x1024_1.png"
 			});
 
-		std::random_device rd;
-		m_Rng = std::mt19937(rd());
+		m_Rng.seed(std::random_device{}());
 		m_XDistribution = std::uniform_real_distribution<float>(0.1f, 2.0f);
 		m_YDistribution = std::uniform_real_distribution<float>(-2.0f, 2.0f);
 		m_TypeDistribution = std::bernoulli_distribution(0.5f);
@@ -55,7 +54,7 @@ namespace Cuphead
 		static constexpr float kYMin = -2.0f;     
 		static constexpr float kYMax = 2.0f;
 		static constexpr float kDxMin = 0.25f;    
-		static constexpr float kDxMaxBase = 2.00f;
+		static constexpr float kDxMaxBase = 1.50f;
 
 		glm::vec2 last = m_LastSpawn;
 
@@ -63,6 +62,10 @@ namespace Cuphead
 		{
 			for (int j = 0; j < 3; j++)
 			{
+				float maxXOffset = kDxMaxBase;
+				if (j == 0)
+					maxXOffset = 0.5f;
+				
 				std::uniform_real_distribution<float> dYrand(-2.5f, 2.5f);
 
 				float proposedY = dYrand(m_Rng);
@@ -77,8 +80,8 @@ namespace Cuphead
 
 				const float dy = proposedY - last.y;
 
-				float dxMax = kDxMaxBase - 0.35f * std::max(0.0f, dy);
-				dxMax = std::clamp(dxMax, 0.25f, kDxMaxBase);
+				float dxMax = maxXOffset - 0.35f * std::max(0.0f, dy);
+				dxMax = std::clamp(dxMax, 0.25f, maxXOffset);
 
 				std::uniform_real_distribution<float> dXrand(kDxMin, dxMax);
 				float proposedX = last.x + dXrand(m_Rng);
@@ -90,10 +93,11 @@ namespace Cuphead
 				last = glm::vec2(proposedX, proposedY);
 			}
 
-			last.x += 0.5f;
+			last.x += 1.0f;
 		}
-
+		
 		m_LastSpawn = last;
+		m_CurrentCloudsSpawning = m_CloudsToSpawn;
 	}
 
 	void CloudPlatform::StartCloudA(float x, float y)
@@ -110,8 +114,8 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 1.0f, 0.2f };
-		collider.Offset = { 0.0f, -0.075f };
+		collider.Size = { 1.1f, 0.025f };
+		collider.Offset = { 0.0f, -0.075f/8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
@@ -140,8 +144,8 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 0.75f, 0.2f };
-		collider.Offset = { 0.0f, -0.1f };
+		collider.Size = { 0.75f * 1.1f, 0.2f / 8 };
+		collider.Offset = { 0.0f, -0.1f / 8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
@@ -170,8 +174,8 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 1.0f, 0.2f };
-		collider.Offset = { 0.0f, -0.075f };
+		collider.Size = { 1.0f * 1.1f, 0.2f / 8 };
+		collider.Offset = { 0.0f, -0.075f / 8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
 		auto& body = cloud.AddComponent<Teddy::Rigidbody2DComponent>();
@@ -187,7 +191,6 @@ namespace Cuphead
 	void CloudPlatform::UpdatePostions()
 	{
 		std::vector<Cloud> newClouds;
-		float movedDistance = 0.0f;
 		float prevDistance = 0.0f;
 
 		for (auto& plats : m_Clouds)
@@ -216,8 +219,12 @@ namespace Cuphead
 		m_Clouds = newClouds;
 
 		std::vector<CloudToSpawn> newCloudsToSpawn;
-		if (m_CurrentCloudsSpawning.size() <= 0) 
-			m_CurrentCloudsSpawning = m_CloudsToSpawn;
+		if (m_CurrentCloudsSpawning.size() <= 0)
+		{
+			m_CurrentCloudsSpawning.reserve(m_CloudsToSpawn.size());
+			for (const auto& cloud : m_CloudsToSpawn)
+				m_CurrentCloudsSpawning.emplace_back(cloud.X + 1.0f, cloud.Y, cloud.Type);
+		}
 		for (auto& toSpawn : m_CurrentCloudsSpawning)
 		{
 			toSpawn.X -= m_MovementSpeed * 1;
@@ -251,7 +258,7 @@ namespace Cuphead
 			auto& filter = cloud.GetComponent<Teddy::CollisionFilter2DComponent>();
 			auto& collider = cloud.GetComponent<Teddy::BoxCollider2DComponent>();
 
-			if (transform.Translation.y < m_PlayerY - 0.5f)
+			if (transform.Translation.y < m_PlayerY - 0.45f) // TODO: if necessary do with x
 			{
 				if (filter.CategoryBits != LevelCategories::CLOUDPLATFORMON)
 				{

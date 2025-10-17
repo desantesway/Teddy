@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO: cloud movement // parry object //
+//TODO:  parry object //
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -21,6 +21,16 @@ namespace Cuphead
 
 		if (!m_ParryReset)
 			m_ParryReset = m_Grounded;
+
+		if (m_State != PlayerState::Parrying)
+		{
+			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+			if (sensor.Sensors.contains("ParryHitBox"))
+			{
+				m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
+				sensor.Sensors.erase("ParryHitBox");
+			}
+		}
 
 		switch (m_State)
 		{
@@ -944,16 +954,6 @@ namespace Cuphead
 	void Player::Parrying()
 	{
 		Falling();
-
-		if (m_State != PlayerState::Parrying)
-		{
-			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-			if (sensor.Sensors.contains("ParryHitBox"))
-			{
-				m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
-				sensor.Sensors.erase("ParryHitBox");
-			}
-		}
 	}
 
 	void Player::StartDrop()
