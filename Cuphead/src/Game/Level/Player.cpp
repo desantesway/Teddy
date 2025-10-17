@@ -32,6 +32,8 @@ namespace Cuphead
 			}
 		}
 
+		TED_CORE_INFO("m_Health {}", m_Health);
+
 		switch (m_State)
 		{
 		case PlayerState::Intro0:
@@ -1042,6 +1044,22 @@ namespace Cuphead
 		{
 			Teddy::EventDispatcher dispatcher(event);
 			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
+		}
+	}
+
+	void Player::FloorHit(bool isContacting)
+	{
+		if (isContacting)
+		{
+			if (!m_Hitting)
+			{
+				m_Hitting = true;
+				m_Health--;
+			}
+		}
+		else if (!isContacting)
+		{
+			m_Hitting = false;
 		}
 	}
 }

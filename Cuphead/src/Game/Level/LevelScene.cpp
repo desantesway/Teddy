@@ -19,16 +19,16 @@ namespace Cuphead
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
-		auto floor = m_Scene->CreateEntity("Level Floor");  // Turn this into a sensor later // or contact and when on contact give damage to player
+		m_Floor = m_Scene->CreateEntity("Level Floor");  // Turn this into a sensor later // or contact and when on contact give damage to player
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
-		auto& floorCollider = floor.AddComponent<Teddy::BoxCollider2DComponent>();
+		auto& floorCollider = m_Floor.AddComponent<Teddy::BoxCollider2DComponent>();
 		floorCollider.EnableSensorEvents = true;
 		floorCollider.Friction = 0.0f;
-		floor.AddComponent<Teddy::Rigidbody2DComponent>();
-		auto& floorTransform = floor.GetComponent<Teddy::TransformComponent>();
+		m_Floor.AddComponent<Teddy::Rigidbody2DComponent>();
+		auto& floorTransform = m_Floor.GetComponent<Teddy::TransformComponent>();
 		floorTransform.Translation = glm::vec3(0.0f, -3.4f, 2.0f);
 		floorTransform.Scale = glm::vec3(15.0f, 1.0f, 1.0f);
-		auto& filter = floor.AddComponent<Teddy::CollisionFilter2DComponent>();
+		auto& filter = m_Floor.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::INVISIBLEWALLS;
 		filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PLAYERGHOST;
 
@@ -469,12 +469,20 @@ namespace Cuphead
 		b2ShapeId playerCollider = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 		if (B2_ID_EQUALS(e.GetShapeA(), playerCollider))
 		{
-			m_Clouds.CloudContactBegin(e.GetShapeB());
+			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
+			if (B2_ID_EQUALS(e.GetShapeB(), floorCollider))
+				m_Player.FloorHit(true);
+			else
+				m_Clouds.CloudContactBegin(e.GetShapeB());
 			return true;
 		}
 		else if (B2_ID_EQUALS(e.GetShapeB(), playerCollider))
 		{
-			m_Clouds.CloudContactBegin(e.GetShapeA());
+			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
+			if (B2_ID_EQUALS(e.GetShapeA(), floorCollider))
+				m_Player.FloorHit(true);
+			else
+				m_Clouds.CloudContactBegin(e.GetShapeA());
 			return true;
 		}
 
@@ -486,12 +494,20 @@ namespace Cuphead
 		b2ShapeId playerCollider = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 		if (B2_ID_EQUALS(e.GetShapeA(), playerCollider))
 		{
-			m_Clouds.CloudContactEnd(e.GetShapeB());
+			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
+			if (B2_ID_EQUALS(e.GetShapeB(), floorCollider))
+				m_Player.FloorHit(false);
+			else
+				m_Clouds.CloudContactBegin(e.GetShapeB());
 			return true;
 		}
 		else if (B2_ID_EQUALS(e.GetShapeB(), playerCollider))
 		{
-			m_Clouds.CloudContactEnd(e.GetShapeA());
+			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
+			if (B2_ID_EQUALS(e.GetShapeA(), floorCollider))
+				m_Player.FloorHit(false);
+			else
+				m_Clouds.CloudContactBegin(e.GetShapeA());
 			return true;
 		}
 

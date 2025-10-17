@@ -77,6 +77,7 @@ namespace Cuphead
 
 		Player m_Player;
 		CloudPlatform m_Clouds;
+		Teddy::Entity m_Floor;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;

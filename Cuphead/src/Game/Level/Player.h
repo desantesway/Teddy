@@ -30,6 +30,8 @@ namespace Cuphead
 		void LoadIntro();
 
 		void SetGrounded(bool grounded);
+
+		void FloorHit(bool isContacting);
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
@@ -113,5 +115,9 @@ namespace Cuphead
 		bool m_Moving = false;
 
 		bool m_ParryReset = true;
+
+		int m_Health = 4;
+		bool m_Hitting = false;
+
 	};
 }
