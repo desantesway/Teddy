@@ -32,6 +32,8 @@ namespace Cuphead
 		void InitPhase1Background();
 		void InitPhase1Foreground();
 		void OnUpdatePhase1();
+		
+		void CameraShake(Teddy::Timestep ts);
 
 		bool OnSensorBegin(Teddy::SensorBeginEvent& e);
 		bool OnSensorEnd(Teddy::SensorEndEvent& e);
@@ -78,6 +80,7 @@ namespace Cuphead
 		Player m_Player;
 		CloudPlatform m_Clouds;
 		Teddy::Entity m_Floor;
+		Teddy::Entity m_Camera;
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;
@@ -86,5 +89,6 @@ namespace Cuphead
 		bool m_StartIntro = false;
 
 		bool m_FloorHitContact = false;
+		bool m_CameraShake = false;
 	};
 }

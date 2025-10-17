@@ -10,9 +10,9 @@ namespace Cuphead
 	{
 		m_Scene = Teddy::CreateRef<Teddy::Scene>();
 		
-		auto camEntt = m_Scene->CreateEntity("Main Menu Camera");
-		camEntt.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
-		auto& cam = camEntt.AddComponent<Teddy::CameraComponent>();
+		m_Camera = m_Scene->CreateEntity("Main Menu Camera");
+		m_Camera.GetComponent<Teddy::TransformComponent>().Translation = { 0.0f, 0.0f, 9.0f };
+		auto& cam = m_Camera.AddComponent<Teddy::CameraComponent>();
 		cam.Camera.SetProjectionType(Teddy::SceneCamera::ProjectionType::Perspective);
 
 		auto& window = Teddy::Application::Get().GetWindow();
@@ -311,8 +311,12 @@ namespace Cuphead
 
 		m_Player.OnUpdate(ts);
 
+		CameraShake(ts);
 		if (m_FloorHitContact)
+		{
+			m_CameraShake = true;
 			m_Player.FloorHit(); // TODO: Camera shake
+		}
 
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
 
@@ -457,6 +461,54 @@ namespace Cuphead
 		//m_Clouds.OnUpdatePhase1(ts);
 	}
 
+	void LevelScene::CameraShake(Teddy::Timestep ts)
+	{
+		if (!m_CameraShake || !m_Camera)
+			return;
+
+		auto& camTransform = m_Camera.GetComponent<Teddy::TransformComponent>();
+
+		static bool s_Started = false;
+		static float s_Timer = 0.0f;
+		static glm::vec3 s_BasePos{ 0.0f, 0.0f, 0.0f };
+
+		constexpr float kDurationSec = 1.0f;
+		constexpr float kAmplitude = 0.06f;  // world units (x/y)
+		constexpr float kFrequency = 24.0f;  // Hz
+		constexpr float kYScale = 0.65f;
+		constexpr float kSkew = 0.85f; 
+
+		if (!s_Started)
+		{
+			s_Started = true;
+			s_Timer = 0.0f;
+			s_BasePos = camTransform.Translation;
+		}
+
+		s_Timer += ts.GetSeconds();
+
+		if (s_Timer >= kDurationSec)
+		{
+			camTransform.Translation = s_BasePos;
+			m_CameraShake = false;
+			s_Started = false;
+			s_Timer = 0.0f;
+			return;
+		}
+
+		const float t = s_Timer / kDurationSec;
+		const float falloff = (1.0f - t) * (1.0f - t);
+
+		const float xAngle = 2.0f * 3.1415926535f * kFrequency * s_Timer;
+		const float yAngle = 2.0f * 3.1415926535f * (kFrequency * kSkew) * s_Timer;
+
+		const float dx = std::sin(xAngle) * kAmplitude * falloff;
+		const float dy = std::cos(yAngle) * kAmplitude * kYScale * falloff;
+
+		camTransform.Translation.x = s_BasePos.x + dx;
+		camTransform.Translation.y = s_BasePos.y + dy;
+	}
+
 	void LevelScene::StartIntro()
 	{
 		m_StartIntro = true;
@@ -477,7 +529,7 @@ namespace Cuphead
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeB(), floorCollider))
 			{
-				m_Player.FloorHit(); // TODO: Camera shake
+				m_Player.FloorHit();
 				m_FloorHitContact = true;
 			}
 			else
@@ -489,7 +541,7 @@ namespace Cuphead
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeA(), floorCollider))
 			{
-				m_Player.FloorHit(); // TODO: Camera shake
+				m_Player.FloorHit();
 				m_FloorHitContact = true;
 			}
 			else
