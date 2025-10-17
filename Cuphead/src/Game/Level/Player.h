@@ -33,10 +33,13 @@ namespace Cuphead
 
 		void FloorHit();
 		void NormalHit();
+
+		bool IsDead() { return m_Health <= 0; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void InitPlayer();
+		void InitPlayerHUD();
 		
 		void Intro0();
 		void Intro1();
@@ -72,6 +75,8 @@ namespace Cuphead
 		void FlashPlayer(Teddy::Timestep ts);
 		void Hitting(Teddy::Timestep ts);
 		void Hit(float velocity);
+		void StartDeath();
+		void UpdateHUD();
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -81,11 +86,13 @@ namespace Cuphead
 
 		Teddy::Entity m_Entity;
 		Teddy::Entity m_Cookie;
+		Teddy::Entity m_HealthHUD;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MovementTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_JumpTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthHudTextures;
 
 		enum class PlayerState
 		{

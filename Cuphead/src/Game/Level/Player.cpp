@@ -215,6 +215,10 @@ namespace Cuphead
 		m_HealthTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Cuphead/Cuphead_Health_146x225_2048x2048_0.png"
 			});
+
+		m_HealthHudTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Hud/Hud_Health_78x32_256x256_0.png"
+			});
 	}
 
 	void Player::InitCuphead(Teddy::Ref<Teddy::Scene> scene)
@@ -266,6 +270,21 @@ namespace Cuphead
 		filter.MaskBits = LevelCategories::INVISIBLEWALLS | LevelCategories::CLOUDPLATFORMON | LevelCategories::ENEMY;
 
 		m_State = PlayerState::Intro1;
+
+		InitPlayerHUD();
+	}
+
+	void Player::InitPlayerHUD()
+	{
+		m_HealthHUD = m_Scene->CreateEntity("Player HUD");
+
+		auto& sprite = m_HealthHUD.AddComponent<Teddy::SpriteAnimationComponent>(0.1f, 0.05f, 0.1f);
+		sprite.Textures = m_HealthHudTextures;
+		sprite.Pause = true;
+		m_HealthHUD.AddComponent<Teddy::SpriteAtlasComponent>(0, 4, 78, 32);
+		auto& transform = m_HealthHUD.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = glm::vec3(-3.875f, -2.15f, 3.2f);
+		transform.Scale = glm::vec3(0.225f, 0.225f, 1.0f);
 	}
 
 	void Player::StartIdle()
@@ -1114,7 +1133,9 @@ namespace Cuphead
 			m_Hitting = false;
 			m_HitTolerance = true;
 			m_State = PlayerState::AnimationDone;
-			if (m_Grounded)
+			if(m_Health == 0)
+				StartDeath();
+			else if (m_Grounded)
 				StartIdle();
 			else
 				StartFall();
@@ -1131,6 +1152,36 @@ namespace Cuphead
 		Hit(5.0f);
 	}
 
+	void Player::StartDeath()
+	{
+		TED_CORE_INFO("Someone died");
+	}
+
+	void Player::UpdateHUD() // TODO: a lil animation when health changes
+	{
+		if (m_Health <= 0)
+		{
+			auto& sprite = m_HealthHUD.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Pause = true;
+			auto& atlas = m_HealthHUD.GetComponent<Teddy::SpriteAtlasComponent>();
+			atlas.X = 0;
+			atlas.Y = 2;
+		}
+		else if (m_Health == 1)
+		{
+			auto& sprite = m_HealthHUD.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.PlayableIndicies = { 15, 16 };
+			sprite.Pause = false;
+			auto& aA = m_HealthHUD.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 15;
+		}
+		else
+		{
+			auto& atlas = m_HealthHUD.GetComponent<Teddy::SpriteAtlasComponent>();
+			atlas.X = 4 - m_Health;
+			atlas.Y = 4;
+		}
+	}
+
 	void Player::Hit(float velocity)
 	{
 		if (!m_Hitting)
@@ -1140,6 +1191,7 @@ namespace Cuphead
 			if (!m_HitTolerance)
 			{
 				m_Health--;
+				UpdateHUD();
 				StartHit();
 			}
 		}
