@@ -22,6 +22,8 @@ namespace Cuphead
 		if (!m_ParryReset)
 			m_ParryReset = m_Grounded;
 
+		HUDAnimation(ts);
+
 		if (m_State != PlayerState::Parrying)
 		{
 			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
@@ -1157,8 +1159,47 @@ namespace Cuphead
 		TED_CORE_INFO("Someone died");
 	}
 
-	void Player::UpdateHUD() // TODO: a lil animation when health changes
+	void Player::HUDAnimation(Teddy::Timestep ts)
 	{
+		static bool firstTime = true;
+		static float elapsed = 0.0f;
+		if (m_HitAnimation)
+		{
+			elapsed += ts;
+			auto& transform = m_HealthHUD.GetComponent<Teddy::TransformComponent>();
+			if (firstTime)
+			{
+				transform.Scale = glm::vec3(0.4f, 0.4f, 1.0f);
+			}
+			else
+			{
+				static constexpr float velocity = 1.0f;
+				static constexpr float duration = 0.5f;
+				static constexpr glm::vec3 startScale = glm::vec3(0.4f, 0.4f, 1.0f);
+				static constexpr glm::vec3 endScale = glm::vec3(0.225f, 0.225f, 1.0f); 
+
+				float t = glm::clamp(elapsed / duration, 0.0f, 1.0f);
+
+				float easeOutT = 1.0f - ((1.0f - t) * (1.0f - t) * (1.0f - t));
+
+				transform.Scale = glm::mix(startScale, endScale, easeOutT);
+			}
+
+			firstTime = false;
+
+			if (transform.Scale.x <= 0.225f)
+			{
+				transform.Scale = glm::vec3(0.225f, 0.225f, 1.0f);
+				m_HitAnimation = false;
+				firstTime = true;
+				elapsed = 0.0f;
+			}
+		}
+	}
+
+	void Player::UpdateHUD()
+	{
+		m_HitAnimation = true;
 		if (m_Health <= 0)
 		{
 			auto& sprite = m_HealthHUD.GetComponent<Teddy::SpriteAnimationComponent>();

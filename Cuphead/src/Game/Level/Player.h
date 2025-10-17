@@ -77,6 +77,7 @@ namespace Cuphead
 		void Hit(float velocity);
 		void StartDeath();
 		void UpdateHUD();
+		void HUDAnimation(Teddy::Timestep ts);
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -134,5 +135,6 @@ namespace Cuphead
 		int m_Health = 4;
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
+		bool m_HitAnimation = false;
 	};
 }
