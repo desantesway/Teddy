@@ -94,10 +94,6 @@ namespace Cuphead
 		{
 			if (m_State != PlayerState::Dead)
 				StartDeath();
-			else
-			{
-				// death animation
-			}
 		}
 		
 	}
@@ -1153,8 +1149,7 @@ namespace Cuphead
 			else
 				StartFall();
 		}
-
-		if (m_Grounded && indicies.Index >= 29)
+		else if (m_Grounded && indicies.Index >= 29)
 		{
 			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 			indicies.Index -= 6;
