@@ -294,6 +294,7 @@ namespace Cuphead
 			m_MovementSpeed = 0.0f;
 			increasingSpeed = false;
 		}
+
 		if (increasingSpeed)
 		{
 			auto& spireSprite = m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -309,6 +310,10 @@ namespace Cuphead
 		}
 
 		m_Player.OnUpdate(ts);
+
+		if (m_FloorHitContact)
+			m_Player.FloorHit(); // TODO: Camera shake
+
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
 
 		switch (m_Phase)
@@ -471,7 +476,10 @@ namespace Cuphead
 		{
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeB(), floorCollider))
-				m_Player.FloorHit(true);
+			{
+				m_Player.FloorHit(); // TODO: Camera shake
+				m_FloorHitContact = true;
+			}
 			else
 				m_Clouds.CloudContactBegin(e.GetShapeB());
 			return true;
@@ -480,7 +488,10 @@ namespace Cuphead
 		{
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeA(), floorCollider))
-				m_Player.FloorHit(true);
+			{
+				m_Player.FloorHit(); // TODO: Camera shake
+				m_FloorHitContact = true;
+			}
 			else
 				m_Clouds.CloudContactBegin(e.GetShapeA());
 			return true;
@@ -496,18 +507,22 @@ namespace Cuphead
 		{
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeB(), floorCollider))
-				m_Player.FloorHit(false);
+			{
+				m_FloorHitContact = false;
+			}
 			else
-				m_Clouds.CloudContactBegin(e.GetShapeB());
+				m_Clouds.CloudContactEnd(e.GetShapeB());
 			return true;
 		}
 		else if (B2_ID_EQUALS(e.GetShapeB(), playerCollider))
 		{
 			b2ShapeId floorCollider = *static_cast<b2ShapeId*>(m_Floor.GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 			if (B2_ID_EQUALS(e.GetShapeA(), floorCollider))
-				m_Player.FloorHit(false);
+			{
+				m_FloorHitContact = false;
+			}
 			else
-				m_Clouds.CloudContactBegin(e.GetShapeA());
+				m_Clouds.CloudContactEnd(e.GetShapeA());
 			return true;
 		}
 

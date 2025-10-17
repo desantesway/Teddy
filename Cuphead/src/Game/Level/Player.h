@@ -31,7 +31,8 @@ namespace Cuphead
 
 		void SetGrounded(bool grounded);
 
-		void FloorHit(bool isContacting);
+		void FloorHit();
+		void NormalHit();
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
@@ -67,6 +68,11 @@ namespace Cuphead
 		void StartParry();
 		void Parrying();
 
+		void StartHit();
+		void FlashPlayer(Teddy::Timestep ts);
+		void Hitting(Teddy::Timestep ts);
+		void Hit(float velocity);
+
 		void LoadCupheadTextures();
 		void BreakCookie();
 		void DeleteCookie(Teddy::Timestep ts);
@@ -79,6 +85,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MovementTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_JumpTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthTextures;
 
 		enum class PlayerState
 		{
@@ -91,6 +98,7 @@ namespace Cuphead
 			Crouching,
 			Dropping,
 			Parrying,
+			Hit,
 			Intro0,
 			Intro1,
 			Intro2,
@@ -118,6 +126,6 @@ namespace Cuphead
 
 		int m_Health = 4;
 		bool m_Hitting = false;
-
+		bool m_HitTolerance = false;
 	};
 }

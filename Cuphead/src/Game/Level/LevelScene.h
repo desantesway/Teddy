@@ -84,5 +84,7 @@ namespace Cuphead
 
 		bool m_IntroDone = false;
 		bool m_StartIntro = false;
+
+		bool m_FloorHitContact = false;
 	};
 }

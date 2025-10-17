@@ -32,7 +32,10 @@ namespace Cuphead
 			}
 		}
 
-		TED_CORE_INFO("m_Health {}", m_Health);
+		if (m_HitTolerance)
+		{
+			FlashPlayer(ts);
+		}
 
 		switch (m_State)
 		{
@@ -72,6 +75,11 @@ namespace Cuphead
 		case PlayerState::Parrying:
 			Move(ts);
 			Parrying();
+			BlockMove();
+			break;
+		case PlayerState::Hit:
+			Move(ts);
+			Hitting(ts);
 			BlockMove();
 			break;
 		case PlayerState::Idle:
@@ -203,6 +211,10 @@ namespace Cuphead
 		m_JumpTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Cuphead/Movement/Cuphead_Jump_288x152_2048x2048_0.png"
 			});
+
+		m_HealthTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Cuphead/Cuphead_Health_146x225_2048x2048_0.png"
+			});
 	}
 
 	void Player::InitCuphead(Teddy::Ref<Teddy::Scene> scene)
@@ -258,7 +270,7 @@ namespace Cuphead
 
 	void Player::StartIdle()
 	{
-		if (m_State == PlayerState::Idle) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Idle) return;
 
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
@@ -484,7 +496,7 @@ namespace Cuphead
 
 	void Player::StartRun(bool isRight)
 	{
-		if (m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing) return;
 
 		if ((isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))) ||
 			(!isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))))
@@ -542,7 +554,7 @@ namespace Cuphead
 
 	void Player::StartFall()
 	{			
-		if (m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
 			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -615,7 +627,7 @@ namespace Cuphead
 
 	void Player::StartJump()
 	{
-		if (m_State == PlayerState::Jumping || m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Jumping || m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
 
 		if (m_ZHeld) return;
 
@@ -695,7 +707,7 @@ namespace Cuphead
 
 	void Player::StartCrouch()
 	{
-		if (m_State == PlayerState::Crouching || !m_Grounded || m_State == PlayerState::Jumping || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Crouching || !m_Grounded || m_State == PlayerState::Jumping || m_State == PlayerState::Dashing) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -777,7 +789,7 @@ namespace Cuphead
 
 	void Player::StartDash()
 	{
-		if (m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -914,9 +926,9 @@ namespace Cuphead
 		
 	}
 
-	void Player::StartParry() // TODO: observer if the parry animation happens until he is on the ground// if hit change to pink animation + lil jump
+	void Player::StartParry() // TODO: observe if the parry animation happens until he is on the ground// if hit change to pink animation + lil jump
 	{
-		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded) return;
+		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded || m_State == PlayerState::Hit) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -924,9 +936,9 @@ namespace Cuphead
 		sprite.Loop = true;
 		sprite.Reverse = false;
 
-		sprite.FinalFrameTime = 0.025f;
-		sprite.FrameTime = 0.025f;
-		sprite.InitialFrameTime = 0.025f;
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 288;
@@ -1047,19 +1059,114 @@ namespace Cuphead
 		}
 	}
 
-	void Player::FloorHit(bool isContacting)
+	void Player::StartHit()
 	{
-		if (isContacting)
+		if (m_State == PlayerState::Hit) return;
+		
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_HealthTextures;
+		sprite.PingPong = false;
+		sprite.Loop = false;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 146;
+		atlas.SpriteHeight = 225;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (transform.Scale.x >= 0)
+			transform.Scale = glm::vec3(2.0f);
+		else
+			transform.Scale = glm::vec3(-2.0f, 2.0f, 1.0f);
+
+		sprite.PlayableIndicies.clear();
+		if (m_Grounded)
 		{
-			if (!m_Hitting)
+			for (int i = 24; i < 29; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
+		else
+		{
+			for (int i = 29; i < 34; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
+		indicies.Index = *sprite.PlayableIndicies.begin();
+
+		m_State = PlayerState::Hit;
+		m_Hitting = true;
+	}
+
+	void Player::Hitting(Teddy::Timestep ts)
+	{
+		static float timer = 0;
+		timer += ts.GetSeconds();
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		if (indicies.Index == 28 || indicies.Index == 34 || timer > 0.5f)
+		{
+			timer = 0;
+			m_Hitting = false;
+			m_HitTolerance = true;
+			m_State = PlayerState::AnimationDone;
+			if (m_Grounded)
+				StartIdle();
+			else
+				StartFall();
+		}
+	}
+
+	void Player::FloorHit()
+	{
+		Hit(25.0f);
+	}
+
+	void Player::NormalHit()
+	{
+		Hit(5.0f);
+	}
+
+	void Player::Hit(float velocity)
+	{
+		if (!m_Hitting)
+		{
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocityY(velocity);
+			if (!m_HitTolerance)
 			{
-				m_Hitting = true;
 				m_Health--;
+				StartHit();
 			}
 		}
-		else if (!isContacting)
+	}
+
+	void Player::FlashPlayer(Teddy::Timestep ts)
+	{
+		static float timerReset = 0.0f;
+		static float timer = 0.0f;
+		timer += ts.GetSeconds();
+		timerReset += ts.GetSeconds();
+		if (timerReset > 0.25f)
 		{
-			m_Hitting = false;
+			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+			if(color.a > 0)
+				color = glm::vec4(0.0f);
+			else
+				color = glm::vec4(1.0f);
+			timerReset = 0.0f;
+		}
+
+		if (timer > 1.5f)
+		{
+			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+			color = glm::vec4(1.0f);
+			timer = 0.0f;
+			m_HitTolerance = false;
 		}
 	}
 }
