@@ -1154,9 +1154,20 @@ namespace Cuphead
 				StartFall();
 		}
 
-		//if(m_Grounded && )
-
-		// TODO: changing from grounded to air hit animation
+		if (m_Grounded && indicies.Index >= 29)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			indicies.Index -= 6;
+			for (int i = 24; i < 29; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
+		else if (!m_Grounded && indicies.Index < 29)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			indicies.Index += 6;
+			for (int i = 29; i < 34; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
 	}
 
 	void Player::FloorHit()
