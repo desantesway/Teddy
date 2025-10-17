@@ -188,7 +188,7 @@ namespace Cuphead
 		m_Clouds.push_back({ cloud, 2 });
 	}
 
-	void CloudPlatform::UpdatePostions()
+	void CloudPlatform::UpdatePostions() // TODO: fix cloud disappearing after lag spike
 	{
 		std::vector<Cloud> newClouds;
 		float prevDistance = 0.0f;

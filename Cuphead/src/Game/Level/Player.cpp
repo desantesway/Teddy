@@ -585,7 +585,7 @@ namespace Cuphead
 
 	void Player::StartFall()
 	{			
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
+		if (m_Health < 0 || m_State == PlayerState::Dead || m_State == PlayerState::Hit || m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
 			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -658,7 +658,8 @@ namespace Cuphead
 
 	void Player::StartJump()
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Jumping || m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Jumping || m_State == PlayerState::Dead ||
+			m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
 
 		if (m_ZHeld) return;
 
@@ -1152,6 +1153,10 @@ namespace Cuphead
 			else
 				StartFall();
 		}
+
+		//if(m_Grounded && )
+
+		// TODO: changing from grounded to air hit animation
 	}
 
 	void Player::FloorHit()
@@ -1166,10 +1171,48 @@ namespace Cuphead
 
 	void Player::StartDeath()
 	{
-		if (m_Health > 0) return;
-		TED_CORE_INFO("Someone died");
+		static bool firstTime = true;
 
+		if (m_Health > 0 || !firstTime || m_State == PlayerState::Dead) return;
+		
 		m_State = PlayerState::Dead;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_HealthTextures;
+		sprite.PingPong = false;
+		sprite.Loop = true;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 146;
+		atlas.SpriteHeight = 225;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (transform.Scale.x >= 0)
+			transform.Scale = glm::vec3(2.0f);
+		else
+			transform.Scale = glm::vec3(-2.0f, 2.0f, 1.0f);
+
+		sprite.PlayableIndicies.clear();
+		for (int i = 0; i < 24; i++)
+			sprite.PlayableIndicies.push_back(i);
+		indicies.Index = 0;
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetVelocity(0.0f, 1.5f);
+		body.SetGravityScale(0.0f);
+		auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::PLAYERGHOST;
+		filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+
+		firstTime = false;
 	}
 
 	void Player::HUDAnimation(Teddy::Timestep ts)
