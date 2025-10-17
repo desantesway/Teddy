@@ -8,88 +8,98 @@ namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
-		DeleteCookie(ts);
-
-		if(m_ZHeld)
-			m_ZHeld = Teddy::Input::IsKeyPressed(Teddy::Key::Z);
-
-		if (m_ShiftHeld)
-			m_ShiftHeld = Teddy::Input::IsKeyPressed(Teddy::Key::LShift);
-
-		if (!m_DashReset)
-			m_DashReset = m_Grounded;
-
-		if (!m_ParryReset)
-			m_ParryReset = m_Grounded;
-
-		HUDAnimation(ts);
-
-		if (m_State != PlayerState::Parrying)
+		if (m_Health > 0)
 		{
-			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-			if (sensor.Sensors.contains("ParryHitBox"))
+			DeleteCookie(ts);
+
+			if (m_ZHeld)
+				m_ZHeld = Teddy::Input::IsKeyPressed(Teddy::Key::Z);
+
+			if (m_ShiftHeld)
+				m_ShiftHeld = Teddy::Input::IsKeyPressed(Teddy::Key::LShift);
+
+			if (!m_DashReset)
+				m_DashReset = m_Grounded;
+
+			if (!m_ParryReset)
+				m_ParryReset = m_Grounded;
+
+			HUDAnimation(ts);
+
+			if (m_State != PlayerState::Parrying)
 			{
-				m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
-				sensor.Sensors.erase("ParryHitBox");
+				auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+				if (sensor.Sensors.contains("ParryHitBox"))
+				{
+					m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
+					sensor.Sensors.erase("ParryHitBox");
+				}
+			}
+
+			FlashPlayer(ts);
+
+			switch (m_State)
+			{
+			case PlayerState::Intro0:
+				Intro0();
+				break;
+			case PlayerState::Intro1:
+				Intro1();
+				break;
+			case PlayerState::Intro2:
+				Intro2();
+				break;
+			case PlayerState::Running:
+				Move(ts);
+				Running();
+				BlockMove();
+				break;
+			case PlayerState::Crouching:
+				Crouching();
+				break;
+			case PlayerState::Jumping:
+				Move(ts);
+				Jumping(ts);
+				BlockMove();
+				break;
+			case PlayerState::Dashing:
+				Dashing(ts);
+				break;
+			case PlayerState::Falling:
+				Move(ts);
+				Falling();
+				BlockMove();
+				break;
+			case PlayerState::Dropping:
+				Dropping(ts);
+				break;
+			case PlayerState::Parrying:
+				Move(ts);
+				Parrying();
+				BlockMove();
+				break;
+			case PlayerState::Hit:
+				Move(ts);
+				Hitting(ts);
+				BlockMove();
+				break;
+			case PlayerState::Idle:
+				BlockMove();
+				break;
+			default:
+				break;
 			}
 		}
-
-		if (m_HitTolerance)
+		else
 		{
-			FlashPlayer(ts);
+			if (m_State != PlayerState::Dead)
+				StartDeath();
+			else
+			{
+				// death animation
+			}
 		}
-
-		switch (m_State)
-		{
-		case PlayerState::Intro0:
-			Intro0();
-			break;
-		case PlayerState::Intro1:
-			Intro1();
-			break;
-		case PlayerState::Intro2:
-			Intro2();
-			break;
-		case PlayerState::Running:
-			Move(ts);
-			Running();
-			BlockMove();
-			break;
-		case PlayerState::Crouching:
-			Crouching();
-			break;
-		case PlayerState::Jumping:
-			Move(ts);
-			Jumping(ts);
-			BlockMove();
-			break;
-		case PlayerState::Dashing:
-			Dashing(ts);
-			break;
-		case PlayerState::Falling:
-			Move(ts);
-			Falling();
-			BlockMove();
-			break;
-		case PlayerState::Dropping:
-			Dropping(ts);
-			break;
-		case PlayerState::Parrying:
-			Move(ts);
-			Parrying();
-			BlockMove();
-			break;
-		case PlayerState::Hit:
-			Move(ts);
-			Hitting(ts);
-			BlockMove();
-			break;
-		case PlayerState::Idle:
-			BlockMove();
-			break;
-		default:
-			break;
-		}
+		
 	}
 
 	void Player::Intro0()
@@ -491,7 +501,7 @@ namespace Cuphead
 	}
 
 	void Player::Move(Teddy::Timestep ts)
-	{
+	{		
 		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
 		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
 
@@ -1073,7 +1083,7 @@ namespace Cuphead
 
 	void Player::OnEvent(Teddy::Event& event)
 	{
-		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0)
+		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0 && m_Health > 0)
 		{
 			Teddy::EventDispatcher dispatcher(event);
 			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
@@ -1135,7 +1145,7 @@ namespace Cuphead
 			m_Hitting = false;
 			m_HitTolerance = true;
 			m_State = PlayerState::AnimationDone;
-			if(m_Health == 0)
+			if(m_Health <= 0)
 				StartDeath();
 			else if (m_Grounded)
 				StartIdle();
@@ -1156,7 +1166,10 @@ namespace Cuphead
 
 	void Player::StartDeath()
 	{
+		if (m_Health > 0) return;
 		TED_CORE_INFO("Someone died");
+
+		m_State = PlayerState::Dead;
 	}
 
 	void Player::HUDAnimation(Teddy::Timestep ts)
@@ -1240,26 +1253,42 @@ namespace Cuphead
 
 	void Player::FlashPlayer(Teddy::Timestep ts)
 	{
-		static float timerReset = 0.0f;
+		static bool doneFlashing = false;
 		static float timer = 0.0f;
-		timer += ts.GetSeconds();
-		timerReset += ts.GetSeconds();
-		if (timerReset > 0.25f)
+		if (m_HitTolerance && !doneFlashing)
 		{
+			timer += ts.GetSeconds();
+			static float timerReset = 0.0f;
+			timerReset += ts.GetSeconds();
 			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
-			if(color.a > 0)
-				color = glm::vec4(0.0f);
-			else
+			if (color.a <= 0.25 && timerReset > 0.1f)
+			{
 				color = glm::vec4(1.0f);
-			timerReset = 0.0f;
-		}
+				timerReset = 0.0f;
+			}
+			else if (color.a > 0.25 && timerReset > 0.25f)
+			{
+				color = glm::vec4(0.25f);
+				timerReset = 0.0f;
+			}
 
-		if (timer > 1.5f)
+			if (timer > 1.0f)
+			{
+				auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				color = glm::vec4(1.0f);
+				timer = 0.0f;
+				doneFlashing = true;
+			}
+		}
+		else if (doneFlashing) // hit delay after flashing
 		{
-			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
-			color = glm::vec4(1.0f);
-			timer = 0.0f;
-			m_HitTolerance = false;
+			timer += ts.GetSeconds();
+			if (timer > 0.5f)
+			{
+				timer = 0.0f;
+				m_HitTolerance = false;
+				doneFlashing = false;
+			}
 		}
 	}
 }

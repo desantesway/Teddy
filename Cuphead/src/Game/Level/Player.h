@@ -110,7 +110,8 @@ namespace Cuphead
 			Intro0,
 			Intro1,
 			Intro2,
-			AnimationDone
+			AnimationDone,
+			Dead
 		};
 
 		PlayerState m_State = PlayerState::Idle;
