@@ -1,84 +1,94 @@
-#include "MainMenuScene.h"
+#include "OptionsMenu.h"
 
 #include <Teddy.h>
 
+// TODO: create entities only when needing to show, destroy when hiding to save memory
 namespace Cuphead
 {
-	OptionsMenu MainMenuScene::m_OptionsMenu;
+	glm::vec4 OptionsMenu::m_WhiteColor = glm::vec4(1.0f);;
+	glm::vec4 OptionsMenu::m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+	glm::vec4 OptionsMenu::m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
+	glm::vec4 OptionsMenu::m_InvisibleColor = glm::vec4(0.0f);
 
-	void MainMenuScene::InitOptionsMenu()
+	void OptionsMenu::Init(Teddy::Ref<Teddy::Scene> scene)
 	{
 		auto& assets = Teddy::AssetManager::Get();
 
 		// Options background
-		m_OptionsMenu.Background = m_MainMenu->CreateEntity("Options Background");
+		m_OptionsMenu.Background = scene->CreateEntity("Options Background");
 		auto& pauseSprite = m_OptionsMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
 		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png", Teddy::Boolean::True);
 		m_OptionsMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
 		auto& pauseTransform = m_OptionsMenu.Background.GetComponent<Teddy::TransformComponent>();
-		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 0.01f);
-		pauseTransform.Scale *= 2.6f;
+		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 5.01f);
+		pauseTransform.Scale *= 1.4f;
 
 		// Options Text
-		m_OptionsMenu.AudioButton = m_MainMenu->CreateEntity("Options Audio Text");
+		m_OptionsMenu.AudioButton = scene->CreateEntity("Options Audio Text");
 		auto& audioText = m_OptionsMenu.AudioButton.AddComponent<Teddy::TextComponent>();
 		audioText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		audioText.SetString("AUDIO");
 		audioText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& audioTransform = m_OptionsMenu.AudioButton.GetComponent<Teddy::TransformComponent>();
-		audioTransform.Scale *= 0.35f;
-		audioTransform.Translation += glm::vec3(0.0f, 0.85f, 0.1f);
+		audioTransform.Scale *= 0.175f;
+		audioTransform.Translation += glm::vec3(0.0f, 0.425f, 5.1f);
 
-		m_OptionsMenu.VisualButton = m_MainMenu->CreateEntity("Options Visual Text");
+		m_OptionsMenu.VisualButton = scene->CreateEntity("Options Visual Text");
 		auto& visualText = m_OptionsMenu.VisualButton.AddComponent<Teddy::TextComponent>();
 		visualText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		visualText.SetString("VISUAL");
 		visualText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& visualTransform = m_OptionsMenu.VisualButton.GetComponent<Teddy::TransformComponent>();
-		visualTransform.Scale *= 0.35f;
-		visualTransform.Translation += glm::vec3(0.0f, 0.5f, 0.1f);
+		visualTransform.Scale *= 0.175f;
+		visualTransform.Translation += glm::vec3(0.0f, 0.25f, 5.1f);
 
-		m_OptionsMenu.ControlsButton = m_MainMenu->CreateEntity("Options Controls Text");
+		m_OptionsMenu.ControlsButton = scene->CreateEntity("Options Controls Text");
 		auto& controlsText = m_OptionsMenu.ControlsButton.AddComponent<Teddy::TextComponent>();
 		controlsText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		controlsText.SetString("CONTROLS");
 		controlsText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& controlsTransform = m_OptionsMenu.ControlsButton.GetComponent<Teddy::TransformComponent>();
-		controlsTransform.Scale *= 0.35f;
-		controlsTransform.Translation += glm::vec3(0.0f, 0.15f, 0.1f);
+		controlsTransform.Scale *= 0.175f;
+		controlsTransform.Translation += glm::vec3(0.0f, 0.075f, 5.1f);
 
-		m_OptionsMenu.LanguageButton = m_MainMenu->CreateEntity("Options Language Text");
+		m_OptionsMenu.LanguageButton = scene->CreateEntity("Options Language Text");
 		auto& langText = m_OptionsMenu.LanguageButton.AddComponent<Teddy::TextComponent>();
 		langText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		langText.SetString("LANGUAGE");
 		langText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& langTransform = m_OptionsMenu.LanguageButton.GetComponent<Teddy::TransformComponent>();
-		langTransform.Scale *= 0.35f;
-		langTransform.Translation += glm::vec3(0.0f, -0.2f, 0.1f);
+		langTransform.Scale *= 0.175f;
+		langTransform.Translation += glm::vec3(0.0f, -0.1f, 5.1f);
 
-		m_OptionsMenu.BackButton = m_MainMenu->CreateEntity("Options Back Text");
+		m_OptionsMenu.BackButton = scene->CreateEntity("Options Back Text");
 		auto& backText = m_OptionsMenu.BackButton.AddComponent<Teddy::TextComponent>();
 		backText.FontAsset = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 		backText.SetString("BACK");
 		backText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 		auto& backTransform = m_OptionsMenu.BackButton.GetComponent<Teddy::TransformComponent>();
-		backTransform.Scale *= 0.35f;
-		backTransform.Translation += glm::vec3(0.0f, -0.55f, 0.1f);
+		backTransform.Scale *= 0.175f;
+		backTransform.Translation += glm::vec3(0.0f, -0.275f, 5.1f);
 
-		UpdateOptionsButtonColors();
+		UpdateButtonColors();
 
-		InitVisualMenu();
+		InitVisualMenu(scene);
 	}
 
-	bool MainMenuScene::OptionsMenuEnter()
+	void OptionsMenu::Show()
+	{
+		m_CurrentMenu = 0;
+		UpdateButtonColors();
+	}
+
+	bool OptionsMenu::OptionsMenuEnter()
 	{
 		switch (m_OptionsMenu.CurrentSelection)
 		{
 		case 0:
 			break;
 		case 1:
-			m_CurrentMenu = 5;
-			HideOptionsMenu();
+			m_CurrentMenu = 1;
+			Hide();
 			UpdateVisualColors();
 			break;
 		case 2:
@@ -86,9 +96,8 @@ namespace Cuphead
 		case 3:
 			break;
 		case 4:
-			m_CurrentMenu = 0;
-			HideOptionsMenu();
-			UpdateMainMenuButtonColors();
+			m_CurrentMenu = -1;
+			Hide();
 			return true;
 		default:
 			break;
@@ -97,7 +106,7 @@ namespace Cuphead
 		return false;
 	}
 
-	void MainMenuScene::HideOptionsMenu()
+	void OptionsMenu::Hide()
 	{
 		m_OptionsMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_InvisibleColor;
 		m_OptionsMenu.AudioButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
@@ -107,9 +116,9 @@ namespace Cuphead
 		m_OptionsMenu.BackButton.GetComponent<Teddy::TextComponent>().Color = m_InvisibleColor;
 	}
 
-	void MainMenuScene::UpdateOptionsButtonColors()
+	void OptionsMenu::UpdateButtonColors()
 	{
-		if (m_CurrentMenu == 2)
+		if (m_CurrentMenu == 0)
 		{
 			m_OptionsMenu.Background.GetComponent<Teddy::SpriteRendererComponent>().Color = m_WhiteColor;
 			m_OptionsMenu.AudioButton.GetComponent<Teddy::TextComponent>().Color = (m_OptionsMenu.CurrentSelection == 0) ? m_RedColor : m_BlackColor;
@@ -120,35 +129,46 @@ namespace Cuphead
 		}
 		else
 		{
-			HideOptionsMenu();
+			Hide();
 		}
 	}
 
-	bool MainMenuScene::OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e)
+	bool OptionsMenu::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
-		switch (e.GetKeyCode())
+		switch (m_CurrentMenu)
 		{
-		case Teddy::Key::Escape:
-			m_CurrentMenu = 0;
-			HideOptionsMenu();
-			UpdateMainMenuButtonColors();
-			return true;
-		case Teddy::Key::Down:
-		case Teddy::Key::S:
-			m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection + 1) % 5;
-			UpdateOptionsButtonColors();
-			return true;
-		case Teddy::Key::Up:
-		case Teddy::Key::W:
-			m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection - 1 + 5) % 5;
-			UpdateOptionsButtonColors();
-			return true;
-		case Teddy::Key::Return:
-			return OptionsMenuEnter();
+		case 0:
+		{
+			switch (e.GetKeyCode())
+			{
+			case Teddy::Key::Escape:
+				Hide();
+				m_CurrentMenu = -1;
+				return true;
+			case Teddy::Key::Down:
+			case Teddy::Key::S:
+				m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection + 1) % 5;
+				UpdateButtonColors();
+				return true;
+			case Teddy::Key::Up:
+			case Teddy::Key::W:
+				m_OptionsMenu.CurrentSelection = (m_OptionsMenu.CurrentSelection - 1 + 5) % 5;
+				UpdateButtonColors();
+				return true;
+			case Teddy::Key::Return:
+				return OptionsMenuEnter();
+			default:
+				break;
+			}
+		}
+		case 1:
+		{
+			return OnVisualMenuKeyPressed(e);
+		}
 		default:
 			break;
 		}
-
+		
 		return false;
 	}
 }

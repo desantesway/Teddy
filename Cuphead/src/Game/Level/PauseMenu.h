@@ -6,6 +6,8 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/KeyEvent.h"
 
+#include "../Scenes/OptionsMenu.h"
+
 namespace Cuphead
 {
 	class PauseMenu
@@ -18,12 +20,14 @@ namespace Cuphead
 
 		static void Init(Teddy::Ref<Teddy::Scene> scene);
 		void OnEvent(Teddy::Event& event);
-		static bool OnUpdate(Teddy::Timestep ts);
+		static void OnUpdate(Teddy::Timestep ts);
 
 		static void Show();
 		static void Hide();
+		static void PartialHide();
+
 		static bool IsVisible() { return m_Visible; }
-		static int GetState() { return m_State; } // 0 = Resume, 1 = Retry, 2 = Exit
+		static int GetState() { return m_State; }
 		static bool WantsToResume() { return m_State == 1; }
 		static bool WantsToRetry()  { return m_State == 2; }
 		static bool WantsToOptions()  { return m_State == 3; }
@@ -51,5 +55,7 @@ namespace Cuphead
 		static bool m_Visible;
 		static int m_State; // 0 = Menu, 1 = Resume,  2 = Retry, 3 = Options, 4 = Exit
 		static int m_CurrentSelection; //0 = Resume,  1 = Retry, 2 = Options, 3 = Exit
+
+		static OptionsMenu m_OptionsMenu;
 	};
 }

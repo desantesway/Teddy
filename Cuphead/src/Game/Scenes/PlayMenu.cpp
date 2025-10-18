@@ -92,7 +92,7 @@ namespace Cuphead
 				mugmanAnimation.InitialFrameTime = 0.05f;
 				mugmanAnimation.FinalFrameTime = 0.05f;
 			}
-			else if (m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7) // <=====
+			else if (m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7)
 			{
 				m_LoadLevel = 1;
 				auto& cupheadAnimation = m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>();

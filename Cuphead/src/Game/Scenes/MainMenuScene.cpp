@@ -14,6 +14,8 @@ namespace Cuphead
 	
 	unsigned int MainMenuScene::m_CurrentMenu = 0;
 
+	OptionsMenu MainMenuScene::m_OptionsMenu;
+
 	Teddy::Ref<Teddy::Scene> MainMenuScene::Init()
 	{
 		TED_PROFILE_FUNCTION();
@@ -40,7 +42,7 @@ namespace Cuphead
 
 		InitMainMenu();
 		InitPlayMenu();
-		InitOptionsMenu();
+		m_OptionsMenu.Init(m_MainMenu);
 		InitDlcMenu();
 
 		return m_MainMenu;
@@ -48,6 +50,11 @@ namespace Cuphead
 
 	void MainMenuScene::OnUpdate(Teddy::Timestep ts)
 	{
+		if(m_CurrentMenu == 2 && m_OptionsMenu.WantsToClose())
+		{
+			m_CurrentMenu = 0;
+			UpdateMainMenuButtonColors();
+		}
 		OnPlayUpdate();
 	}
 
@@ -143,7 +150,7 @@ namespace Cuphead
 		case 1:
 			m_CurrentMenu = 2;
 			HideMainMenu();
-			UpdateOptionsButtonColors();
+			m_OptionsMenu.Show();
 			break;
 		case 2:
 			m_CurrentMenu = 3;
@@ -193,11 +200,9 @@ namespace Cuphead
 		case 1:
 			return OnPlayMenuKeyPressed(e);
 		case 2:
-			return OnOptionsMenuKeyPressed(e);
+			return m_OptionsMenu.OnKeyPressed(e);
 		case 3:
 			return OnDlcMenuKeyPressed(e);
-		case 5:
-			return OnVisualMenuKeyPressed(e);
 		default:
 			break;
 		}
@@ -211,7 +216,6 @@ namespace Cuphead
 
 		m_MainMenuOptions.~MainMenu();
 		m_OptionsMenu.~OptionsMenu();
-		m_VisualMenu.~VisualMenu();
 		m_DlcMenu.~DlcMenu();
 		m_PlayMenu.~PlayMenu();
 

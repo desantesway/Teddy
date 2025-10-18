@@ -32,6 +32,7 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/DlcMenu.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/PlayMenu.cpp
 
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/OptionsMenu.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/OptionsMenu.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Scenes/VisualOptions.cpp
 

@@ -5,7 +5,7 @@
 #include "Teddy/Events/Event.h"
 #include "Teddy/Events/KeyEvent.h"
 #include "Teddy/Scene/Entity.h"
-#include "Slider.h"
+#include "OptionsMenu.h"
 
 namespace Cuphead
 {
@@ -15,43 +15,6 @@ namespace Cuphead
 		Teddy::Entity OptionsButton;
 		Teddy::Entity DlcButton;
 		Teddy::Entity ExitButton;
-
-		unsigned int CurrentSelection = 0;
-	};
-
-	struct OptionsMenu
-	{
-		Teddy::Entity AudioButton;
-		Teddy::Entity VisualButton;
-		Teddy::Entity ControlsButton;
-		Teddy::Entity LanguageButton;
-		Teddy::Entity BackButton;
-
-		Teddy::Entity Background;
-
-		unsigned int CurrentSelection = 0;
-	};
-
-	struct VisualMenu
-	{
-
-		Teddy::Entity Resolution;
-		Teddy::Entity ResolutionButton;
-		Teddy::Entity Display;
-		Teddy::Entity DisplayButton;
-		Teddy::Entity VSync;
-		Teddy::Entity VSyncButton;
-		Teddy::Entity Overscan;
-		Slider OverscanBar;
-		Teddy::Entity Brightness;
-		Slider BrightnessBar;
-		Teddy::Entity ColorBleed;
-		Slider ColorBleedBar;
-		Teddy::Entity TitleScreen;
-		Teddy::Entity TitleScreenButton;
-		Teddy::Entity Back;
-
-		Teddy::Entity Background;
 
 		unsigned int CurrentSelection = 0;
 	};
@@ -94,17 +57,6 @@ namespace Cuphead
 		static void EnterMainMenuOption();
 		static bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
 
-		void InitOptionsMenu();
-		static void HideOptionsMenu();
-		static void UpdateOptionsButtonColors();
-		static bool OptionsMenuEnter();
-		static bool OnOptionsMenuKeyPressed(Teddy::KeyPressedEvent& e);
-
-		void InitVisualMenu();
-		static bool OnVisualMenuKeyPressed(Teddy::KeyPressedEvent& e);
-		static void UpdateVisualColors();
-		static void HideVisualMenu();
-
 		void InitDlcMenu();
 		static void HideDlcMenu();
 		static void UpdateDlcButtonColors();
@@ -126,10 +78,9 @@ namespace Cuphead
 		static glm::vec4 m_InvisibleColor;
 		
 		static MainMenu m_MainMenuOptions;
-		static OptionsMenu m_OptionsMenu;
-		static VisualMenu m_VisualMenu;
 		static DlcMenu m_DlcMenu;
 		static PlayMenu m_PlayMenu;
+		static OptionsMenu m_OptionsMenu;
 
 		static unsigned int m_LoadLevel; // 0 = none, 1 = cuphead, 2 = mugman
 		static unsigned int m_CurrentMenu;

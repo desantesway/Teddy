@@ -708,6 +708,8 @@ namespace Cuphead
 
 	void LevelScene::StartPauseMenu()
 	{
+		if (!m_Player.IsIntroDone()) return;
+
 		m_Scene->OnRuntimeStop();
 		m_PauseMenu.Show();
 		m_Paused = true;
@@ -720,6 +722,8 @@ namespace Cuphead
 	{
 		if (!m_Player.IsIntroDone()) return false;
 
+		m_PauseMenu.OnUpdate(ts);
+
 		if (m_Paused)
 		{
 			//m_PauseMenu.OnUpdate(ts);
@@ -728,7 +732,6 @@ namespace Cuphead
 			{
 				m_Scene->OnRuntimeStart();
 				m_Paused = false;
-				m_PauseMenu.Hide();
 				m_Player.Unpause();
 				m_Clouds.Unpause();
 				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;

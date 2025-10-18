@@ -26,6 +26,19 @@ namespace Cuphead
 
 	bool PauseMenu::m_Visible = false;
 
+	OptionsMenu PauseMenu::m_OptionsMenu;
+
+	void PauseMenu::OnUpdate(Teddy::Timestep ts)
+	{
+		if (m_State == 3 && m_OptionsMenu.WantsToClose())
+		{
+			m_State = 0;
+			m_OptionsMenu.Hide();
+			Show();
+			UpdateColors();
+		}
+	}
+
 	void PauseMenu::Shutdown()
 	{
 		m_Overlay	= {};
@@ -47,6 +60,8 @@ namespace Cuphead
 		m_OptionsFont = nullptr;
 
 		m_Visible = false;
+
+		m_OptionsMenu.~OptionsMenu();
 	}
 
 	void PauseMenu::Init(Teddy::Ref<Teddy::Scene> scene)
@@ -55,6 +70,8 @@ namespace Cuphead
 		m_BackgroundTexture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png", Teddy::Boolean::True);
 
 		m_OptionsFont = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
+
+		m_OptionsMenu.Init(scene);
 
 		m_Scene = scene;
 	}
@@ -131,68 +148,86 @@ namespace Cuphead
 
 	void PauseMenu::Hide()
 	{
-		m_Scene->DestroyEntity(m_Background);
-		m_Background = {};
-
-		m_Scene->DestroyEntity(m_Resume);
-		m_Resume = {};
-		 
-		m_Scene->DestroyEntity(m_Options);
-		m_Options = {};
-		
-		m_Scene->DestroyEntity(m_Retry);
-		m_Retry = {};
-		
-		m_Scene->DestroyEntity(m_Exit);
-		m_Exit = {};
+		PartialHide();
 
 		m_Scene->DestroyEntity(m_Overlay);
 		m_Overlay = {};
 	}
 
+	void PauseMenu::PartialHide()
+	{
+		m_Scene->DestroyEntity(m_Background);
+		m_Background = {};
+
+		m_Scene->DestroyEntity(m_Resume);
+		m_Resume = {};
+
+		m_Scene->DestroyEntity(m_Options);
+		m_Options = {};
+
+		m_Scene->DestroyEntity(m_Retry);
+		m_Retry = {};
+
+		m_Scene->DestroyEntity(m_Exit);
+		m_Exit = {};
+	}
+
 	bool PauseMenu::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
-		switch (e.GetKeyCode())
+		switch (m_State)
 		{
-		case Teddy::Key::Escape:
-			if(m_State == 0)
-				m_State = 1;
-			else
-				m_State = 0;
-			return true;
-		case Teddy::Key::Down:
-		case Teddy::Key::S:
-			m_CurrentSelection = (m_CurrentSelection + 1) % 4;
-			UpdateColors();
-			return true;
-		case Teddy::Key::Up:
-		case Teddy::Key::W:
-			m_CurrentSelection = (m_CurrentSelection - 1 + 4) % 4;
-			UpdateColors();
-			return true;
-		case Teddy::Key::Return:
-			if (m_State != 0) return false;
-			switch (m_CurrentSelection)
+		case 0:
+		{
+			switch (e.GetKeyCode())
 			{
-			case 0:
+			case Teddy::Key::Escape:
 				m_State = 1;
-				break;
-			case 1:
-				m_State = 2;
-				break;
-			case 2:
-				m_State = 3;
-				break;
-			case 3:
-				m_State = 4;
-				break;
+				Hide();
+				return true;
+			case Teddy::Key::Down:
+			case Teddy::Key::S:
+				m_CurrentSelection = (m_CurrentSelection + 1) % 4;
+				UpdateColors();
+				return true;
+			case Teddy::Key::Up:
+			case Teddy::Key::W:
+				m_CurrentSelection = (m_CurrentSelection - 1 + 4) % 4;
+				UpdateColors();
+				return true;
+			case Teddy::Key::Return:
+				switch (m_CurrentSelection)
+				{
+				case 0:
+					m_State = 1;
+					break;
+				case 1:
+					m_State = 2;
+					break;
+				case 2:
+					m_State = 3;
+					PartialHide();
+					m_OptionsMenu.Show();
+					break;
+				case 3:
+					m_State = 4;
+					break;
+				default:
+					break;
+				}
+				return true;
 			default:
 				break;
 			}
-			return true;
+			break;
+		}
+		case 3:
+			m_OptionsMenu.OnKeyPressed(e);
+			break;
 		default:
 			break;
 		}
+
+		
 	}
 
 	void PauseMenu::OnEvent(Teddy::Event& event)
