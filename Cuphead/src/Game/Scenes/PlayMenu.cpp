@@ -11,8 +11,6 @@ namespace Cuphead
 	{
 		auto& assets = Teddy::AssetManager::Get();
 
-		TED_CORE_INFO("Initializing Play Menu {}", m_LoadLevel);
-
 		m_PlayMenu.Background = m_MainMenu->CreateEntity("Play Menu Background");
 		auto& sprite = m_PlayMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Slot_Select-2048x2048-fmt12.png", Teddy::Boolean::True);
@@ -87,14 +85,22 @@ namespace Cuphead
 			if (m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7)
 			{
 				m_LoadLevel = 2;
-				m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 5, 6, 7 };
-				m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().PingPong = true;
+				auto& mugmanAnimation = m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>();
+				mugmanAnimation.PlayableIndicies = std::vector<int>{ 5, 6, 7 };
+				mugmanAnimation.PingPong = true;
+				mugmanAnimation.FrameTime = 0.05f;
+				mugmanAnimation.InitialFrameTime = 0.05f;
+				mugmanAnimation.FinalFrameTime = 0.05f;
 			}
 			else if (m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7) // <=====
 			{
 				m_LoadLevel = 1;
-				m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 5, 6, 7 };
-				m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().PingPong = true;
+				auto& cupheadAnimation = m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>();
+				cupheadAnimation.PlayableIndicies = std::vector<int>{ 5, 6, 7 };
+				cupheadAnimation.PingPong = true;
+				cupheadAnimation.FrameTime = 0.05f;
+				cupheadAnimation.InitialFrameTime = 0.05f;
+				cupheadAnimation.FinalFrameTime = 0.05f;
 			}
 		}
 	}

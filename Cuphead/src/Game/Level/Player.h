@@ -148,5 +148,10 @@ namespace Cuphead
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
 		bool m_HitAnimation = false;
+
+		bool m_FirstDeath = true;
+
+		bool m_CookieDeleted = false;
+		bool m_CookieCreated = false;
 	};
 }

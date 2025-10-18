@@ -53,6 +53,11 @@ namespace Cuphead
 		m_Hitting = false;
 		m_HitTolerance = false;
 		m_HitAnimation = false;
+
+		m_FirstDeath = true;
+
+		m_CookieDeleted = false;
+		m_CookieCreated = false;
 	}
 
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -190,7 +195,12 @@ namespace Cuphead
 			count++;
 		}
 		else if (index == 27)
+		{
+			count = 0;
+			lastIndex = 0;
 			StartIdle();
+			return;
+		}
 
 		lastIndex = index;
 	}
@@ -410,8 +420,8 @@ namespace Cuphead
 	void Player::DeleteCookie(Teddy::Timestep ts)
 	{
 		static bool fadeOut = false;
-		static bool done = false;
-		if (!done && m_Cookie)
+
+		if (!m_CookieDeleted && m_Cookie)
 		{
 			auto& color = m_Cookie.GetComponent<Teddy::SpriteAnimationComponent>().Color;
 			if (m_Cookie.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 113)
@@ -425,7 +435,7 @@ namespace Cuphead
 			if (color.a <= 0)
 			{
 				fadeOut = false;
-				done = true;
+				m_CookieDeleted = true;
 				m_Scene->DestroyEntity(m_Cookie);
 				m_Cookie = {};
 			}
@@ -434,8 +444,7 @@ namespace Cuphead
 
 	void Player::BreakCookie()
 	{
-		static bool created = false;
-		if (created)
+		if (m_CookieCreated)
 			return;
 		m_Cookie = m_Scene->CreateEntity("Cookie");
 		auto& sprite = m_Cookie.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
@@ -457,7 +466,7 @@ namespace Cuphead
 		transform.Translation += m_Entity.GetComponent<Teddy::TransformComponent>().Translation;
 		transform.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
-		created = true;
+		m_CookieCreated = true;
 	}
 
 	void Player::LoadIntro()
@@ -471,8 +480,8 @@ namespace Cuphead
 
 		static std::random_device rd;
 		static std::mt19937 gen(rd());
-		static std::uniform_int_distribution<> distr(0, 2);
-		static int choice = distr(gen);
+		static std::uniform_int_distribution<> distr(0, 2); // TODO
+		int choice = distr(gen);
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
@@ -1232,9 +1241,7 @@ namespace Cuphead
 
 	void Player::StartDeath()
 	{
-		static bool firstTime = true;
-
-		if (m_Health > 0 || !firstTime || m_State == PlayerState::Dead) return;
+		if (m_Health > 0 || !m_FirstDeath || m_State == PlayerState::Dead) return;
 		
 		m_State = PlayerState::Dead;
 
@@ -1266,7 +1273,7 @@ namespace Cuphead
 			sprite.PlayableIndicies.push_back(i);
 		indicies.Index = 0;
 
-		firstTime = false;
+		m_FirstDeath = false;
 	}
 
 	void Player::HUDAnimation(Teddy::Timestep ts)

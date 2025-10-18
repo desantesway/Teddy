@@ -105,5 +105,9 @@ namespace Cuphead
 		bool m_CameraShake = false;
 
 		bool m_IsCuphead = true;
+
+		bool m_FirstDeath = true;
+
+		bool m_IncreasingSpeed = false;
 	};
 }

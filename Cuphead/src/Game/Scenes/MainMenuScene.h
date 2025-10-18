@@ -86,7 +86,7 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 		static unsigned int LoadLevel() { return m_LoadLevel; }
-		void Reset();
+		void Shutdown();
 	private:
 		void InitMainMenu();
 		static void UpdateMainMenuButtonColors();

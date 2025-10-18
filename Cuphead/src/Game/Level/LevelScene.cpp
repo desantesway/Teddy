@@ -34,6 +34,10 @@ namespace Cuphead
 		m_CameraShake = false;
 
 		m_IsCuphead = true;
+
+		m_FirstDeath = true;
+
+		m_IncreasingSpeed = false;
 	}
 
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
@@ -319,14 +323,12 @@ namespace Cuphead
 
 		if (m_Player.IsDead())
 		{
-			static bool firstDeath = true;
-
 			m_Player.OnUpdate(ts);
 
-			if (firstDeath)
+			if (m_FirstDeath)
 			{
 				m_Scene->OnRuntimeStop();
-				firstDeath = false;
+				m_FirstDeath = false;
 				m_CameraShake = true;
 				// TODO: Start death menu
 			}
@@ -334,18 +336,22 @@ namespace Cuphead
 			return;
 		}
 
-		static bool increasingSpeed = false;
+		static float timer = 0.0f;
 		if (m_Player.IsIntroDone())
 		{
-			static float timer = 0.0f;
 			timer += ts;
-			m_MovementSpeed = m_MovementVelocity * ts;
-			m_MovementVelocity = 0.25f * timer;
-			increasingSpeed = true;
-			if (m_MovementVelocity > 1.1f)
+			
+			if (m_MovementVelocity >= 1.1f)
 			{
 				m_MovementVelocity = 1.1f;
-				increasingSpeed = false;
+				m_IncreasingSpeed = false;
+				timer = 0.0f;
+			}
+			else
+			{
+				m_MovementSpeed = m_MovementVelocity * ts;
+				m_MovementVelocity = 0.25f * timer;
+				m_IncreasingSpeed = true;
 			}
 
 			m_Clouds.SetMovementSpeed(m_MovementSpeed);
@@ -353,14 +359,14 @@ namespace Cuphead
 		else
 		{
 			m_MovementSpeed = 0.0f;
-			increasingSpeed = false;
+			m_IncreasingSpeed = false;
 		}
 
-		if (increasingSpeed)
+		if (m_IncreasingSpeed)
 		{
 			auto& spireSprite = m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>();
 
-			constexpr float maxFrameTime = 0.3f;
+			constexpr float maxFrameTime = 0.5f;
 			constexpr float minFrameTime = 0.125f;
 
 			float frameT = maxFrameTime - (m_MovementVelocity / 1.1f) * (maxFrameTime - minFrameTime);
@@ -529,8 +535,8 @@ namespace Cuphead
 
 		auto& camTransform = m_Camera.GetComponent<Teddy::TransformComponent>();
 
-		static bool s_Started = false;
-		static float s_Timer = 0.0f;
+		static bool started = false;
+		static float timer = 0.0f;
 		static glm::vec3 s_BasePos{ 0.0f, 0.0f, 0.0f };
 
 		constexpr float kDurationSec = 0.5f;
@@ -539,29 +545,29 @@ namespace Cuphead
 		constexpr float kYScale = 0.65f;
 		constexpr float kSkew = 0.85f; 
 
-		if (!s_Started)
+		if (!started)
 		{
-			s_Started = true;
-			s_Timer = 0.0f;
+			started = true;
+			timer = 0.0f;
 			s_BasePos = camTransform.Translation;
 		}
 
-		s_Timer += ts.GetSeconds();
+		timer += ts.GetSeconds();
 
-		if (s_Timer >= kDurationSec)
+		if (timer >= kDurationSec)
 		{
 			camTransform.Translation = s_BasePos;
 			m_CameraShake = false;
-			s_Started = false;
-			s_Timer = 0.0f;
+			started = false;
+			timer = 0.0f;
 			return;
 		}
 
-		const float t = s_Timer / kDurationSec;
+		const float t = timer / kDurationSec;
 		const float falloff = (1.0f - t) * (1.0f - t);
 
-		const float xAngle = 2.0f * 3.1415926535f * kFrequency * s_Timer;
-		const float yAngle = 2.0f * 3.1415926535f * (kFrequency * kSkew) * s_Timer;
+		const float xAngle = 2.0f * 3.1415926535f * kFrequency * timer;
+		const float yAngle = 2.0f * 3.1415926535f * (kFrequency * kSkew) * timer;
 
 		const float dx = std::sin(xAngle) * kAmplitude * falloff;
 		const float dy = std::cos(yAngle) * kAmplitude * kYScale * falloff;

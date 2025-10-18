@@ -205,7 +205,7 @@ namespace Cuphead
 		return false;
 	}
 
-	void MainMenuScene::Reset()
+	void MainMenuScene::Shutdown()
 	{
 		m_MainMenu = nullptr;
 

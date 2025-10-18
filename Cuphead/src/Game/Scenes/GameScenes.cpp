@@ -114,7 +114,7 @@ namespace Cuphead
             m_MainTitleScene.~MainTitleScene();
         if (m_CurrentScene != 2)
         {
-            m_MainMenuScene.Reset();
+            m_MainMenuScene.Shutdown();
             m_MainMenuScene.~MainMenuScene();
         }
         if (m_CurrentScene != 3)
