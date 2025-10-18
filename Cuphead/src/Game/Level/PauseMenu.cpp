@@ -6,6 +6,7 @@
 
 namespace Cuphead
 {
+	Teddy::Entity PauseMenu::m_Overlay;
 	Teddy::Entity PauseMenu::m_Background;
 	Teddy::Entity PauseMenu::m_Resume;
 	Teddy::Entity PauseMenu::m_Retry;
@@ -37,6 +38,13 @@ namespace Cuphead
 
 	void PauseMenu::Show()
 	{
+		m_Overlay = m_Scene->CreateEntity("Pause Menu Overlay");
+		auto& overlaySprite = m_Overlay.AddComponent<Teddy::SpriteRendererComponent>();
+		overlaySprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.5f);
+		overlaySprite.IsBackground = true;
+		auto& overlayTransform = m_Overlay.GetComponent<Teddy::TransformComponent>();
+		overlayTransform.Translation = glm::vec3(0.0f, 0.0f, 3.5f);;
+
 		m_Background = m_Scene->CreateEntity("Pause Menu Background");
 		auto& sprite = m_Background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.Texture = m_BackgroundTexture;
@@ -114,6 +122,9 @@ namespace Cuphead
 		
 		m_Scene->DestroyEntity(m_Exit);
 		m_Exit = {};
+
+		m_Scene->DestroyEntity(m_Overlay);
+		m_Overlay = {};
 	}
 
 	bool PauseMenu::OnKeyPressed(Teddy::KeyPressedEvent& e)

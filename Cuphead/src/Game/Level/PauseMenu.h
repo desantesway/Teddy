@@ -27,6 +27,7 @@ namespace Cuphead
 
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
+		static Teddy::Entity m_Overlay;
 		static Teddy::Entity m_Background;
 		static Teddy::Entity m_Resume;
 		static Teddy::Entity m_Retry;
