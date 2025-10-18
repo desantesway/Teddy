@@ -24,6 +24,9 @@ namespace Cuphead
 
 		void CloudContactBegin(const b2ShapeId& cloudShape);
 		void CloudContactEnd(const b2ShapeId& cloudShape);
+
+		void Pause();
+		void Unpause();
 	private:
 		struct Cloud
 		{

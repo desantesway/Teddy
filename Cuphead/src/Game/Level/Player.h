@@ -37,6 +37,10 @@ namespace Cuphead
 		bool IsDead() { return m_Health <= 0; }
 
 		bool CanHit() { return !m_HitTolerance && !m_Hitting; }
+
+		void Pause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true; }
+		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
+
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 

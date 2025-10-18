@@ -562,4 +562,32 @@ namespace Cuphead
 			}
 		}
 	}
+
+	void CloudPlatform::Pause()
+	{
+		for (auto& cloud : m_Clouds)
+		{
+			auto& sprite = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Pause = true;
+			if (cloud.Overlay)
+			{
+				auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+				spriteOverlay.Pause = true;
+			}
+		}
+	}
+
+	void CloudPlatform::Unpause()
+	{
+		for (auto& cloud : m_Clouds)
+		{
+			auto& sprite = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Pause = false;
+			if (cloud.Overlay)
+			{
+				auto& spriteOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>();
+				spriteOverlay.Pause = false;
+			}
+		}
+	}
 }

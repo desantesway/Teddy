@@ -19,10 +19,11 @@ namespace Cuphead
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
-		m_Floor = m_Scene->CreateEntity("Level Floor");  // Turn this into a sensor later // or contact and when on contact give damage to player
+		m_Floor = m_Scene->CreateEntity("Level Floor");
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
 		auto& floorCollider = m_Floor.AddComponent<Teddy::BoxCollider2DComponent>();
 		floorCollider.EnableSensorEvents = true;
+		floorCollider.EnableContactEvents = true;
 		floorCollider.Friction = 0.0f;
 		m_Floor.AddComponent<Teddy::Rigidbody2DComponent>();
 		auto& floorTransform = m_Floor.GetComponent<Teddy::TransformComponent>();
@@ -667,6 +668,9 @@ namespace Cuphead
 		m_Scene->OnRuntimeStop();
 		m_PauseMenu.Show();
 		m_Paused = true;
+		m_Player.Pause();
+		m_Clouds.Pause();
+		m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
 	}
 
 	bool LevelScene::Pause(Teddy::Timestep ts)
@@ -683,6 +687,10 @@ namespace Cuphead
 				m_Scene->OnRuntimeStart();
 				m_Paused = false;
 				m_PauseMenu.Hide();
+				m_Player.Unpause();
+				m_Clouds.Unpause();
+				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				// TODO: bug when pausing while falling and after leaving pause menu where player has weird animations
 			}
 			else if(m_PauseMenu.WantsToRetry())
 			{
