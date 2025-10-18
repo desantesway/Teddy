@@ -14,6 +14,8 @@ namespace Cuphead
 		CloudPlatform() = default;
 		~CloudPlatform() = default;
 
+		void Shutdown();
+
 		void Init(Teddy::Ref<Teddy::Scene> scene);
 		void InitPhase1();
 
@@ -72,7 +74,7 @@ namespace Cuphead
 		float m_PlayerY = 0.0f;
 		float m_MovementSpeed = 0.0f;
 
-		glm::vec2 m_LastSpawn;
+		glm::vec2 m_LastSpawn = {0.0f, 0.0f};
 		std::mt19937 m_Rng;
 		std::uniform_real_distribution<float> m_XDistribution;
 		std::uniform_real_distribution<float> m_YDistribution;	   // TODO: change this to levelScenes

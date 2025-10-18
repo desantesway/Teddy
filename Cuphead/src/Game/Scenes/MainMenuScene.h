@@ -78,7 +78,7 @@ namespace Cuphead
 	{
 	public:
 		MainMenuScene() = default;
-		~MainMenuScene() = default;
+		~MainMenuScene() { m_MainMenu = nullptr; }
 
 		Teddy::Ref<Teddy::Scene> Init();
 
@@ -86,6 +86,7 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 		static unsigned int LoadLevel() { return m_LoadLevel; }
+		void Reset();
 	private:
 		void InitMainMenu();
 		static void UpdateMainMenuButtonColors();

@@ -11,6 +11,11 @@ namespace Cuphead
 	class PauseMenu
 	{
 	public:
+		PauseMenu() = default;
+		~PauseMenu() = default;
+
+		void Shutdown();
+
 		static void Init(Teddy::Ref<Teddy::Scene> scene);
 		void OnEvent(Teddy::Event& event);
 		static bool OnUpdate(Teddy::Timestep ts);
@@ -20,7 +25,8 @@ namespace Cuphead
 		static bool IsVisible() { return m_Visible; }
 		static int GetState() { return m_State; } // 0 = Resume, 1 = Retry, 2 = Exit
 		static bool WantsToResume() { return m_State == 1; }
-		static bool WantsToRetry()  { return m_State == 3; }
+		static bool WantsToRetry()  { return m_State == 2; }
+		static bool WantsToOptions()  { return m_State == 3; }
 		static bool WantsToExit()   { return m_State == 4; }
 	private:
 		static void UpdateColors();
@@ -43,7 +49,7 @@ namespace Cuphead
 		static glm::vec4 m_RedColor;
 
 		static bool m_Visible;
-		static int m_State; // 0 = Menu, 1 = Resume, 2 = Options, 3 = Retry, 4 = Exit
-		static int m_CurrentSelection; //0 = Resume, 1 = Options, 2 = Retry, 3 = Exit
+		static int m_State; // 0 = Menu, 1 = Resume,  2 = Retry, 3 = Options, 4 = Exit
+		static int m_CurrentSelection; //0 = Resume,  1 = Retry, 2 = Options, 3 = Exit
 	};
 }

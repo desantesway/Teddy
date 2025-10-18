@@ -26,6 +26,29 @@ namespace Cuphead
 
 	bool PauseMenu::m_Visible = false;
 
+	void PauseMenu::Shutdown()
+	{
+		m_Overlay	= {};
+		m_Background = {};
+		m_Resume	= {};
+		m_Retry		= {};
+		m_Options	= {};
+		m_Exit		= {};
+
+		m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+		m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
+
+		m_State = 0;
+		m_CurrentSelection = 0;
+
+		m_Scene = nullptr;
+
+		m_BackgroundTexture = nullptr;
+		m_OptionsFont = nullptr;
+
+		m_Visible = false;
+	}
+
 	void PauseMenu::Init(Teddy::Ref<Teddy::Scene> scene)
 	{
 		auto& assets = Teddy::AssetManager::Get();

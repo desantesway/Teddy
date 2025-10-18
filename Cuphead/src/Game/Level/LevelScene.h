@@ -18,16 +18,21 @@ namespace Cuphead
 		LevelScene() = default;
 		~LevelScene() = default;
 		
-		Teddy::Ref<Teddy::Scene> Init(unsigned int character);
+		Teddy::Ref<Teddy::Scene> Init(bool character);
 		Teddy::Ref<Teddy::Scene> GetScene() { return m_Scene; }
 
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
 
+		void Shutdown();
+
 		void StartIntro();
 		void LoadIntro();
 		bool IsIntroDone() { return m_IntroDone; }
 		bool HasIntroStarted() { return m_StartIntro; }
+
+		bool WantsToRetry() { return m_State == 1; }
+		bool WantsToExit() { return m_State == 2; }
 	private:
 		void InitPhase1();
 		void InitPhase1Background();
@@ -87,7 +92,7 @@ namespace Cuphead
 		Teddy::Entity m_Floor;
 		Teddy::Entity m_Camera;
 
-		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
+		int m_State = 0;
 		int m_Phase = 1;
 
 		bool m_Paused = false;
@@ -98,5 +103,7 @@ namespace Cuphead
 
 		bool m_FloorHitContact = false;
 		bool m_CameraShake = false;
+
+		bool m_IsCuphead = true;
 	};
 }

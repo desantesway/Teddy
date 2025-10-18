@@ -49,7 +49,11 @@ namespace Cuphead
         if (GameScenes::OnUpdate(ts))
         {
             m_ActiveScene->OnRuntimeStop();
-            m_ActiveScene = GameScenes::InitNextScene();
+			Teddy::Ref<Teddy::Scene> nextScene = GameScenes::InitNextScene();
+            if(!nextScene)
+                nextScene = GameScenes::InitNextScene();
+            m_ActiveScene = nullptr;
+            m_ActiveScene = nextScene;
             m_ActiveScene->OnRuntimeStart();
             GameScenes::FreeScenes();
         }

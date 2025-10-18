@@ -14,6 +14,8 @@ namespace Cuphead
 		Player() = default;
 		~Player() = default;
 
+		void Shutdown();
+
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
 
@@ -91,6 +93,8 @@ namespace Cuphead
 		void DeleteCookie(Teddy::Timestep ts);
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+
+		bool m_IntroLoaded = false;
 
 		Teddy::Entity m_Entity;
 		Teddy::Entity m_Cookie;

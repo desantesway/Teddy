@@ -6,7 +6,37 @@
 
 namespace Cuphead
 {
-	Teddy::Ref<Teddy::Scene> LevelScene::Init(unsigned int character)
+	void LevelScene::Shutdown()
+	{
+		m_Scene = nullptr;
+
+		m_MovementVelocity = 0.0f;
+		m_MovementSpeed = 0.0f;
+
+		m_Background.~Background();
+		m_Foreground.~Foreground();
+
+		m_Player.Shutdown();
+		m_Clouds.Shutdown();
+		m_Floor = {};
+		m_Camera = {};
+
+		m_State = 0;
+		m_Phase = 1;
+
+		m_Paused = false;
+		m_PauseMenu.Shutdown();
+
+		m_IntroDone = false;
+		m_StartIntro = false;
+
+		m_FloorHitContact = false;
+		m_CameraShake = false;
+
+		m_IsCuphead = true;
+	}
+
+	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
 	{
 		m_Scene = Teddy::CreateRef<Teddy::Scene>();
 		
@@ -17,7 +47,6 @@ namespace Cuphead
 
 		auto& window = Teddy::Application::Get().GetWindow();
 		m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
-		cam.Camera.GetWidthAndHeight(m_WorldWidth, m_WorldHeight);
 
 		m_Floor = m_Scene->CreateEntity("Level Floor");
 		//auto& floorSprite = floor.AddComponent<Teddy::SpriteRendererComponent>();
@@ -61,10 +90,16 @@ namespace Cuphead
 
 		InitPhase1();
 
-		if (character == 1)
+		if (isCuphead)
+		{
+			m_IsCuphead = true;
 			m_Player.InitCuphead(m_Scene);
+		}
 		else
+		{
+			m_IsCuphead = false;
 			m_Player.InitMugman(m_Scene);
+		}
 
 		m_PauseMenu.Init(m_Scene);
 
@@ -276,6 +311,8 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
+		if (m_State != 0) return;
+
 		if(Pause(ts)) return;
 
 		CameraShake(ts);
@@ -677,7 +714,6 @@ namespace Cuphead
 	{
 		if (!m_Player.IsIntroDone()) return false;
 
-		
 		if (m_Paused)
 		{
 			//m_PauseMenu.OnUpdate(ts);
@@ -694,11 +730,13 @@ namespace Cuphead
 			}
 			else if(m_PauseMenu.WantsToRetry())
 			{
-				// restart level
+				m_Scene->OnRuntimeStart(); // to avoid crash
+				m_State = 1;
 			}
 			else if (m_PauseMenu.WantsToExit())
 			{
-				// return to main menu
+				m_Scene->OnRuntimeStart();
+				m_State = 2;
 			}
 
 			return true;

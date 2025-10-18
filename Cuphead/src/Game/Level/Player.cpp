@@ -6,6 +6,55 @@
 //TODO:  parry object //
 namespace Cuphead
 {
+	void Player::Shutdown()
+	{
+		if(m_Entity)
+			m_Scene->DestroyEntity(m_Entity);
+		m_Entity = {};
+
+		if(m_Cookie)
+			m_Scene->DestroyEntity(m_Cookie);
+		m_Cookie = {};
+
+		if(m_HealthHUD)
+			m_Scene->DestroyEntity(m_HealthHUD);
+		m_HealthHUD = {};
+
+		m_Scene = nullptr;
+
+		m_MovementTextures.clear();
+		m_IntroTextures.clear();
+		m_JumpTextures.clear();
+		m_HealthTextures.clear();
+		m_HealthHudTextures.clear();
+
+		m_State = PlayerState::Idle;
+
+		m_IntroLoaded = false;
+
+		m_DirectionRight = true;
+		m_Grounded = true;
+
+		m_StartDash = false;
+		m_DashReset = true;
+		m_ShiftHeld = false;
+
+		m_StartCrouch = false;
+
+		m_Dropping = false;
+
+		m_StartJump = false;
+		m_ZHeld = false;
+		m_Moving = false;
+
+		m_ParryReset = true;
+
+		m_Health = 4;
+		m_Hitting = false;
+		m_HitTolerance = false;
+		m_HitAnimation = false;
+	}
+
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
 		if (m_Health > 0)
@@ -413,11 +462,9 @@ namespace Cuphead
 
 	void Player::LoadIntro()
 	{
-		static bool loaded = false;
+		if (m_IntroLoaded) return;
 
-		if (loaded) return;
-
-		loaded = true;
+		m_IntroLoaded = true;
 
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;

@@ -204,4 +204,18 @@ namespace Cuphead
 		
 		return false;
 	}
+
+	void MainMenuScene::Reset()
+	{
+		m_MainMenu = nullptr;
+
+		m_MainMenuOptions.~MainMenu();
+		m_OptionsMenu.~OptionsMenu();
+		m_VisualMenu.~VisualMenu();
+		m_DlcMenu.~DlcMenu();
+		m_PlayMenu.~PlayMenu();
+
+		m_LoadLevel = 0;
+		m_CurrentMenu = 0;
+	}
 }

@@ -26,8 +26,8 @@ namespace Cuphead
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
-		static Teddy::Ref<Teddy::Scene> InitMainTitle();
-		static Teddy::Ref<Teddy::Scene> InitTitleMenu();
+		static Teddy::Ref<Teddy::Scene> InitTitle();
+		static Teddy::Ref<Teddy::Scene> InitMainMenu();
 		static Teddy::Ref<Teddy::Scene> InitLevel();
 	private:
 		static int m_CurrentScene;
@@ -38,6 +38,8 @@ namespace Cuphead
 		static MainTitleScene m_MainTitleScene;
 		static MainMenuScene m_MainMenuScene;
 		static LevelScene m_LevelScene;
+
+		static bool m_IsCuphead;
 	private:
 		static GameScenes* instance;
 	};
