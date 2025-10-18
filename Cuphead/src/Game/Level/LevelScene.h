@@ -7,6 +7,7 @@
 #include "Teddy/Physics/SensorEvent.h"
 #include "Player.h"
 #include "CloudPlatform.h"
+#include "PauseMenu.h"
 
 namespace Cuphead
 {
@@ -35,6 +36,10 @@ namespace Cuphead
 		
 		void CameraShake(Teddy::Timestep ts);
 
+		void StartPauseMenu();
+		bool Pause(Teddy::Timestep ts);
+
+		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnSensorBegin(Teddy::SensorBeginEvent& e);
 		bool OnSensorEnd(Teddy::SensorEndEvent& e);
 		bool OnContactBegin(Teddy::ContactBeginEvent& e);
@@ -84,6 +89,9 @@ namespace Cuphead
 
 		float m_WorldWidth = 0.0f, m_WorldHeight = 0.0f;
 		int m_Phase = 1;
+
+		bool m_Paused = false;
+		PauseMenu m_PauseMenu;
 
 		bool m_IntroDone = false;
 		bool m_StartIntro = false;

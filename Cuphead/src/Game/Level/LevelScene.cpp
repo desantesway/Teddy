@@ -65,6 +65,8 @@ namespace Cuphead
 		else
 			m_Player.InitMugman(m_Scene);
 
+		m_PauseMenu.Init(m_Scene);
+
 		return m_Scene;
 	}
 
@@ -273,18 +275,23 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
+		if(Pause(ts)) return;
+
 		CameraShake(ts);
 
 		if (m_Player.IsDead())
 		{
-			if (m_FloorHitContact)
-			{
-				m_CameraShake = true;
-			}
+			static bool firstDeath = true;
 
 			m_Player.OnUpdate(ts);
-			m_Clouds.SetMovementSpeed(0.0f);
-			m_Clouds.OnUpdate(ts);
+
+			if (firstDeath)
+			{
+				m_Scene->OnRuntimeStop();
+				firstDeath = false;
+				m_CameraShake = true;
+				// TODO: Start death menu
+			}
 
 			return;
 		}
@@ -624,14 +631,71 @@ namespace Cuphead
 		return false;
 	}
 
+	bool LevelScene::OnKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Escape:
+		{
+			StartPauseMenu();
+			return true;
+		}
+		default:
+			break;
+		}
+	}
+
 	void LevelScene::OnEvent(Teddy::Event& event)
 	{
+		if (m_Paused)
+		{
+			m_PauseMenu.OnEvent(event);
+			return;
+		}
 		m_Player.OnEvent(event);
 
 		Teddy::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(LevelScene::OnKeyPressed));
 		dispatcher.Dispatch<Teddy::SensorBeginEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorBegin));
 		dispatcher.Dispatch<Teddy::SensorEndEvent>(TED_BIND_EVENT_FN(LevelScene::OnSensorEnd));
 		dispatcher.Dispatch<Teddy::ContactBeginEvent>(TED_BIND_EVENT_FN(LevelScene::OnContactBegin));
 		dispatcher.Dispatch<Teddy::ContactEndEvent>(TED_BIND_EVENT_FN(LevelScene::OnContactEnd));
+	}
+
+	void LevelScene::StartPauseMenu()
+	{
+		m_Scene->OnRuntimeStop();
+		m_PauseMenu.Show();
+		m_Paused = true;
+	}
+
+	bool LevelScene::Pause(Teddy::Timestep ts)
+	{
+		if (!m_Player.IsIntroDone()) return false;
+
+		
+		if (m_Paused)
+		{
+			//m_PauseMenu.OnUpdate(ts);
+
+			if(m_PauseMenu.WantsToResume()) 
+			{
+				m_Scene->OnRuntimeStart();
+				m_Paused = false;
+				m_PauseMenu.Hide();
+			}
+			else if(m_PauseMenu.WantsToRetry())
+			{
+				// restart level
+			}
+			else if (m_PauseMenu.WantsToExit())
+			{
+				// return to main menu
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 }

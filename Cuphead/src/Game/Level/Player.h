@@ -35,6 +35,8 @@ namespace Cuphead
 		void NormalHit();
 
 		bool IsDead() { return m_Health <= 0; }
+
+		bool CanHit() { return !m_HitTolerance && !m_Hitting; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
@@ -76,6 +78,7 @@ namespace Cuphead
 		void Hitting(Teddy::Timestep ts);
 		void Hit(float velocity);
 		void StartDeath();
+		void Dying(Teddy::Timestep ts);
 		void UpdateHUD();
 		void HUDAnimation(Teddy::Timestep ts);
 

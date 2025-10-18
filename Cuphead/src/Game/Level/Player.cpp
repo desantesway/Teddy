@@ -94,6 +94,8 @@ namespace Cuphead
 		{
 			if (m_State != PlayerState::Dead)
 				StartDeath();
+			else
+				Dying(ts);
 		}
 		
 	}
@@ -1175,6 +1177,12 @@ namespace Cuphead
 		Hit(5.0f);
 	}
 
+	void Player::Dying(Teddy::Timestep ts)
+	{
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation.y += 1.5f * ts.GetSeconds();
+	}
+
 	void Player::StartDeath()
 	{
 		static bool firstTime = true;
@@ -1210,13 +1218,6 @@ namespace Cuphead
 		for (int i = 0; i < 24; i++)
 			sprite.PlayableIndicies.push_back(i);
 		indicies.Index = 0;
-
-		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-		body.SetVelocity(0.0f, 1.5f);
-		body.SetGravityScale(0.0f);
-		auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::PLAYERGHOST;
-		filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
 
 		firstTime = false;
 	}
