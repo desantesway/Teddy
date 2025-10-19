@@ -88,9 +88,9 @@ namespace Cuphead
 				auto& mugmanAnimation = m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>();
 				mugmanAnimation.PlayableIndicies = std::vector<int>{ 5, 6, 7 };
 				mugmanAnimation.PingPong = true;
-				mugmanAnimation.FrameTime = 0.05f;
-				mugmanAnimation.InitialFrameTime = 0.05f;
-				mugmanAnimation.FinalFrameTime = 0.05f;
+				mugmanAnimation.FrameTime = 0.075f;
+				mugmanAnimation.InitialFrameTime = 0.075f;
+				mugmanAnimation.FinalFrameTime = 0.075f;
 			}
 			else if (m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7)
 			{
@@ -98,9 +98,9 @@ namespace Cuphead
 				auto& cupheadAnimation = m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>();
 				cupheadAnimation.PlayableIndicies = std::vector<int>{ 5, 6, 7 };
 				cupheadAnimation.PingPong = true;
-				cupheadAnimation.FrameTime = 0.05f;
-				cupheadAnimation.InitialFrameTime = 0.05f;
-				cupheadAnimation.FinalFrameTime = 0.05f;
+				cupheadAnimation.FrameTime = 0.075f;
+				cupheadAnimation.InitialFrameTime = 0.075f;
+				cupheadAnimation.FinalFrameTime = 0.075f;
 			}
 		}
 	}
@@ -174,16 +174,16 @@ namespace Cuphead
 				case 0:
 					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
 					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
-					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.05f;
-					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.05f;
-					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.05f;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.075f;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.075f;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.075f;
 					break;
 				case 1:
 					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
 					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
-					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.05f;
-					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.05f;
-					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.05f;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.075f;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.075f;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.075f;
 					break;
 				default:
 					break;

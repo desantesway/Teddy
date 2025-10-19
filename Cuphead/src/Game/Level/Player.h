@@ -45,6 +45,7 @@ namespace Cuphead
 
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
+		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
 
 		void InitPlayer();
 		void InitPlayerHUD();
@@ -57,6 +58,7 @@ namespace Cuphead
 		void BlockMove();
 
 		void StartIdle();
+		void Idle();
 
 		void StartFall();
 		void Falling();
@@ -153,5 +155,7 @@ namespace Cuphead
 
 		bool m_CookieDeleted = false;
 		bool m_CookieCreated = false;
+
+		bool m_Shooting = false;
 	};
 }

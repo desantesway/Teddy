@@ -138,6 +138,7 @@ namespace Cuphead
 				BlockMove();
 				break;
 			case PlayerState::Idle:
+				Idle();
 				BlockMove();
 				break;
 			default:
@@ -367,10 +368,20 @@ namespace Cuphead
 		sprite.Textures = m_MovementTextures;
 		sprite.PingPong = true;
 		sprite.Loop = true;
-		sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
-		sprite.FinalFrameTime = 0.1f;
-		sprite.FrameTime = 0.05f;
-		sprite.InitialFrameTime = 0.1f;
+		if (m_Shooting)
+		{
+			sprite.FinalFrameTime = 0.25f;
+			sprite.FrameTime = 0.02f;
+			sprite.InitialFrameTime = 0.02f;
+			sprite.PlayableIndicies = { 9, 10, 11 };
+		}
+		else
+		{
+			sprite.FinalFrameTime = 0.1f;
+			sprite.FrameTime = 0.05f;
+			sprite.InitialFrameTime = 0.1f;
+			sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
+		}
 
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 347;
@@ -378,7 +389,7 @@ namespace Cuphead
 
 		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		indicies.GenerateFrames(sprite, atlas);
-		indicies.Index = 84;
+		indicies.Index = *sprite.PlayableIndicies.begin();
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 
@@ -415,6 +426,25 @@ namespace Cuphead
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Idle;
+	}
+
+	void Player::Idle()
+	{
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		if (m_Shooting && sprite.PlayableIndicies.size() > 3)
+		{ // TODO: change this to lock() and there see all directions
+			sprite.FinalFrameTime = 0.25f;
+			sprite.FrameTime = 0.02f;
+			sprite.InitialFrameTime = 0.02f;
+			sprite.PlayableIndicies = { 9, 10, 11 };
+		}
+		else if (!m_Shooting && sprite.PlayableIndicies.size() < 4)
+		{
+			sprite.FinalFrameTime = 0.1f;
+			sprite.FrameTime = 0.05f;
+			sprite.InitialFrameTime = 0.1f;
+			sprite.PlayableIndicies = { 84, 85, 86, 87, 88 };
+		}
 	}
 
 	void Player::DeleteCookie(Teddy::Timestep ts)
@@ -1129,6 +1159,22 @@ namespace Cuphead
 		case Teddy::Key::LShift:
 			StartDash();
 			return true;
+		case Teddy::Key::X:
+			m_Shooting = true;
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	bool Player::OnKeyReleased(Teddy::KeyReleasedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::X:
+			m_Shooting = false;
+			break;
 		default:
 			break;
 		}
@@ -1142,6 +1188,7 @@ namespace Cuphead
 		{
 			Teddy::EventDispatcher dispatcher(event);
 			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
+			dispatcher.Dispatch<Teddy::KeyReleasedEvent>(TED_BIND_EVENT_FN(Player::OnKeyReleased));
 		}
 	}
 

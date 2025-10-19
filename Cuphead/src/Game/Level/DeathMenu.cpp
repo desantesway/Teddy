@@ -329,6 +329,7 @@ namespace Cuphead
 		m_Scene = nullptr;
 
 		m_BackgroundTexture = nullptr;
+		m_EnemyTexture = nullptr;
 		m_OptionsFont = nullptr;
 		m_QuoteFont = nullptr;
 		m_YouDiedTexture.clear();
