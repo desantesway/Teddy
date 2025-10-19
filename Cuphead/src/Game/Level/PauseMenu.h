@@ -25,6 +25,7 @@ namespace Cuphead
 		static void Show();
 		static void Hide();
 		static void PartialHide();
+		static void PartialShow();
 
 		static bool IsVisible() { return m_Visible; }
 		static int GetState() { return m_State; }

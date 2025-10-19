@@ -32,7 +32,7 @@ namespace Cuphead
 		// Background
 		auto& assets = Teddy::AssetManager::Get();
 
-		auto background = m_MainMenu->CreateEntity("Main Menu Background");
+		auto background = m_MainMenu->CreateEntity("Main Menu Background"); // TODO: a lil animation
 		auto& sprite = background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.IsBackground = true;
 		sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Slot_Select_BG-2048x1024-fmt10.png", Teddy::Boolean::True);

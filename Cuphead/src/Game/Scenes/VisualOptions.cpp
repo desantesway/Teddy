@@ -37,7 +37,7 @@ namespace Cuphead
 			resButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& resButTransform = m_VisualMenu.ResolutionButton.GetComponent<Teddy::TransformComponent>();
 			resButTransform.Scale *= 0.175f;
-			resButTransform.Translation += glm::vec3(0.1f, 0.775f, 5.1f);
+			resButTransform.Translation += glm::vec3(0.025f, 0.775f, 5.1f);
 		}
 
 		{
@@ -62,7 +62,7 @@ namespace Cuphead
 			disButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& disButTransform = m_VisualMenu.DisplayButton.GetComponent<Teddy::TransformComponent>();
 			disButTransform.Scale *= 0.175f;
-			disButTransform.Translation += glm::vec3(0.1f, 0.6f, 5.1f);
+			disButTransform.Translation += glm::vec3(0.025f, 0.6f, 5.1f);
 		}
 
 		{
@@ -82,7 +82,7 @@ namespace Cuphead
 			vsyncButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& vsyncButTransform = m_VisualMenu.VSyncButton.GetComponent<Teddy::TransformComponent>();
 			vsyncButTransform.Scale *= 0.175f;
-			vsyncButTransform.Translation += glm::vec3(0.1f, 0.425f, 5.1f);
+			vsyncButTransform.Translation += glm::vec3(0.025f, 0.425f, 5.1f);
 		}
 
 		{
@@ -97,10 +97,10 @@ namespace Cuphead
 
 
 			Teddy::TransformComponent barSliderTransform;
-			barSliderTransform.Scale *= glm::vec3(0.04f, 0.04f, 1.0f);
-			barSliderTransform.Translation += glm::vec3(0.125f, 0.225f, 5.1f); // TODO: smaller
+			barSliderTransform.Scale *= glm::vec3(0.03f, 0.03f, 1.0f);
+			barSliderTransform.Translation += glm::vec3(0.05f, 0.225f, 5.1f);
 
-			m_VisualMenu.OverscanBar = Slider(scene, barSliderTransform, 0, 0.075f);
+			m_VisualMenu.OverscanBar = Slider(scene, barSliderTransform, 0, 0.05f);
 		}
 
 		{
@@ -115,10 +115,10 @@ namespace Cuphead
 
 
 			Teddy::TransformComponent brightSliderTransform;
-			brightSliderTransform.Scale *= glm::vec3(0.04f, 0.04f, 1.0f);
-			brightSliderTransform.Translation += glm::vec3(0.125f, 0.05f, 5.1f);
+			brightSliderTransform.Scale *= glm::vec3(0.03f, 0.03f, 1.0f);
+			brightSliderTransform.Translation += glm::vec3(0.05f, 0.05f, 5.1f);
 
-			m_VisualMenu.BrightnessBar = Slider(scene, brightSliderTransform, 5, 0.075f);
+			m_VisualMenu.BrightnessBar = Slider(scene, brightSliderTransform, 5, 0.05f);
 		}
 
 		{
@@ -133,10 +133,10 @@ namespace Cuphead
 
 
 			Teddy::TransformComponent cBleedSliderTransform;
-			cBleedSliderTransform.Scale *= glm::vec3(0.04f, 0.04f, 1.0f);
-			cBleedSliderTransform.Translation += glm::vec3(0.125f, -0.125f, 5.1f);
+			cBleedSliderTransform.Scale *= glm::vec3(0.03f, 0.03f, 1.0f);
+			cBleedSliderTransform.Translation += glm::vec3(0.05f, -0.125f, 5.1f);
 
-			m_VisualMenu.ColorBleedBar = Slider(scene, cBleedSliderTransform, 5, 0.075f);
+			m_VisualMenu.ColorBleedBar = Slider(scene, cBleedSliderTransform, 5, 0.05f);
 		}
 
 		{
@@ -156,7 +156,7 @@ namespace Cuphead
 			ttSButText.TextAlignment = Teddy::TextComponent::AlignmentType::RightCenter;
 			auto& ttSButTransform = m_VisualMenu.TitleScreenButton.GetComponent<Teddy::TransformComponent>();
 			ttSButTransform.Scale *= 0.175f;
-			ttSButTransform.Translation += glm::vec3(0.1f, -0.275f, 5.1f);
+			ttSButTransform.Translation += glm::vec3(0.025f, -0.275f, 5.1f);
 		}
 
 		{

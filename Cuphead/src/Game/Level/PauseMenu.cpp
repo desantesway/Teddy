@@ -34,7 +34,7 @@ namespace Cuphead
 		{
 			m_State = 0;
 			m_OptionsMenu.Hide();
-			Show();
+			PartialShow();
 			UpdateColors();
 		}
 	}
@@ -76,19 +76,12 @@ namespace Cuphead
 		m_Scene = scene;
 	}
 
-	void PauseMenu::Show()
+	void PauseMenu::PartialShow()
 	{
-		m_Overlay = m_Scene->CreateEntity("Pause Menu Overlay");
-		auto& overlaySprite = m_Overlay.AddComponent<Teddy::SpriteRendererComponent>();
-		overlaySprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.5f);
-		overlaySprite.IsBackground = true;
-		auto& overlayTransform = m_Overlay.GetComponent<Teddy::TransformComponent>();
-		overlayTransform.Translation = glm::vec3(0.0f, 0.0f, 3.5f);;
-
 		m_Background = m_Scene->CreateEntity("Pause Menu Background");
 		auto& sprite = m_Background.AddComponent<Teddy::SpriteRendererComponent>();
 		sprite.Texture = m_BackgroundTexture;
-		m_Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 300);
+		m_Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
 		auto& transform = m_Background.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(0.0f, 0.0f, 5.01f);
 		transform.Scale *= 1.4f;
@@ -101,7 +94,7 @@ namespace Cuphead
 		auto& textTransform = m_Resume.GetComponent<Teddy::TransformComponent>();
 		textTransform.Scale *= 0.175f;
 		textTransform.Translation = glm::vec3(0.0f, 0.35f, 5.1f);
-		
+
 		m_Retry = m_Scene->CreateEntity("Pause Menu Retry Option");
 		auto& rtext = m_Retry.AddComponent<Teddy::TextComponent>();
 		rtext.FontAsset = m_OptionsFont;
@@ -110,7 +103,7 @@ namespace Cuphead
 		auto& rtextTransform = m_Retry.GetComponent<Teddy::TransformComponent>();
 		rtextTransform.Scale *= 0.175f;
 		rtextTransform.Translation = glm::vec3(0.0f, 0.175f, 5.1f);
-		
+
 		m_Options = m_Scene->CreateEntity("Pause Menu Options Option");
 		auto& otext = m_Options.AddComponent<Teddy::TextComponent>();
 		otext.FontAsset = m_OptionsFont;
@@ -119,7 +112,7 @@ namespace Cuphead
 		auto& otextTransform = m_Options.GetComponent<Teddy::TransformComponent>();
 		otextTransform.Scale *= 0.175f;
 		otextTransform.Translation = glm::vec3(0.0f, 0.00f, 5.1f);
-		
+
 		m_Exit = m_Scene->CreateEntity("Pause Menu Exit Option");
 		auto& etext = m_Exit.AddComponent<Teddy::TextComponent>();
 		etext.FontAsset = m_OptionsFont;
@@ -128,11 +121,23 @@ namespace Cuphead
 		auto& etextTransform = m_Exit.GetComponent<Teddy::TransformComponent>();
 		etextTransform.Scale *= 0.175f;
 		etextTransform.Translation = glm::vec3(0.0f, -0.175f, 5.1f);
-		
+
 		m_State = 0;
 		m_CurrentSelection = 0;
 
 		UpdateColors();
+	}
+
+	void PauseMenu::Show()
+	{
+		m_Overlay = m_Scene->CreateEntity("Pause Menu Overlay");
+		auto& overlaySprite = m_Overlay.AddComponent<Teddy::SpriteRendererComponent>();
+		overlaySprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.5f);
+		overlaySprite.IsBackground = true;
+		auto& overlayTransform = m_Overlay.GetComponent<Teddy::TransformComponent>();
+		overlayTransform.Translation = glm::vec3(0.0f, 0.0f, 3.5f);;
+
+		PartialShow();
 	}
 
 	void PauseMenu::UpdateColors()
