@@ -16,42 +16,46 @@ namespace Cuphead
 
 		void Shutdown();
 
-		static void Init(Teddy::Ref<Teddy::Scene> scene);
+		void Init(Teddy::Ref<Teddy::Scene> scene);
 		void OnEvent(Teddy::Event& event);
-		static void OnUpdate(Teddy::Timestep ts);
+		void OnUpdate(Teddy::Timestep ts, bool isCuphead, int bossProgress);
 
-		static void Show(bool isCuphead, int bossProgress);
-		static void Hide();
+		void Show();
+		void Hide();
 
-		static int GetState() { return m_State; }
-		static bool WantsToRetry() { return m_State == 1; }
-		static bool WantsToExit() { return m_State == 2; }
-		static bool WantsToQuit() { return m_State == 3; }
+		int GetState() { return m_State; }
+		bool WantsToRetry() { return m_State == 1; }
+		bool WantsToExit() { return m_State == 2; }
+		bool WantsToQuit() { return m_State == 3; }
 	private:
-		static void UpdateColors();
+		void UpdateColors();
 
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
-		static Teddy::Entity m_Overlay;
-		static Teddy::Entity m_YouDied;
-		static Teddy::Entity m_Background;
-		static Teddy::Entity m_BossPhoto;
-		static Teddy::Entity m_BossQuote;
-		static Teddy::Entity m_ProgressBar;
-		static Teddy::Entity m_Retry;
-		static Teddy::Entity m_ExitToMap;
-		static Teddy::Entity m_Quit;
+		Teddy::Entity m_Overlay;
+		Teddy::Entity m_YouDied;
+		Teddy::Entity m_Background;
+		Teddy::Entity m_BossPhoto;
+		Teddy::Entity m_BossQuote;
+		Teddy::Entity m_ProgressBar;
+		Teddy::Entity m_Retry;
+		Teddy::Entity m_ExitToMap;
+		Teddy::Entity m_Quit;
 
-		static Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
-		static Teddy::Ref<Teddy::Font> m_OptionsFont;
-		static Teddy::Ref<Teddy::Font> m_QuoteFont;
+		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_YouDiedTexture;
+		Teddy::Ref<Teddy::Font> m_OptionsFont;
+		Teddy::Ref<Teddy::Font> m_QuoteFont;
 
-		static Teddy::Ref<Teddy::Scene> m_Scene;
+		Teddy::Ref<Teddy::Scene> m_Scene;
 
-		static glm::vec4 m_BlackColor;
-		static glm::vec4 m_RedColor;
+		glm::vec4 m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+		glm::vec4 m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
 
-		static int m_State;
-		static int m_CurrentSelection;
+		int m_State = 0;
+		int m_CurrentSelection = 0;
+
+		bool m_Started = false;
+		bool m_LoadedMenu = false;
 	};
 }

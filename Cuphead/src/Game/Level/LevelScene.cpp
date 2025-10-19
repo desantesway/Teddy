@@ -334,8 +334,10 @@ namespace Cuphead
 				m_Scene->OnRuntimeStop();
 				m_FirstDeath = false;
 				m_CameraShake = true;
-				m_DeathMenu.Show(m_IsCuphead, 50);
+				m_DeathMenu.Show();
 			}
+
+			m_DeathMenu.OnUpdate(ts, m_IsCuphead, 50);
 
 			return;
 		}
