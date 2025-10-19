@@ -17,7 +17,9 @@ namespace Cuphead
 		m_Foreground.~Foreground();
 
 		m_Player.Shutdown();
+		m_Player.~Player();
 		m_Clouds.Shutdown();
+		m_Clouds.~CloudPlatform();
 		m_Floor = {};
 		m_Camera = {};
 
@@ -26,6 +28,7 @@ namespace Cuphead
 
 		m_Paused = false;
 		m_PauseMenu.Shutdown();
+		m_PauseMenu.~PauseMenu();
 
 		m_IntroDone = false;
 		m_StartIntro = false;
@@ -40,6 +43,7 @@ namespace Cuphead
 		m_IncreasingSpeed = false;
 
 		m_DeathMenu.Shutdown();
+		m_DeathMenu.~DeathMenu();
 	}
 
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
@@ -109,7 +113,7 @@ namespace Cuphead
 
 		m_PauseMenu.Init(m_Scene);
 
-		m_DeathMenu.Init(m_Scene);
+		m_DeathMenu.Init(m_Scene, isCuphead);
 
 		return m_Scene;
 	}
@@ -337,7 +341,22 @@ namespace Cuphead
 				m_DeathMenu.Show();
 			}
 
-			m_DeathMenu.OnUpdate(ts, m_IsCuphead, 50);
+			m_DeathMenu.OnUpdate(ts, 50);
+
+			if (m_DeathMenu.WantsToRetry())
+			{
+				m_Scene->OnRuntimeStart();
+				m_State = 1;
+			}
+			else if (m_DeathMenu.WantsToExit())
+			{
+				m_Scene->OnRuntimeStart();
+				m_State = 2;
+			}
+			else if (m_DeathMenu.WantsToQuit())
+			{
+				Teddy::Application::Get().Close();
+			}
 
 			return;
 		}
@@ -697,11 +716,18 @@ namespace Cuphead
 
 	void LevelScene::OnEvent(Teddy::Event& event)
 	{
+		if (m_Player.IsDead())
+		{
+			m_DeathMenu.OnEvent(event);
+			return;
+		}
+
 		if (m_Paused)
 		{
 			m_PauseMenu.OnEvent(event);
 			return;
 		}
+
 		m_Player.OnEvent(event);
 
 		Teddy::EventDispatcher dispatcher(event);

@@ -16,9 +16,9 @@ namespace Cuphead
 
 		void Shutdown();
 
-		void Init(Teddy::Ref<Teddy::Scene> scene);
+		void Init(Teddy::Ref<Teddy::Scene> scene, bool isCuphead);
 		void OnEvent(Teddy::Event& event);
-		void OnUpdate(Teddy::Timestep ts, bool isCuphead, int bossProgress);
+		void OnUpdate(Teddy::Timestep ts, int bossProgress);
 
 		void Show();
 		void Hide();
@@ -28,21 +28,23 @@ namespace Cuphead
 		bool WantsToExit() { return m_State == 2; }
 		bool WantsToQuit() { return m_State == 3; }
 	private:
-		void UpdateColors();
+		void UpdateColors(glm::vec4 ToMultiply = glm::vec4(1.0f));
 
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
 		Teddy::Entity m_Overlay;
 		Teddy::Entity m_YouDied;
 		Teddy::Entity m_Background;
-		Teddy::Entity m_BossPhoto;
-		Teddy::Entity m_BossQuote;
+		Teddy::Entity m_EnemyPhoto;
+		Teddy::Entity m_EnemyQuote;
+		Teddy::Entity m_EnemyQuotePart2;
 		Teddy::Entity m_ProgressBar;
 		Teddy::Entity m_Retry;
 		Teddy::Entity m_ExitToMap;
 		Teddy::Entity m_Quit;
 
 		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
+		Teddy::Ref<Teddy::Texture2D> m_EnemyTexture;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_YouDiedTexture;
 		Teddy::Ref<Teddy::Font> m_OptionsFont;
 		Teddy::Ref<Teddy::Font> m_QuoteFont;
@@ -56,6 +58,8 @@ namespace Cuphead
 		int m_CurrentSelection = 0;
 
 		bool m_Started = false;
+		bool m_YouDiedFadeOut = false;
 		bool m_LoadedMenu = false;
+		bool m_AnimationDone = false;
 	};
 }

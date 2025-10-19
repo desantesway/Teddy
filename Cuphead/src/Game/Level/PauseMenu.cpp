@@ -6,27 +6,6 @@
 
 namespace Cuphead
 {
-	Teddy::Entity PauseMenu::m_Overlay;
-	Teddy::Entity PauseMenu::m_Background;
-	Teddy::Entity PauseMenu::m_Resume;
-	Teddy::Entity PauseMenu::m_Retry;
-	Teddy::Entity PauseMenu::m_Options;
-	Teddy::Entity PauseMenu::m_Exit;
-
-	glm::vec4 PauseMenu::m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
-	glm::vec4 PauseMenu::m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
-
-	int PauseMenu::m_State = 0;
-	int PauseMenu::m_CurrentSelection = 0;
-
-	Teddy::Ref<Teddy::Scene> PauseMenu::m_Scene = nullptr;
-
-	Teddy::Ref<Teddy::Texture2D> PauseMenu::m_BackgroundTexture = nullptr;
-	Teddy::Ref<Teddy::Font> PauseMenu::m_OptionsFont = nullptr;
-
-	bool PauseMenu::m_Visible = false;
-
-	OptionsMenu PauseMenu::m_OptionsMenu;
 
 	void PauseMenu::OnUpdate(Teddy::Timestep ts)
 	{
@@ -41,11 +20,23 @@ namespace Cuphead
 
 	void PauseMenu::Shutdown()
 	{
+		if(m_Overlay)
+			m_Scene->DestroyEntity(m_Overlay);
 		m_Overlay	= {};
+		if (m_Background)
+			m_Scene->DestroyEntity(m_Background);
 		m_Background = {};
+		if (m_Resume)
+			m_Scene->DestroyEntity(m_Resume);
 		m_Resume	= {};
+		if (m_Retry)
+			m_Scene->DestroyEntity(m_Retry);
 		m_Retry		= {};
+		if (m_Options)
+			m_Scene->DestroyEntity(m_Options);
 		m_Options	= {};
+		if (m_Exit)
+			m_Scene->DestroyEntity(m_Exit);
 		m_Exit		= {};
 
 		m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
@@ -58,8 +49,6 @@ namespace Cuphead
 
 		m_BackgroundTexture = nullptr;
 		m_OptionsFont = nullptr;
-
-		m_Visible = false;
 
 		m_OptionsMenu.~OptionsMenu();
 	}

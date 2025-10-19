@@ -18,45 +18,43 @@ namespace Cuphead
 
 		void Shutdown();
 
-		static void Init(Teddy::Ref<Teddy::Scene> scene);
+		void Init(Teddy::Ref<Teddy::Scene> scene);
 		void OnEvent(Teddy::Event& event);
-		static void OnUpdate(Teddy::Timestep ts);
+		void OnUpdate(Teddy::Timestep ts);
 
-		static void Show();
-		static void Hide();
-		static void PartialHide();
-		static void PartialShow();
+		void Show();
+		void Hide();
+		void PartialHide();
+		void PartialShow();
 
-		static bool IsVisible() { return m_Visible; }
-		static int GetState() { return m_State; }
-		static bool WantsToResume() { return m_State == 1; }
-		static bool WantsToRetry()  { return m_State == 2; }
-		static bool WantsToOptions()  { return m_State == 3; }
-		static bool WantsToExit()   { return m_State == 4; }
+		int GetState() { return m_State; }
+		bool WantsToResume() { return m_State == 1; }
+		bool WantsToRetry()  { return m_State == 2; }
+		bool WantsToOptions()  { return m_State == 3; }
+		bool WantsToExit()   { return m_State == 4; }
 	private:
-		static void UpdateColors();
+		void UpdateColors();
 
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
-		static Teddy::Entity m_Overlay;
-		static Teddy::Entity m_Background;
-		static Teddy::Entity m_Resume;
-		static Teddy::Entity m_Retry;
-		static Teddy::Entity m_Options;
-		static Teddy::Entity m_Exit;
+		Teddy::Entity m_Overlay;
+		Teddy::Entity m_Background;
+		Teddy::Entity m_Resume;
+		Teddy::Entity m_Retry;
+		Teddy::Entity m_Options;
+		Teddy::Entity m_Exit;
 
-		static Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
-		static Teddy::Ref<Teddy::Font> m_OptionsFont;
+		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture = nullptr;
+		Teddy::Ref<Teddy::Font> m_OptionsFont = nullptr;
 
-		static Teddy::Ref<Teddy::Scene> m_Scene;
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 
-		static glm::vec4 m_BlackColor;
-		static glm::vec4 m_RedColor;
+		glm::vec4 m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+		glm::vec4 m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
 
-		static bool m_Visible;
-		static int m_State; // 0 = Menu, 1 = Resume,  2 = Retry, 3 = Options, 4 = Exit
-		static int m_CurrentSelection; //0 = Resume,  1 = Retry, 2 = Options, 3 = Exit
+		int m_State = 0; // 0 = Menu, 1 = Resume,  2 = Retry, 3 = Options, 4 = Exit
+		int m_CurrentSelection = 0; //0 = Resume,  1 = Retry, 2 = Options, 3 = Exit
 
-		static OptionsMenu m_OptionsMenu;
+		OptionsMenu m_OptionsMenu;
 	};
 }

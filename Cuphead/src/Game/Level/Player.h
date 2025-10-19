@@ -144,7 +144,7 @@ namespace Cuphead
 
 		bool m_ParryReset = true;
 
-		int m_Health = 4;
+		int m_Health = 1;
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
 		bool m_HitAnimation = false;
