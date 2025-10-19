@@ -2,6 +2,7 @@
 
 #include <Teddy.h>
 
+// TODO: Smaller text
 namespace Cuphead
 {
 	void OptionsMenu::InitVisualMenu(Teddy::Ref<Teddy::Scene> scene)
@@ -11,11 +12,11 @@ namespace Cuphead
 		// Visual background
 		m_VisualMenu.Background = scene->CreateEntity("Visual Background");
 		auto& optionsSprite = m_VisualMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
-		optionsSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Options-1024x2048-fmt12.png", Teddy::Boolean::True);
-		m_VisualMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 590, 520);
+		optionsSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/UI/UI_Cards_595x668_2048x2048_0.png", Teddy::Boolean::True);
+		m_VisualMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(1, 0, 595, 668);
 		auto& optionsTransform = m_VisualMenu.Background.GetComponent<Teddy::TransformComponent>();
-		optionsTransform.Translation = glm::vec3(0.0f, 0.0f, 5.01f);
-		optionsTransform.Scale *= 2.5f;
+		optionsTransform.Translation = glm::vec3(0.0f, 0.35f, 5.01f);
+		optionsTransform.Scale *= 3.0f;
 
 		// Options
 		auto& app = Teddy::Application::Get();

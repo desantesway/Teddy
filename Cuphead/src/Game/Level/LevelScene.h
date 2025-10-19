@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "CloudPlatform.h"
 #include "PauseMenu.h"
+#include "DeathMenu.h"
 
 namespace Cuphead
 {
@@ -106,6 +107,7 @@ namespace Cuphead
 
 		bool m_IsCuphead = true;
 
+		DeathMenu m_DeathMenu;
 		bool m_FirstDeath = true;
 
 		bool m_IncreasingSpeed = false;

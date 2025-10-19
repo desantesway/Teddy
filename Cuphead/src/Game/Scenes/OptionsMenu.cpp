@@ -17,11 +17,11 @@ namespace Cuphead
 		// Options background
 		m_OptionsMenu.Background = scene->CreateEntity("Options Background");
 		auto& pauseSprite = m_OptionsMenu.Background.AddComponent<Teddy::SpriteRendererComponent>();
-		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Pause (Group 0)-1024x1024-fmt12.png", Teddy::Boolean::True);
-		m_OptionsMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 304);
+		pauseSprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/UI/UI_Cards_595x668_2048x2048_0.png", Teddy::Boolean::True);
+		m_OptionsMenu.Background.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 595, 668);
 		auto& pauseTransform = m_OptionsMenu.Background.GetComponent<Teddy::TransformComponent>();
-		pauseTransform.Translation = glm::vec3(0.0f, 0.0f, 5.01f);
-		pauseTransform.Scale *= 1.4f;
+		pauseTransform.Translation = glm::vec3(0.0f, 0.8f, 5.01f);
+		pauseTransform.Scale *= 3.0f;
 
 		// Options Text
 		m_OptionsMenu.AudioButton = scene->CreateEntity("Options Audio Text");

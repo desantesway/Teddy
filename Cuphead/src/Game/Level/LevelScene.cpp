@@ -38,6 +38,8 @@ namespace Cuphead
 		m_FirstDeath = true;
 
 		m_IncreasingSpeed = false;
+
+		m_DeathMenu.Shutdown();
 	}
 
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
@@ -106,6 +108,8 @@ namespace Cuphead
 		}
 
 		m_PauseMenu.Init(m_Scene);
+
+		m_DeathMenu.Init(m_Scene);
 
 		return m_Scene;
 	}
@@ -330,7 +334,7 @@ namespace Cuphead
 				m_Scene->OnRuntimeStop();
 				m_FirstDeath = false;
 				m_CameraShake = true;
-				// TODO: Start death menu
+				m_DeathMenu.Show(m_IsCuphead, 50);
 			}
 
 			return;

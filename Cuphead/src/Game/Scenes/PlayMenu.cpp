@@ -174,10 +174,16 @@ namespace Cuphead
 				case 0:
 					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
 					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.05f;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.05f;
+					m_PlayMenu.Cuphead.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.05f;
 					break;
 				case 1:
 					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies = std::vector<int>{ 0, 1, 2, 3, 4, 5, 6, 7 };
 					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FrameTime = 0.05f;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().InitialFrameTime = 0.05f;
+					m_PlayMenu.Mugman.GetComponent<Teddy::SpriteAnimationComponent>().FinalFrameTime = 0.05f;
 					break;
 				default:
 					break;
