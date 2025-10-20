@@ -370,9 +370,9 @@ namespace Cuphead
 		sprite.Loop = true;
 		if (m_Shooting)
 		{
-			sprite.FinalFrameTime = 0.25f;
-			sprite.FrameTime = 0.02f;
-			sprite.InitialFrameTime = 0.02f;
+			sprite.FinalFrameTime = m_ShootingRestTime;
+			sprite.FrameTime = m_ShootingActiveTime;
+			sprite.InitialFrameTime = m_ShootingActiveTime;
 			sprite.PlayableIndicies = { 9, 10, 11 };
 		}
 		else
@@ -432,10 +432,10 @@ namespace Cuphead
 	{
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		if (m_Shooting && sprite.PlayableIndicies.size() > 3)
-		{ // TODO: change this to lock() and there see all directions
-			sprite.FinalFrameTime = 0.25f;
-			sprite.FrameTime = 0.02f;
-			sprite.InitialFrameTime = 0.02f;
+		{
+			sprite.FinalFrameTime = m_ShootingRestTime;
+			sprite.FrameTime = m_ShootingActiveTime;
+			sprite.InitialFrameTime = m_ShootingActiveTime;
 			sprite.PlayableIndicies = { 9, 10, 11 };
 		}
 		else if (!m_Shooting && sprite.PlayableIndicies.size() < 4)
@@ -628,10 +628,6 @@ namespace Cuphead
 		sprite.Loop = true;
 		sprite.Reverse = true;
 
-		sprite.FinalFrameTime = 0.05f;
-		sprite.FrameTime = 0.05f;
-		sprite.InitialFrameTime = 0.05f;
-
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 347;
 		atlas.SpriteHeight = 192;
@@ -640,9 +636,23 @@ namespace Cuphead
 		indicies.GenerateFrames(sprite, atlas);
 
 		sprite.PlayableIndicies.clear();
-		for (int i = 68; i < 84; i++)
-			sprite.PlayableIndicies.push_back(i);
-		indicies.Index = 68;
+		if (m_Shooting)
+		{
+			sprite.FinalFrameTime = 0.05f;
+			sprite.FrameTime = 0.05f;
+			sprite.InitialFrameTime = 0.05f;
+			for (int i = 52; i < 68; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
+		else
+		{
+			sprite.FinalFrameTime = 0.05f;
+			sprite.FrameTime = 0.05f;
+			sprite.InitialFrameTime = 0.05f;
+			for (int i = 68; i < 84; i++)
+				sprite.PlayableIndicies.push_back(i);
+		}
+		indicies.Index = *sprite.PlayableIndicies.begin();
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 
@@ -664,6 +674,31 @@ namespace Cuphead
 		if(!m_Moving)
 		{
 			StartIdle();
+		}
+		else
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (m_Shooting && *sprite.PlayableIndicies.begin() == 68)
+			{
+				sprite.FinalFrameTime = 0.05f;
+				sprite.FrameTime = 0.05f;
+				sprite.InitialFrameTime = 0.05f;
+				sprite.PlayableIndicies.clear();
+				for (int i = 52; i < 68; i++)
+					sprite.PlayableIndicies.push_back(i);
+				indicies.Index = indicies.Index - 16;
+			}
+			else if(!m_Shooting && *sprite.PlayableIndicies.begin() == 52)
+			{
+				sprite.FinalFrameTime = 0.05f;
+				sprite.FrameTime = 0.05f;
+				sprite.InitialFrameTime = 0.05f;
+				sprite.PlayableIndicies.clear();
+				for (int i = 68; i < 84; i++)
+					sprite.PlayableIndicies.push_back(i);
+				indicies.Index = indicies.Index + 16;
+			}
 		}
 	}
 

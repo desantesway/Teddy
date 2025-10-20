@@ -157,5 +157,8 @@ namespace Cuphead
 		bool m_CookieCreated = false;
 
 		bool m_Shooting = false;
+
+		const float m_ShootingRestTime = 0.25f;
+		const float m_ShootingActiveTime = 0.02f;
 	};
 }
