@@ -49,7 +49,8 @@ namespace Cuphead
 
 		void InitPlayer();
 		void InitPlayerHUD();
-		
+		void InitProjectiles();
+
 		void Intro0();
 		void Intro1();
 		void Intro2();
@@ -89,6 +90,9 @@ namespace Cuphead
 		void Dying(Teddy::Timestep ts);
 		void UpdateHUD();
 		void HUDAnimation(Teddy::Timestep ts);
+
+		void Shoot(Teddy::Timestep ts);
+		void LaunchProjectile();
 
 		void LoadCupheadTextures();
 		void BreakCookie();
@@ -164,5 +168,17 @@ namespace Cuphead
 
 		const float m_ShootingRestTime = 0.25f;
 		const float m_ShootingActiveTime = 0.04f;
+
+		enum class ProjectileType
+		{
+			Roundabout,
+			Lobber
+		};
+
+		std::vector<Teddy::Entity> m_ActiveProjectiles;
+		ProjectileType m_Projectile = ProjectileType::Lobber;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
+		float m_ShootTimer = 0.0f;
+		bool m_Shot = false;
 	};
 }

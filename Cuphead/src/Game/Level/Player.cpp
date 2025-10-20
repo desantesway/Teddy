@@ -64,6 +64,8 @@ namespace Cuphead
 		m_LeftPressed = false;
 
 		m_Shooting = false;
+
+		m_ActiveProjectiles.clear();
 	}
 
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -159,6 +161,98 @@ namespace Cuphead
 				Dying(ts);
 		}
 		
+		Shoot(ts);
+	}
+
+	void Player::LaunchProjectile()
+	{
+		if (m_Projectile == ProjectileType::Lobber)
+		{
+			auto ent = m_Scene->CreateEntity();
+			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Textures = m_LobberTextures;
+			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0,0, 223, 189);
+
+			sprite.PlayableIndicies = { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+
+			auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			aA.Index = 12;
+
+			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+			//transform.Scale *= 0.35f;
+			if (m_DirectionRight)
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.2f, 0.002f);
+			else
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.2f, 0.002f);
+
+			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+			rb.FixedRotation = true;
+			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
+			//rb.SetGravityScale(0.5f);
+			auto& box = ent.AddComponent<Teddy::BoxCollider2DComponent>();
+			box.EnableSensorEvents = true;
+			
+			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PROJECTILE;
+			filter.MaskBits = LevelCategories::ENEMY;
+
+			m_Scene->RefreshBody(ent);
+			rb.SetVelocityX(m_DirectionRight ? 2.5f : -2.5f);
+
+			m_ActiveProjectiles.push_back(ent);
+		}
+	}
+
+	void Player::Shoot(Teddy::Timestep ts)
+	{
+		if (!m_Shooting) return;
+
+		m_ShootTimer += ts;
+
+		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+		if (m_State == PlayerState::Crouching || m_State == PlayerState::Idle)
+		{
+			if ((aA.Index == 10 || aA.Index == 95) && m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Reverse == false)
+			{
+				if (!m_Shot && m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
+				{
+					LaunchProjectile();
+					m_Shot = true;
+					m_ShootTimer = 0.0f;
+				}
+			}
+			else
+			{
+				m_Shot = false;
+			}
+		}
+
+		if (m_State == PlayerState::Dashing || m_State == PlayerState::Jumping || m_State == PlayerState::Falling ||
+			m_State == PlayerState::Dropping || m_State == PlayerState::Parrying || m_State == PlayerState::Running )
+		{
+			if (m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
+			{
+				m_ShootTimer = 0.0f;
+				LaunchProjectile();
+			}
+		}
+
+		std::vector<Teddy::Entity> newActive;
+		for (auto& ent : m_ActiveProjectiles)
+		{
+			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f || 
+				transform.Translation.y <= -2.75f || transform.Translation.y >= 2.75f)
+			{
+				m_Scene->DestroyEntity(ent);
+			}
+			else
+			{
+				newActive.push_back(ent);
+			}
+		}
+		m_ActiveProjectiles = newActive;
 	}
 
 	void Player::Intro0()
@@ -341,6 +435,19 @@ namespace Cuphead
 		m_State = PlayerState::Intro1;
 
 		InitPlayerHUD();
+		InitProjectiles();
+	}
+
+	void Player::InitProjectiles()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+
+		m_LobberTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Weapons/Lobber/Lobber_223x189_1024x1024_0.png",
+			"assets/Textures/Weapons/Lobber/Lobber_223x189_1024x1024_1.png",
+			});
+
+		// load EX and others
 	}
 
 	void Player::InitPlayerHUD()
