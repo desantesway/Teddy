@@ -20,8 +20,6 @@ namespace Cuphead
 			m_Scene->DestroyEntity(m_HealthHUD);
 		m_HealthHUD = {};
 
-		m_Scene = nullptr;
-
 		m_MovementTextures.clear();
 		m_IntroTextures.clear();
 		m_JumpTextures.clear();
@@ -65,7 +63,11 @@ namespace Cuphead
 
 		m_Shooting = false;
 
+		for (auto& projectile : m_ActiveProjectiles)
+			m_Scene->DestroyEntity(projectile);
 		m_ActiveProjectiles.clear();
+
+		m_Scene = nullptr;
 	}
 
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -168,38 +170,49 @@ namespace Cuphead
 	{
 		if (m_Projectile == ProjectileType::Lobber)
 		{
-			auto ent = m_Scene->CreateEntity();
-			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>();
+			static int lobberCount = 0;
+			auto ent = m_Scene->CreateEntity("Lobber #" + std::to_string(lobberCount));
+			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 			sprite.Textures = m_LobberTextures;
 			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0,0, 223, 189);
 
-			sprite.PlayableIndicies = { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+			sprite.PlayableIndicies = { 15, 16, 17, 18, 19, 20, 21 }; // TODO: this animation should be only after shot (12,13,14)
 
 			auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
 			aA.Index = 12;
 
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
-			//transform.Scale *= 0.35f;
+			transform.Scale *= 1.5f;
 			if (m_DirectionRight)
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.2f, 0.002f);
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.0f, 0.002f); // TODO: change based on hand position
 			else
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.2f, 0.002f);
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.0f, 0.002f);
 
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
-			//rb.SetGravityScale(0.5f);
 			auto& box = ent.AddComponent<Teddy::BoxCollider2DComponent>();
 			box.EnableSensorEvents = true;
+			box.Size = { 0.001f, 0.001f };
 			
+			// TODO: Circle SENSOR
+
+			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f);
+
 			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PROJECTILE;
 			filter.MaskBits = LevelCategories::ENEMY;
 
 			m_Scene->RefreshBody(ent);
-			rb.SetVelocityX(m_DirectionRight ? 2.5f : -2.5f);
+			rb.SetVelocityX(m_DirectionRight ? 5.0f : -5.0f);
+			rb.SetVelocityY(0.5f);
 
 			m_ActiveProjectiles.push_back(ent);
+
+			// TODO: hand effect
+
+			lobberCount++;
 		}
 	}
 
@@ -243,7 +256,7 @@ namespace Cuphead
 		{
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f || 
-				transform.Translation.y <= -2.75f || transform.Translation.y >= 2.75f)
+				transform.Translation.y <= -3.0f)
 			{
 				m_Scene->DestroyEntity(ent);
 			}

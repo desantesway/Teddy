@@ -12,7 +12,7 @@ namespace Cuphead
 	{
 	public:
 		Player() = default;
-		~Player() = default;
+		~Player() { Shutdown();  }
 
 		void Shutdown();
 
