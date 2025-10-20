@@ -58,6 +58,12 @@ namespace Cuphead
 
 		m_CookieDeleted = false;
 		m_CookieCreated = false;
+
+		m_DownPressed = false;
+		m_RightPressed = false;
+		m_LeftPressed = false;
+
+		m_Shooting = false;
 	}
 
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -239,22 +245,15 @@ namespace Cuphead
 
 	void Player::BlockMove()
 	{
-		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
-		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
-
-		if (leftPressed && rightPressed)
+		if (m_LeftPressed && m_RightPressed)
 		{
 			if(m_State != PlayerState::Dashing) m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(0.0f);
 			if (m_State == PlayerState::Running) StartIdle();
-			return;
 		}
-		else
-		{
-			if (leftPressed)
-				StartRun(false);
-			if (rightPressed)
-				StartRun(true);
-		}
+		else if (m_LeftPressed)
+			StartRun(false);
+		else if(m_RightPressed)
+			StartRun(true);
 	}
 
 	void Player::SetGrounded(bool grounded)
@@ -431,14 +430,14 @@ namespace Cuphead
 	void Player::Idle()
 	{
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-		if (m_Shooting && sprite.PlayableIndicies.size() > 3)
+		if (m_Shooting && *sprite.PlayableIndicies.begin() == 84) // TODO: fix atlas x difference
 		{
 			sprite.FinalFrameTime = m_ShootingRestTime;
 			sprite.FrameTime = m_ShootingActiveTime;
 			sprite.InitialFrameTime = m_ShootingActiveTime;
 			sprite.PlayableIndicies = { 9, 10, 11 };
 		}
-		else if (!m_Shooting && sprite.PlayableIndicies.size() < 4)
+		else if (!m_Shooting && *sprite.PlayableIndicies.begin() == 9)
 		{
 			sprite.FinalFrameTime = 0.1f;
 			sprite.FrameTime = 0.05f;
@@ -586,17 +585,14 @@ namespace Cuphead
 
 	void Player::Move(Teddy::Timestep ts)
 	{		
-		bool leftPressed = Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left);
-		bool rightPressed = Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right);
-
 		float velocity = 0;
-		if (leftPressed)
+		if (m_LeftPressed)
 		{
 			m_Moving = true;
 			velocity = -3.75f;
 			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocityX(velocity);
 		}
-		else if (rightPressed)
+		else if (m_RightPressed)
 		{
 			m_Moving = true;
 			velocity = 3.75f;
@@ -613,9 +609,7 @@ namespace Cuphead
 	{
 		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing) return;
 
-		if ((isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))) ||
-			(!isRight && (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))))
-			return;
+		if ((isRight && m_LeftPressed) || (!isRight && m_RightPressed)) return;
 
 		m_DirectionRight = isRight;
 		m_Entity.GetComponent<Teddy::TransformComponent>().Scale.x = m_DirectionRight ? 1.75f : -1.75f;
@@ -635,20 +629,18 @@ namespace Cuphead
 		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		indicies.GenerateFrames(sprite, atlas);
 
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+		
 		sprite.PlayableIndicies.clear();
 		if (m_Shooting)
 		{
-			sprite.FinalFrameTime = 0.05f;
-			sprite.FrameTime = 0.05f;
-			sprite.InitialFrameTime = 0.05f;
 			for (int i = 52; i < 68; i++)
 				sprite.PlayableIndicies.push_back(i);
 		}
 		else
 		{
-			sprite.FinalFrameTime = 0.05f;
-			sprite.FrameTime = 0.05f;
-			sprite.InitialFrameTime = 0.05f;
 			for (int i = 68; i < 84; i++)
 				sprite.PlayableIndicies.push_back(i);
 		}
@@ -681,9 +673,6 @@ namespace Cuphead
 			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (m_Shooting && *sprite.PlayableIndicies.begin() == 68)
 			{
-				sprite.FinalFrameTime = 0.05f;
-				sprite.FrameTime = 0.05f;
-				sprite.InitialFrameTime = 0.05f;
 				sprite.PlayableIndicies.clear();
 				for (int i = 52; i < 68; i++)
 					sprite.PlayableIndicies.push_back(i);
@@ -691,9 +680,6 @@ namespace Cuphead
 			}
 			else if(!m_Shooting && *sprite.PlayableIndicies.begin() == 52)
 			{
-				sprite.FinalFrameTime = 0.05f;
-				sprite.FrameTime = 0.05f;
-				sprite.InitialFrameTime = 0.05f;
 				sprite.PlayableIndicies.clear();
 				for (int i = 68; i < 84; i++)
 					sprite.PlayableIndicies.push_back(i);
@@ -755,17 +741,17 @@ namespace Cuphead
 				filter.SetFilterCategory(box, filter.CategoryBits);
 			}
 
-			if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+			if (m_DownPressed)
 			{
 				m_State = PlayerState::DoneJumping;
 				StartCrouch();
 			}
-			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)))
+			else if (m_RightPressed && !m_LeftPressed)
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRun(true);
 			}
-			else if ((Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left)) && !(Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right)))
+			else if (m_LeftPressed && !m_RightPressed)
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRun(false);
@@ -866,10 +852,6 @@ namespace Cuphead
 		sprite.Loop = true;
 		sprite.Reverse = false;
 
-		sprite.FinalFrameTime = 0.05f;
-		sprite.FrameTime = 0.05f;
-		sprite.InitialFrameTime = 0.05f;
-
 		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.SpriteWidth = 347;
 		atlas.SpriteHeight = 192;
@@ -878,10 +860,14 @@ namespace Cuphead
 		indicies.GenerateFrames(sprite, atlas);
 
 		sprite.PlayableIndicies.clear();
+		
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
 		for (int i = 97; i < 110; i++)
 			sprite.PlayableIndicies.push_back(i);
 		indicies.Index = 109;
-
+		
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		if (transform.Scale.x >= 0)
 			transform.Scale = glm::vec3(1.75f);
@@ -897,38 +883,67 @@ namespace Cuphead
 		m_State = PlayerState::Crouching;
 	}
 
-	void Player::Crouching()
+	void Player::Crouching() // TODO: direction change animation while crouching
 	{
 		static bool running = false;
 
 		auto& animationAtlas = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-		if (m_StartCrouch && animationAtlas.Index <= 101)
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		if (m_StartCrouch)
+		{
+			if (animationAtlas.Index <= 101)
+			{
+				auto& animation = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				animation.Loop = true;
+				animation.PingPong = true;
+				animation.Reverse = true;
+				if (m_Shooting)
+				{
+					animation.FinalFrameTime = m_ShootingRestTime;
+					animation.FrameTime = m_ShootingActiveTime;
+					animation.InitialFrameTime = m_ShootingActiveTime;
+					animation.PlayableIndicies = { 94, 95, 96 };
+					animationAtlas.Index = 96;
+				}
+				else
+				{
+					animationAtlas.Index = 101;
+					animation.PlayableIndicies = { 97, 98, 99, 100, 101 };
+					animation.FinalFrameTime = 0.1f;
+					animation.FrameTime = 0.05f;
+					animation.InitialFrameTime = 0.1f;
+				}
+
+				m_StartCrouch = false;
+			}
+		}
+		else if (m_Shooting && *sprite.PlayableIndicies.begin() == 97)
 		{
 			auto& animation = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-			animation.Loop = true;
-			animation.PingPong = true;
-			animation.Reverse = true;
+			animation.FinalFrameTime = m_ShootingRestTime;
+			animation.FrameTime = m_ShootingActiveTime;
+			animation.InitialFrameTime = m_ShootingActiveTime;
+			animation.PlayableIndicies = { 94, 95, 96 };
+			animationAtlas.Index = 96;
+		}
+		else if (!m_Shooting && *sprite.PlayableIndicies.begin() == 94)
+		{
+			auto& animation = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 			animationAtlas.Index = 101;
 			animation.PlayableIndicies = { 97, 98, 99, 100, 101 };
 			animation.FinalFrameTime = 0.1f;
 			animation.FrameTime = 0.05f;
 			animation.InitialFrameTime = 0.1f;
-
-			m_StartCrouch = false;
 		}
 
-		if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+		if (!m_DownPressed)
 		{
-			m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
-		}
-		else
-		{
-			if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+			if (m_RightPressed)
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRun(true);
 			}
-			else if(Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+			else if(m_LeftPressed)
 			{
 				m_State = PlayerState::AnimationDone;
 				StartRun(false);
@@ -1029,17 +1044,17 @@ namespace Cuphead
 			if(m_Grounded)
 			{
 				m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetVelocity(0.0f, 0.0f);
-				if (Teddy::Input::IsKeyPressed(Teddy::Key::S) || Teddy::Input::IsKeyPressed(Teddy::Key::Down))
+				if (m_DownPressed)
 				{
 					m_State = PlayerState::AnimationDone;
 					StartCrouch();
 				}
-				else if (Teddy::Input::IsKeyPressed(Teddy::Key::D) || Teddy::Input::IsKeyPressed(Teddy::Key::Right))
+				else if (m_RightPressed)
 				{
 					m_State = PlayerState::AnimationDone;
 					StartRun(true);
 				}
-				else if (Teddy::Input::IsKeyPressed(Teddy::Key::A) || Teddy::Input::IsKeyPressed(Teddy::Key::Left))
+				else if (m_LeftPressed)
 				{
 					m_State = PlayerState::AnimationDone;
 					StartRun(false);
@@ -1173,10 +1188,12 @@ namespace Cuphead
 		{
 		case Teddy::Key::A:
 		case Teddy::Key::Left:
+			m_LeftPressed = true;
 			StartRun(false);
 			return true;
 		case Teddy::Key::D:
 		case Teddy::Key::Right:
+			m_RightPressed = true;
 			StartRun(true);
 			return true;
 		case Teddy::Key::Z:
@@ -1189,6 +1206,7 @@ namespace Cuphead
 			return true;
 		case Teddy::Key::Down:
 		case Teddy::Key::S:
+			m_DownPressed = true;
 			StartCrouch();
 			return true;
 		case Teddy::Key::LShift:
@@ -1196,6 +1214,7 @@ namespace Cuphead
 			return true;
 		case Teddy::Key::X:
 			m_Shooting = true;
+			return true;
 		default:
 			break;
 		}
@@ -1207,6 +1226,18 @@ namespace Cuphead
 	{
 		switch (e.GetKeyCode())
 		{
+		case Teddy::Key::A:
+		case Teddy::Key::Left:
+			m_LeftPressed = false;
+			return true;
+		case Teddy::Key::D:
+		case Teddy::Key::Right:
+			m_RightPressed = false;
+			return true;
+		case Teddy::Key::Down:
+		case Teddy::Key::S:
+			m_DownPressed = false;
+			return true;
 		case Teddy::Key::X:
 			m_Shooting = false;
 			break;

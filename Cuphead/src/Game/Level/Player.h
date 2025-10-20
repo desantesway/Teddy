@@ -156,9 +156,13 @@ namespace Cuphead
 		bool m_CookieDeleted = false;
 		bool m_CookieCreated = false;
 
+		bool m_DownPressed = false;
+		bool m_RightPressed = false;
+		bool m_LeftPressed = false;
+
 		bool m_Shooting = false;
 
 		const float m_ShootingRestTime = 0.25f;
-		const float m_ShootingActiveTime = 0.02f;
+		const float m_ShootingActiveTime = 0.04f;
 	};
 }
