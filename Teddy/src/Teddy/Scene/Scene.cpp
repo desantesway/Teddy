@@ -639,7 +639,7 @@ namespace Teddy
 		{
 			b2Polygon sensorBox = b2MakeOffsetBox(sensor.Size.x, sensor.Size.y,
 				{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(0));
-			b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
+			sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
 		}
 		else
 		{
@@ -648,7 +648,7 @@ namespace Teddy
 			float sx = std::abs(transform.Scale.x);
 			float sy = std::abs(transform.Scale.y);
 			circle.radius = glm::max(sx, sy);
-			b2ShapeId sensor = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
+			sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 		}
 
 		sensor.RuntimeFixture = new b2ShapeId(sensorShape);
@@ -694,12 +694,12 @@ namespace Teddy
 					//shapeDef.filter.groupIndex = filter.GroupIndex;
 				}
 
-				b2ShapeId sensor;
+				b2ShapeId sensorShape;
 				if (value.IsBox)
 				{
 					b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-					b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
+					sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
 				}
 				else
 				{
@@ -708,10 +708,10 @@ namespace Teddy
 					float sx = std::abs(transform.Scale.x);
 					float sy = std::abs(transform.Scale.y);
 					circle.radius = glm::max(sx, sy);
-					b2ShapeId sensor = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
+					sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 				}
 				
-				value.RuntimeFixture = new b2ShapeId(sensor);
+				value.RuntimeFixture = new b2ShapeId(sensorShape);
 			}
 		}
 
@@ -955,12 +955,12 @@ namespace Teddy
 						//shapeDef.filter.groupIndex = filter.GroupIndex;
 					}
 
-					b2ShapeId sensor;
+					b2ShapeId sensorShape;
 					if (value.IsBox)
 					{
 						b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
 							{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-						b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
+						sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
 					}
 					else
 					{
@@ -969,10 +969,10 @@ namespace Teddy
 						float sx = std::abs(transform.Scale.x);
 						float sy = std::abs(transform.Scale.y);
 						circle.radius = glm::max(sx, sy);
-						b2ShapeId sensor = b2CreateCircleShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &circle);
+						sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &circle);
 					}
 
-					value.RuntimeFixture = new b2ShapeId(sensor);
+					value.RuntimeFixture = new b2ShapeId(sensorShape);
 				}
 			}
 			

@@ -177,10 +177,11 @@ namespace Cuphead
 			static int lobberCount = 0;
 			auto ent = m_Scene->CreateEntity("Lobber #" + std::to_string(lobberCount));
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+			sprite.Loop = false;
 			sprite.Textures = m_LobberTextures;
 			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0,0, 223, 189);
 
-			sprite.PlayableIndicies = { 15, 16, 17, 18, 19, 20, 21 }; // TODO: this animation should be only after shot (12,13,14)
+			sprite.PlayableIndicies = { 12, 13, 14 };
 
 			auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
 			aA.Index = 12;
@@ -278,6 +279,16 @@ namespace Cuphead
 			}
 			else
 			{
+				auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& sprite = ent.GetComponent<Teddy::SpriteAnimationComponent>();
+				if (sprite.PlayableIndicies.size() < 4 && aA.Index >= 14)
+				{
+					sprite.PlayableIndicies = { 15, 16, 17, 18, 19, 20, 21 };
+					aA.Index = 15;
+
+					sprite.Loop = true;
+				}
+
 				newActive.push_back(ent);
 			}
 		}
@@ -882,6 +893,7 @@ namespace Cuphead
 
 	void Player::Falling()
 	{
+		TED_CORE_INFO("{}", m_Grounded);
 		if (m_Grounded)
 		{
 			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
