@@ -3,20 +3,6 @@
 
 namespace Cuphead
 {
-	void CloudPlatform::Shutdown()
-	{
-		m_Scene = nullptr;
-
-		m_Clouds.clear();
-		m_CloudsToSpawn.clear();
-		m_CurrentCloudsSpawning.clear();
-		m_CloudTextures.clear();
-
-		m_PlayerY = 0.0f;
-		m_MovementSpeed = 0.0f;
-
-		m_LastSpawn = { 0.0f, 0.0f };
-	}
 
 	void CloudPlatform::OnUpdate(Teddy::Timestep ts)
 	{

@@ -65,6 +65,8 @@ namespace Cuphead
 		m_MainTitleScene = MainTitleScene();
 
         m_ActiveScene = m_MainTitleScene.Init();
+        m_LevelScene = nullptr;
+        m_MainMenuScene = nullptr;
         return m_ActiveScene;
     }
 
@@ -102,7 +104,6 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        //m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:

@@ -6,46 +6,6 @@
 
 namespace Cuphead
 {
-	void LevelScene::Shutdown()
-	{
-		m_Scene = nullptr;
-
-		m_MovementVelocity = 0.0f;
-		m_MovementSpeed = 0.0f;
-
-		m_Background.~Background();
-		m_Foreground.~Foreground();
-
-		m_Player.Shutdown();
-		m_Player.~Player();
-		m_Clouds.Shutdown();
-		m_Clouds.~CloudPlatform();
-		m_Floor = {};
-		m_Camera = {};
-
-		m_State = 0;
-		m_Phase = 1;
-
-		m_Paused = false;
-		m_PauseMenu.Shutdown();
-		m_PauseMenu.~PauseMenu();
-
-		m_IntroDone = false;
-		m_StartIntro = false;
-
-		m_FloorHitContact = false;
-		m_CameraShake = false;
-
-		m_IsCuphead = true;
-
-		m_FirstDeath = true;
-
-		m_IncreasingSpeed = false;
-
-		m_DeathMenu.Shutdown();
-		m_DeathMenu.~DeathMenu();
-	}
-
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
 	{
 		m_Scene = Teddy::CreateRef<Teddy::Scene>();

@@ -16,8 +16,6 @@ namespace Cuphead
 		PauseMenu() = default;
 		~PauseMenu() = default;
 
-		void Shutdown();
-
 		void Init(Teddy::Ref<Teddy::Scene> scene);
 		void OnEvent(Teddy::Event& event);
 		void OnUpdate(Teddy::Timestep ts);

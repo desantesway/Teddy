@@ -6,74 +6,6 @@
 //TODO:  parry object //
 namespace Cuphead
 {
-	void Player::Shutdown()
-	{
-		if(m_Entity)
-			m_Scene->DestroyEntity(m_Entity);
-		m_Entity = {};
-
-		if(m_Cookie)
-			m_Scene->DestroyEntity(m_Cookie);
-		m_Cookie = {};
-
-		if(m_HealthHUD)
-			m_Scene->DestroyEntity(m_HealthHUD);
-		m_HealthHUD = {};
-
-		m_MovementTextures.clear();
-		m_IntroTextures.clear();
-		m_JumpTextures.clear();
-		m_HealthTextures.clear();
-		m_HealthHudTextures.clear();
-
-		m_State = PlayerState::Idle;
-
-		m_IntroLoaded = false;
-
-		m_DirectionRight = true;
-		m_Grounded = true;
-
-		m_StartDash = false;
-		m_DashReset = true;
-		m_ShiftHeld = false;
-
-		m_StartCrouch = false;
-
-		m_Dropping = false;
-
-		m_StartJump = false;
-		m_ZHeld = false;
-		m_Moving = false;
-
-		m_ParryReset = true;
-
-		m_Health = 4;
-		m_Hitting = false;
-		m_HitTolerance = false;
-		m_HitAnimation = false;
-
-		m_FirstDeath = true;
-
-		m_CookieDeleted = false;
-		m_CookieCreated = false;
-
-		m_DownPressed = false;
-		m_RightPressed = false;
-		m_LeftPressed = false;
-
-		m_Shooting = false;
-
-		for (auto& projectile : m_ActiveProjectiles)
-			m_Scene->DestroyEntity(projectile);
-		m_ActiveProjectiles.clear();
-
-		for (auto& project : m_ProjectileExplosion)
-			m_Scene->DestroyEntity(project);
-		m_ActiveProjectiles.clear();
-
-		m_Scene = nullptr;
-	}
-
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
 		if (m_Health > 0)
@@ -247,7 +179,7 @@ namespace Cuphead
 			{
 				if (!m_Shot && m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
 				{
-					//LaunchProjectile();
+					LaunchProjectile();
 					m_Shot = true;
 					m_ShootTimer = 0.0f;
 				}
@@ -264,7 +196,7 @@ namespace Cuphead
 			if (m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
 			{
 				m_ShootTimer = 0.0f;
-				//LaunchProjectile();
+				LaunchProjectile();
 			}
 		}
 
@@ -893,7 +825,6 @@ namespace Cuphead
 
 	void Player::Falling()
 	{
-		TED_CORE_INFO("{}", m_Grounded);
 		if (m_Grounded)
 		{
 			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();

@@ -12,9 +12,7 @@ namespace Cuphead
 	{
 	public:
 		Player() = default;
-		~Player() { Shutdown();  }
-
-		void Shutdown();
+		~Player() = default;
 
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);

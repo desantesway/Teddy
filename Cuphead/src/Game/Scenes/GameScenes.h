@@ -34,7 +34,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Scene> InitMainMenu();
 		Teddy::Ref<Teddy::Scene> InitLevel();
 	private:
-		int m_CurrentScene = 0;
+		int m_CurrentScene = 2;
 
 		Teddy::Ref<Teddy::Scene> m_ActiveScene = nullptr;
 

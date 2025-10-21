@@ -14,8 +14,6 @@ namespace Cuphead
 		CloudPlatform() = default;
 		~CloudPlatform() = default;
 
-		void Shutdown();
-
 		void Init(Teddy::Ref<Teddy::Scene> scene);
 		void InitPhase1();
 

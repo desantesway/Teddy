@@ -25,8 +25,6 @@ namespace Cuphead
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
 
-		void Shutdown();
-
 		void StartIntro();
 		void LoadIntro();
 		bool IsIntroDone() { return m_IntroDone; }
