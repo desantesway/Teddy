@@ -247,7 +247,7 @@ namespace Cuphead
 			{
 				if (!m_Shot && m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
 				{
-					LaunchProjectile();
+					//LaunchProjectile();
 					m_Shot = true;
 					m_ShootTimer = 0.0f;
 				}
@@ -264,7 +264,7 @@ namespace Cuphead
 			if (m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
 			{
 				m_ShootTimer = 0.0f;
-				LaunchProjectile();
+				//LaunchProjectile();
 			}
 		}
 

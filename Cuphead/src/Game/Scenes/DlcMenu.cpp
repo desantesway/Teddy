@@ -4,9 +4,6 @@
 
 namespace Cuphead
 {
-
-	DlcMenu MainMenuScene::m_DlcMenu;
-
 	void MainMenuScene::InitDlcMenu()
 	{
 		auto& assets = Teddy::AssetManager::Get();

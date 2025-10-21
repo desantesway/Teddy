@@ -11,36 +11,38 @@ namespace Cuphead
 	class GameScenes
 	{
 	public:
-		GameScenes();
+		GameScenes() = default;
 		~GameScenes() = default;
 
-		static GameScenes* Get() { return instance; }
+		static GameScenes& Get()
+		{
+			static GameScenes instance;
+			return instance;
+		}
 
-		static void Init();
-		static bool OnUpdate(Teddy::Timestep& ts);
+		void Init();
+		bool OnUpdate(Teddy::Timestep& ts);
 
 		void OnEvent(Teddy::Event& event);
 
-		static Teddy::Ref<Teddy::Scene> InitNextScene();
-		static void FreeScenes();
+		Teddy::Ref<Teddy::Scene> InitNextScene();
+		void FreeScenes();
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
-		static Teddy::Ref<Teddy::Scene> InitTitle();
-		static Teddy::Ref<Teddy::Scene> InitMainMenu();
-		static Teddy::Ref<Teddy::Scene> InitLevel();
+		Teddy::Ref<Teddy::Scene> InitTitle();
+		Teddy::Ref<Teddy::Scene> InitMainMenu();
+		Teddy::Ref<Teddy::Scene> InitLevel();
 	private:
-		static int m_CurrentScene;
+		int m_CurrentScene = 0;
 
-		static Teddy::Ref<Teddy::Scene> m_ActiveScene;
+		Teddy::Ref<Teddy::Scene> m_ActiveScene = nullptr;
 
-		static TransitionScenes m_TransitionScenes;
-		static MainTitleScene m_MainTitleScene;
-		static MainMenuScene m_MainMenuScene;
-		static LevelScene m_LevelScene;
+		TransitionScenes m_TransitionScenes;  // TODO: make this on another layer
+		MainTitleScene m_MainTitleScene;
+		Teddy::Ref<MainMenuScene> m_MainMenuScene = nullptr;
+		Teddy::Ref<LevelScene> m_LevelScene = nullptr;
 
-		static bool m_IsCuphead;
-	private:
-		static GameScenes* instance;
+		bool m_IsCuphead = false;
 	};
 }

@@ -2,6 +2,8 @@
 
 #include <Teddy.h>
 
+#include "Scenes/GameScenes.h"
+
 namespace Cuphead
 {
 	class CupheadLayer : public Teddy::Layer
@@ -22,7 +24,6 @@ namespace Cuphead
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnWindowResize(Teddy::WindowResizeEvent& e);
 	protected:
-		bool new_Scene = false;
 		Teddy::Ref<Teddy::Scene> m_ActiveScene;
 	};
 }

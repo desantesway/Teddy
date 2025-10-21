@@ -4,9 +4,6 @@
 
 namespace Cuphead
 {
-	PlayMenu MainMenuScene::m_PlayMenu;
-	unsigned int MainMenuScene::m_LoadLevel = 0;
-
 	void MainMenuScene::InitPlayMenu()
 	{
 		auto& assets = Teddy::AssetManager::Get();

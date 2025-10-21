@@ -2,26 +2,6 @@
 
 namespace Cuphead
 {
-    GameScenes* GameScenes::instance = nullptr;
-
-    Teddy::Ref<Teddy::Scene> GameScenes::m_ActiveScene = nullptr;
-
-    TransitionScenes GameScenes::m_TransitionScenes;
-    MainTitleScene GameScenes::m_MainTitleScene;
-    MainMenuScene GameScenes::m_MainMenuScene;
-	LevelScene GameScenes::m_LevelScene;
-
-    int GameScenes::m_CurrentScene = 0;
-
-	bool GameScenes::m_IsCuphead = true;
-
-    GameScenes::GameScenes()
-    {
-        if (instance)
-            TED_CORE_ASSERT(false, "GameScenes instance already exists!");
-        instance = this;
-    }
-
     void GameScenes::Init()
     {
         m_TransitionScenes.Init();
@@ -39,33 +19,37 @@ namespace Cuphead
                 case 1:
                     return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
                 case 2:
-                    m_MainMenuScene.OnUpdate(ts);
-                    if (m_MainMenuScene.LoadLevel())
+                    if (!m_MainMenuScene) return false;
+
+                    m_MainMenuScene->OnUpdate(ts);
+                    if (m_MainMenuScene->LoadLevel())
                     {
                         m_TransitionScenes.FadeIn();
                         m_TransitionScenes.CircleIn();
 
-						m_IsCuphead = (m_MainMenuScene.LoadLevel() == 1);
+						m_IsCuphead = (m_MainMenuScene->LoadLevel() == 1);
                     }
-                    return m_MainMenuScene.LoadLevel() && m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
+                    return m_MainMenuScene->LoadLevel() && m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
                 case 3:
+                    if (!m_LevelScene) return false;
+
                     if (!m_TransitionScenes.IsCircleOut())
                     {
                         m_TransitionScenes.CircleOut();
-                        m_LevelScene.LoadIntro();
+                        m_LevelScene->LoadIntro();
                     }
-                    else if (!m_LevelScene.HasIntroStarted())
+                    else if (!m_LevelScene->HasIntroStarted())
                     {
-                        m_LevelScene.StartIntro();
+                        m_LevelScene->StartIntro();
                     }
-                    if(m_LevelScene.WantsToRetry() || m_LevelScene.WantsToExit())
+                    if(m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit())
                     {
                         m_TransitionScenes.FadeIn();
                         m_TransitionScenes.CircleIn();
                         return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
 					}
 
-                    m_LevelScene.OnUpdate(ts);
+                    m_LevelScene->OnUpdate(ts);
                     return false;
                 default:
                     TED_CORE_INFO("No scene loaded for index {0}", m_CurrentScene);
@@ -80,31 +64,31 @@ namespace Cuphead
     {
 		m_MainTitleScene = MainTitleScene();
 
-        m_MainMenuScene.~MainMenuScene();
-        Teddy::Ref<Teddy::Scene> scene = m_MainTitleScene.Init();
-        m_ActiveScene = scene;
+        m_ActiveScene = m_MainTitleScene.Init();
         return m_ActiveScene;
     }
 
-    Teddy::Ref<Teddy::Scene> GameScenes::InitMainMenu()
+    Teddy::Ref<Teddy::Scene> GameScenes::InitMainMenu() // TODO: assets bypass
     {
-		m_MainMenuScene = MainMenuScene();
+        m_MainMenuScene = Teddy::CreateRef<MainMenuScene>();
 
         m_TransitionScenes.FadeOut();
         m_TransitionScenes.SetCircleAlpha(0.0f); 
         m_TransitionScenes.CircleOut();
-		Teddy::Ref<Teddy::Scene> scene = m_MainMenuScene.Init();
-		m_ActiveScene = scene;
+        m_ActiveScene = m_MainMenuScene->Init();
+        m_LevelScene = nullptr;
 		return m_ActiveScene;
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitLevel()
     {
+        m_LevelScene = Teddy::CreateRef<LevelScene>();
+
         m_TransitionScenes.SetFadeAlpha(0.0f);
         m_TransitionScenes.FadeOut();
         m_TransitionScenes.SetCircleAlpha(1.0f);
-        Teddy::Ref<Teddy::Scene> scene = m_LevelScene.Init(m_IsCuphead);
-        m_ActiveScene = scene;
+        m_ActiveScene = m_LevelScene->Init(m_IsCuphead);
+		m_MainMenuScene = nullptr;
         return m_ActiveScene;
     }
 
@@ -112,23 +96,13 @@ namespace Cuphead
     {
         if (m_CurrentScene != 1)
             m_MainTitleScene.~MainTitleScene();
-        if (m_CurrentScene != 2)
-        {
-            m_MainMenuScene.Shutdown();
-            m_MainMenuScene.~MainMenuScene();
-        }
-        if (m_CurrentScene != 3)
-        {
-            m_LevelScene.Shutdown();
-            m_LevelScene.~LevelScene();
-        }
         
         Teddy::AssetManager::Get().RemoveExpiredAll();
     }
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        m_CurrentScene = 2;
+        //m_CurrentScene = 2;
         switch (++m_CurrentScene)
         {
             case 1:
@@ -138,17 +112,15 @@ namespace Cuphead
             case 3:
                 return InitLevel();
             case 4:
-                if (m_LevelScene.WantsToExit())
+                if (m_LevelScene->WantsToExit())
                 {
-                    m_LevelScene.Shutdown();
-					m_CurrentScene = 1;
-                    return nullptr;
-                }
-                else if (m_LevelScene.WantsToRetry())
-                {
-                    m_LevelScene.Shutdown();
 					m_CurrentScene = 2;
-                    return nullptr;
+                    return InitMainMenu();
+                }
+                else if (m_LevelScene->WantsToRetry())
+                {
+					m_CurrentScene = 3;
+                    return InitLevel();
                 }
                 else
                 {
@@ -181,11 +153,14 @@ namespace Cuphead
         {
         case 1:
             dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(GameScenes::OnKeyPressed));
+            break;
         case 2:
-			m_MainMenuScene.OnEvent(event);
+            if (m_MainMenuScene)
+			    m_MainMenuScene->OnEvent(event);
             break;
 		case 3:
-            m_LevelScene.OnEvent(event);
+            if (m_LevelScene)
+                m_LevelScene->OnEvent(event);
 			break;
         default:
             break;

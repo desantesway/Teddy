@@ -3,15 +3,13 @@
 
 #include <Teddy.h>
 
-#include "Scenes/GameScenes.h"
-
 #include <imgui.h>
 
 namespace Cuphead
 {
 
     CupheadLayer::CupheadLayer()
-	    : Layer("Main Layer")
+		: Layer("Main Layer")
     {
 
     }
@@ -22,10 +20,10 @@ namespace Cuphead
 
 		Teddy::Renderer2D::SetLineWidth(2.0f);
 
-		GameScenes::Init();
-	    m_ActiveScene = GameScenes::InitNextScene();
+        GameScenes::Get().Init();
+	    m_ActiveScene = GameScenes::Get().InitNextScene();
         m_ActiveScene->OnRuntimeStart();
-        GameScenes::FreeScenes();
+        GameScenes::Get().FreeScenes();
 
 	    Teddy::PostProcessing::EnableEffect(Teddy::PostProcessing::Effect::ChromaticAberration);
 	    Teddy::PostProcessing::SetChromaticAberrationOffset({ 2.5f, 2.5f, -2.5f });
@@ -48,16 +46,12 @@ namespace Cuphead
             m_ActiveScene->ShowPhysicsColliders();
         }
 
-        if (GameScenes::OnUpdate(ts))
+        if (GameScenes::Get().OnUpdate(ts))
         {
             m_ActiveScene->OnRuntimeStop();
-			Teddy::Ref<Teddy::Scene> nextScene = GameScenes::InitNextScene();
-            if(!nextScene)
-                nextScene = GameScenes::InitNextScene();
-            m_ActiveScene = nullptr;
-            m_ActiveScene = nextScene;
+            m_ActiveScene = GameScenes::Get().InitNextScene();
             m_ActiveScene->OnRuntimeStart();
-            GameScenes::FreeScenes();
+            GameScenes::Get().FreeScenes();
         }
 
         m_ActiveScene->SimulatePhysics(ts);
@@ -87,7 +81,7 @@ namespace Cuphead
         dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnKeyPressed));
         dispatcher.Dispatch<Teddy::WindowResizeEvent>(TED_BIND_EVENT_FN(CupheadLayer::OnWindowResize)); // TODO: WINDOW SIZE/RESIZE
 
-        GameScenes::Get()->OnEvent(event);
+        GameScenes::Get().OnEvent(event);
         m_ActiveScene->OnEvent(event);
     }
 

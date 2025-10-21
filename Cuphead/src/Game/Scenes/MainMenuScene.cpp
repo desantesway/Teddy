@@ -4,17 +4,6 @@
 
 namespace Cuphead
 {
-	glm::vec4 MainMenuScene::m_WhiteColor = glm::vec4(1.0f);
-	glm::vec4 MainMenuScene::m_GrayColor = glm::vec4(110.0f / 255.0f, 110.0f / 255.0f, 110.0f / 255.0f, 1.0f);
-	glm::vec4 MainMenuScene::m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
-	glm::vec4 MainMenuScene::m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
-	glm::vec4 MainMenuScene::m_InvisibleColor = glm::vec4(0.0f);
-
-	MainMenu MainMenuScene::m_MainMenuOptions;
-	
-	unsigned int MainMenuScene::m_CurrentMenu = 0;
-
-	OptionsMenu MainMenuScene::m_OptionsMenu;
 
 	Teddy::Ref<Teddy::Scene> MainMenuScene::Init()
 	{

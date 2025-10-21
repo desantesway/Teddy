@@ -48,41 +48,41 @@ namespace Cuphead
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
 
-		static unsigned int LoadLevel() { return m_LoadLevel; }
+		unsigned int LoadLevel() { return m_LoadLevel; }
 		void Shutdown();
 	private:
 		void InitMainMenu();
-		static void UpdateMainMenuButtonColors();
-		static void HideMainMenu();
-		static void EnterMainMenuOption();
-		static bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		void UpdateMainMenuButtonColors();
+		void HideMainMenu();
+		void EnterMainMenuOption();
+		bool OnMainMenuKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void InitDlcMenu();
-		static void HideDlcMenu();
-		static void UpdateDlcButtonColors();
-		static bool OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		void HideDlcMenu();
+		void UpdateDlcButtonColors();
+		bool OnDlcMenuKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void InitPlayMenu();
-		static void HidePlayMenu();
-		static void UpdatePlayButtonColors();
-		static bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
+		void HidePlayMenu();
+		void UpdatePlayButtonColors();
+		bool OnPlayMenuKeyPressed(Teddy::KeyPressedEvent& e);
 		void OnPlayUpdate();
 
-		static bool OnKeyPressed(Teddy::KeyPressedEvent& e);
+		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 	private:
 		Teddy::Ref<Teddy::Scene> m_MainMenu;
-		static glm::vec4 m_GrayColor;
-		static glm::vec4 m_WhiteColor;
-		static glm::vec4 m_BlackColor;
-		static glm::vec4 m_RedColor;
-		static glm::vec4 m_InvisibleColor;
+		glm::vec4 m_WhiteColor = glm::vec4(1.0f);
+		glm::vec4 m_GrayColor = glm::vec4(110.0f / 255.0f, 110.0f / 255.0f, 110.0f / 255.0f, 1.0f);
+		glm::vec4 m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
+		glm::vec4 m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
+		glm::vec4 m_InvisibleColor = glm::vec4(0.0f);
 		
-		static MainMenu m_MainMenuOptions;
-		static DlcMenu m_DlcMenu;
-		static PlayMenu m_PlayMenu;
-		static OptionsMenu m_OptionsMenu;
+		MainMenu m_MainMenuOptions;
+		DlcMenu m_DlcMenu;
+		PlayMenu m_PlayMenu;
+		OptionsMenu m_OptionsMenu;
 
-		static unsigned int m_LoadLevel; // 0 = none, 1 = cuphead, 2 = mugman
-		static unsigned int m_CurrentMenu;
+		unsigned int m_LoadLevel = 0; // 0 = none, 1 = cuphead, 2 = mugman
+		unsigned int m_CurrentMenu = 0;
 	};
 }

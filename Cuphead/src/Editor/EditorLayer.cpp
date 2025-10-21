@@ -51,13 +51,13 @@ namespace Teddy
 
         if (m_Editor.GetState() == Editor::SceneState::Play)
         {
-            if (Cuphead::GameScenes::OnUpdate(ts))
+            if (Cuphead::GameScenes::Get().OnUpdate(ts))
             {
                 m_ActiveScene->OnRuntimeStop();
-                m_ActiveScene = Cuphead::GameScenes::InitNextScene();
+                m_ActiveScene = Cuphead::GameScenes::Get().InitNextScene();
 				m_Editor.SetActiveScene(m_ActiveScene);
                 m_ActiveScene->OnRuntimeStart();
-                Cuphead::GameScenes::FreeScenes();
+                Cuphead::GameScenes::Get().FreeScenes();
             }
         }
 
