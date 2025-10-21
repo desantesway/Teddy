@@ -150,7 +150,7 @@ namespace Cuphead
 
 		bool m_ParryReset = true;
 
-		int m_Health = 1;
+		int m_Health = 4;
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
 		bool m_HitAnimation = false;
@@ -176,6 +176,7 @@ namespace Cuphead
 		};
 
 		std::vector<Teddy::Entity> m_ActiveProjectiles;
+		std::vector<Teddy::Entity> m_ProjectileExplosion;
 		ProjectileType m_Projectile = ProjectileType::Lobber;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
 		float m_ShootTimer = 0.0f;

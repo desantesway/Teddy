@@ -67,6 +67,10 @@ namespace Cuphead
 			m_Scene->DestroyEntity(projectile);
 		m_ActiveProjectiles.clear();
 
+		for (auto& project : m_ProjectileExplosion)
+			m_Scene->DestroyEntity(project);
+		m_ActiveProjectiles.clear();
+
 		m_Scene = nullptr;
 	}
 
@@ -195,10 +199,8 @@ namespace Cuphead
 			box.EnableSensorEvents = true;
 			box.Size = { 0.001f, 0.001f };
 			
-			// TODO: Circle SENSOR
-
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
-			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f);
+			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, false);
 
 			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PROJECTILE;
@@ -210,7 +212,21 @@ namespace Cuphead
 
 			m_ActiveProjectiles.push_back(ent);
 
-			// TODO: hand effect
+			auto exp = m_Scene->CreateEntity("Lobber Explosion");
+			auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
+			expSprite.Textures = m_LobberTextures;
+			expSprite.Loop = false;
+			auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
+
+			expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
+			auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			expAA.Index = 23;
+
+			auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
+			expTransform.Scale *= 1.25f;
+			expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
+
+			m_ProjectileExplosion.push_back(exp);
 
 			lobberCount++;
 		}
@@ -266,6 +282,21 @@ namespace Cuphead
 			}
 		}
 		m_ActiveProjectiles = newActive;
+
+		std::vector<Teddy::Entity> newExplosions;
+		for (auto& exp : m_ProjectileExplosion)
+		{
+			auto& aA = exp.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (aA.Index >= 27)
+			{
+				m_Scene->DestroyEntity(exp);
+			}
+			else
+			{
+				newExplosions.push_back(exp);
+			}
+		}
+		m_ProjectileExplosion = newExplosions;
 	}
 
 	void Player::Intro0()
@@ -438,8 +469,8 @@ namespace Cuphead
 		box.Size = { 0.2f, 0.3f };
 		box.EnableContactEvents = true;
 		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f };
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
+		sensor.Sensors["GroundSensor"] = { { 0.0f, -0.75f }, { 0.34f, 0.1f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
 
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::PLAYER;
@@ -541,7 +572,7 @@ namespace Cuphead
 		}
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Idle;
@@ -774,7 +805,7 @@ namespace Cuphead
 			transform.Scale = glm::vec3(-1.75f, 1.75f, 1.0f);
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_Moving = true;
@@ -842,7 +873,7 @@ namespace Cuphead
 		indicies.Index = 0;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		if(m_State != PlayerState::Dropping)
@@ -917,7 +948,7 @@ namespace Cuphead
 		indicies.Index = 0;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_ZHeld = true;
@@ -997,7 +1028,7 @@ namespace Cuphead
 		m_StartCrouch = true; 
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Crouching;
@@ -1116,7 +1147,7 @@ namespace Cuphead
 		m_ShiftHeld = true;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { m_DirectionRight ? 0.25f : -0.25f, -0.25f }, { 0.4f, 0.45f }, 0.0f };
+		sensor.Sensors["HitBox"] = { { m_DirectionRight ? 0.25f : -0.25f, -0.25f }, { 0.4f, 0.45f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Dashing;
@@ -1245,7 +1276,7 @@ namespace Cuphead
 		indicies.Index = indicies.Index + 36;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f };
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true };
 
 		m_State = PlayerState::Parrying;
 		m_ParryReset = false;

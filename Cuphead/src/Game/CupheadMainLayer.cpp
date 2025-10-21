@@ -20,6 +20,8 @@ namespace Cuphead
     {
 	    TED_PROFILE_FUNCTION();
 
+		Teddy::Renderer2D::SetLineWidth(2.0f);
+
 		GameScenes::Init();
 	    m_ActiveScene = GameScenes::InitNextScene();
         m_ActiveScene->OnRuntimeStart();

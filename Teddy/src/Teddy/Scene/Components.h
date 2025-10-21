@@ -244,13 +244,14 @@ namespace Teddy
 			glm::vec2 Offset = { 0.0f, 0.0f };
 			glm::vec2 Size = { 0.5f, 0.5f };
 			float Rotation = 0.0f;
+			bool IsBox = true;
 
 			void* RuntimeFixture = nullptr;
 
 			SensorData() = default;
 			SensorData(const SensorData&) = default;
-			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation)
-				: Offset(offset), Size(size), Rotation(rotation) {}
+			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox)
+				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox) {}
 		};
 		
 		std::unordered_map<std::string, SensorData> Sensors;

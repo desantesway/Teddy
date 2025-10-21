@@ -76,7 +76,7 @@ namespace Teddy
         auto& box = test.AddComponent<Teddy::BoxCollider2DComponent>();
 
         auto& sensor = test.AddComponent<Teddy::Sensor2DComponent>();
-        sensor.Sensors["BottomSensor"] = { { 0.0f, -2.0f }, { 0.5f, 0.1f }, 0.0f };
+        sensor.Sensors["BottomSensor"] = { { 0.0f, -2.0f }, { 0.5f, 0.1f }, 0.0f, true };
 
         auto floor = m_ActiveScene->CreateEntity("Physics floor test");
         floor.AddComponent<Teddy::SpriteRendererComponent>();
