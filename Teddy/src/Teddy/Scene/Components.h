@@ -95,6 +95,8 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
+		bool FowardAfterRender = false;
+
 		BlendingMode BlendMode = BlendingMode::None;
 
 		SpriteAnimationComponent() = default;

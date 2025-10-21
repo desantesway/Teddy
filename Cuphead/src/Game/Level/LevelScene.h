@@ -9,6 +9,7 @@
 #include "CloudPlatform.h"
 #include "PauseMenu.h"
 #include "DeathMenu.h"
+#include "Dragon.h"
 
 namespace Cuphead
 {
@@ -86,6 +87,7 @@ namespace Cuphead
 		Background m_Background;
 		Foreground m_Foreground;
 
+		Dragon m_Dragon;
 		Player m_Player;
 		CloudPlatform m_Clouds;
 		Teddy::Entity m_Floor;

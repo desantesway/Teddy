@@ -489,12 +489,28 @@ namespace Teddy
 						if (ent.HasComponent<SpriteAtlasComponent>()) {
 							auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 							auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
-							FowardAtlasAnimation(ts, animation, atlas, indicies);
-							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+							if (animation.FowardAfterRender)
+							{
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+								FowardAtlasAnimation(ts, animation, atlas, indicies);
+							}
+							else
+							{
+								FowardAtlasAnimation(ts, animation, atlas, indicies);
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+							}
 						}
 						else {
-							FowardAnimation(ts, animation);
-							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+							if (animation.FowardAfterRender)
+							{
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+								FowardAnimation(ts, animation);
+							}
+							else
+							{
+								FowardAnimation(ts, animation);
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+							}
 						}
 					}
 				}
@@ -553,12 +569,29 @@ namespace Teddy
 					if (ent.HasComponent<SpriteAtlasComponent>()) {
 						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 						auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
-						FowardAtlasAnimation(ts, animation, atlas, indicies);
-						Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+						if (animation.FowardAfterRender)
+						{
+							Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+							FowardAtlasAnimation(ts, animation, atlas, indicies);
+						}
+						else
+						{
+							FowardAtlasAnimation(ts, animation, atlas, indicies);
+							Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+						}
 					}
 					else {
-						FowardAnimation(ts, animation);
-						Renderer2D::DrawQuad(transform, animation, (int)entity);
+						if (animation.FowardAfterRender)
+						{
+							Renderer2D::DrawQuad(transform, animation, (int)entity);
+							FowardAnimation(ts, animation);
+						}
+						else
+						{
+							FowardAnimation(ts, animation);
+							Renderer2D::DrawQuad(transform, animation, (int)entity);
+						}
+
 					}
 				}
 			}

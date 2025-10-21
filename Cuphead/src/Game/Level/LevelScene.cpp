@@ -71,6 +71,8 @@ namespace Cuphead
 			m_Player.InitMugman(m_Scene);
 		}
 
+		m_Dragon.Init(m_Scene);
+
 		m_PauseMenu.Init(m_Scene);
 
 		m_DeathMenu.Init(m_Scene, isCuphead);
@@ -292,6 +294,7 @@ namespace Cuphead
 		if (m_Player.IsDead())
 		{
 			m_Player.OnUpdate(ts);
+			m_Dragon.OnUpdate(ts);
 
 			if (m_FirstDeath)
 			{
@@ -362,6 +365,7 @@ namespace Cuphead
 		}
 
 		m_Player.OnUpdate(ts);
+		m_Dragon.OnUpdate(ts);
 
 		CameraShake(ts);
 		if (m_FloorHitContact)
@@ -566,11 +570,13 @@ namespace Cuphead
 		m_StartIntro = true;
 
 		m_Player.StartIntro();
+		m_Dragon.StartIntro();
 	}
 
 	void LevelScene::LoadIntro()
 	{
 		m_Player.LoadIntro();
+		m_Dragon.LoadIntro();
 	}
 	
 	bool LevelScene::OnContactBegin(Teddy::ContactBeginEvent& e)

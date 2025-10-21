@@ -141,7 +141,7 @@ namespace Teddy::Atlas
                     drawH = static_cast<int>(h * scale);
                 }
 
-                int offsetX = entryX;// + (spriteW - drawW) / 2;
+                int offsetX = entryX + (spriteW - drawW) / 2;
                 int offsetY = entryY;// + (spriteH - drawH) / 2;
 
                 if (drawW == w && drawH == h) {
