@@ -7,6 +7,15 @@
 
 namespace Teddy
 {
+    void Rigidbody2DComponent::SetPosition(TransformComponent& transform)
+    {
+        if (RuntimeBody)
+        {
+		    b2BodyId bodyId = *static_cast<b2BodyId*>(RuntimeBody);
+		    b2Body_SetTransform(bodyId, { transform.Translation.x, transform.Translation.y }, b2MakeRot(transform.Rotation.z));
+        }
+    }
+
     uint64_t CollisionFilter2DComponent::GetFilterCategory(BoxCollider2DComponent& collider)
     {
         return b2Shape_GetFilter(*static_cast<b2ShapeId*>(collider.RuntimeFixture)).categoryBits;

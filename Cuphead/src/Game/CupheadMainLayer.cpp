@@ -39,22 +39,23 @@ namespace Cuphead
     {
 	    TED_PROFILE_FUNCTION();
 
+        bool nextScene = GameScenes::Get().OnUpdate(ts);
+        m_ActiveScene->SimulatePhysics(ts);
+
         {
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
             m_ActiveScene->AlwaysOnUpdate();
             m_ActiveScene->OnUpdateRuntime(ts);
-            m_ActiveScene->ShowPhysicsColliders();
+            //m_ActiveScene->ShowPhysicsColliders();
         }
-
-        if (GameScenes::Get().OnUpdate(ts))
+   
+        if (nextScene)
         {
             m_ActiveScene->OnRuntimeStop();
             m_ActiveScene = GameScenes::Get().InitNextScene();
             m_ActiveScene->OnRuntimeStart();
             GameScenes::Get().FreeScenes();
         }
-
-        m_ActiveScene->SimulatePhysics(ts);
     }
 
     bool CupheadLayer::OnKeyPressed(Teddy::KeyPressedEvent& e)

@@ -192,6 +192,8 @@ namespace Teddy
 		float GetGravityScale();
 		void SetGravityScale(float scale);
 
+		void SetPosition(TransformComponent& transform);
+
 		glm::vec2 GetVelocity();
 		void SetVelocity(float velX, float velY);
 		void SetVelocityY(float velY);

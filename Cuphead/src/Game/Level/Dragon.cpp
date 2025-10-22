@@ -85,7 +85,7 @@ namespace Cuphead
 		sensor.Sensors["BellyHitBox"] = { { - 0.4f, -0.75f }, { 1.0f, 1.0f }, 0.0f, false };
 		sensor.Sensors["NeckHitBox"] = { { 0.25f, 0.75f }, { 1.25f, 0.5f }, 45.0f, true };
 		sensor.Sensors["HeadHitBox"] = { { -0.5f, 2.0f }, { 1.25f, 0.5f }, 0.0f, true };
-
+		
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::ENEMY;
 		filter.MaskBits = LevelCategories::PLAYER;
@@ -130,6 +130,8 @@ namespace Cuphead
 		transform.Translation = glm::vec3(3.25f, -0.65f, 2.011f);
 		transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
 
+		m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.PlayableIndicies.clear();
 		
@@ -161,6 +163,7 @@ namespace Cuphead
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(4.25f, -0.65f, 2.011f);
+		m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
 
 		m_State = DragonState::Idle;
 	}

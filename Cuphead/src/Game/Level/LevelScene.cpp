@@ -648,12 +648,12 @@ namespace Cuphead
 			return true;
 		}
 
-		auto& dragSensor = m_Dragon.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors;
-		b2ShapeId bellySensor = *static_cast<b2ShapeId*>(dragSensor["BellyHitBox"].RuntimeFixture);
-		b2ShapeId neckSensor = *static_cast<b2ShapeId*>(dragSensor["NeckHitBox"].RuntimeFixture);
-		if(//B2_ID_EQUALS(e.GetSensorShape(), bellySensor) || B2_ID_EQUALS(e.GetVisitorShape(), bellySensor) || 
-			B2_ID_EQUALS(e.GetSensorShape(), neckSensor) || B2_ID_EQUALS(e.GetVisitorShape(), neckSensor))
-			TED_CORE_INFO(e);
+		//auto& dragSensor = m_Dragon.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors;
+		//b2ShapeId bellySensor = *static_cast<b2ShapeId*>(dragSensor["BellyHitBox"].RuntimeFixture);
+		//b2ShapeId neckSensor = *static_cast<b2ShapeId*>(dragSensor["NeckHitBox"].RuntimeFixture);
+		//if(//B2_ID_EQUALS(e.GetSensorShape(), bellySensor) || B2_ID_EQUALS(e.GetVisitorShape(), bellySensor) || 
+		//	B2_ID_EQUALS(e.GetSensorShape(), neckSensor) || B2_ID_EQUALS(e.GetVisitorShape(), neckSensor))
+		//	TED_CORE_INFO(e);
 
 		return false;
 	}
