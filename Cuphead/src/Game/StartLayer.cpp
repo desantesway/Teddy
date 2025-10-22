@@ -26,7 +26,7 @@ void StartLayer::OnUpdate(Teddy::Timestep& ts)
 
 		Teddy::PostProcessing::Bind();
 
-		Teddy::RenderCommand::SetClearColor({ 1.0f, 0.1f, 0.1f, 1 });
+		Teddy::RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0f, 1 });
 		Teddy::RenderCommand::Clear();
 
 		Teddy::PostProcessing::Clear();

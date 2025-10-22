@@ -164,45 +164,13 @@ namespace Cuphead
 
 	void Player::Shoot(Teddy::Timestep ts)
 	{
-		if (!m_Shooting) return;
-
-		m_ShootTimer += ts;
-
-		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-
-		if (m_State == PlayerState::Crouching || m_State == PlayerState::Idle)
-		{
-			if ((aA.Index == 10 || aA.Index == 95) && m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Reverse == false)
-			{
-				if (!m_Shot && m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
-				{
-					LaunchProjectile();
-					m_Shot = true;
-					m_ShootTimer = 0.0f;
-				}
-			}
-			else
-			{
-				m_Shot = false;
-			}
-		}
-
-		if (m_State == PlayerState::Dashing || m_State == PlayerState::Jumping || m_State == PlayerState::Falling ||
-			m_State == PlayerState::Dropping || m_State == PlayerState::Parrying || m_State == PlayerState::Running )
-		{
-			if (m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
-			{
-				m_ShootTimer = 0.0f;
-				LaunchProjectile();
-			}
-		}
-
 		std::vector<Teddy::Entity> newActive;
 		for (auto& ent : m_ActiveProjectiles)
 		{
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
-			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f || 
-				transform.Translation.y <= -3.0f)
+			auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
+				transform.Translation.y <= -3.0f || aA.Index == 11)
 			{
 				m_Scene->DestroyEntity(ent);
 			}
@@ -237,6 +205,39 @@ namespace Cuphead
 			}
 		}
 		m_ProjectileExplosion = newExplosions;
+
+		if (!m_Shooting) return;
+
+		m_ShootTimer += ts;
+
+		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+		if (m_State == PlayerState::Crouching || m_State == PlayerState::Idle)
+		{
+			if ((aA.Index == 10 || aA.Index == 95) && m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Reverse == false)
+			{
+				if (!m_Shot && m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
+				{
+					LaunchProjectile();
+					m_Shot = true;
+					m_ShootTimer = 0.0f;
+				}
+			}
+			else
+			{
+				m_Shot = false;
+			}
+		}
+
+		if (m_State == PlayerState::Dashing || m_State == PlayerState::Jumping || m_State == PlayerState::Falling ||
+			m_State == PlayerState::Dropping || m_State == PlayerState::Parrying || m_State == PlayerState::Running )
+		{
+			if (m_ShootTimer >= m_ShootingRestTime + m_ShootingActiveTime * 2)
+			{
+				m_ShootTimer = 0.0f;
+				LaunchProjectile();
+			}
+		}
 	}
 
 	void Player::Intro0()
@@ -1618,8 +1619,6 @@ namespace Cuphead
 
 	void Player::ProjectileImpact(b2ShapeId shape)
 	{
-		std::vector<Teddy::Entity> newActives;
-		std::vector<Teddy::Entity> toRemove;
 		for (auto& proj : m_ActiveProjectiles)
 		{
 			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
@@ -1628,19 +1627,20 @@ namespace Cuphead
 				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
 				if (B2_ID_EQUALS(senShape, shape))
 				{
-					toRemove.push_back(proj);
-				}
-				else
-				{
-					newActives.push_back(proj);
+					auto& sprite = proj.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11 };
+					sprite.Loop = false;
+					sprite.PingPong = false;
+					sprite.Reverse = false;
+
+					auto& aA = proj.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					aA.Index = 6;
+
+					auto& body = proj.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetVelocity(0.0f, 0.0f);
+					body.SetGravityScale(0.0f);
 				}
 			}
-		}
-		m_ActiveProjectiles = newActives;
-
-		for (auto& entity : toRemove)
-		{
-			m_Scene->DestroyEntity(entity);
 		}
 	}
 }
