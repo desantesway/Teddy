@@ -12,7 +12,7 @@ namespace Cuphead
 	{
 	public:
 		GameScenes() = default;
-		~GameScenes() = default;
+		~GameScenes();
 
 		static GameScenes& Get()
 		{

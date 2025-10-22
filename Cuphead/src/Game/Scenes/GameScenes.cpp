@@ -2,6 +2,12 @@
 
 namespace Cuphead
 {
+    GameScenes::~GameScenes()
+    {
+        m_LevelScene = nullptr;
+        m_MainMenuScene = nullptr;
+    }
+
     void GameScenes::Init()
     {
         m_TransitionScenes.Init();

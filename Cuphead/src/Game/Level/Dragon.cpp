@@ -23,33 +23,33 @@ namespace Cuphead
 		}
 	}
 	
-	void Dragon::Hitting(Teddy::Timestep ts)
+	void Dragon::Hitting(Teddy::Timestep ts) // TODO: white overlay shader
 	{
 		if (m_Hit)
 		{
-			static bool decreasing = true;
+			static bool increasing = true;
 			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
-			if (color.a > 0.5f)
+			if (color.r <= 1.25f)
 			{
-				if(decreasing)
-					color -= glm::vec4(ts * 10.0f);
+				if(increasing)
+					color += glm::vec4(ts * 7.5f);
 				else
 				{
-					color += glm::vec4(ts * 10.0f);
-					if (color.a >= 1.0f)
+					color -= glm::vec4(ts * 7.5f);
+					if (color.r <= 1.0f)
 					{
 						color = glm::vec4(1.0f);
 						m_Hit = false;
-						decreasing = true;
+						increasing = true;
 					}
 				}
 			}
 			else 
 			{
-				color += glm::vec4(ts * 10.0f);
-				decreasing = false;
+				color = glm::vec4(1.0f);
+				increasing = false;
 			}
-
+			color.a = 1.0f;
 		}
 	}
 
