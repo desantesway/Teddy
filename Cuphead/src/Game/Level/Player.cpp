@@ -1616,7 +1616,7 @@ namespace Cuphead
 		return false;
 	}
 
-	void Player::RemoveProjectile(b2ShapeId shape)
+	void Player::ProjectileImpact(b2ShapeId shape)
 	{
 		std::vector<Teddy::Entity> newActives;
 		std::vector<Teddy::Entity> toRemove;

@@ -8,6 +8,8 @@ namespace Cuphead
 {
 	void Dragon::OnUpdate(Teddy::Timestep ts)
 	{
+		Hitting(ts);
+
 		switch (m_State)
 		{
 		case DragonState::Idle:
@@ -18,6 +20,36 @@ namespace Cuphead
 			break;
 		default:
 			break;
+		}
+	}
+	
+	void Dragon::Hitting(Teddy::Timestep ts)
+	{
+		if (m_Hit)
+		{
+			static bool decreasing = true;
+			auto& color = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+			if (color.a > 0.5f)
+			{
+				if(decreasing)
+					color -= glm::vec4(ts * 10.0f);
+				else
+				{
+					color += glm::vec4(ts * 10.0f);
+					if (color.a >= 1.0f)
+					{
+						color = glm::vec4(1.0f);
+						m_Hit = false;
+						decreasing = true;
+					}
+				}
+			}
+			else 
+			{
+				color += glm::vec4(ts * 10.0f);
+				decreasing = false;
+			}
+
 		}
 	}
 
@@ -186,5 +218,11 @@ namespace Cuphead
 					return true;
 			}
 		}
+	}
+
+	void Dragon::Hit(int damage)
+	{
+		m_Health -= damage;
+		m_Hit = true;	
 	}
 }

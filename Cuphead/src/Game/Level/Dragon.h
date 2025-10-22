@@ -29,6 +29,8 @@ namespace Cuphead
 		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
 
 		bool IsSensor(b2ShapeId shape);
+
+		void Hit(int damage);
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
@@ -37,6 +39,8 @@ namespace Cuphead
 		void Idle();
 
 		void Intro();
+
+		void Hitting(Teddy::Timestep ts);
 
 		void LoadTextures();
 	private:
@@ -57,6 +61,7 @@ namespace Cuphead
 		bool m_IntroDone = false;
 
 		int m_Health = 100;
+		bool m_Hit = false;
 	};
 
 }
