@@ -51,7 +51,7 @@ namespace Cuphead
 			Intro
 		};
 
-		DragonState m_State = DragonState::Idle;
+		DragonState m_State = DragonState::Intro;
 
 		bool m_IntroDone = false;
 
