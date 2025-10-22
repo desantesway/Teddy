@@ -22,9 +22,43 @@ namespace Cuphead
 	void Dragon::Intro()
 	{
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-		if (aA.Index >= 38)
+		static int counter = 0;
+		if (counter == 0 && aA.Index >= 25 && aA.Index <= 28)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.PlayableIndicies = { 25, 26, 27, 28 };
+			sprite.Loop = true;
+
+			counter++;
+		}
+		else if (counter >= 1 && counter <= 4)
+		{
+			static bool loopCounted = false;
+			if (aA.Index == 28)
+			{
+				if (counter == 4)
+				{
+					auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.PlayableIndicies = { 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 };
+					sprite.Loop = false;
+					counter++;
+				}
+
+				if(!loopCounted)
+				{ 
+					counter++;
+					loopCounted = true;
+				}
+			}
+			else
+			{
+				loopCounted = false;
+			}
+		}
+		else if (aA.Index >= 38)
 		{		
 			StartIdle();
+			counter = 0;
 		}
 		
 	}
