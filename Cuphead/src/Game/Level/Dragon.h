@@ -32,6 +32,9 @@ namespace Cuphead
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
 
+		void StartIdle();
+		void Idle();
+
 		void Intro();
 
 		void LoadTextures();
@@ -40,6 +43,7 @@ namespace Cuphead
 		Teddy::Entity m_Entity;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
 
 		enum class DragonState
 		{
@@ -48,6 +52,8 @@ namespace Cuphead
 		};
 
 		DragonState m_State = DragonState::Idle;
+
+		bool m_IntroDone = false;
 
 		int m_Health = 100;
 	};
