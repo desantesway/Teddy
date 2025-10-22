@@ -671,7 +671,7 @@ namespace Teddy
 		if (sensor.IsBox)
 		{
 			b2Polygon sensorBox = b2MakeOffsetBox(sensor.Size.x, sensor.Size.y,
-				{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(0));
+				{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(glm::radians(sensor.Rotation)));
 			sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
 		}
 		else
@@ -731,7 +731,7 @@ namespace Teddy
 				if (value.IsBox)
 				{
 					b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
-						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
+						{ value.Offset.x, value.Offset.y }, b2MakeRot(glm::radians(value.Rotation)));
 					sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
 				}
 				else
@@ -834,7 +834,7 @@ namespace Teddy
 		Renderer2D::EndScene();
 	}
 
-	void Scene::ShowPhysicsColliders(bool alreadyBegun)
+	void Scene::ShowPhysicsColliders(bool alreadyBegun) // TODO: improve this
 	{
 		auto viewCircle = GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
 		for (auto [entity, tc, cc2d] : viewCircle.each())
@@ -910,6 +910,13 @@ namespace Teddy
 				Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
 			}
 
+			
+		}
+
+		auto viewBody = GetAllEntitiesWith<TransformComponent, Rigidbody2DComponent>();
+		for (auto [entity, tc, rb2d] : viewBody.each())
+		{
+			Entity ent = Entity{ entity, this };
 			if (ent.HasComponent<Sensor2DComponent>())
 			{
 				for (auto& [_, sensorData] : ent.GetComponent<Sensor2DComponent>().Sensors)
@@ -918,8 +925,8 @@ namespace Teddy
 					{
 						glm::vec3 scale = glm::vec3(sensorData.Size * 2.0f, 1.0f);
 						glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-							* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
 							* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
+							* glm::rotate(glm::mat4(1.0f), glm::radians(sensorData.Rotation), glm::vec3(0.0f, 0.0f, 1.0f))
 							* glm::scale(glm::mat4(1.0f), scale);
 
 						Renderer2D::DrawRect(transform, glm::vec4(0, 0, 1, 1));
@@ -932,7 +939,6 @@ namespace Teddy
 						glm::vec3 scale = glm::vec3(maxScale * 2, maxScale * 2, 1.0f);
 
 						glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-							* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
 							* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
 							* glm::scale(glm::mat4(1.0f), scale);
 
@@ -940,10 +946,11 @@ namespace Teddy
 						Renderer2D::DrawCircleLine(transform, glm::vec4(0, 0, 1, 1), Renderer2D::GetLineWidth() / 50);
 						RenderCommand::EnableDepth();
 					}
-					
+
 				}
 			}
 		}
+
 	}
 
 	void Scene::OnRuntimeStart()
@@ -992,7 +999,7 @@ namespace Teddy
 					if (value.IsBox)
 					{
 						b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
-							{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
+							{ value.Offset.x, value.Offset.y }, b2MakeRot(glm::radians(value.Rotation)));
 						sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
 					}
 					else

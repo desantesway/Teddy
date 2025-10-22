@@ -2,6 +2,8 @@
 
 #include <Teddy.h>
 
+#include "LevelCategories.h"
+
 namespace Cuphead
 {
 	void Dragon::OnUpdate(Teddy::Timestep ts)
@@ -75,6 +77,18 @@ namespace Cuphead
 		spriteAnim.Loop = false;
 		spriteAnim.Textures = m_IntroTextures;
 		auto& atlas = m_Entity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1000, 805);
+
+		auto& body = m_Entity.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+
+		auto& sensor = m_Entity.AddComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["BellyHitBox"] = { { - 0.4f, -0.75f }, { 1.0f, 1.0f }, 0.0f, false };
+		sensor.Sensors["NeckHitBox"] = { { 0.25f, 0.75f }, { 1.25f, 0.5f }, 45.0f, true };
+		sensor.Sensors["HeadHitBox"] = { { -0.5f, 2.0f }, { 1.25f, 0.5f }, 0.0f, true };
+
+		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::ENEMY;
+		filter.MaskBits = LevelCategories::PLAYER;
 	}
 
 	void Dragon::LoadTextures()
@@ -153,6 +167,6 @@ namespace Cuphead
 
 	void Dragon::Idle()
 	{
-				
+		
 	}
 }

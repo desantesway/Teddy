@@ -128,9 +128,6 @@ namespace Cuphead
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
-			auto& box = ent.AddComponent<Teddy::BoxCollider2DComponent>();
-			box.EnableSensorEvents = true;
-			box.Size = { 0.001f, 0.001f };
 			
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, false);
