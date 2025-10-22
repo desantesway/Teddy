@@ -88,7 +88,7 @@ namespace Cuphead
 		
 		auto& filter = m_Entity.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filter.CategoryBits = LevelCategories::ENEMY;
-		filter.MaskBits = LevelCategories::PLAYER;
+		filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
 	}
 
 	void Dragon::LoadTextures()
@@ -170,6 +170,21 @@ namespace Cuphead
 
 	void Dragon::Idle()
 	{
-		
+
+	}
+
+	bool Dragon::IsSensor(b2ShapeId shape)
+	{
+		auto& dragSensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+
+		for (auto& [_, sensor] : dragSensor)
+		{
+			if (sensor.RuntimeFixture)
+			{
+				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+				if (B2_ID_EQUALS(shape, sensorShape))
+					return true;
+			}
+		}
 	}
 }

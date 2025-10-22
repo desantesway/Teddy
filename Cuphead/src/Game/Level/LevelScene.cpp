@@ -642,18 +642,24 @@ namespace Cuphead
 	bool LevelScene::OnSensorBegin(Teddy::SensorBeginEvent& e)
 	{
 		b2ShapeId playerSensor = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture);
+
 		if (B2_ID_EQUALS(e.GetSensorShape(), playerSensor) || B2_ID_EQUALS(e.GetVisitorShape(), playerSensor))
 		{
 			m_Player.SetGrounded(true);
 			return true;
 		}
-
-		//auto& dragSensor = m_Dragon.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors;
-		//b2ShapeId bellySensor = *static_cast<b2ShapeId*>(dragSensor["BellyHitBox"].RuntimeFixture);
-		//b2ShapeId neckSensor = *static_cast<b2ShapeId*>(dragSensor["NeckHitBox"].RuntimeFixture);
-		//if(//B2_ID_EQUALS(e.GetSensorShape(), bellySensor) || B2_ID_EQUALS(e.GetVisitorShape(), bellySensor) || 
-		//	B2_ID_EQUALS(e.GetSensorShape(), neckSensor) || B2_ID_EQUALS(e.GetVisitorShape(), neckSensor))
-		//	TED_CORE_INFO(e);
+		else if(m_Dragon.IsSensor(e.GetSensorShape()) && m_Player.IsProjectile(e.GetVisitorShape()))
+		{
+			TED_CORE_INFO(e);
+			m_Player.RemoveProjectile(e.GetVisitorShape());
+			return true;
+		}
+		else if (m_Dragon.IsSensor(e.GetVisitorShape()) && m_Player.IsProjectile(e.GetSensorShape()))
+		{
+			TED_CORE_INFO(e);
+			m_Player.RemoveProjectile(e.GetSensorShape());
+			return true;
+		}
 
 		return false;
 	}

@@ -678,8 +678,8 @@ namespace Teddy
 		{
 			b2Circle circle;
 			circle.center = { sensor.Offset.x, sensor.Offset.y };
-			float sx = std::abs(transform.Scale.x);
-			float sy = std::abs(transform.Scale.y);
+			float sx = std::abs(sensor.Size.x);
+			float sy = std::abs(sensor.Size.y);
 			circle.radius = glm::max(sx, sy);
 			sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 		}
@@ -738,8 +738,8 @@ namespace Teddy
 				{
 					b2Circle circle;
 					circle.center = { value.Offset.x, value.Offset.y };
-					float sx = std::abs(transform.Scale.x);
-					float sy = std::abs(transform.Scale.y);
+					float sx = std::abs(value.Size.x);
+					float sy = std::abs(value.Size.y);
 					circle.radius = glm::max(sx, sy);
 					sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 				}
@@ -1006,8 +1006,8 @@ namespace Teddy
 					{
 						b2Circle circle;
 						circle.center = { value.Offset.x, value.Offset.y };
-						float sx = std::abs(transform.Scale.x);
-						float sy = std::abs(transform.Scale.y);
+						float sx = std::abs(value.Size.x);
+						float sy = std::abs(value.Size.y);
 						circle.radius = glm::max(sx, sy);
 						sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &circle);
 					}

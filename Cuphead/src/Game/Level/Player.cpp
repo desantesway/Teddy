@@ -121,9 +121,9 @@ namespace Cuphead
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 			transform.Scale *= 1.5f;
 			if (m_DirectionRight)
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.0f, 0.002f); // TODO: change based on hand position
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.0f, 0.102f); // TODO: change based on hand position
 			else
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.0f, 0.002f);
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.0f, 0.102f);
 
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 			rb.FixedRotation = true;
@@ -1597,6 +1597,50 @@ namespace Cuphead
 				m_HitTolerance = false;
 				doneFlashing = false;
 			}
+		}
+	}
+
+	bool Player::IsProjectile(b2ShapeId shape)
+	{
+		for (auto& proj : m_ActiveProjectiles)
+		{
+			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
+			for (auto& [name, sensorShape] : sensor.Sensors)
+			{
+				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
+				if(B2_ID_EQUALS(senShape, shape))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	void Player::RemoveProjectile(b2ShapeId shape)
+	{
+		std::vector<Teddy::Entity> newActives;
+		std::vector<Teddy::Entity> toRemove;
+		for (auto& proj : m_ActiveProjectiles)
+		{
+			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
+			for (auto& [_, sensorShape] : sensor.Sensors)
+			{
+				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
+				if (B2_ID_EQUALS(senShape, shape))
+				{
+					toRemove.push_back(proj);
+				}
+				else
+				{
+					newActives.push_back(proj);
+				}
+			}
+		}
+		m_ActiveProjectiles = newActives;
+
+		for (auto& entity : toRemove)
+		{
+			m_Scene->DestroyEntity(entity);
 		}
 	}
 }

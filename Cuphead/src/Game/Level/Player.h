@@ -41,6 +41,8 @@ namespace Cuphead
 		void Pause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true; }
 		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
 
+		bool IsProjectile(b2ShapeId shape);
+		void RemoveProjectile(b2ShapeId shape);
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
