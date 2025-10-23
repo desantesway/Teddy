@@ -384,13 +384,13 @@ namespace Cuphead
 		m_Dragon.OnUpdate(ts);
 
 		CameraShake(ts);
-		if (m_FloorHitContact && m_Player.FloorHit())
+		if (m_FloorHitContact)
 		{
-			m_CameraShake = true;
+			m_Player.FloorHit();
 		}
-		if (m_HitContact && m_Player.NormalHit())
+		if (m_HitContact)
 		{
-			m_CameraShake = true;
+			m_Player.NormalHit();
 		}
 
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
