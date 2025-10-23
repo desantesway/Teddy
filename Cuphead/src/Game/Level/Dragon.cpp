@@ -10,8 +10,21 @@ namespace Cuphead
 	{
 		Hitting(ts);
 
+		if (m_State == DragonState::Idle && m_Phase == 1)
+		{
+			m_PeashotTimer += ts;
+			if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+			{
+				m_PeashotTimer = 0.0f;
+				StartPeashot();
+			}
+		}
+
 		switch (m_State)
 		{
+		case DragonState::Peashot:
+			Peashot(ts);
+			break;
 		case DragonState::Idle:
 			Idle();
 			break;
@@ -146,6 +159,17 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Idle/Dragon_Idle_690x800_2048x2048_2.png",
 			"assets/Textures/Dragon/Entity/Idle/Dragon_Idle_690x800_2048x2048_3.png"
 			});
+
+		m_PeashotTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_6.png",
+			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_7.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -193,9 +217,29 @@ namespace Cuphead
 		atlasAnim.GenerateFrames(sprite, atlas);
 		atlasAnim.Index = 0;
 
+		switch (m_State)
+		{
+			case DragonState::Peashot:
+				atlasAnim.Index = 6;
+				break;
+			default:
+				break;
+		}
+
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(4.25f, -0.65f, 2.011f);
+		transform.Translation = glm::vec3(4.25f, -0.5f, 2.011f);
 		m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
+		m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
+		m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
+		sensor.Sensors["BellyHitBox"] = { { -0.4f, -0.75f }, { 1.0f, 1.0f }, 0.0f, false, sensor.Sensors["BellyHitBox"].RuntimeFixture };
+		sensor.Sensors["NeckHitBox"] = { { 0.25f, 0.75f }, { 1.25f, 0.5f }, 45.0f, true	, sensor.Sensors["NeckHitBox"].RuntimeFixture };
+		sensor.Sensors["HeadHitBox"] = { { -0.5f, 2.0f }, { 1.25f, 0.5f }, 0.0f, true	, sensor.Sensors["HeadHitBox"].RuntimeFixture };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
 
 		m_State = DragonState::Idle;
 	}
@@ -226,6 +270,116 @@ namespace Cuphead
 		{
 			m_Health -= damage;
 			m_Hit = true;	
+		}
+	}
+
+	void Dragon::StartPeashot()
+	{
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Pause = false;
+		sprite.Loop = false;
+		sprite.PlayableIndicies.clear();
+		sprite.Textures = m_PeashotTextures;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 690;
+		atlas.SpriteHeight = 800;
+
+		auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		atlasAnim.GenerateFrames(sprite, atlas);
+		atlasAnim.Index = 0; 
+		sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["BellyHitBox"] = { { -0.4f, -1.25f }, { 1.0f, 1.0f }, 0.0f, false, sensor.Sensors["BellyHitBox"].RuntimeFixture	};
+		sensor.Sensors["NeckHitBox"] = { { 0.4f, 0.5f }, { 1.25f, 0.5f }, 45.0f, true	, sensor.Sensors["NeckHitBox"].RuntimeFixture 	};
+		sensor.Sensors["HeadHitBox"] = { { 0.0f, 2.0f }, { 1.0f, 0.5f }, 0.0f, true		, sensor.Sensors["HeadHitBox"].RuntimeFixture 	};
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
+
+		m_State = DragonState::Peashot;
+	}
+
+	void Dragon::Peashot(Teddy::Timestep ts)
+	{
+		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+
+		static int shot = 0;
+		const int maxShots = 3; // TODO: randomizer with like 70/30 for 2/3
+		static float timer = 0.0f;
+		timer += ts;
+		
+		if (sprite.PlayableIndicies.size() > 10)
+		{
+			if (shot <= maxShots)
+			{
+				if (timer >= 2.5f)
+				{
+					TED_CORE_INFO("PIUPIU");
+					shot++;
+					timer = 0.0f;
+				}
+			}
+			else if (aA.Index == 8)
+			{
+				sprite.PlayableIndicies = { 24, 25, 26, 27, 28, 29, 30, 31 };
+			}
+		} 
+		else if (aA.Index <= 7)
+		{
+			// start shot
+			static bool inPosition = false;
+			if (inPosition && aA.Index == 7)
+			{
+				aA.Index = 8;
+				sprite.Loop = true;
+				sprite.PlayableIndicies = { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 };
+				shot = 1;
+				timer = 0.0f;
+				inPosition = false;
+				TED_CORE_INFO("PIU PIU");
+			}
+			else
+			{
+				auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+				transform.Translation += glm::vec3(0.0f, ts * 5.0f, 0.0f);
+				m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
+				if (transform.Translation.y >= -0.1f)
+				{
+					transform.Translation.y = 0.1f;
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+					inPosition = true;
+				}
+			}
+		}
+		else if (aA.Index >= 24)
+		{
+			static bool inOriginalPosition = false;
+			if (inOriginalPosition && aA.Index == 31)
+			{
+				StartIdle();
+				shot = 0;
+				timer = 0.0f;
+				inOriginalPosition = false;
+			}
+			else
+			{
+				auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+				transform.Translation -= glm::vec3(0.0f, ts * 5.0f, 0.0f);
+				m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
+				sprite.Loop = false;
+
+				if (transform.Translation.y <= -0.5f)
+				{
+					transform.Translation.y = -0.5f;
+					m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+					inOriginalPosition = true;
+				}
+			}
 		}
 	}
 }

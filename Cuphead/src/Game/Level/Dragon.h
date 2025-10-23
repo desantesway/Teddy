@@ -40,6 +40,9 @@ namespace Cuphead
 
 		void Intro();
 
+		void StartPeashot();
+		void Peashot(Teddy::Timestep ts);
+
 		void Hitting(Teddy::Timestep ts);
 
 		void LoadTextures();
@@ -49,20 +52,26 @@ namespace Cuphead
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PeashotTextures;
 
 		enum class DragonState
 		{
 			Idle = 0,
-			Intro
+			Intro,
+			Peashot
 		};
 
 		DragonState m_State = DragonState::Intro;
+
+		int m_Phase = 1;
 
 		bool m_IntroDone = false;
 
 		int m_Health = 1700; // 629, 510, 561 /// 1700, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
+
+		float m_PeashotTimer = 0.0f;
 	};
 
 }

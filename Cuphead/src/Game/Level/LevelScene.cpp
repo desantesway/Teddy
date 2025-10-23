@@ -304,7 +304,6 @@ namespace Cuphead
 		if (m_Player.IsDead())
 		{
 			m_Player.OnUpdate(ts);
-			m_Dragon.OnUpdate(ts);
 
 			if (m_FirstDeath)
 			{

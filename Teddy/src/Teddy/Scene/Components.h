@@ -256,6 +256,8 @@ namespace Teddy
 			SensorData(const SensorData&) = default;
 			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox)
 				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox) {}
+			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox, void* fixture)
+				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox), RuntimeFixture(fixture) {}
 		};
 		
 		std::unordered_map<std::string, SensorData> Sensors;

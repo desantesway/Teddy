@@ -643,14 +643,14 @@ namespace Teddy
 
 	void Scene::RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor)
 	{
-		if (!ent.HasComponent<Rigidbody2DComponent>() && !ent.HasComponent<TransformComponent>()) return;
+		if (!ent.HasComponent<Rigidbody2DComponent>() || !ent.HasComponent<TransformComponent>()) return;
 
 		Rigidbody2DComponent& rigidBody = ent.GetComponent<Rigidbody2DComponent>();
 		TransformComponent& transform = ent.GetComponent<TransformComponent>();
 
 		if (sensor.RuntimeFixture)
 		{
-			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), true);
+			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), false);
 			delete static_cast<b2ShapeId*>(sensor.RuntimeFixture);
 			sensor.RuntimeFixture = nullptr;
 		}
@@ -658,7 +658,7 @@ namespace Teddy
 		b2ShapeDef sensorDef = b2DefaultShapeDef();
 		sensorDef.isSensor = true;
 		sensorDef.enableSensorEvents = true;
-
+		
 		if (ent.HasComponent<CollisionFilter2DComponent>())
 		{
 			auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
@@ -666,7 +666,7 @@ namespace Teddy
 			sensorDef.filter.maskBits = filter.MaskBits;
 			//shapeDef.filter.groupIndex = filter.GroupIndex;
 		}
-
+		
 		b2ShapeId sensorShape;
 		if (sensor.IsBox)
 		{
@@ -683,7 +683,7 @@ namespace Teddy
 			circle.radius = glm::max(sx, sy);
 			sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 		}
-
+		
 		sensor.RuntimeFixture = new b2ShapeId(sensorShape);
 	}
 

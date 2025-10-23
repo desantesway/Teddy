@@ -521,6 +521,7 @@ namespace Cuphead
 		}
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		m_Scene->DeleteSensor(sensor.Sensors["HitBox"]);
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
@@ -754,7 +755,7 @@ namespace Cuphead
 			transform.Scale = glm::vec3(-1.75f, 1.75f, 1.0f);
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_Moving = true;
@@ -822,7 +823,7 @@ namespace Cuphead
 		indicies.Index = 0;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		if(m_State != PlayerState::Dropping)
@@ -897,7 +898,7 @@ namespace Cuphead
 		indicies.Index = 0;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_ZHeld = true;
@@ -977,7 +978,7 @@ namespace Cuphead
 		m_StartCrouch = true; 
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Crouching;
@@ -1096,7 +1097,7 @@ namespace Cuphead
 		m_ShiftHeld = true;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { m_DirectionRight ? 0.25f : -0.25f, -0.25f }, { 0.4f, 0.45f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { m_DirectionRight ? 0.25f : -0.25f, -0.25f }, { 0.4f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Dashing;
@@ -1225,7 +1226,7 @@ namespace Cuphead
 		indicies.Index = indicies.Index + 36;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true };
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 
 		m_State = PlayerState::Parrying;
 		m_ParryReset = false;
