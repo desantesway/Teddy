@@ -289,6 +289,16 @@ namespace Cuphead
 
 		if(Pause(ts)) return;
 
+		if (!m_IntroDone && m_StartIntro)
+		{
+			if (m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back())
+			{
+				m_Scene->DestroyEntity(m_GetReady);
+				m_GetReady = {};
+				m_IntroDone = true;
+			}
+		}
+
 		CameraShake(ts);
 
 		if (m_Player.IsDead())
@@ -325,7 +335,7 @@ namespace Cuphead
 		}
 
 		static float timer = 0.0f;
-		if (m_Player.IsIntroDone())
+		if (m_Player.IsIntroDone() && m_Dragon.IsIntroDone())
 		{
 			timer += ts;
 			
@@ -569,12 +579,35 @@ namespace Cuphead
 	{
 		m_StartIntro = true;
 
+		m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+		m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+
 		m_Player.StartIntro();
 		m_Dragon.StartIntro();
 	}
 
 	void LevelScene::LoadIntro()
 	{
+		if (m_GetReady)
+			m_Scene->DestroyEntity(m_GetReady);
+		m_GetReady = m_Scene->CreateEntity("Get Ready!");
+		auto& sprite = m_GetReady.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+		sprite.Loop = false;
+		sprite.Pause = true;
+		sprite.IsBackground = true;
+		sprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/UI/Intro/GetReady_512x288_2048x2048_0.png",
+			"assets/Textures/UI/Intro/GetReady_512x288_2048x2048_1.png"
+			});
+
+		m_GetReady.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
+
+		m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back();
+
+		auto& transform = m_GetReady.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
+		transform.Scale *= 0.7f;
+
 		m_Player.LoadIntro();
 		m_Dragon.LoadIntro();
 	}

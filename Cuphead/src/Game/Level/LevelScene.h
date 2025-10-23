@@ -101,6 +101,7 @@ namespace Cuphead
 
 		bool m_IntroDone = false;
 		bool m_StartIntro = false;
+		Teddy::Entity m_GetReady;
 
 		bool m_FloorHitContact = false;
 		bool m_CameraShake = false;
