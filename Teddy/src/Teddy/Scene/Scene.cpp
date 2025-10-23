@@ -3,6 +3,7 @@
 
 #include "Teddy/Scene/Components.h"
 #include "Teddy/Renderer/Renderer2D.h"
+#include "Teddy/Renderer/RenderCommand.h"
 #include "Teddy/Scene/Entity.h"
 #include "Teddy/Scene/ScriptableEntity.h"
 
@@ -488,12 +489,28 @@ namespace Teddy
 						if (ent.HasComponent<SpriteAtlasComponent>()) {
 							auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 							auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
-							FowardAtlasAnimation(ts, animation, atlas, indicies);
-							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+							if (animation.FowardAfterRender)
+							{
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+								FowardAtlasAnimation(ts, animation, atlas, indicies);
+							}
+							else
+							{
+								FowardAtlasAnimation(ts, animation, atlas, indicies);
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, atlas, (int)entity);
+							}
 						}
 						else {
-							FowardAnimation(ts, animation);
-							Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+							if (animation.FowardAfterRender)
+							{
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+								FowardAnimation(ts, animation);
+							}
+							else
+							{
+								FowardAnimation(ts, animation);
+								Renderer2D::DrawQuad(transform, animation, *activeCamera, cameraTransform, (int)entity);
+							}
 						}
 					}
 				}
@@ -552,12 +569,29 @@ namespace Teddy
 					if (ent.HasComponent<SpriteAtlasComponent>()) {
 						auto& atlas = ent.GetComponent<SpriteAtlasComponent>();
 						auto& indicies = ent.GetComponent<SpriteAnimationAtlasComponent>();
-						FowardAtlasAnimation(ts, animation, atlas, indicies);
-						Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+						if (animation.FowardAfterRender)
+						{
+							Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+							FowardAtlasAnimation(ts, animation, atlas, indicies);
+						}
+						else
+						{
+							FowardAtlasAnimation(ts, animation, atlas, indicies);
+							Renderer2D::DrawQuad(transform, animation, atlas, (int)entity);
+						}
 					}
 					else {
-						FowardAnimation(ts, animation);
-						Renderer2D::DrawQuad(transform, animation, (int)entity);
+						if (animation.FowardAfterRender)
+						{
+							Renderer2D::DrawQuad(transform, animation, (int)entity);
+							FowardAnimation(ts, animation);
+						}
+						else
+						{
+							FowardAnimation(ts, animation);
+							Renderer2D::DrawQuad(transform, animation, (int)entity);
+						}
+
 					}
 				}
 			}
@@ -633,9 +667,23 @@ namespace Teddy
 			//shapeDef.filter.groupIndex = filter.GroupIndex;
 		}
 
-		b2Polygon box = b2MakeOffsetBox(sensor.Size.x, sensor.Size.y,
-			{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(0));
-		b2ShapeId sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &box);
+		b2ShapeId sensorShape;
+		if (sensor.IsBox)
+		{
+			b2Polygon sensorBox = b2MakeOffsetBox(sensor.Size.x, sensor.Size.y,
+				{ sensor.Offset.x, sensor.Offset.y }, b2MakeRot(glm::radians(sensor.Rotation)));
+			sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
+		}
+		else
+		{
+			b2Circle circle;
+			circle.center = { sensor.Offset.x, sensor.Offset.y };
+			float sx = std::abs(sensor.Size.x);
+			float sy = std::abs(sensor.Size.y);
+			circle.radius = glm::max(sx, sy);
+			sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
+		}
+
 		sensor.RuntimeFixture = new b2ShapeId(sensorShape);
 	}
 
@@ -679,10 +727,24 @@ namespace Teddy
 					//shapeDef.filter.groupIndex = filter.GroupIndex;
 				}
 
-				b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
-					{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-				b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
-				value.RuntimeFixture = new b2ShapeId(sensor);
+				b2ShapeId sensorShape;
+				if (value.IsBox)
+				{
+					b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
+						{ value.Offset.x, value.Offset.y }, b2MakeRot(glm::radians(value.Rotation)));
+					sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &sensorBox);
+				}
+				else
+				{
+					b2Circle circle;
+					circle.center = { value.Offset.x, value.Offset.y };
+					float sx = std::abs(value.Size.x);
+					float sy = std::abs(value.Size.y);
+					circle.radius = glm::max(sx, sy);
+					sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
+				}
+				
+				value.RuntimeFixture = new b2ShapeId(sensorShape);
 			}
 		}
 
@@ -772,7 +834,7 @@ namespace Teddy
 		Renderer2D::EndScene();
 	}
 
-	void Scene::ShowPhysicsColliders(bool show)
+	void Scene::ShowPhysicsColliders(bool alreadyBegun) // TODO: improve this
 	{
 		auto viewCircle = GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
 		for (auto [entity, tc, cc2d] : viewCircle.each())
@@ -787,7 +849,9 @@ namespace Teddy
 				* glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, 0.001f))
 				* glm::scale(glm::mat4(1.0f), scale);
 
-			Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth() / 100);
+			RenderCommand::DisableDepth();
+			Renderer2D::DrawCircleLine(transform, glm::vec4(0, 1, 0, 1), Renderer2D::GetLineWidth() / 50);
+			RenderCommand::EnableDepth();
 		}
 
 		auto viewBox = GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -846,20 +910,47 @@ namespace Teddy
 				Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
 			}
 
+			
+		}
+
+		auto viewBody = GetAllEntitiesWith<TransformComponent, Rigidbody2DComponent>();
+		for (auto [entity, tc, rb2d] : viewBody.each())
+		{
+			Entity ent = Entity{ entity, this };
 			if (ent.HasComponent<Sensor2DComponent>())
 			{
 				for (auto& [_, sensorData] : ent.GetComponent<Sensor2DComponent>().Sensors)
 				{
-					glm::vec3 scale = glm::vec3(sensorData.Size * 2.0f, 1.0f);
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-						* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
-						* glm::scale(glm::mat4(1.0f), scale);
+					if (sensorData.IsBox)
+					{
+						glm::vec3 scale = glm::vec3(sensorData.Size * 2.0f, 1.0f);
+						glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+							* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
+							* glm::rotate(glm::mat4(1.0f), glm::radians(sensorData.Rotation), glm::vec3(0.0f, 0.0f, 1.0f))
+							* glm::scale(glm::mat4(1.0f), scale);
 
-					Renderer2D::DrawRect(transform, glm::vec4(0, 0, 1, 1));
+						Renderer2D::DrawRect(transform, glm::vec4(0, 0, 1, 1));
+					}
+					else
+					{
+						float sx = std::abs(sensorData.Size.x);
+						float sy = std::abs(sensorData.Size.y);
+						float maxScale = glm::max(sx, sy);
+						glm::vec3 scale = glm::vec3(maxScale * 2, maxScale * 2, 1.0f);
+
+						glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+							* glm::translate(glm::mat4(1.0f), glm::vec3(sensorData.Offset, 0.001f))
+							* glm::scale(glm::mat4(1.0f), scale);
+
+						RenderCommand::DisableDepth();
+						Renderer2D::DrawCircleLine(transform, glm::vec4(0, 0, 1, 1), Renderer2D::GetLineWidth() / 50);
+						RenderCommand::EnableDepth();
+					}
+
 				}
 			}
 		}
+
 	}
 
 	void Scene::OnRuntimeStart()
@@ -904,10 +995,24 @@ namespace Teddy
 						//shapeDef.filter.groupIndex = filter.GroupIndex;
 					}
 
-					b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
-						{ value.Offset.x, value.Offset.y }, b2MakeRot(0));
-					b2ShapeId sensor = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
-					value.RuntimeFixture = new b2ShapeId(sensor);
+					b2ShapeId sensorShape;
+					if (value.IsBox)
+					{
+						b2Polygon sensorBox = b2MakeOffsetBox(value.Size.x, value.Size.y,
+							{ value.Offset.x, value.Offset.y }, b2MakeRot(glm::radians(value.Rotation)));
+						sensorShape = b2CreatePolygonShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &sensorBox);
+					}
+					else
+					{
+						b2Circle circle;
+						circle.center = { value.Offset.x, value.Offset.y };
+						float sx = std::abs(value.Size.x);
+						float sy = std::abs(value.Size.y);
+						circle.radius = glm::max(sx, sy);
+						sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rb2d.RuntimeBody), &sensorDef, &circle);
+					}
+
+					value.RuntimeFixture = new b2ShapeId(sensorShape);
 				}
 			}
 			

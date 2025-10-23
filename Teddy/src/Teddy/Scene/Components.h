@@ -95,6 +95,8 @@ namespace Teddy
 		bool Pause = false;
 		bool Reverse = false;
 
+		bool FowardAfterRender = false;
+
 		BlendingMode BlendMode = BlendingMode::None;
 
 		SpriteAnimationComponent() = default;
@@ -190,6 +192,8 @@ namespace Teddy
 		float GetGravityScale();
 		void SetGravityScale(float scale);
 
+		void SetPosition(TransformComponent& transform);
+
 		glm::vec2 GetVelocity();
 		void SetVelocity(float velX, float velY);
 		void SetVelocityY(float velY);
@@ -244,13 +248,14 @@ namespace Teddy
 			glm::vec2 Offset = { 0.0f, 0.0f };
 			glm::vec2 Size = { 0.5f, 0.5f };
 			float Rotation = 0.0f;
+			bool IsBox = true;
 
 			void* RuntimeFixture = nullptr;
 
 			SensorData() = default;
 			SensorData(const SensorData&) = default;
-			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation)
-				: Offset(offset), Size(size), Rotation(rotation) {}
+			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox)
+				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox) {}
 		};
 		
 		std::unordered_map<std::string, SensorData> Sensors;
