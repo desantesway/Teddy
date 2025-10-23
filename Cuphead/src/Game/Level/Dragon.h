@@ -31,6 +31,9 @@ namespace Cuphead
 		bool IsSensor(b2ShapeId shape);
 
 		void Hit(int damage);
+		bool IsShooting() const { return m_Shooting; }
+
+		void SetPlayerPosition(const glm::vec2& pos) { m_PlayerPosition = pos; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
@@ -42,6 +45,7 @@ namespace Cuphead
 
 		void StartPeashot();
 		void Peashot(Teddy::Timestep ts);
+		void PsychicEye(Teddy::Timestep ts);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -53,6 +57,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PeashotTextures;
+		Teddy::Ref<Teddy::Texture2D> m_PsychicEyeTexture;
 
 		enum class DragonState
 		{
@@ -65,13 +70,19 @@ namespace Cuphead
 
 		int m_Phase = 1;
 
+		glm::vec2 m_PlayerPosition = { 0.0f, 0.0f };
+
 		bool m_IntroDone = false;
+		bool m_Shooting = false;
 
 		int m_Health = 1700; // 629, 510, 561 /// 1700, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
 
 		float m_PeashotTimer = 0.0f;
+
+		Teddy::Entity m_PsychicEyeEntity;
+		std::vector<Teddy::Entity> m_PeashotEntities;
 	};
 
 }

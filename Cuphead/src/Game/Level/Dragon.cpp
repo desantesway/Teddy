@@ -24,6 +24,7 @@ namespace Cuphead
 		{
 		case DragonState::Peashot:
 			Peashot(ts);
+			PsychicEye(ts);
 			break;
 		case DragonState::Idle:
 			Idle();
@@ -170,6 +171,8 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_6.png",
 			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_7.png"
 			});
+
+		m_PsychicEyeTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_1024x1024_0.png", Teddy::Boolean::True);
 	}
 
 	void Dragon::StartIntro()
@@ -301,6 +304,52 @@ namespace Cuphead
 		m_State = DragonState::Peashot;
 	}
 
+	void Dragon::PsychicEye(Teddy::Timestep ts)
+	{
+		if (m_Shooting)
+		{
+			static int count = 0;
+			static float timer = 0.0f;
+			static glm::vec2 playerPos = m_PlayerPosition;
+
+			timer += ts;
+
+			if(playerPos.x == 0 && playerPos.y == 0) 
+				playerPos = m_PlayerPosition;
+
+			if (!m_PsychicEyeEntity)
+			{
+				m_PsychicEyeEntity = m_Scene->CreateEntity("Psychic Eye");
+				auto& sprite = m_PsychicEyeEntity.AddComponent<Teddy::SpriteAnimationComponent>();
+				sprite.Textures = { m_PsychicEyeTexture };
+				sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+				auto& atlas = m_PsychicEyeEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 151, 145);
+
+				auto& transform = m_PsychicEyeEntity.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 2.0f, 0.1f);
+				count = 0;
+				timer = 0.0f;
+				playerPos = m_PlayerPosition;
+			}
+			else if (m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 10)
+			{
+				m_Scene->DestroyEntity(m_PsychicEyeEntity);
+				m_PsychicEyeEntity = {};
+				m_Shooting = false;
+				count = 0;
+				timer = 0.0f;
+				playerPos = m_PlayerPosition;
+			}
+			else if (m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index >= 5 && count < 3 && timer >= 0.25f)
+			{
+				//auto ent = m_Scene->CreateEntity("Psychic Eye Projectile");
+				count++;
+			}
+			m_PeashotTimer = 0.0f;
+		}
+	}
+
 	void Dragon::Peashot(Teddy::Timestep ts)
 	{
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -313,11 +362,12 @@ namespace Cuphead
 		
 		if (sprite.PlayableIndicies.size() > 10)
 		{
-			if (shot <= maxShots)
+			if (shot < maxShots)
 			{
 				if (timer >= 2.5f)
 				{
-					TED_CORE_INFO("PIUPIU");
+					m_Shooting = true;
+					PsychicEye(ts);
 					shot++;
 					timer = 0.0f;
 				}
@@ -339,7 +389,8 @@ namespace Cuphead
 				shot = 1;
 				timer = 0.0f;
 				inPosition = false;
-				TED_CORE_INFO("PIU PIU");
+				m_Shooting = true;
+				PsychicEye(ts);
 			}
 			else
 			{
@@ -360,6 +411,10 @@ namespace Cuphead
 			static bool inOriginalPosition = false;
 			if (inOriginalPosition && aA.Index == 31)
 			{
+				m_Scene->DestroyEntity(m_PsychicEyeEntity);
+				m_PsychicEyeEntity = {};
+				m_Shooting = false;
+
 				StartIdle();
 				shot = 0;
 				timer = 0.0f;
