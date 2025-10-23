@@ -377,10 +377,7 @@ namespace Cuphead
 
 		m_Player.OnUpdate(ts);
 
-		if (m_Dragon.IsShooting())
-		{
-			m_Dragon.SetPlayerPosition(m_Player.GetPosition());
-		}
+		m_Dragon.SetPlayerPosition(m_Player.GetPosition());
 		m_Dragon.OnUpdate(ts);
 
 		CameraShake(ts);

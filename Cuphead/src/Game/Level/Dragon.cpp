@@ -311,6 +311,7 @@ namespace Cuphead
 			static int count = 0;
 			static float timer = 0.0f;
 			static glm::vec2 playerPos = m_PlayerPosition;
+			static bool canShoot = false;
 
 			timer += ts;
 
@@ -320,9 +321,10 @@ namespace Cuphead
 			if (!m_PsychicEyeEntity)
 			{
 				m_PsychicEyeEntity = m_Scene->CreateEntity("Psychic Eye");
-				auto& sprite = m_PsychicEyeEntity.AddComponent<Teddy::SpriteAnimationComponent>();
+				auto& sprite = m_PsychicEyeEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 				sprite.Textures = { m_PsychicEyeTexture };
 				sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+				sprite.Loop = true;
 
 				auto& atlas = m_PsychicEyeEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 151, 145);
 
@@ -331,20 +333,64 @@ namespace Cuphead
 				count = 0;
 				timer = 0.0f;
 				playerPos = m_PlayerPosition;
+
+				canShoot = false;
 			}
-			else if (m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 10)
+			else if (m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index >= 5)
 			{
-				m_Scene->DestroyEntity(m_PsychicEyeEntity);
-				m_PsychicEyeEntity = {};
-				m_Shooting = false;
-				count = 0;
-				timer = 0.0f;
-				playerPos = m_PlayerPosition;
+				if(!canShoot)
+					playerPos = m_PlayerPosition;
+				canShoot = true;
 			}
-			else if (m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index >= 5 && count < 3 && timer >= 0.25f)
+
+			if (canShoot && count < 3 && timer >= 0.2f)
 			{
-				//auto ent = m_Scene->CreateEntity("Psychic Eye Projectile");
+				auto ent = m_Scene->CreateEntity("Psychic Eye Projectile");
+				auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+				sprite.Textures = { m_PsychicEyeTexture };
+				auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 151, 145);
+
+				auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+				auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 2.0f, 0.11f);
+				glm::vec2 direction = playerPos - glm::vec2(transform.Translation.x, transform.Translation.y);
+				transform.Rotation.z = std::atan2(direction.y, direction.x);
+
+				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+				
+				if (count == 2)
+				{
+					sprite.PlayableIndicies = { 19, 20, 21, 22, 23, 24, 25, 26 };
+					aA.Index = 19;
+					sensor.Sensors["Parry"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
+					m_Shooting = false;
+					m_Scene->DestroyEntity(m_PsychicEyeEntity);
+					m_PsychicEyeEntity = {};
+					canShoot = false;
+				}
+				else
+				{
+					sprite.PlayableIndicies = { 11, 12, 13, 14, 15, 16, 17, 18 };
+					aA.Index = 11;
+					sensor.Sensors["HitBox"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
+				}
+
+				auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+				rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+
+				auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = LevelCategories::ENEMY;
+				filter.MaskBits = LevelCategories::PLAYER;
+
+				m_Scene->RefreshBody(ent);
+				rb.SetVelocity(std::cos(transform.Rotation.z) * 5.0f, std::sin(transform.Rotation.z) * 5.0f);
+
+				m_PeashotEntities.push_back(ent);
+
 				count++;
+
+				timer = 0.0f;
 			}
 			m_PeashotTimer = 0.0f;
 		}
@@ -352,6 +398,8 @@ namespace Cuphead
 
 	void Dragon::Peashot(Teddy::Timestep ts)
 	{
+		if (m_Shooting) return;
+
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 
@@ -364,7 +412,7 @@ namespace Cuphead
 		{
 			if (shot < maxShots)
 			{
-				if (timer >= 2.5f)
+				if (timer >= 0.75f)
 				{
 					m_Shooting = true;
 					PsychicEye(ts);
@@ -372,14 +420,13 @@ namespace Cuphead
 					timer = 0.0f;
 				}
 			}
-			else if (aA.Index == 8)
+			else if (aA.Index == 8 && timer >= 1.0f)
 			{
 				sprite.PlayableIndicies = { 24, 25, 26, 27, 28, 29, 30, 31 };
 			}
 		} 
 		else if (aA.Index <= 7)
 		{
-			// start shot
 			static bool inPosition = false;
 			if (inPosition && aA.Index == 7)
 			{
@@ -411,7 +458,8 @@ namespace Cuphead
 			static bool inOriginalPosition = false;
 			if (inOriginalPosition && aA.Index == 31)
 			{
-				m_Scene->DestroyEntity(m_PsychicEyeEntity);
+				if(m_PsychicEyeEntity)
+					m_Scene->DestroyEntity(m_PsychicEyeEntity);
 				m_PsychicEyeEntity = {};
 				m_Shooting = false;
 
