@@ -1226,7 +1226,7 @@ namespace Cuphead
 		indicies.Index = indicies.Index + 36;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true };
 
 		m_State = PlayerState::Parrying;
 		m_ParryReset = false;

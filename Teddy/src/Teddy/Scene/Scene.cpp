@@ -31,6 +31,11 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
+		for (auto e : m_Registry.view<entt::any>())
+		{
+			m_Registry.destroy(e);
+		}
+
 		m_Registry.clear();
 		m_PhysicsWorld = { 0, 0 };
 	}
