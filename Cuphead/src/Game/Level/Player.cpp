@@ -1437,14 +1437,20 @@ namespace Cuphead
 		}
 	}
 
-	void Player::FloorHit()
+	bool Player::FloorHit()
 	{
-		Hit(25.0f);
+		if (!m_Hitting)
+		{
+			bool ret = Hit(0.0f);
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocityY(25.0f);
+			return ret;
+		}
 	}
 
-	void Player::NormalHit()
+	bool Player::NormalHit()
 	{
-		Hit(5.0f);
+		return Hit(10.0f);
 	}
 
 	void Player::Dying(Teddy::Timestep ts)
@@ -1554,19 +1560,22 @@ namespace Cuphead
 		}
 	}
 
-	void Player::Hit(float velocity)
+	bool Player::Hit(float velocity)
 	{
 		if (!m_Hitting)
 		{
-			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-			body.SetVelocityY(velocity);
 			if (!m_HitTolerance)
 			{
+				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+				body.SetVelocityY(velocity);
+
 				m_Health--;
 				UpdateHUD();
 				StartHit();
+				return true;
 			}
 		}
+		return false;
 	}
 
 	void Player::FlashPlayer(Teddy::Timestep ts)
@@ -1651,5 +1660,11 @@ namespace Cuphead
 				}
 			}
 		}
+	}
+
+	bool Player::IsHitBox(b2ShapeId shape)
+	{
+		b2ShapeId sensorShape = *static_cast<b2ShapeId*>(m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors["HitBox"].RuntimeFixture);
+		return B2_ID_EQUALS(sensorShape, shape);
 	}
 }

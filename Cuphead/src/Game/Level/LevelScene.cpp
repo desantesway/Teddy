@@ -289,6 +289,8 @@ namespace Cuphead
 
 		if(Pause(ts)) return;
 
+		if (ts > 5.0f) ts.Reset();
+
 		if (!m_IntroDone && m_StartIntro)
 		{
 			if (m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back())
@@ -382,10 +384,13 @@ namespace Cuphead
 		m_Dragon.OnUpdate(ts);
 
 		CameraShake(ts);
-		if (m_FloorHitContact)
+		if (m_FloorHitContact && m_Player.FloorHit())
 		{
 			m_CameraShake = true;
-			m_Player.FloorHit();
+		}
+		if (m_HitContact && m_Player.NormalHit())
+		{
+			m_CameraShake = true;
 		}
 
 		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
@@ -626,6 +631,7 @@ namespace Cuphead
 			{
 				m_Player.FloorHit();
 				m_FloorHitContact = true;
+				m_CameraShake = true;
 			}
 			else
 				m_Clouds.CloudContactBegin(e.GetShapeB());
@@ -638,6 +644,7 @@ namespace Cuphead
 			{
 				m_Player.FloorHit();
 				m_FloorHitContact = true;
+				m_CameraShake = true;
 			}
 			else
 				m_Clouds.CloudContactBegin(e.GetShapeA());
@@ -685,17 +692,37 @@ namespace Cuphead
 			m_Player.SetGrounded(true);
 			return true;
 		}
-		else if(m_Dragon.IsSensor(e.GetSensorShape()) && m_Player.IsProjectile(e.GetVisitorShape()))
+		else if(m_Dragon.IsSensor(e.GetSensorShape()))
 		{
-			m_Player.ProjectileImpact(e.GetVisitorShape());
-			m_Dragon.Hit(m_Player.GetProjectileDamage());
-			return true;
+			if (m_Player.IsProjectile(e.GetVisitorShape()))
+			{
+				m_Player.ProjectileImpact(e.GetVisitorShape());
+				m_Dragon.Hit(m_Player.GetProjectileDamage());
+				return true;
+			}
+			else if (m_Player.IsHitBox(e.GetVisitorShape()))
+			{
+				m_Player.NormalHit();
+				m_CameraShake = true;
+				m_HitContact = true;
+				return true;
+			}
 		}
-		else if (m_Dragon.IsSensor(e.GetVisitorShape()) && m_Player.IsProjectile(e.GetSensorShape()))
+		else if (m_Dragon.IsSensor(e.GetVisitorShape()))
 		{
-			m_Player.ProjectileImpact(e.GetSensorShape());
-			m_Dragon.Hit(m_Player.GetProjectileDamage());
-			return true;
+			if (m_Player.IsProjectile(e.GetSensorShape()))
+			{
+				m_Player.ProjectileImpact(e.GetSensorShape());
+				m_Dragon.Hit(m_Player.GetProjectileDamage());
+				return true;
+			}
+			else if (m_Player.IsHitBox(e.GetSensorShape()))
+			{
+				m_Player.NormalHit();
+				m_CameraShake = true;
+				m_HitContact = true;
+				return true;
+			}
 		}
 
 		return false;
@@ -709,6 +736,23 @@ namespace Cuphead
 			if (B2_ID_EQUALS(e.GetSensorShape(), playerSensor) || B2_ID_EQUALS(e.GetVisitorShape(), playerSensor))
 			{
 				m_Player.SetGrounded(false);
+				return true;
+			}
+		}
+
+		if (m_Dragon.IsSensor(e.GetSensorShape()))
+		{
+			if (m_Player.IsHitBox(e.GetVisitorShape()))
+			{
+				m_HitContact = false;
+				return true;
+			}
+		}
+		else if (m_Dragon.IsSensor(e.GetVisitorShape()))
+		{
+			if (m_Player.IsHitBox(e.GetSensorShape()))
+			{
+				m_HitContact = false;
 				return true;
 			}
 		}

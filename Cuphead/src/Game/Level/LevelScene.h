@@ -104,6 +104,7 @@ namespace Cuphead
 		Teddy::Entity m_GetReady;
 
 		bool m_FloorHitContact = false;
+		bool m_HitContact = false;
 		bool m_CameraShake = false;
 
 		bool m_IsCuphead = true;

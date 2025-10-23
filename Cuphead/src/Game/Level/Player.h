@@ -31,8 +31,8 @@ namespace Cuphead
 
 		void SetGrounded(bool grounded);
 
-		void FloorHit();
-		void NormalHit();
+		bool FloorHit();
+		bool NormalHit();
 
 		bool IsDead() { return m_Health <= 0; }
 
@@ -43,6 +43,7 @@ namespace Cuphead
 
 		bool IsProjectile(b2ShapeId shape);
 		void ProjectileImpact(b2ShapeId shape);
+		bool IsHitBox(b2ShapeId shape);
 
 		float GetProjectileDamage() { return m_Damage; }
 		float GetEXDamage() { return m_EXDamage; }
@@ -88,7 +89,7 @@ namespace Cuphead
 		void StartHit();
 		void FlashPlayer(Teddy::Timestep ts);
 		void Hitting(Teddy::Timestep ts);
-		void Hit(float velocity);
+		bool Hit(float velocity);
 		void StartDeath();
 		void Dying(Teddy::Timestep ts);
 		void UpdateHUD();
