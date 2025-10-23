@@ -43,6 +43,9 @@ namespace Cuphead
 
 		bool IsProjectile(b2ShapeId shape);
 		void ProjectileImpact(b2ShapeId shape);
+
+		float GetProjectileDamage() { return m_Damage; }
+		float GetEXDamage() { return m_EXDamage; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
@@ -171,13 +174,15 @@ namespace Cuphead
 
 		enum class ProjectileType
 		{
-			Roundabout,
-			Lobber
+			Roundabout, // 8.5 // EX: 5 per hit
+			Lobber // 11.6 // EX: 28
 		};
 
 		std::vector<Teddy::Entity> m_ActiveProjectiles;
 		std::vector<Teddy::Entity> m_ProjectileExplosion;
 		ProjectileType m_Projectile = ProjectileType::Lobber;
+		int m_Damage = 0.0f;
+		int m_EXDamage = 0.0f;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
 		float m_ShootTimer = 0.0f;
 		bool m_Shot = false;

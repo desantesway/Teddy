@@ -684,13 +684,13 @@ namespace Cuphead
 		else if(m_Dragon.IsSensor(e.GetSensorShape()) && m_Player.IsProjectile(e.GetVisitorShape()))
 		{
 			m_Player.ProjectileImpact(e.GetVisitorShape());
-			m_Dragon.Hit(1); // TODO: projectile damage
+			m_Dragon.Hit(m_Player.GetProjectileDamage());
 			return true;
 		}
 		else if (m_Dragon.IsSensor(e.GetVisitorShape()) && m_Player.IsProjectile(e.GetSensorShape()))
 		{
 			m_Player.ProjectileImpact(e.GetSensorShape());
-			m_Dragon.Hit(1);
+			m_Dragon.Hit(m_Player.GetProjectileDamage());
 			return true;
 		}
 

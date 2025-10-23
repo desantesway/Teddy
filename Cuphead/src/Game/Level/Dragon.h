@@ -60,7 +60,8 @@ namespace Cuphead
 
 		bool m_IntroDone = false;
 
-		int m_Health = 100;
+		int m_Health = 1700; // 629, 510, 561 /// 1700, 1071, 561
+		// grim firebubble has 5 health
 		bool m_Hit = false;
 	};
 

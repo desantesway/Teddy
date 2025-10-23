@@ -106,6 +106,9 @@ namespace Cuphead
 	{
 		if (m_Projectile == ProjectileType::Lobber)
 		{
+			m_Damage = 11.6f;
+			m_EXDamage = 28.0f;
+
 			static int lobberCount = 0;
 			auto ent = m_Scene->CreateEntity("Lobber #" + std::to_string(lobberCount));
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
@@ -159,6 +162,11 @@ namespace Cuphead
 			m_ProjectileExplosion.push_back(exp);
 
 			lobberCount++;
+		}
+		else if (m_Projectile == ProjectileType::Roundabout)
+		{
+			m_Damage = 8.5f;
+			m_EXDamage = 5.5f;
 		}
 	}
 

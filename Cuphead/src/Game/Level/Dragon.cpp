@@ -23,7 +23,7 @@ namespace Cuphead
 		}
 	}
 	
-	void Dragon::Hitting(Teddy::Timestep ts) // TODO: white overlay shader
+	void Dragon::Hitting(Teddy::Timestep ts)
 	{
 		if (m_Hit)
 		{
@@ -222,7 +222,10 @@ namespace Cuphead
 
 	void Dragon::Hit(int damage)
 	{
-		m_Health -= damage;
-		m_Hit = true;	
+		if (!m_Hit)
+		{
+			m_Health -= damage;
+			m_Hit = true;	
+		}
 	}
 }
