@@ -90,6 +90,9 @@ namespace Cuphead
 		void StartParry();
 		void Parrying();
 
+		void StartParryHit();
+		void ParryHitting(Teddy::Timestep ts);
+
 		void StartHit();
 		void FlashPlayer(Teddy::Timestep ts);
 		void Hitting(Teddy::Timestep ts);
@@ -132,6 +135,7 @@ namespace Cuphead
 			Dropping,
 			Parrying,
 			Hit,
+			ParryHit,
 			Intro0,
 			Intro1,
 			Intro2,

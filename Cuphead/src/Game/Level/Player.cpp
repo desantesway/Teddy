@@ -3,7 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
-//TODO:  parry object //
+
 namespace Cuphead
 {
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -81,6 +81,11 @@ namespace Cuphead
 			case PlayerState::Hit:
 				Move(ts);
 				Hitting(ts);
+				BlockMove();
+				break;
+			case PlayerState::ParryHit:
+				Move(ts);
+				ParryHitting(ts);
 				BlockMove();
 				break;
 			case PlayerState::Idle:
@@ -1498,6 +1503,82 @@ namespace Cuphead
 		m_FirstDeath = false;
 	}
 
+	void Player::StartParryHit()
+	{
+		if (m_State != PlayerState::Parrying) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_JumpTextures;
+		sprite.PingPong = false;
+		sprite.Loop = false;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 288;
+		atlas.SpriteHeight = 152;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		indicies.GenerateFrames(sprite, atlas);
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		if (transform.Scale.x >= 0)
+			transform.Scale = glm::vec3(1.35f);
+		else
+			transform.Scale = glm::vec3(-1.35f, 1.35f, 1.0f);
+
+		sprite.PlayableIndicies.clear();
+		for (int i = 44; i < 52; i++)
+			sprite.PlayableIndicies.push_back(i);
+		indicies.Index = 44;
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		m_State = PlayerState::ParryHit;
+	}
+
+	void Player::ParryHitting(Teddy::Timestep ts)
+	{
+		if (!m_Grounded)
+		{
+			auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (indicies.Index == 51)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies.clear();
+				for (int i = 0; i < 8; i++)
+					sprite.PlayableIndicies.push_back(i);
+				indicies.Index = 0;
+				m_State = PlayerState::Falling;
+			}
+		}
+		else
+		{
+			if (m_DownPressed)
+			{
+				m_State = PlayerState::DoneJumping;
+				StartCrouch();
+			}
+			else if (m_RightPressed && !m_LeftPressed)
+			{
+				m_State = PlayerState::AnimationDone;
+				StartRun(true);
+			}
+			else if (m_LeftPressed && !m_RightPressed)
+			{
+				m_State = PlayerState::AnimationDone;
+				StartRun(false);
+			}
+			else
+				StartIdle();
+		}
+	}
+
 	void Player::HUDAnimation(Teddy::Timestep ts)
 	{
 		static bool firstTime = true;
@@ -1569,6 +1650,8 @@ namespace Cuphead
 			if (!m_HitTolerance)
 			{
 				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+				if(body.GetGravityScale() != 7.5f) 
+					body.SetGravityScale(7.5f);
 				body.SetVelocityY(velocity);
 
 				m_Health--;
@@ -1705,7 +1788,7 @@ namespace Cuphead
 				sensor.Sensors.erase("ParryHitBox");
 			}
 
-			StartFall();
+			StartParryHit();
 		}
 	}
 }
