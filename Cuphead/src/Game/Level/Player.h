@@ -41,6 +41,10 @@ namespace Cuphead
 		void Pause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true; }
 		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
 
+		void ParryHit();
+
+		bool IsParry(b2ShapeId shape);
+		bool IsGroundSensor(b2ShapeId shape);
 		bool IsProjectile(b2ShapeId shape);
 		void ProjectileImpact(b2ShapeId shape);
 		bool IsHitBox(b2ShapeId shape);

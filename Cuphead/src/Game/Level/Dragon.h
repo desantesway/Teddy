@@ -29,6 +29,9 @@ namespace Cuphead
 		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
 
 		bool IsSensor(b2ShapeId shape);
+		bool IsParry(b2ShapeId shape);
+
+		void ClearProjectiles();
 
 		void Hit(int damage);
 		bool IsShooting() const { return m_Shooting; }
@@ -39,7 +42,7 @@ namespace Cuphead
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
 
 		void StartIdle();
-		void Idle();
+		void Idle(Teddy::Timestep ts);
 
 		void Intro();
 

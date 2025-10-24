@@ -10,15 +10,7 @@ namespace Cuphead
 	{
 		Hitting(ts);
 
-		if (m_State == DragonState::Idle && m_Phase == 1)
-		{
-			m_PeashotTimer += ts;
-			if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
-			{
-				m_PeashotTimer = 0.0f;
-				StartPeashot();
-			}
-		}
+		ClearProjectiles();
 
 		switch (m_State)
 		{
@@ -27,7 +19,7 @@ namespace Cuphead
 			PsychicEye(ts);
 			break;
 		case DragonState::Idle:
-			Idle();
+			Idle(ts);
 			break;
 		case DragonState::Intro:
 			Intro();
@@ -247,9 +239,49 @@ namespace Cuphead
 		m_State = DragonState::Idle;
 	}
 
-	void Dragon::Idle()
+	void Dragon::Idle(Teddy::Timestep ts)
 	{
+		if (m_Phase == 1)
+		{
+			m_PeashotTimer += ts;
+			if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+			{
+				m_PeashotTimer = 0.0f;
+				StartPeashot();
+			}
+		}
+	}
 
+	bool Dragon::IsParry(b2ShapeId shape)
+	{
+		auto& dragSensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+
+		for (auto& [name, sensor] : dragSensor)
+		{
+			if (name == "Parry" && sensor.RuntimeFixture)
+			{
+				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+				if (B2_ID_EQUALS(shape, sensorShape))
+					return true;
+			}
+		}
+
+		for (auto& ent: m_PeashotEntities)
+		{
+			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+
+			for (auto& [shotName, shotSensor] : shotSensor)
+			{
+				if (shotName == "Parry" && shotSensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(shotSensor.RuntimeFixture);
+					if (B2_ID_EQUALS(shape, sensorShape))
+						return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	bool Dragon::IsSensor(b2ShapeId shape)
@@ -262,9 +294,28 @@ namespace Cuphead
 			{
 				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
 				if (B2_ID_EQUALS(shape, sensorShape))
+				{
 					return true;
+				}
 			}
 		}
+
+		for (auto& ent : m_PeashotEntities)
+		{
+			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+
+			for (auto& [_, shotSensor] : shotSensor)
+			{
+				if (shotSensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(shotSensor.RuntimeFixture);
+					if (B2_ID_EQUALS(shape, sensorShape))
+						return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	void Dragon::Hit(int damage)
@@ -357,6 +408,9 @@ namespace Cuphead
 				glm::vec2 direction = playerPos - glm::vec2(transform.Translation.x, transform.Translation.y);
 				transform.Rotation.z = std::atan2(direction.y, direction.x);
 
+				auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+				rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+
 				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 				
 				if (count == 2)
@@ -375,9 +429,6 @@ namespace Cuphead
 					aA.Index = 11;
 					sensor.Sensors["HitBox"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
 				}
-
-				auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
-				rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 				auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 				filter.CategoryBits = LevelCategories::ENEMY;
@@ -484,5 +535,24 @@ namespace Cuphead
 				}
 			}
 		}
+	}
+
+	void Dragon::ClearProjectiles()
+	{
+		std::vector<Teddy::Entity> newPeashots;
+		for (auto& ent : m_PeashotEntities)
+		{
+			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
+				transform.Translation.y <= -3.5f || transform.Translation.y >= 3.5f)
+			{
+				m_Scene->DestroyEntity(ent);
+			}
+			else
+			{
+				newPeashots.push_back(ent);
+			}
+		}
+		m_PeashotEntities = newPeashots;
 	}
 }

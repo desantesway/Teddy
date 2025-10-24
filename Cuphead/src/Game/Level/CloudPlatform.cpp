@@ -591,4 +591,17 @@ namespace Cuphead
 			}
 		}
 	}
+
+	bool CloudPlatform::IsSensor(const b2ShapeId& shape)
+	{
+		for (auto& cloud : m_Clouds)
+		{
+			auto& collider = cloud.Entity.GetComponent<Teddy::BoxCollider2DComponent>();
+			b2ShapeId shapeId = *static_cast<b2ShapeId*>(collider.RuntimeFixture);
+			if (B2_ID_EQUALS(shapeId, shape))
+				return true;
+		}
+
+		return false;
+	}
 }

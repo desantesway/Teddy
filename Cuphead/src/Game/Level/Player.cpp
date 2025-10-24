@@ -1226,7 +1226,9 @@ namespace Cuphead
 		indicies.Index = indicies.Index + 36;
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.4f, 0.4f }, 0.0f, true };
+		m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.45f, 0.45f }, 0.0f, true };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["ParryHitBox"]);
 
 		m_State = PlayerState::Parrying;
 		m_ParryReset = false;
@@ -1619,6 +1621,12 @@ namespace Cuphead
 		}
 	}
 
+	bool Player::IsGroundSensor(b2ShapeId shape)
+	{
+		b2ShapeId sensorShape = *static_cast<b2ShapeId*>(m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture);
+		return B2_ID_EQUALS(sensorShape, shape);
+	}
+
 	bool Player::IsProjectile(b2ShapeId shape)
 	{
 		for (auto& proj : m_ActiveProjectiles)
@@ -1666,5 +1674,38 @@ namespace Cuphead
 	{
 		b2ShapeId sensorShape = *static_cast<b2ShapeId*>(m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors["HitBox"].RuntimeFixture);
 		return B2_ID_EQUALS(sensorShape, shape);
+	}
+
+	bool Player::IsParry(b2ShapeId shape)
+	{
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		if (m_State == PlayerState::Parrying && sensor.Sensors.contains("ParryHitBox"))
+		{
+			if (sensor.Sensors["ParryHitBox"].RuntimeFixture)
+			{
+				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.Sensors["ParryHitBox"].RuntimeFixture);
+				return B2_ID_EQUALS(sensorShape, shape);
+			}
+			
+		}
+		return false;
+	}
+
+	void Player::ParryHit()
+	{
+		if (m_State == PlayerState::Parrying)
+		{
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocityY(15.0f);
+
+			auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+			if (sensor.Sensors.contains("ParryHitBox"))
+			{
+				m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
+				sensor.Sensors.erase("ParryHitBox");
+			}
+
+			StartFall();
+		}
 	}
 }

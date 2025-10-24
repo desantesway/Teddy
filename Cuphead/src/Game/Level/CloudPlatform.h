@@ -27,6 +27,8 @@ namespace Cuphead
 
 		void Pause();
 		void Unpause();
+
+		bool IsSensor(const b2ShapeId& shape);
 	private:
 		struct Cloud
 		{
