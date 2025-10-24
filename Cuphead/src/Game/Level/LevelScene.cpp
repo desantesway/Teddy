@@ -701,10 +701,9 @@ namespace Cuphead
 		{
 			if (m_Player.IsParry(e.GetVisitorShape()))
 			{
-				TED_CORE_INFO("Parry!");
 				m_Player.ParryHit();
 				m_CameraShake = true;
-				// Explode projectiles
+				m_Dragon.DestroyParry(e.GetSensorShape());
 				return true;
 			}
 		}
@@ -712,9 +711,9 @@ namespace Cuphead
 		{
 			if (m_Player.IsParry(e.GetSensorShape()))
 			{
-				TED_CORE_INFO("Parry!");
 				m_Player.ParryHit();
 				m_CameraShake = true;
+				m_Dragon.DestroyParry(e.GetVisitorShape());
 				return true;
 			}
 		}

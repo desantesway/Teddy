@@ -379,7 +379,10 @@ namespace Cuphead
 
 	void DeathMenu::OnEvent(Teddy::Event& event)
 	{
-		Teddy::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(DeathMenu::OnKeyPressed));
+		if (m_Scene)
+		{
+			Teddy::EventDispatcher dispatcher(event);
+			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(DeathMenu::OnKeyPressed));
+		}
 	}
 }

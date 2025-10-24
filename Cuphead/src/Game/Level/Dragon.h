@@ -30,6 +30,7 @@ namespace Cuphead
 
 		bool IsSensor(b2ShapeId shape);
 		bool IsParry(b2ShapeId shape);
+		void DestroyParry(b2ShapeId shape);
 
 		void ClearProjectiles();
 

@@ -318,6 +318,37 @@ namespace Cuphead
 		return false;
 	}
 
+	void Dragon::DestroyParry(b2ShapeId shape)
+	{
+		std::vector<Teddy::Entity> newShots;
+
+		for (auto& ent : m_PeashotEntities)
+		{
+			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+			bool toRemove = false;
+
+			for (auto& [_, shotSensor] : shotSensor)
+			{
+				if (shotSensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(shotSensor.RuntimeFixture);
+					if (!B2_ID_EQUALS(shape, sensorShape))
+					{
+						newShots.push_back(ent);
+					}
+					else
+					{
+						toRemove = true;
+					}
+				}
+			}
+
+			if(toRemove)
+				m_Scene->DestroyEntity(ent);
+		}
+		m_PeashotEntities = newShots;
+	}
+
 	void Dragon::Hit(int damage)
 	{
 		if (!m_Hit)
