@@ -113,5 +113,7 @@ namespace Cuphead
 		bool m_FirstDeath = true;
 
 		bool m_IncreasingSpeed = false;
+
+		bool m_Freeze = false;
 	};
 }

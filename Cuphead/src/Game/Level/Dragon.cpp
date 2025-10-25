@@ -586,4 +586,26 @@ namespace Cuphead
 		}
 		m_PeashotEntities = newPeashots;
 	}
+
+	void Dragon::Pause()
+	{
+		m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+		if (m_PsychicEyeEntity)
+			m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+		for (auto& ent : m_PeashotEntities)
+		{
+			ent.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+		}
+	}
+
+	void Dragon::Unpause()
+	{
+		m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+		if (m_PsychicEyeEntity)
+			m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+		for (auto& ent : m_PeashotEntities)
+		{
+			ent.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+		}
+	}
 }

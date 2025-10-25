@@ -80,6 +80,7 @@ namespace Teddy
 
     void Rigidbody2DComponent::SetVelocity(float velX, float velY)
     {
+		Velocity = { velX, velY };
         b2Body_SetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody), { velX, velY });
     }
 

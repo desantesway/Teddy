@@ -25,8 +25,8 @@ namespace Cuphead
 
 		bool IsDead() { return m_Health <= 0; }
 
-		void Pause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true; }
-		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
+		void Pause();
+		void Unpause();
 
 		bool IsSensor(b2ShapeId shape);
 		bool IsParry(b2ShapeId shape);

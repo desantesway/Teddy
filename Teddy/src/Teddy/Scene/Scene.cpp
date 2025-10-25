@@ -980,6 +980,7 @@ namespace Teddy
 			bodyDef.motionLocks.angularZ = rb2d.FixedRotation;
 			bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
 			bodyDef.gravityScale = rb2d.GravityScale;
+			bodyDef.linearVelocity = b2Vec2(rb2d.Velocity.x, rb2d.Velocity.y);
 
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
@@ -1111,6 +1112,13 @@ namespace Teddy
 
 	void Scene::OnRuntimeStop()
 	{
+		for (auto entity : m_Registry.view<Rigidbody2DComponent>())
+		{
+			Teddy::Entity ent{ entity, this };
+			auto& rb2d = ent.GetComponent<Rigidbody2DComponent>();
+			rb2d.Velocity = rb2d.GetVelocity();
+		}
+
 		b2DestroyWorld(m_PhysicsWorld);
 		m_PhysicsWorld = b2_nullWorldId;
 	}

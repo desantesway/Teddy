@@ -285,6 +285,38 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
+		if (m_Freeze)
+		{
+			static float timer = 0.0f;
+			static bool firstTime = true;
+			timer += ts;
+
+			if (timer >= 0.15f)
+			{
+				m_Freeze = false;
+				timer = 0.0f;
+				m_Scene->OnRuntimeStart();
+				m_Player.Unpause();
+				m_Dragon.Unpause();
+				m_Clouds.Unpause();
+				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				firstTime = true;
+			}
+			else
+			{
+				if (firstTime)
+				{
+					m_Player.Pause();
+					m_Dragon.Pause();
+					m_Clouds.Pause();
+					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+					m_Scene->OnRuntimeStop();
+					firstTime = false;
+				}
+				return;
+			}
+		}
+
 		if (m_State != 0) return;
 
 		if(Pause(ts)) return;
@@ -702,7 +734,7 @@ namespace Cuphead
 			if (m_Player.IsParry(e.GetVisitorShape()))
 			{
 				m_Player.ParryHit();
-				m_CameraShake = true;
+				m_Freeze = true;
 				m_Dragon.DestroyParry(e.GetSensorShape());
 				return true;
 			}
@@ -712,7 +744,7 @@ namespace Cuphead
 			if (m_Player.IsParry(e.GetSensorShape()))
 			{
 				m_Player.ParryHit();
-				m_CameraShake = true;
+				m_Freeze = true;
 				m_Dragon.DestroyParry(e.GetVisitorShape());
 				return true;
 			}
@@ -767,21 +799,6 @@ namespace Cuphead
 			if (m_Clouds.IsSensor(e.GetSensorShape()))
 			{
 				m_Player.SetGrounded(false);
-				return true;
-			}
-		}
-		
-		if (m_Dragon.IsParry(e.GetSensorShape()))
-		{
-			if (m_Player.IsParry(e.GetVisitorShape()))
-			{
-				return true;
-			}
-		}
-		else if (m_Dragon.IsParry(e.GetVisitorShape()))
-		{
-			if (m_Player.IsParry(e.GetSensorShape()))
-			{
 				return true;
 			}
 		}

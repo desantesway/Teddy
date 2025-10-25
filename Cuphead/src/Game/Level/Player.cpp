@@ -1457,7 +1457,7 @@ namespace Cuphead
 
 	bool Player::NormalHit()
 	{
-		return Hit(10.0f);
+		return Hit(15.0f);
 	}
 
 	void Player::Dying(Teddy::Timestep ts)

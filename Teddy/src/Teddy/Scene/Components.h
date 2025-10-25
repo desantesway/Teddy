@@ -187,6 +187,8 @@ namespace Teddy
 
 		void* RuntimeBody = nullptr;
 
+		glm::vec2 Velocity = { 0.0f, 0.0f };
+
 		void ApplyForce(float forceX, float forceY, bool wake);
 
 		float GetGravityScale();
