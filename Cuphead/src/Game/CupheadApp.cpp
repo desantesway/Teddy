@@ -34,7 +34,7 @@ namespace Cuphead
 
 		~CupheadApp()
 		{
-			// Cleanup code can go here
+			
 		}
 	};
 

@@ -6,6 +6,11 @@
 
 namespace Cuphead
 {
+	LevelScene::~LevelScene()
+	{
+		m_Player.~Player();
+	}
+
 	Teddy::Ref<Teddy::Scene> LevelScene::Init(bool isCuphead)
 	{
 		m_Scene = Teddy::CreateRef<Teddy::Scene>();

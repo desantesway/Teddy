@@ -18,7 +18,7 @@ namespace Cuphead
 	{
 	public:
 		LevelScene() = default;
-		~LevelScene() = default;
+		~LevelScene();
 		
 		Teddy::Ref<Teddy::Scene> Init(bool character);
 		Teddy::Ref<Teddy::Scene> GetScene() { return m_Scene; }
@@ -50,7 +50,11 @@ namespace Cuphead
 		bool OnContactBegin(Teddy::ContactBeginEvent& e);
 		bool OnContactEnd(Teddy::ContactEndEvent& e);
 	private:
-		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+		Dragon m_Dragon;
+		Player m_Player;
+		CloudPlatform m_Clouds;
+		Teddy::Entity m_Floor;
+		Teddy::Entity m_Camera;
 
 		float m_MovementVelocity = 0.0f;
 		float m_MovementSpeed = 0.0f;
@@ -87,12 +91,6 @@ namespace Cuphead
 		Background m_Background;
 		Foreground m_Foreground;
 
-		Dragon m_Dragon;
-		Player m_Player;
-		CloudPlatform m_Clouds;
-		Teddy::Entity m_Floor;
-		Teddy::Entity m_Camera;
-
 		int m_State = 0;
 		int m_Phase = 1;
 
@@ -115,5 +113,7 @@ namespace Cuphead
 		bool m_IncreasingSpeed = false;
 
 		bool m_Freeze = false;
+
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 }

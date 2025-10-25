@@ -66,6 +66,7 @@ namespace Teddy
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowMoved(WindowMovedEvent& e);
 	private:
+		LayerStack m_LayerStack;
 		ApplicationSpecification m_Specification;
 
 		Scope<Window> m_Window;
@@ -73,7 +74,6 @@ namespace Teddy
 		bool m_Running = true; 
 		bool m_NeedsRender = false;
 		bool m_Minimized = false;
-		LayerStack m_LayerStack;
 
 		float m_LastFrameTime = 0.0f;
 

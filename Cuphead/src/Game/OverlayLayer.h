@@ -14,5 +14,5 @@ public:
 	void OnEvent(Teddy::Event& event) override;
 	virtual void OnImGuiRender() override;
 protected:
-	Teddy::Ref<Teddy::Scene> m_ActiveScene;
+	Teddy::Ref<Teddy::Scene> m_ActiveScene = nullptr;
 };

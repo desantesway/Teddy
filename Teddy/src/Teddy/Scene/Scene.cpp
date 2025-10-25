@@ -31,11 +31,6 @@ namespace Teddy
 	{
 		TED_PROFILE_FUNCTION();
 
-		for (auto e : m_Registry.view<entt::any>())
-		{
-			m_Registry.destroy(e);
-		}
-
 		m_Registry.clear();
 		m_PhysicsWorld = { 0, 0 };
 	}
@@ -712,6 +707,7 @@ namespace Teddy
 		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
 		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
 		bodyDef.gravityScale = rigidBody.GravityScale;
+		bodyDef.linearVelocity = b2Vec2(rigidBody.Velocity.x, rigidBody.Velocity.y);
 
 		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 		rigidBody.RuntimeBody = new b2BodyId(bodyId);

@@ -6,6 +6,22 @@
 
 namespace Cuphead
 {
+
+	Player::~Player()
+	{
+		for (auto& it : m_ActiveProjectiles)
+		{
+			m_Scene->DestroyEntity(it);
+		}
+		m_ActiveProjectiles.clear();
+
+		for (auto& it : m_ProjectileExplosion)
+		{
+			m_Scene->DestroyEntity(it);
+		}	
+		m_ProjectileExplosion.clear();
+	}
+
 	void Player::OnUpdate(Teddy::Timestep ts)
 	{
 		if (m_Health > 0)
@@ -115,58 +131,58 @@ namespace Cuphead
 			m_EXDamage = 28.0f;
 
 			static int lobberCount = 0;
+
 			auto ent = m_Scene->CreateEntity("Lobber #" + std::to_string(lobberCount));
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 			sprite.Loop = false;
 			sprite.Textures = m_LobberTextures;
 			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0,0, 223, 189);
-
+			
 			sprite.PlayableIndicies = { 12, 13, 14 };
-
+			
 			auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
 			aA.Index = 12;
-
+			
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 			transform.Scale *= 1.5f;
 			if (m_DirectionRight)
 				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(0.5f, 0.0f, 0.102f); // TODO: change based on hand position
 			else
 				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 0.0f, 0.102f);
-
+			
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
-			
+			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.5f };
+
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, false);
-
+			
 			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PROJECTILE;
 			filter.MaskBits = LevelCategories::ENEMY;
-
+			
 			m_Scene->RefreshBody(ent);
-			rb.SetVelocityX(m_DirectionRight ? 5.0f : -5.0f);
-			rb.SetVelocityY(0.5f);
-
+			
 			m_ActiveProjectiles.push_back(ent);
 
-			auto exp = m_Scene->CreateEntity("Lobber Explosion");
-			auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
-			expSprite.Textures = m_LobberTextures;
-			expSprite.Loop = false;
-			auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
-
-			expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
-			auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
-			expAA.Index = 23;
-
-			auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
-			expTransform.Scale *= 1.25f;
-			expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
-
-			m_ProjectileExplosion.push_back(exp);
-
-			lobberCount++;
+			//auto exp = m_Scene->CreateEntity("Lobber Explosion");
+			//auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
+			//expSprite.Textures = m_LobberTextures;
+			//expSprite.Loop = false;
+			//auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
+			//
+			//expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
+			//auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			//expAA.Index = 23;
+			//
+			//auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
+			//expTransform.Scale *= 1.25f;
+			//expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
+			//
+			//m_ProjectileExplosion.push_back(exp);
+			//
+			//lobberCount++;
 		}
 		else if (m_Projectile == ProjectileType::Roundabout)
 		{
@@ -195,11 +211,12 @@ namespace Cuphead
 				{
 					sprite.PlayableIndicies = { 15, 16, 17, 18, 19, 20, 21 };
 					aA.Index = 15;
-
+		
 					sprite.Loop = true;
 				}
-
-				newActive.push_back(ent);
+		
+				if (ent && ent.HasComponent<Teddy::Rigidbody2DComponent>())
+					newActive.push_back(ent);
 			}
 		}
 		m_ActiveProjectiles = newActive;
@@ -1741,10 +1758,10 @@ namespace Cuphead
 					sprite.Loop = false;
 					sprite.PingPong = false;
 					sprite.Reverse = false;
-
+		
 					auto& aA = proj.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 					aA.Index = 6;
-
+		
 					auto& body = proj.GetComponent<Teddy::Rigidbody2DComponent>();
 					body.SetVelocity(0.0f, 0.0f);
 					body.SetGravityScale(0.0f);

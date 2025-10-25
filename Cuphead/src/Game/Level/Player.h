@@ -12,7 +12,7 @@ namespace Cuphead
 	{
 	public:
 		Player() = default;
-		~Player() = default;
+		~Player();
 
 		void OnUpdate(Teddy::Timestep ts);
 		void OnEvent(Teddy::Event& event);
@@ -109,8 +109,6 @@ namespace Cuphead
 		void BreakCookie();
 		void DeleteCookie(Teddy::Timestep ts);
 	private:
-		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
-
 		bool m_IntroLoaded = false;
 
 		Teddy::Entity m_Entity;
@@ -195,5 +193,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
 		float m_ShootTimer = 0.0f;
 		bool m_Shot = false;
+
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 }

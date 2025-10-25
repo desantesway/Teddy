@@ -4,8 +4,7 @@ namespace Cuphead
 {
     GameScenes::~GameScenes()
     {
-        m_LevelScene = nullptr;
-        m_MainMenuScene = nullptr;
+        TED_CORE_INFO("pois");
     }
 
     void GameScenes::Init()

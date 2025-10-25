@@ -36,13 +36,13 @@ namespace Cuphead
 	private:
 		int m_CurrentScene = 2;
 
-		Teddy::Ref<Teddy::Scene> m_ActiveScene = nullptr;
-
 		TransitionScenes m_TransitionScenes;  // TODO: make this on another layer
 		MainTitleScene m_MainTitleScene;
 		Teddy::Ref<MainMenuScene> m_MainMenuScene = nullptr;
 		Teddy::Ref<LevelScene> m_LevelScene = nullptr;
 
 		bool m_IsCuphead = false;
+
+		Teddy::Ref<Teddy::Scene> m_ActiveScene = nullptr;
 	};
 }
