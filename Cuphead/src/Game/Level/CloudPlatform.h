@@ -19,7 +19,7 @@ namespace Cuphead
 
 		void OnUpdate(Teddy::Timestep ts);
 
-		void SetPlayerY(float y);
+		void SetPlayerPosition(glm::vec2 pos);
 		void SetMovementSpeed(float speed) { m_MovementSpeed = speed; }
 
 		void CloudContactBegin(const b2ShapeId& cloudShape);
@@ -51,7 +51,7 @@ namespace Cuphead
 		void GeneratePattern(int cloudNum);
 
 		void UpdatePostions();
-		void UpdateCollisionFilters();
+		void UpdateCollisionFilters(Teddy::Timestep ts);
 		void UpdateAnimations();
 	private:
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
@@ -71,7 +71,7 @@ namespace Cuphead
 		std::vector<CloudToSpawn> m_CurrentCloudsSpawning;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_CloudTextures;
 
-		float m_PlayerY = 0.0f;
+		glm::vec2 m_PlayerPosition = { 0.0f, 0.0f };
 		float m_MovementSpeed = 0.0f;
 
 		glm::vec2 m_LastSpawn = {0.0f, 0.0f};

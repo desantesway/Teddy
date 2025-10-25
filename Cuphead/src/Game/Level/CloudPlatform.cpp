@@ -7,7 +7,7 @@ namespace Cuphead
 	void CloudPlatform::OnUpdate(Teddy::Timestep ts)
 	{
 		UpdatePostions();
-		UpdateCollisionFilters();
+		UpdateCollisionFilters(ts);
 		UpdateAnimations();
 	}
 
@@ -192,7 +192,7 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 1.1f, 0.025f };
+		collider.Size = { 1.5f, 0.025f };
 		collider.Offset = { 0.0f, -0.075f/8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
@@ -200,8 +200,8 @@ namespace Cuphead
 		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
-		filter.MaskBits = LevelCategories::PLAYER;
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMOFF;
+		filter.MaskBits = 0;
 
 		m_Clouds.push_back({ cloud, 0 });
 	}
@@ -222,7 +222,7 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 0.75f * 1.1f, 0.2f / 8 };
+		collider.Size = { 0.75f * 1.5f, 0.2f / 8 };
 		collider.Offset = { 0.0f, -0.1f / 8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
@@ -230,8 +230,8 @@ namespace Cuphead
 		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
-		filter.MaskBits = LevelCategories::PLAYER;
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMOFF;
+		filter.MaskBits = 0;
 
 		m_Clouds.push_back({ cloud, 1 });
 	}
@@ -252,7 +252,7 @@ namespace Cuphead
 		transform.Scale *= 0.75f;
 
 		auto& collider = cloud.AddComponent<Teddy::BoxCollider2DComponent>();
-		collider.Size = { 1.0f * 1.1f, 0.2f / 8 };
+		collider.Size = { 1.0f * 1.5f, 0.2f / 8 };
 		collider.Offset = { 0.0f, -0.075f / 8 };
 		collider.EnableSensorEvents = true;
 		collider.EnableContactEvents = true;
@@ -260,8 +260,8 @@ namespace Cuphead
 		body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
 		auto& filter = cloud.AddComponent<Teddy::CollisionFilter2DComponent>();
-		filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
-		filter.MaskBits = LevelCategories::PLAYER;
+		filter.CategoryBits = LevelCategories::CLOUDPLATFORMOFF;
+		filter.MaskBits = 0;
 
 		m_Clouds.push_back({ cloud, 2 });
 	}
@@ -327,7 +327,7 @@ namespace Cuphead
 		m_CurrentCloudsSpawning = newCloudsToSpawn;
 	}
 
-	void CloudPlatform::UpdateCollisionFilters()
+	void CloudPlatform::UpdateCollisionFilters(Teddy::Timestep ts)
 	{
 		for (auto& plats : m_Clouds)
 		{
@@ -336,7 +336,9 @@ namespace Cuphead
 			auto& filter = cloud.GetComponent<Teddy::CollisionFilter2DComponent>();
 			auto& collider = cloud.GetComponent<Teddy::BoxCollider2DComponent>();
 
-			if (transform.Translation.y < m_PlayerY - 0.45f) // TODO: if necessary do with x
+			if ((transform.Translation.y < m_PlayerPosition.y - 0.25f) && 
+				(transform.Translation.x >= m_PlayerPosition.x - 0.8f) && 
+				(transform.Translation.x <= m_PlayerPosition.x + 0.8f))
 			{
 				if (filter.CategoryBits != LevelCategories::CLOUDPLATFORMON)
 				{
@@ -352,24 +354,33 @@ namespace Cuphead
 			}
 			else
 			{
+				static constexpr float coyoteTime = 0.1f;
+				static float timer = 0.0f;
 				if (filter.CategoryBits != LevelCategories::CLOUDPLATFORMOFF)
 				{
-					filter.CategoryBits = LevelCategories::CLOUDPLATFORMOFF;
-					filter.SetFilterCategory(collider, filter.CategoryBits);
-
+					timer += ts;
+					if (timer >= coyoteTime)
+					{
+						filter.CategoryBits = LevelCategories::CLOUDPLATFORMOFF;
+						filter.SetFilterCategory(collider, filter.CategoryBits);
+					}
 				}
 				if (filter.MaskBits != 0)
 				{
-					filter.MaskBits = 0;
-					filter.SetFilterMask(collider, filter.MaskBits);
+					if (timer >= coyoteTime)
+					{
+						filter.MaskBits = 0;
+						filter.SetFilterMask(collider, filter.MaskBits);
+						timer = 0.0f;
+					}
 				}
 			}
 		}
 	}
 
-	void CloudPlatform::SetPlayerY(float y)
+	void CloudPlatform::SetPlayerPosition(glm::vec2 pos)
 	{
-		m_PlayerY = y;
+		m_PlayerPosition = pos;
 	}
 
 	void CloudPlatform::CloudContactBegin(const b2ShapeId& cloudShape)

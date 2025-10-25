@@ -427,7 +427,7 @@ namespace Cuphead
 		//	m_Player.NormalHit();
 		//}
 
-		m_Clouds.SetPlayerY(m_Player.GetPosition().y);
+		m_Clouds.SetPlayerPosition(m_Player.GetPosition());
 
 		switch (m_Phase)
 		{

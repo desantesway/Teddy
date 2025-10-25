@@ -166,23 +166,23 @@ namespace Cuphead
 			
 			m_ActiveProjectiles.push_back(ent);
 
-			//auto exp = m_Scene->CreateEntity("Lobber Explosion");
-			//auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
-			//expSprite.Textures = m_LobberTextures;
-			//expSprite.Loop = false;
-			//auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
-			//
-			//expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
-			//auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
-			//expAA.Index = 23;
-			//
-			//auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
-			//expTransform.Scale *= 1.25f;
-			//expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
-			//
-			//m_ProjectileExplosion.push_back(exp);
-			//
-			//lobberCount++;
+			auto exp = m_Scene->CreateEntity("Lobber Explosion");
+			auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
+			expSprite.Textures = m_LobberTextures;
+			expSprite.Loop = false;
+			auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
+			
+			expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
+			auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			expAA.Index = 23;
+			
+			auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
+			expTransform.Scale *= 1.25f;
+			expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
+			
+			m_ProjectileExplosion.push_back(exp);
+			
+			lobberCount++;
 		}
 		else if (m_Projectile == ProjectileType::Roundabout)
 		{
