@@ -1249,7 +1249,7 @@ namespace Cuphead
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		m_Scene->DeleteSensor(sensor.Sensors["ParryHitBox"]);
-		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.45f, 0.45f }, 0.0f, true };
+		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.5f, 0.5f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["ParryHitBox"]);
 
 		m_State = PlayerState::Parrying;

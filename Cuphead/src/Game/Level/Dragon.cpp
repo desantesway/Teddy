@@ -321,32 +321,32 @@ namespace Cuphead
 	void Dragon::DestroyParry(b2ShapeId shape)
 	{
 		std::vector<Teddy::Entity> newShots;
-
+		
 		for (auto& ent : m_PeashotEntities)
 		{
-			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
-			bool toRemove = false;
-
-			for (auto& [_, shotSensor] : shotSensor)
+			bool shouldRemove = false;
+			auto& sensors = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+		
+			for (auto& [name, shotSensor] : sensors)
 			{
 				if (shotSensor.RuntimeFixture)
 				{
 					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(shotSensor.RuntimeFixture);
-					if (!B2_ID_EQUALS(shape, sensorShape))
+					if (B2_ID_EQUALS(shape, sensorShape))
 					{
-						newShots.push_back(ent);
-					}
-					else
-					{
-						toRemove = true;
+						shouldRemove = true;
+						break;
 					}
 				}
 			}
-
-			if(toRemove)
+		
+			if (shouldRemove)
 				m_Scene->DestroyEntity(ent);
+			else
+				newShots.push_back(ent);
 		}
-		m_PeashotEntities = newShots;
+		
+		m_PeashotEntities = newShots;			
 	}
 
 	void Dragon::Hit(int damage)
@@ -464,6 +464,40 @@ namespace Cuphead
 				auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 				filter.CategoryBits = LevelCategories::ENEMY;
 				filter.MaskBits = LevelCategories::PLAYER;
+				
+				class PsychicEye : public Teddy::ScriptableEntity
+				{
+				public:
+					void OnUpdate(Teddy::Timestep ts) override
+					{
+						m_Timer += ts;
+						auto& transform = GetComponent<Teddy::TransformComponent>();
+						if (m_Direction)
+						{
+							transform.Translation += glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 
+								std::sin(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 0.0f);
+							GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+						}
+						else
+						{
+							transform.Translation -= glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 
+								std::sin(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 0.0f);
+							GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+						}
+
+						if (m_Timer >= 0.15f)
+						{
+							m_Timer = 0.0f;
+							m_Direction = !m_Direction;
+						}
+					}
+
+					bool m_Direction = true;
+					float m_Timer = 0.0f;
+					float m_Velocity = 0.5f;
+				};
+
+				ent.AddComponent<Teddy::NativeScriptComponent>().Bind<PsychicEye>();
 
 				m_Scene->RefreshBody(ent);
 				rb.SetVelocity(std::cos(transform.Rotation.z) * 5.0f, std::sin(transform.Rotation.z) * 5.0f);

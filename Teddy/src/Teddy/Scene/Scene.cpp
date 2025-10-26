@@ -118,6 +118,16 @@ namespace Teddy
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		if (entity.HasComponent<NativeScriptComponent>())
+		{
+			auto& nsc = entity.GetComponent<NativeScriptComponent>();
+			if (nsc.Instance)
+			{
+				nsc.Instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			}
+		}
+
 		m_Registry.destroy(entity);
 	}
 
@@ -425,16 +435,19 @@ namespace Teddy
 		
 		// Scripts
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-				{
-					if (!nsc.Instance)
+			if (m_IsRuntime)
+			{
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 					{
-						nsc.Instance = nsc.InstantiateScript();
-						nsc.Instance->m_Entity = Entity{ entity, this };
-						nsc.Instance->OnCreate();
-					}
-					nsc.Instance->OnUpdate(ts);
-				});
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateScript();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
 		}
 
 		// Render
@@ -1090,6 +1103,8 @@ namespace Teddy
 				bc2d.RuntimeFixture = new b2ShapeId(myShapeId);
 			}
 		}
+
+		m_IsRuntime = true;
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -1117,6 +1132,12 @@ namespace Teddy
 
 		b2DestroyWorld(m_PhysicsWorld);
 		m_PhysicsWorld = b2_nullWorldId;
+		m_IsRuntime = false;
+	}
+
+	bool Scene::IsRuntime()
+	{
+		return m_IsRuntime;
 	}
 
 	void Scene::DuplicateEntity(Entity entity)

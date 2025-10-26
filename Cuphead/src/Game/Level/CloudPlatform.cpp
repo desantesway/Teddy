@@ -344,7 +344,6 @@ namespace Cuphead
 				{
 					filter.CategoryBits = LevelCategories::CLOUDPLATFORMON;
 					filter.SetFilterCategory(collider, filter.CategoryBits);
-
 				}
 				if (filter.MaskBits != LevelCategories::PLAYER)
 				{

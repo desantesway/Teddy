@@ -24,6 +24,8 @@ namespace Teddy
 
 		Entity GetPrimaryCameraEntity();
 
+		bool IsRuntime();
+
 		static Ref<Scene> Copy(Ref<Scene> other);
 
 		Entity CreateEntity(const std::string& name = std::string());
@@ -61,6 +63,7 @@ namespace Teddy
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 	private:
+		bool m_IsRuntime = false;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2WorldId m_PhysicsWorld = {0,0};
