@@ -3,6 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
+#include "Randomizer.h"
 
 namespace Cuphead
 {
@@ -630,10 +631,7 @@ namespace Cuphead
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
 
-		static std::random_device rd;
-		static std::mt19937 gen(rd());
-		static std::uniform_int_distribution<> distr(0, 2); // TODO
-		int choice = distr(gen);
+		int choice = Randomizer::Get().RandomInt(0,2);
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_IntroTextures;
@@ -1006,7 +1004,7 @@ namespace Cuphead
 		m_State = PlayerState::Crouching;
 	}
 
-	void Player::Crouching() // TODO: direction change animation while crouching
+	void Player::Crouching()
 	{
 		static bool running = false;
 
@@ -1215,7 +1213,7 @@ namespace Cuphead
 		
 	}
 
-	void Player::StartParry() // TODO: observe if the parry animation happens until he is on the ground// if hit change to pink animation + lil jump
+	void Player::StartParry()
 	{
 		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded || m_State == PlayerState::Hit) return;
 

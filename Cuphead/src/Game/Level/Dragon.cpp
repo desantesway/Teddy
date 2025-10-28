@@ -3,6 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
+#include "Randomizer.h"
 
 namespace Cuphead
 {
@@ -164,7 +165,11 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Peashot/Dragon_Peashot_690x800_2048x2048_7.png"
 			});
 
-		m_PsychicEyeTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_1024x1024_0.png", Teddy::Boolean::True);
+		m_PsychicEyeTexture = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_512x512_0.png",
+			"assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_512x512_1.png",
+			"assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_512x512_2.png"
+			}); 
 	}
 
 	void Dragon::StartIntro()
@@ -429,10 +434,12 @@ namespace Cuphead
 			{
 				auto ent = m_Scene->CreateEntity("Psychic Eye Projectile");
 				auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
-				sprite.Textures = { m_PsychicEyeTexture };
+				sprite.Textures = m_PsychicEyeTexture;
 				auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 151, 145);
 
-				auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				sprite.PlayableIndicies = { 19, 20, 21, 22, 23, 24, 25, 26 };
+				aA.Index = 19;
 
 				auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.5f, 2.0f, 0.11f);
@@ -442,29 +449,10 @@ namespace Cuphead
 				auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 				rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
 
-				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
-				
-				if (count == 2)
-				{
-					sprite.PlayableIndicies = { 19, 20, 21, 22, 23, 24, 25, 26 };
-					aA.Index = 19;
-					sensor.Sensors["Parry"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
-					m_Shooting = false;
-					m_Scene->DestroyEntity(m_PsychicEyeEntity);
-					m_PsychicEyeEntity = {};
-					canShoot = false;
-				}
-				else
-				{
-					sprite.PlayableIndicies = { 11, 12, 13, 14, 15, 16, 17, 18 };
-					aA.Index = 11;
-					sensor.Sensors["HitBox"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
-				}
-
 				auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 				filter.CategoryBits = LevelCategories::ENEMY;
 				filter.MaskBits = LevelCategories::PLAYER;
-				
+
 				class PsychicEye : public Teddy::ScriptableEntity
 				{
 				public:
@@ -474,13 +462,13 @@ namespace Cuphead
 						auto& transform = GetComponent<Teddy::TransformComponent>();
 						if (m_Direction)
 						{
-							transform.Translation += glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 
+							transform.Translation += glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity,
 								std::sin(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 0.0f);
 							GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
 						}
 						else
 						{
-							transform.Translation -= glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 
+							transform.Translation -= glm::vec3(std::cos(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity,
 								std::sin(transform.Rotation.z + glm::radians(90.0f)) * ts * m_Velocity, 0.0f);
 							GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
 						}
@@ -498,6 +486,23 @@ namespace Cuphead
 				};
 
 				ent.AddComponent<Teddy::NativeScriptComponent>().Bind<PsychicEye>();
+
+				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+				
+				if (count >= 2)
+				{
+					sensor.Sensors["Parry"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
+					m_Shooting = false;
+					m_Scene->DestroyEntity(m_PsychicEyeEntity);
+					m_PsychicEyeEntity = {};
+					canShoot = false;
+				}
+				else
+				{
+					sprite.PlayableIndicies = { 11, 12, 13, 14, 15, 16, 17, 18 };
+					aA.Index = 11;
+					sensor.Sensors["HitBox"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
+				}
 
 				m_Scene->RefreshBody(ent);
 				rb.SetVelocity(std::cos(transform.Rotation.z) * 5.0f, std::sin(transform.Rotation.z) * 5.0f);
@@ -520,7 +525,7 @@ namespace Cuphead
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 
 		static int shot = 0;
-		const int maxShots = 3; // TODO: randomizer with like 70/30 for 2/3
+		static int maxShots = 2; 
 		static float timer = 0.0f;
 		timer += ts;
 		
@@ -538,6 +543,7 @@ namespace Cuphead
 			}
 			else if (aA.Index == 8 && timer >= 1.0f)
 			{
+				maxShots = 2;
 				sprite.PlayableIndicies = { 24, 25, 26, 27, 28, 29, 30, 31 };
 			}
 		} 
@@ -553,12 +559,14 @@ namespace Cuphead
 				timer = 0.0f;
 				inPosition = false;
 				m_Shooting = true;
+				if (Randomizer::Get().RandomBool(0.3f))
+					maxShots = 3;
 				PsychicEye(ts);
 			}
 			else
 			{
 				auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-				transform.Translation += glm::vec3(0.0f, ts * 5.0f, 0.0f);
+				transform.Translation += glm::vec3(0.0f, ts * 5.0f, 0.0f); // TODO: fix this
 				m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
 
 				if (transform.Translation.y >= -0.1f)

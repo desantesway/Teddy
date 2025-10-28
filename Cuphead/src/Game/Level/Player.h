@@ -194,6 +194,8 @@ namespace Cuphead
 		float m_ShootTimer = 0.0f;
 		bool m_Shot = false;
 
+		int m_StartIndex = 0;
+
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 }

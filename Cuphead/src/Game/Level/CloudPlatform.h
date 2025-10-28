@@ -54,8 +54,6 @@ namespace Cuphead
 		void UpdateCollisionFilters(Teddy::Timestep ts);
 		void UpdateAnimations();
 	private:
-		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
-
 		struct CloudToSpawn
 		{
 			float X;
@@ -75,9 +73,7 @@ namespace Cuphead
 		float m_MovementSpeed = 0.0f;
 
 		glm::vec2 m_LastSpawn = {0.0f, 0.0f};
-		std::mt19937 m_Rng;
-		std::uniform_real_distribution<float> m_XDistribution;
-		std::uniform_real_distribution<float> m_YDistribution;	   // TODO: change this to levelScenes
-		std::bernoulli_distribution m_TypeDistribution;	   // TODO: change this to levelScenes
+
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 }

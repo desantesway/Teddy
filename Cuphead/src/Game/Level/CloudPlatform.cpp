@@ -1,5 +1,6 @@
 #include "CloudPlatform.h"
 #include "LevelCategories.h"
+#include "Randomizer.h"
 
 namespace Cuphead
 {
@@ -21,11 +22,6 @@ namespace Cuphead
 			"assets/Textures/Dragon/Platforms/Cloud_Platform_242x90_1024x1024_0.png",
 			"assets/Textures/Dragon/Platforms/Cloud_Platform_242x90_1024x1024_1.png"
 			});
-
-		m_Rng.seed(std::random_device{}());
-		m_XDistribution = std::uniform_real_distribution<float>(0.1f, 2.0f);
-		m_YDistribution = std::uniform_real_distribution<float>(-2.0f, 2.0f);
-		m_TypeDistribution = std::bernoulli_distribution(0.5f);
 	}
 
 	void CloudPlatform::InitPhase1()
@@ -66,14 +62,12 @@ namespace Cuphead
 				float maxXOffset = kDxMaxBase;
 				if (j == 0)
 					maxXOffset = 0.5f;
-				
-				std::uniform_real_distribution<float> dYrand(-2.5f, 2.5f);
 
-				float proposedY = dYrand(m_Rng);
+				float proposedY = Randomizer::Get().RandomFloat(-2.5f, 2.5f);
 
 				while (proposedY > kYMax || proposedY < kYMin || (proposedY < (last.y + 2.0f) && proposedY > (last.y - 2.0f)))
 				{
-					proposedY = dYrand(m_Rng);
+					proposedY = Randomizer::Get().RandomFloat(-2.5f, 2.5f);
 				}
 
 				if (proposedY > last.y + kMaxUp)   proposedY = last.y + kMaxUp;
@@ -84,10 +78,9 @@ namespace Cuphead
 				float dxMax = maxXOffset - 0.35f * std::max(0.0f, dy);
 				dxMax = std::clamp(dxMax, 0.25f, maxXOffset);
 
-				std::uniform_real_distribution<float> dXrand(kDxMin, dxMax);
-				float proposedX = last.x + dXrand(m_Rng);
+				float proposedX = last.x + Randomizer::Get().RandomFloat(kDxMin, dxMax);
 
-				bool typeIsC = m_TypeDistribution(m_Rng);
+				bool typeIsC = Randomizer::Get().RandomBool(0.4f);
 
 				m_CloudsToSpawn.emplace_back(proposedX, proposedY, typeIsC);
 

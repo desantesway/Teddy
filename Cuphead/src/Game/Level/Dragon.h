@@ -61,7 +61,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PeashotTextures;
-		Teddy::Ref<Teddy::Texture2D> m_PsychicEyeTexture;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PsychicEyeTexture;
 
 		enum class DragonState
 		{
