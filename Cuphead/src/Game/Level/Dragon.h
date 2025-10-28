@@ -51,6 +51,9 @@ namespace Cuphead
 		void Peashot(Teddy::Timestep ts);
 		void PsychicEye(Teddy::Timestep ts);
 
+		void StartMeteor();
+		void Meteor(Teddy::Timestep ts);
+
 		void Hitting(Teddy::Timestep ts);
 
 		void LoadTextures();
@@ -61,13 +64,15 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PeashotTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PsychicEyeTexture;
 
 		enum class DragonState
 		{
 			Idle = 0,
 			Intro,
-			Peashot
+			Peashot,
+			Meteor
 		};
 
 		DragonState m_State = DragonState::Intro;
@@ -78,8 +83,9 @@ namespace Cuphead
 
 		bool m_IntroDone = false;
 		bool m_Shooting = false;
+		bool m_MeteorStart = true;
 
-		int m_Health = 1700; // 629, 510, 561 /// 1700, 1071, 561
+		int m_Health = 1530; // 629, 510, 561 /// 1700, 1535, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
 
@@ -87,6 +93,10 @@ namespace Cuphead
 
 		Teddy::Entity m_PsychicEyeEntity;
 		std::vector<Teddy::Entity> m_PeashotEntities;
+
+		bool m_ChargingMeteor = false;
+		bool m_DidMeteorLaunch = false;
+		int m_MeteorsLaunched = 0;
 	};
 
 }

@@ -4,7 +4,6 @@ namespace Cuphead
 {
     GameScenes::~GameScenes()
     {
-        TED_CORE_INFO("pois");
     }
 
     void GameScenes::Init()

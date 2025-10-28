@@ -46,7 +46,7 @@ namespace Cuphead
             TED_PROFILE_SCOPE("Renderer Draw (CPU)");
             m_ActiveScene->AlwaysOnUpdate();
             m_ActiveScene->OnUpdateRuntime(ts);
-            //m_ActiveScene->ShowPhysicsColliders();
+            m_ActiveScene->ShowPhysicsColliders();
         }
    
         if (nextScene)

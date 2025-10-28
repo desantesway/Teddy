@@ -19,6 +19,9 @@ namespace Cuphead
 			Peashot(ts);
 			PsychicEye(ts);
 			break;
+		case DragonState::Meteor:
+			Meteor(ts);
+			break;
 		case DragonState::Idle:
 			Idle(ts);
 			break;
@@ -170,6 +173,17 @@ namespace Cuphead
 			"assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_512x512_1.png",
 			"assets/Textures/Dragon/Projectiles/Dragon_Psychic_151x145_512x512_2.png"
 			}); 
+
+		m_MeteorTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_6.png",
+			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_7.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -248,11 +262,56 @@ namespace Cuphead
 	{
 		if (m_Phase == 1)
 		{
-			m_PeashotTimer += ts;
-			if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+			if (m_Health > 1535)
 			{
-				m_PeashotTimer = 0.0f;
-				StartPeashot();
+				m_PeashotTimer += ts;
+				if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+				{
+					m_PeashotTimer = 0.0f;
+					StartPeashot();
+				}
+			}
+			else if (m_Health > 1071)
+			{
+				static bool choosed = false;
+				bool MeteorAttack = true;
+				m_PeashotTimer += ts;
+				if (m_PeashotTimer >= 2.5f)
+				{
+					if (!choosed)
+					{
+						if (m_MeteorStart)
+						{
+							m_MeteorStart = false;
+							MeteorAttack = true;
+							choosed = true;
+						}
+						else
+						{
+							MeteorAttack = Randomizer::Get().RandomBool(0.6f);
+							choosed = true;
+						}
+					}
+
+					if (MeteorAttack && m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 0)
+					{
+						m_PeashotTimer = 0.0f;
+						choosed = false;
+						m_MeteorsLaunched = 0;
+						StartMeteor();
+					}
+					else if (!MeteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+					{
+						m_PeashotTimer = 0.0f;
+						choosed = false;
+						StartPeashot(); // TODO: 4
+					}
+				}
+
+			}
+			else
+			{
+				m_Phase = 2;
 			}
 		}
 	}
@@ -649,5 +708,145 @@ namespace Cuphead
 		{
 			ent.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
 		}
+	}
+
+	void Dragon::StartMeteor()
+	{
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Pause = false;
+		sprite.Loop = false;
+		sprite.PingPong = false;
+		sprite.PlayableIndicies.clear();
+		sprite.Textures = m_MeteorTextures;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 800;
+		atlas.SpriteHeight = 800;
+
+		auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		atlasAnim.GenerateFrames(sprite, atlas);
+		atlasAnim.Index = 0;
+
+		for (int i = 0; i < 16; i++)
+			sprite.PlayableIndicies.push_back(i);
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = glm::vec3(4.25f, -0.5f, 2.011f);
+		m_Entity.GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
+		m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
+		m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
+		sensor.Sensors["BellyHitBox"] = { { 0.0f, 0.75f }, { 1.0f, 1.0f }, 0.0f, false};
+		sensor.Sensors["NeckHitBox"] = { { -0.25f, -0.5f }, { 0.5f, 0.75f }, 0.0f, true };
+		sensor.Sensors["HeadHitBox"] = { { 0.5f, 2.0f }, { 1.25f, 0.5f }, 0.0f, true	};
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
+
+		m_State = DragonState::Meteor;
+	}
+
+	void Dragon::Meteor(Teddy::Timestep ts)
+	{
+		static constexpr int maxMeteors = 2;
+		if (m_MeteorsLaunched >= maxMeteors)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			if (sprite.PlayableIndicies.size() > 6)
+			{
+				auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				sprite.Loop = false;
+				sprite.Reverse = false;
+				sprite.PlayableIndicies = { 26, 27, 28, 29, 30, 31 };
+
+				aA.Index = 26;
+				m_ChargingMeteor = false;
+				m_DidMeteorLaunch = false;
+			}
+			else
+			{
+				auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == 31)
+				{
+					StartIdle();
+					m_MeteorsLaunched = 0;
+				}
+			}
+			return;
+		}
+
+		if (m_DidMeteorLaunch)
+		{
+			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (aA.Index == 25)
+			{
+				TED_CORE_INFO("Meteor Launched");
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.Loop = false;
+				sprite.Reverse = true;
+				sprite.PlayableIndicies = { 16, 17, 18, 19, 20, 23, 24, 25 };
+
+				aA.Index = 25;
+				m_ChargingMeteor = false;
+				m_DidMeteorLaunch = false;
+				m_MeteorsLaunched++;
+			}
+		}
+		else
+		{
+			if (m_ChargingMeteor)
+			{
+				static float timer = 0.0f;
+				timer += ts;
+
+				if (timer >= 2.5f)
+				{
+					auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aA.Index == 15)
+					{
+						auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						sprite.Loop = false;
+						sprite.Reverse = false;
+						sprite.PlayableIndicies = {16, 17, 18, 19, 20, 21, 22, 25};
+
+						aA.Index = 16;
+						m_ChargingMeteor = false;
+						m_DidMeteorLaunch = true;
+						timer = 0.0f;
+					}
+				}
+			}
+			else
+			{
+				auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == 15)
+				{
+					auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.Loop = true;
+					sprite.Reverse = false;
+					sprite.PlayableIndicies.clear();
+					for (int i = 7; i < 16; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					aA.Index = 7;
+					m_ChargingMeteor = true;
+				}
+				else if (aA.Index == 16)
+				{
+					auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.Loop = true;
+					sprite.Reverse = false;
+					sprite.PlayableIndicies.clear();
+					for (int i = 7; i < 16; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					aA.Index = 11;
+					m_ChargingMeteor = true;
+				}
+			}
+		}
+		
 	}
 }
