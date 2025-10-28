@@ -184,6 +184,12 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_6.png",
 			"assets/Textures/Dragon/Entity/Meteor/Dragon_Met_800x800_2048x2048_7.png"
 			});
+
+		m_MeteorProjectileTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_0.png",
+			"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_1.png",
+			"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_2.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -782,7 +788,7 @@ namespace Cuphead
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (aA.Index == 25)
 			{
-				TED_CORE_INFO("Meteor Launched");
+				LaunchMeteor();
 				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 				sprite.Loop = false;
 				sprite.Reverse = true;
@@ -848,5 +854,92 @@ namespace Cuphead
 			}
 		}
 		
+	}
+
+	void Dragon::LaunchMeteor()
+	{
+		static bool up = true;
+		up = !up;
+
+		auto ent = m_Scene->CreateEntity("Meteor Projectile");
+		auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+		sprite.Textures = m_MeteorProjectileTextures;
+		sprite.Loop = true;
+		auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 240, 193);
+		auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-1.0f, 1.5f, up ? 0.11f : 0.1f);
+		transform.Scale = glm::vec3(1.5f, 1.5f, 1.0f);
+		transform.Rotation.z = glm::radians(up ? -70.0f : 70.0f);
+
+		auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+		rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::ENEMY;
+		filter.MaskBits = LevelCategories::PLAYER;
+
+		class Meteor : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnCreate() override
+			{
+				auto& transform = GetComponent<Teddy::TransformComponent>();
+				float angle = transform.Rotation.z;
+
+				m_MovingUp = angle < 0.0f;
+			}
+
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& transform = GetComponent<Teddy::TransformComponent>();
+
+				const float edge = 2.0f;
+				const float minSpeed = 0.25f;
+				const float maxSpeed = 7.5f;
+
+				float t = std::abs(transform.Translation.y) / edge;
+				t = glm::clamp(t, 0.0f, 1.0f);
+
+				float velocityMultiplier = 1.0f - t * t;
+				float moveY = glm::mix(minSpeed, maxSpeed, velocityMultiplier) * ts;
+
+				float signedMoveY = m_MovingUp ? moveY : -moveY;
+				transform.Translation.y += signedMoveY;
+
+				if (transform.Translation.y >= edge - 0.01f)
+					m_MovingUp = false;
+				else if (transform.Translation.y <= -edge + 0.01f)
+					m_MovingUp = true;
+
+				transform.Translation.x -= 7.5f * ts / 2.5f;
+
+				float maxMoveY = maxSpeed * ts;
+				float normalizedSpeed = 0.0f;
+				if (maxMoveY > 0.0f)
+					normalizedSpeed = signedMoveY / maxMoveY;
+
+				float angleDegrees = - normalizedSpeed * 70.0f;
+				transform.Rotation.z = glm::radians(angleDegrees);
+
+				GetComponent<Teddy::Rigidbody2DComponent>().SetPosition(transform);
+
+				auto& sensor = GetComponent<Teddy::Sensor2DComponent>();
+				sensor.Sensors["HitBox"] = { { -0.25f * cos(transform.Rotation.z), -0.25f * sin(transform.Rotation.z)}, {0.5f, 0.5f}, 0.0f, false, sensor.Sensors["HitBox"].RuntimeFixture };
+				//GetScene()->RefreshSensor(GetEntity(), sensor.Sensors["HitBox"]);
+			}
+
+			bool m_MovingUp = true;
+		};
+
+		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<Meteor>();
+
+		auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { -0.25f * cos(transform.Rotation.z), -0.25f * sin(transform.Rotation.z)}, {0.5f, 0.5f}, 0.0f, false};
+
+		m_Scene->RefreshBody(ent);
+
+	    // Smoke entity
 	}
 }

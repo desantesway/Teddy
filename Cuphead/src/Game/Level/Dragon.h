@@ -53,6 +53,7 @@ namespace Cuphead
 
 		void StartMeteor();
 		void Meteor(Teddy::Timestep ts);
+		void LaunchMeteor();
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -64,8 +65,9 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IdleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PeashotTextures;
-		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PsychicEyeTexture;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorProjectileTextures;
 
 		enum class DragonState
 		{
