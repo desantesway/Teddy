@@ -202,6 +202,11 @@ namespace Cuphead
 		m_TailTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Dragon/Entity/Tail/Dragon_Tail_303x856_2048x2048_0.png"
 			});
+
+		m_DashTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Dash/Dragon_Dash_481x127_512x512_0.png",
+			"assets/Textures/Dragon/Entity/Dash/Dragon_Dash_481x127_512x512_1.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -345,7 +350,7 @@ namespace Cuphead
 				if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits != 0)
 				{
 					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-					transform.Translation.x += 2.0f * ts;
+					transform.Translation.x += 2.5f * ts;
 
 					if (transform.Translation.x > 8.0f)
 					{
@@ -361,16 +366,53 @@ namespace Cuphead
 				}
 				else
 				{
-					TED_CORE_INFO("transition");
+					if (!m_Transitioning)
+					{
+						auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						sprite.Loop = true;
+						sprite.Textures = m_DashTextures;
+
+						auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+						atlas.SpriteWidth = 481;
+						atlas.SpriteHeight = 127;
+						sprite.PlayableIndicies.clear();
+
+						auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						atlasAnim.GenerateFrames(sprite, atlas);
+						atlasAnim.Index = 0;
+
+						auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+						transform.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+						transform.Translation.z = 0.9f;
+
+						m_Transitioning = true;
+					}
+
+					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation.x -= 15.0f * ts;
+					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetPosition(transform);
+
+					if (transform.Translation.x <= -7.0f)
+					{
+						m_PhaseStart = false;
+						m_Transitioning = false;
+						
+						auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+						filter.CategoryBits = LevelCategories::ENEMY;
+						filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
+						filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
+						filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+
+						transform.Translation = glm::vec3(3.25f, -0.65f, 2.011f);
+						transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
+						// load intro
+					}
 				}
 			}
 			else
 			{
-				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
-				filter.CategoryBits = LevelCategories::ENEMY;
-				filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
-				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
-				filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+				
 
 				TED_CORE_INFO("transition done");
 			}

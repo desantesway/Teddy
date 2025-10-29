@@ -145,6 +145,7 @@ namespace Teddy
     {
 		int index = 0;
 		bool add = animation.PlayableIndicies.size() == 0;
+		AnimationSprites.clear();
         for (int i = 0; i < animation.Textures.size(); i++)
         {
             int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[i]->GetWidth() / atlas.SpriteWidth);

@@ -72,6 +72,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorProjectileTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TailTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DashTextures;
 
 		enum class DragonState
 		{
@@ -111,6 +112,7 @@ namespace Cuphead
 		bool m_TailUp = false;
 
 		bool m_PhaseStart = false;
+		bool m_Transitioning = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
