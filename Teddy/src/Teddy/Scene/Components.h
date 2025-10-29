@@ -103,6 +103,9 @@ namespace Teddy
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
 		SpriteAnimationComponent(float initFrame, float frame, float finalFrame)
 			: InitialFrameTime(initFrame), FrameTime(frame), FinalFrameTime(finalFrame)
+		{}
+		SpriteAnimationComponent(float frame)
+			: InitialFrameTime(frame), FrameTime(frame), FinalFrameTime(frame)
 		{
 		}
 	};

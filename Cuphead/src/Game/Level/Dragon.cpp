@@ -268,8 +268,10 @@ namespace Cuphead
 	{
 		if (m_Phase == 1)
 		{
+			static bool choosed = false;
 			if (m_Health > 1535)
 			{
+				choosed = false;
 				m_PeashotTimer += ts;
 				if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
 				{
@@ -279,8 +281,7 @@ namespace Cuphead
 			}
 			else if (m_Health > 1071)
 			{
-				static bool choosed = false;
-				bool MeteorAttack = true;
+				static bool meteorAttack = true;
 				m_PeashotTimer += ts;
 				if (m_PeashotTimer >= 2.5f)
 				{
@@ -289,28 +290,30 @@ namespace Cuphead
 						if (m_MeteorStart)
 						{
 							m_MeteorStart = false;
-							MeteorAttack = true;
+							meteorAttack = true;
 							choosed = true;
+							m_LaunchThreeMeteors = false;
 						}
 						else
 						{
-							MeteorAttack = Randomizer::Get().RandomBool(0.6f);
+							meteorAttack = Randomizer::Get().RandomBool(0.6f);
 							choosed = true;
+							m_LaunchThreeMeteors = true;
 						}
 					}
 
-					if (MeteorAttack && m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 0)
+					if (meteorAttack && m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 0)
 					{
 						m_PeashotTimer = 0.0f;
 						choosed = false;
 						m_MeteorsLaunched = 0;
 						StartMeteor();
 					}
-					else if (!MeteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+					else if (!meteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
 					{
 						m_PeashotTimer = 0.0f;
 						choosed = false;
-						StartPeashot(); // TODO: 4
+						StartPeashot();
 					}
 				}
 
@@ -461,6 +464,13 @@ namespace Cuphead
 		if (m_Shooting)
 		{
 			static int count = 0;
+			int maxCount = 2;
+			float maxTimer = 0.2f;
+			if (m_Health <= 1535)
+			{
+				maxCount = 3;
+				maxTimer = 0.15f;
+			}
 			static float timer = 0.0f;
 			static glm::vec2 playerPos = m_PlayerPosition;
 			static bool canShoot = false;
@@ -495,7 +505,7 @@ namespace Cuphead
 				canShoot = true;
 			}
 
-			if (canShoot && count < 3 && timer >= 0.2f)
+			if (canShoot && count <= maxCount && timer >= maxTimer)
 			{
 				auto ent = m_Scene->CreateEntity("Psychic Eye Projectile");
 				auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
@@ -554,7 +564,7 @@ namespace Cuphead
 
 				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 				
-				if (count >= 2)
+				if (count >= maxCount)
 				{
 					sensor.Sensors["Parry"] = { { 0.125f, 0.0f }, { 0.25f, 0.45f }, glm::degrees(transform.Rotation.z), true };
 					m_Shooting = false;
@@ -756,7 +766,9 @@ namespace Cuphead
 
 	void Dragon::Meteor(Teddy::Timestep ts)
 	{
-		static constexpr int maxMeteors = 2;
+		int maxMeteors = 2;
+		if(m_LaunchThreeMeteors)
+			maxMeteors = 3;
 		if (m_MeteorsLaunched >= maxMeteors)
 		{
 			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -788,6 +800,8 @@ namespace Cuphead
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (aA.Index == 25)
 			{
+				if (m_MeteorsLaunched == 2 && m_LaunchThreeMeteors)
+					LaunchMeteor();
 				LaunchMeteor();
 				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 				sprite.Loop = false;

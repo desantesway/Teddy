@@ -99,6 +99,7 @@ namespace Cuphead
 		bool m_ChargingMeteor = false;
 		bool m_DidMeteorLaunch = false;
 		int m_MeteorsLaunched = 0;
+		bool m_LaunchThreeMeteors = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
