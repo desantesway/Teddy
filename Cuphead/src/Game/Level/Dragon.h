@@ -110,6 +110,8 @@ namespace Cuphead
 		bool m_TailPick = false;
 		bool m_TailUp = false;
 
+		bool m_PhaseStart = false;
+
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 

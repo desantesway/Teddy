@@ -62,6 +62,12 @@ namespace Cuphead
 				increasing = false;
 			}
 			color.a = 1.0f;
+
+			if (m_TailEntity)
+			{
+				auto& tailColor = m_TailEntity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				tailColor = color;
+			}
 		}
 	}
 
@@ -329,16 +335,44 @@ namespace Cuphead
 			else
 			{
 				m_Phase = 2;
-				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
-				filter.CategoryBits = 0;
-				filter.MaskBits = 0;
+				m_PhaseStart = true;
 			}
 		}
 		else if (m_Phase == 2)
 		{
-			if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits == 0)
+			if (m_PhaseStart)
 			{
+				if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits != 0)
+				{
+					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation.x += 2.0f * ts;
 
+					if (transform.Translation.x > 8.0f)
+					{
+						auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+						filter.CategoryBits = 0;
+						filter.MaskBits = 0;
+						filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
+						filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+					}
+
+					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetPosition(transform);
+				}
+				else
+				{
+					TED_CORE_INFO("transition");
+				}
+			}
+			else
+			{
+				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = LevelCategories::ENEMY;
+				filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
+				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
+				filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+
+				TED_CORE_INFO("transition done");
 			}
 		}
 	}
@@ -378,7 +412,6 @@ namespace Cuphead
 	bool Dragon::IsSensor(b2ShapeId shape)
 	{
 		auto& dragSensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
-
 		for (auto& [_, sensor] : dragSensor)
 		{
 			if (sensor.RuntimeFixture)
@@ -387,6 +420,22 @@ namespace Cuphead
 				if (B2_ID_EQUALS(shape, sensorShape))
 				{
 					return true;
+				}
+			}
+		}
+
+		if (m_TailEntity)
+		{
+			auto& tailSensor = m_TailEntity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+			for (auto& [_, sensor] : tailSensor)
+			{
+				if (sensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+					if (B2_ID_EQUALS(shape, sensorShape))
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -1079,6 +1128,17 @@ namespace Cuphead
 					transform.Translation = glm::vec3(m_PlayerPosition.x, -5.5f, 2.1f);
 					transform.Scale = glm::vec3(6.5f, 6.5f, 1.0f);
 
+					auto& body = m_TailEntity.AddComponent<Teddy::Rigidbody2DComponent>();
+					body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+					auto& filter = m_TailEntity.AddComponent<Teddy::CollisionFilter2DComponent>();
+					filter.CategoryBits = LevelCategories::ENEMY;
+					filter.MaskBits = LevelCategories::PLAYER;
+
+					auto& sensor = m_TailEntity.AddComponent<Teddy::Sensor2DComponent>();
+					sensor.Sensors["HitBox"] = { { -0.5f, 0.0f }, { 0.25f, 3.0f }, 0.0f, true };
+
+					m_Scene->RefreshBody(m_TailEntity);
+
 					m_TailPick = false;
 					m_TailUp = false;
 					timer = 0.0f;
@@ -1096,6 +1156,10 @@ namespace Cuphead
 						transform.Translation.y = -5.0f;
 						m_TailPick = true;
 					}
+
+					auto& body = m_TailEntity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetPosition(transform);
+
 					timer = 0.0f;
 				}
 				else if (!m_TailUp)
@@ -1111,12 +1175,18 @@ namespace Cuphead
 							m_TailUp = true;
 							timer = 0.0f;
 						}
+
+						auto& body = m_TailEntity.GetComponent<Teddy::Rigidbody2DComponent>();
+						body.SetPosition(transform);
 					}
 				}
 				else if (timer > 0.5f)
 				{
 					auto& transform = m_TailEntity.GetComponent<Teddy::TransformComponent>();
 					transform.Translation.y -= 10.0f * ts;
+
+					auto& body = m_TailEntity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetPosition(transform);
 
 					if (transform.Translation.y < -5.5f)
 					{

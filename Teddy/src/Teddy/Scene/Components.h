@@ -283,6 +283,9 @@ namespace Teddy
 		void SetFilterCategory(BoxCollider2DComponent& collider, uint64_t filter);
 		void SetFilterMask(BoxCollider2DComponent& collider, uint64_t filter);
 		void SetFilterGroupIndex(BoxCollider2DComponent& collider, uint64_t filter);
+		void SetFilterCategory(Sensor2DComponent& collider, uint64_t filter);
+		void SetFilterMask(Sensor2DComponent& collider, uint64_t filter);
+		void SetFilterGroupIndex(Sensor2DComponent& collider, uint64_t filter);
 
 		CollisionFilter2DComponent() = default;
 		CollisionFilter2DComponent(const CollisionFilter2DComponent&) = default;

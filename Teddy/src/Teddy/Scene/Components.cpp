@@ -61,6 +61,45 @@ namespace Teddy
         }
     }
 
+    void CollisionFilter2DComponent::SetFilterCategory(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.categoryBits = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
+    void CollisionFilter2DComponent::SetFilterMask(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.maskBits = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
+    void CollisionFilter2DComponent::SetFilterGroupIndex(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.groupIndex = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
     float Rigidbody2DComponent::GetGravityScale()
     {
         return b2Body_GetGravityScale(*static_cast<b2BodyId*>(RuntimeBody));
