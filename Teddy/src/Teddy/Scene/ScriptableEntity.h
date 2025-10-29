@@ -26,6 +26,7 @@ namespace Teddy {
 			m_Entity.RemoveComponent<T>();
 		}
 
+		Entity GetEntity() { return m_Entity; }
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}

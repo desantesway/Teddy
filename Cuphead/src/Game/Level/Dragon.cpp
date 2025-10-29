@@ -336,7 +336,7 @@ namespace Cuphead
 			}
 		}
 
-		for (auto& ent: m_PeashotEntities)
+		for (auto& ent: m_ProjectileEntities)
 		{
 			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
 
@@ -370,7 +370,7 @@ namespace Cuphead
 			}
 		}
 
-		for (auto& ent : m_PeashotEntities)
+		for (auto& ent : m_ProjectileEntities)
 		{
 			auto& shotSensor = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
 
@@ -392,7 +392,7 @@ namespace Cuphead
 	{
 		std::vector<Teddy::Entity> newShots;
 		
-		for (auto& ent : m_PeashotEntities)
+		for (auto& ent : m_ProjectileEntities)
 		{
 			bool shouldRemove = false;
 			auto& sensors = ent.GetComponent<Teddy::Sensor2DComponent>().Sensors;
@@ -416,7 +416,7 @@ namespace Cuphead
 				newShots.push_back(ent);
 		}
 		
-		m_PeashotEntities = newShots;			
+		m_ProjectileEntities = newShots;
 	}
 
 	void Dragon::Hit(int damage)
@@ -572,7 +572,7 @@ namespace Cuphead
 				m_Scene->RefreshBody(ent);
 				rb.SetVelocity(std::cos(transform.Rotation.z) * 5.0f, std::sin(transform.Rotation.z) * 5.0f);
 
-				m_PeashotEntities.push_back(ent);
+				m_ProjectileEntities.push_back(ent);
 
 				count++;
 
@@ -678,7 +678,7 @@ namespace Cuphead
 	void Dragon::ClearProjectiles()
 	{
 		std::vector<Teddy::Entity> newPeashots;
-		for (auto& ent : m_PeashotEntities)
+		for (auto& ent : m_ProjectileEntities)
 		{
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
@@ -691,7 +691,7 @@ namespace Cuphead
 				newPeashots.push_back(ent);
 			}
 		}
-		m_PeashotEntities = newPeashots;
+		m_ProjectileEntities = newPeashots;
 	}
 
 	void Dragon::Pause()
@@ -699,7 +699,7 @@ namespace Cuphead
 		m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
 		if (m_PsychicEyeEntity)
 			m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
-		for (auto& ent : m_PeashotEntities)
+		for (auto& ent : m_ProjectileEntities)
 		{
 			ent.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
 		}
@@ -710,7 +710,7 @@ namespace Cuphead
 		m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
 		if (m_PsychicEyeEntity)
 			m_PsychicEyeEntity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
-		for (auto& ent : m_PeashotEntities)
+		for (auto& ent : m_ProjectileEntities)
 		{
 			ent.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
 		}
@@ -927,7 +927,8 @@ namespace Cuphead
 
 				auto& sensor = GetComponent<Teddy::Sensor2DComponent>();
 				sensor.Sensors["HitBox"] = { { -0.25f * cos(transform.Rotation.z), -0.25f * sin(transform.Rotation.z)}, {0.5f, 0.5f}, 0.0f, false, sensor.Sensors["HitBox"].RuntimeFixture };
-				//GetScene()->RefreshSensor(GetEntity(), sensor.Sensors["HitBox"]);
+				auto entity = GetEntity();
+				Teddy::Scene::RefreshSensor(entity, sensor.Sensors["HitBox"]);
 			}
 
 			bool m_MovingUp = true;
@@ -940,6 +941,7 @@ namespace Cuphead
 
 		m_Scene->RefreshBody(ent);
 
+		m_ProjectileEntities.push_back(ent);
 	    // Smoke entity
 	}
 }

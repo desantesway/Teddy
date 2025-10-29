@@ -94,7 +94,7 @@ namespace Cuphead
 		float m_PeashotTimer = 0.0f;
 
 		Teddy::Entity m_PsychicEyeEntity;
-		std::vector<Teddy::Entity> m_PeashotEntities;
+		std::vector<Teddy::Entity> m_ProjectileEntities;
 
 		bool m_ChargingMeteor = false;
 		bool m_DidMeteorLaunch = false;
