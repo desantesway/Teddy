@@ -31,6 +31,8 @@ namespace Cuphead
 		default:
 			break;
 		}
+
+		Tail(ts);
 	}
 	
 	void Dragon::Hitting(Teddy::Timestep ts)
@@ -190,6 +192,10 @@ namespace Cuphead
 			"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_1.png",
 			"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_2.png"
 			});
+
+		m_TailTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Tail/Dragon_Tail_303x856_2048x2048_0.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -308,12 +314,14 @@ namespace Cuphead
 						choosed = false;
 						m_MeteorsLaunched = 0;
 						StartMeteor();
+						StartTail();
 					}
 					else if (!meteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
 					{
 						m_PeashotTimer = 0.0f;
 						choosed = false;
 						StartPeashot();
+						StartTail();
 					}
 				}
 
@@ -321,6 +329,16 @@ namespace Cuphead
 			else
 			{
 				m_Phase = 2;
+				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = 0;
+				filter.MaskBits = 0;
+			}
+		}
+		else if (m_Phase == 2)
+		{
+			if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits == 0)
+			{
+
 			}
 		}
 	}
@@ -1032,5 +1050,85 @@ namespace Cuphead
 		m_Scene->RefreshBody(ent);
 
 		m_ProjectileEntities.push_back(ent);
+	}
+
+	void Dragon::StartTail()
+	{
+		m_TailActive = true;
+	}
+
+	void Dragon::Tail(Teddy::Timestep ts)
+	{
+		if (m_TailActive)
+		{
+			static float timer = 0.0f;
+			timer += ts;
+
+			if (!m_TailEntity)
+			{
+				if ((timer >= 1.5f && m_State == DragonState::Peashot) || (timer >= 5.0f && m_State == DragonState::Meteor))
+				{
+					m_TailEntity = m_Scene->CreateEntity("Dragon Tail");
+					auto& sprite = m_TailEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.075f);
+					sprite.Textures = m_TailTextures;
+					sprite.Loop = true;
+
+					auto& atlas = m_TailEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 303, 856);
+
+					auto& transform = m_TailEntity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation = glm::vec3(m_PlayerPosition.x, -5.5f, 2.1f);
+					transform.Scale = glm::vec3(6.5f, 6.5f, 1.0f);
+
+					m_TailPick = false;
+					m_TailUp = false;
+					timer = 0.0f;
+				}
+			}
+			else
+			{
+				if (!m_TailPick)
+				{
+					auto& transform = m_TailEntity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation.y += 2.0f * ts;
+
+					if (transform.Translation.y > -5.0f)
+					{
+						transform.Translation.y = -5.0f;
+						m_TailPick = true;
+					}
+					timer = 0.0f;
+				}
+				else if (!m_TailUp)
+				{
+					if (timer > 1.0f)
+					{
+						auto& transform = m_TailEntity.GetComponent<Teddy::TransformComponent>();
+						transform.Translation.y += 10.0f * ts;
+
+						if (transform.Translation.y > -0.75f)
+						{
+							transform.Translation.y = -0.75f;
+							m_TailUp = true;
+							timer = 0.0f;
+						}
+					}
+				}
+				else if (timer > 0.5f)
+				{
+					auto& transform = m_TailEntity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation.y -= 10.0f * ts;
+
+					if (transform.Translation.y < -5.5f)
+					{
+						m_Scene->DestroyEntity(m_TailEntity);
+						m_TailEntity = {};
+						m_TailPick = false;
+						m_TailUp = false;
+						m_TailActive = false;
+						timer = 0.0f;
+					}
+				}
+			}
+		}
 	}
 }
