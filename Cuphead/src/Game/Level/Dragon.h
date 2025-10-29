@@ -59,7 +59,7 @@ namespace Cuphead
 
 		void LoadTextures();
 	private:
-		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
+		
 		Teddy::Entity m_Entity;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
@@ -99,6 +99,8 @@ namespace Cuphead
 		bool m_ChargingMeteor = false;
 		bool m_DidMeteorLaunch = false;
 		int m_MeteorsLaunched = 0;
+
+		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
 
 }

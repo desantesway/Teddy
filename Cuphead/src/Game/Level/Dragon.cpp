@@ -681,7 +681,7 @@ namespace Cuphead
 		for (auto& ent : m_ProjectileEntities)
 		{
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
-			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
+			if (transform.Translation.x >= 10.0f || transform.Translation.x <= -10.0f ||
 				transform.Translation.y <= -3.5f || transform.Translation.y >= 3.5f)
 			{
 				m_Scene->DestroyEntity(ent);
@@ -891,6 +891,18 @@ namespace Cuphead
 				m_MovingUp = angle < 0.0f;
 			}
 
+			void OnDestroy() override
+			{
+				for (auto& smokeEnt : m_SmokeEntities)
+				{
+					auto scene = GetScene();
+					if (scene)
+					{
+						scene->DestroyEntity(smokeEnt);
+					}
+				}
+			}
+
 			void OnUpdate(Teddy::Timestep ts) override
 			{
 				auto& transform = GetComponent<Teddy::TransformComponent>();
@@ -929,19 +941,82 @@ namespace Cuphead
 				sensor.Sensors["HitBox"] = { { -0.25f * cos(transform.Rotation.z), -0.25f * sin(transform.Rotation.z)}, {0.5f, 0.5f}, 0.0f, false, sensor.Sensors["HitBox"].RuntimeFixture };
 				auto entity = GetEntity();
 				Teddy::Scene::RefreshSensor(entity, sensor.Sensors["HitBox"]);
+
+				m_Timer += ts;
+				if (m_Timer >= 0.15f)
+				{
+					auto scene = GetScene();
+					if (scene)
+					{
+						auto smoke = scene->CreateEntity("Meteor Smoke");
+						auto& smokeSprite = smoke.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+						smokeSprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
+							"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_0.png",
+							"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_1.png",
+							"assets/Textures/Dragon/Projectiles/Meteor_240x193_1024x1024_2.png"
+							});
+						smokeSprite.Loop = false;
+						auto& smokeAtlas = smoke.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 240, 193);
+						auto& smokeAA = smoke.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						smokeSprite.PlayableIndicies.clear();
+						for (int i = 8; i <= 43; i++)
+							smokeSprite.PlayableIndicies.push_back(i);
+						smokeAA.Index = 8;
+
+						auto& smokeTransform = smoke.GetComponent<Teddy::TransformComponent>();
+						smokeTransform = transform;
+						smokeTransform.Translation.x += 0.5f;
+						smokeTransform.Translation.z += - 0.05f + (0.001f * (m_Count + 1));
+
+						m_Count++;
+
+						m_SmokeEntities.push_back(smoke);
+					}
+					m_Timer = 0.0f;
+				}
+
+				std::vector<Teddy::Entity> newSmokeEntities;
+				std::vector<Teddy::Entity> expiredSmokeEntities;
+				for (auto& smokeEnt : m_SmokeEntities)
+				{
+					auto scene = GetScene();
+					if (scene)
+					{
+						auto& smokeAA = smokeEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						if (smokeAA.Index >= 43)
+						{
+							expiredSmokeEntities.push_back(smokeEnt);
+						}
+						else
+						{
+							newSmokeEntities.push_back(smokeEnt);
+						}
+					}
+				}
+				for (auto& expiredEnt : expiredSmokeEntities)
+				{
+					auto scene = GetScene();
+					if (scene)
+					{
+						scene->DestroyEntity(expiredEnt);
+					}
+				}
+				m_SmokeEntities = newSmokeEntities;
 			}
 
 			bool m_MovingUp = true;
+			float m_Timer = 0.0f;
+			int m_Count = 0;
+			std::vector<Teddy::Entity> m_SmokeEntities;
 		};
-
-		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<Meteor>();
 
 		auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { -0.25f * cos(transform.Rotation.z), -0.25f * sin(transform.Rotation.z)}, {0.5f, 0.5f}, 0.0f, false};
 
+		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<Meteor>();
+
 		m_Scene->RefreshBody(ent);
 
 		m_ProjectileEntities.push_back(ent);
-	    // Smoke entity
 	}
 }

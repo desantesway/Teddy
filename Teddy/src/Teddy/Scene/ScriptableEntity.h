@@ -27,6 +27,7 @@ namespace Teddy {
 		}
 
 		Entity GetEntity() { return m_Entity; }
+		Scene* GetScene() { return GetEntity().GetScene(); }
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}
