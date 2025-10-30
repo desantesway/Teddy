@@ -218,6 +218,11 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
 			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
 			});
+
+		m_TongueTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Tongue/Tong_1190x160_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Tongue/Tong_1190x160_2048x2048_1.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -448,12 +453,114 @@ namespace Cuphead
 					}
 				}
 			}
+			else if (!m_Phase2Start)
+			{
+				if (m_TongueToLoop)
+				{
+					auto& aA = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aA.Index >= 11)
+					{
+						auto& tongueSprite = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+						tongueSprite.Pause = false;
+						tongueSprite.Loop = true;
+						tongueSprite.FrameTime = 0.1f;
+						tongueSprite.FinalFrameTime = 0.1f;
+						tongueSprite.InitialFrameTime = 0.1f;
+
+						tongueSprite.PlayableIndicies = { 11, 12, 13 };
+						aA.Index = 11;
+
+						m_Phase2Start = true;
+						m_TongueToLoop = false;
+					}
+					
+					return;
+				}
+				auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index >= 19)
+				{
+					auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.Loop = true;
+					sprite.PlayableIndicies.clear();
+					for (int i = 19; i < 33; i++)
+						sprite.PlayableIndicies.push_back(i);
+					aA.Index = 19;
+
+					class DragonOverlayTongue : public Teddy::ScriptableEntity
+					{
+					public:
+						void OnCreate() override
+						{
+							m_OverlayEntity = GetScene()->CreateEntity("DragonTongueOverlay");
+							auto& sprite = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+							sprite.Pause = false;
+							sprite.Loop = true;
+							sprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_0.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_1.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_2.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_3.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_4.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_5.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
+								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
+								});
+
+							auto& atlas = m_OverlayEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 600, 750);
+							auto& atlasAnim = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+							atlasAnim.GenerateFrames(sprite, atlas);
+							sprite.PlayableIndicies.clear();
+							for (int i = 33; i < 47; i++)
+								sprite.PlayableIndicies.push_back(i);
+							atlasAnim.Index = 34;
+
+							auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
+							transform = GetComponent<Teddy::TransformComponent>();
+							transform.Translation.z += 0.002f;
+						}
+
+						void OnUpdate(Teddy::Timestep ts) override
+						{
+							auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+							auto& overlayA = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+							overlayA.Index = aA.Index + 14;
+
+							auto& spriteOverlay = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteOverlay.PlayableIndicies = { overlayA.Index };
+
+							auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+
+							spriteOverlay.Color = sprite.Color;
+						}
+
+						Teddy::Entity m_OverlayEntity;
+					};
+
+					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonOverlayTongue>();
+
+					m_TongueToLoop = true;
+
+					m_DragonTongueEntity = m_Scene->CreateEntity("Dragon Tongue");
+					auto& tongueSprite = m_DragonTongueEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+					tongueSprite.Pause = false;
+					tongueSprite.Loop = false;
+					tongueSprite.Textures = m_TongueTextures;
+
+					auto& atlas = m_DragonTongueEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1190, 160);
+
+					tongueSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+
+					auto& transform = m_DragonTongueEntity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation = glm::vec3(0.9f, -2.25f, 2.012f);
+					transform.Scale = glm::vec3(1.25f, 1.25f, 1.0f);
+				}
+			}
 			else
 			{
-				
-
-				
+				//auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				//if()
 			}
+			
 		}
 	}
 

@@ -74,6 +74,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TailTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DashTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DragonTongueTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TongueTextures;
 
 		enum class DragonState
 		{
@@ -108,12 +109,15 @@ namespace Cuphead
 		bool m_LaunchThreeMeteors = false;
 
 		Teddy::Entity m_TailEntity;
+		Teddy::Entity m_DragonTongueEntity;
 		bool m_TailActive = false;
 		bool m_TailPick = false;
 		bool m_TailUp = false;
 
 		bool m_PhaseStart = false;
 		bool m_Transitioning = false;
+		bool m_Phase2Start = false;
+		bool m_TongueToLoop = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
