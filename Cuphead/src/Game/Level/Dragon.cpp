@@ -207,6 +207,17 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Dash/Dragon_Dash_481x127_512x512_0.png",
 			"assets/Textures/Dragon/Entity/Dash/Dragon_Dash_481x127_512x512_1.png"
 			});
+
+		m_DragonTongueTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
+			"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -335,7 +346,6 @@ namespace Cuphead
 						StartTail();
 					}
 				}
-
 			}
 			else
 			{
@@ -404,9 +414,37 @@ namespace Cuphead
 						filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
 						filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
 
-						transform.Translation = glm::vec3(3.25f, -0.65f, 2.011f);
+						auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						sprite.Textures = m_DragonTongueTextures;
+						sprite.PlayableIndicies.clear();
+						sprite.Loop = false;
+
+						auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+						atlas.SpriteWidth = 600;
+						atlas.SpriteHeight = 750;
+
+						auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						atlasAnim.GenerateFrames(sprite, atlas);
+						atlasAnim.Index = 0;
+
+						for (int i = 0; i < 20; i++)
+							sprite.PlayableIndicies.push_back(i);
+
+						transform.Translation = glm::vec3(-3.0f, 0.0f, 2.011f);
 						transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
-						// load intro
+						auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+						body.SetPosition(transform);
+
+						auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+						m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
+						if (sensor.Sensors.contains("BellyHitBox"))
+							sensor.Sensors.erase("BellyHitBox");
+						m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
+						m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
+						sensor.Sensors["NeckHitBox"] = { { -1.0f, -2.25f }, { 1.25f, 0.5f }, 0.0f, true };
+						sensor.Sensors["HeadHitBox"] = { { -1.75f, -0.25f }, { 0.5f,  1.5f}, 0.0f, true };
+						m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
+						m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
 					}
 				}
 			}
@@ -414,7 +452,7 @@ namespace Cuphead
 			{
 				
 
-				TED_CORE_INFO("transition done");
+				
 			}
 		}
 	}

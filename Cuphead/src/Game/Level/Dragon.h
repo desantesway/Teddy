@@ -73,6 +73,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorProjectileTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TailTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DashTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DragonTongueTextures;
 
 		enum class DragonState
 		{
@@ -92,7 +93,7 @@ namespace Cuphead
 		bool m_Shooting = false;
 		bool m_MeteorStart = true;
 
-		int m_Health = 1530; // 629, 510, 561 /// 1700, 1535, 1071, 561
+		int m_Health = 1072; // 629, 510, 561 /// 1700, 1535, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
 
