@@ -303,60 +303,17 @@ namespace Cuphead
 		m_State = DragonState::Idle;
 	}
 
-	void Dragon::Idle(Teddy::Timestep ts) // TODO: refactor this mess
+	void Dragon::Idle(Teddy::Timestep ts)
 	{
 		if (m_Phase == 1)
 		{
-			static bool choosed = false;
 			if (m_Health > 1535)
 			{
-				choosed = false;
-				m_PeashotTimer += ts;
-				if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
-				{
-					m_PeashotTimer = 0.0f;
-					StartPeashot();
-				}
+				Phase1Part1(ts);
 			}
 			else if (m_Health > 1071)
 			{
-				static bool meteorAttack = true;
-				m_PeashotTimer += ts;
-				if (m_PeashotTimer >= 2.5f)
-				{
-					if (!choosed)
-					{
-						if (m_MeteorStart)
-						{
-							m_MeteorStart = false;
-							meteorAttack = true;
-							choosed = true;
-							m_LaunchThreeMeteors = false;
-						}
-						else
-						{
-							meteorAttack = Randomizer::Get().RandomBool(0.6f);
-							choosed = true;
-							m_LaunchThreeMeteors = true;
-						}
-					}
-
-					if (meteorAttack && m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 0)
-					{
-						m_PeashotTimer = 0.0f;
-						choosed = false;
-						m_MeteorsLaunched = 0;
-						StartMeteor();
-						StartTail();
-					}
-					else if (!meteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
-					{
-						m_PeashotTimer = 0.0f;
-						choosed = false;
-						StartPeashot();
-						StartTail();
-					}
-				}
+				Phase1Part2(ts);
 			}
 			else
 			{
@@ -368,340 +325,428 @@ namespace Cuphead
 		{
 			if (m_PhaseStart)
 			{
-				if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits != 0)
-				{
-					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-					transform.Translation.x += 2.5f * ts;
-
-					if (transform.Translation.x > 8.0f)
-					{
-						auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
-						filter.CategoryBits = 0;
-						filter.MaskBits = 0;
-						filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
-						filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
-					}
-
-					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-					body.SetPosition(transform);
-				}
-				else
-				{
-					if (!m_Transitioning)
-					{
-						auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-						sprite.Loop = true;
-						sprite.Textures = m_DashTextures;
-
-						auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
-						atlas.SpriteWidth = 481;
-						atlas.SpriteHeight = 127;
-						sprite.PlayableIndicies.clear();
-
-						auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-						atlasAnim.GenerateFrames(sprite, atlas);
-						atlasAnim.Index = 0;
-
-						auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-						transform.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
-						transform.Translation.z = 0.9f;
-
-						m_Transitioning = true;
-					}
-
-					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-					transform.Translation.x -= 15.0f * ts;
-					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-					body.SetPosition(transform);
-
-					if (transform.Translation.x <= -7.0f)
-					{
-						m_PhaseStart = false;
-						m_Transitioning = false;
-						
-						auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
-						filter.CategoryBits = LevelCategories::ENEMY;
-						filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
-						filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
-						filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
-
-						auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-						sprite.Textures = m_DragonTongueTextures;
-						sprite.PlayableIndicies.clear();
-						sprite.Loop = false;
-
-						auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
-						atlas.SpriteWidth = 600;
-						atlas.SpriteHeight = 750;
-
-						auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-						atlasAnim.GenerateFrames(sprite, atlas);
-						atlasAnim.Index = 0;
-
-						for (int i = 0; i < 20; i++)
-							sprite.PlayableIndicies.push_back(i);
-
-						transform.Translation = glm::vec3(-3.0f, 0.0f, 2.011f);
-						transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
-						auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
-						body.SetPosition(transform);
-
-						auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
-						m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
-						m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
-						m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
-						sensor.Sensors["NeckHitBox"] = { { -1.0f, -2.25f }, { 1.25f, 0.5f }, 0.0f, true };
-						sensor.Sensors["HeadHitBox"] = { { 0.05f, -1.3f }, { 0.15f, 0.75f }, 0.0f, true };
-						sensor.Sensors["BellyHitBox"] = { { -1.75f, -0.25f }, { 0.5f,  1.5f}, 0.0f, true };
-						m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
-						m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
-						m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
-
-						if (m_TailEntity)
-						{
-							m_Scene->DestroyEntity(m_TailEntity);
-							m_TailEntity = {};
-						}
-					}
-				}
+				Phase1To2(ts);
 			}
 			else if (!m_Phase2Start)
 			{
-				if (m_TongueToLoop)
-				{
-					auto& aA = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-					if (aA.Index >= 11)
-					{
-						auto& tongueSprite = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-						tongueSprite.Pause = false;
-						tongueSprite.Loop = true;
-						tongueSprite.FrameTime = 0.1f;
-						tongueSprite.FinalFrameTime = 0.1f;
-						tongueSprite.InitialFrameTime = 0.1f;
-
-						tongueSprite.PlayableIndicies = { 11, 12, 13 };
-						aA.Index = 11;
-
-						m_Phase2Start = true;
-						m_TongueToLoop = false;
-					}
-					
-					return;
-				}
-				auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-				if (aA.Index >= 19)
-				{
-					auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-					sprite.Loop = true;
-					sprite.PlayableIndicies.clear();
-					for (int i = 19; i < 33; i++)
-						sprite.PlayableIndicies.push_back(i);
-					aA.Index = 19;
-
-					class DragonOverlayTongue : public Teddy::ScriptableEntity
-					{
-					public:
-						void OnCreate() override
-						{
-							m_OverlayEntity = GetScene()->CreateEntity("Dragon Tongue Overlay");
-							auto& sprite = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-							sprite.Pause = false;
-							sprite.Loop = true;
-							sprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_0.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_1.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_2.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_3.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_4.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_5.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
-								"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
-								});
-
-							auto& atlas = m_OverlayEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 600, 750);
-							auto& atlasAnim = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-							sprite.PlayableIndicies.clear();
-							for (int i = 33; i < 47; i++)
-								sprite.PlayableIndicies.push_back(i);
-							atlasAnim.Index = 34;
-
-							auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
-							transform = GetComponent<Teddy::TransformComponent>();
-							transform.Translation.z += 0.002f;
-						}
-
-						void OnUpdate(Teddy::Timestep ts) override
-						{
-							auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-							auto& overlayA = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-							overlayA.Index = aA.Index + 14;
-
-							auto& spriteOverlay = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-							spriteOverlay.PlayableIndicies = { overlayA.Index };
-
-							auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
-
-							spriteOverlay.Color = sprite.Color;
-
-							spriteOverlay.Pause = sprite.Pause;
-						}
-
-						Teddy::Entity m_OverlayEntity;
-					};
-
-					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonOverlayTongue>();
-
-					m_DragonTongueEntity = m_Scene->CreateEntity("Dragon Tongue");
-					auto& tongueSprite = m_DragonTongueEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-					tongueSprite.Pause = false;
-					tongueSprite.Loop = false;
-					tongueSprite.Textures = m_TongueTextures;
-
-					auto& atlas = m_DragonTongueEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1190, 160);
-
-					tongueSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
-
-					auto& transform = m_DragonTongueEntity.GetComponent<Teddy::TransformComponent>();
-					transform.Translation = glm::vec3(0.9f, -2.25f, 2.012f);
-					transform.Scale = glm::vec3(1.25f, 1.25f, 1.0f);
-
-					m_SmokeEntity = m_Scene->CreateEntity("Dragon Smoke and Fire");
-					auto& spriteSmoke = m_SmokeEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-					spriteSmoke.Textures = m_SmokeTextures;
-
-					m_SmokeEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 380, 533);
-
-					m_TongueToLoop = true;
-
-					m_ResetFireLoop = true;
-				}
+				Phase2Start(ts);
 			}
 			else
 			{
-				static bool firstFire = true;
-				if (m_ResetFireLoop)
+				if (m_Health > 561)
 				{
-					auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-					spriteSmoke.Pause = false;
-					spriteSmoke.Loop = false;
-					spriteSmoke.Textures = m_SmokeTextures;
-
-					auto& atlasAnim = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-					spriteSmoke.PlayableIndicies.clear();
-					for (int i = 21; i < 34; i++)
-						spriteSmoke.PlayableIndicies.push_back(i);
-					atlasAnim.Index = 21;
-
-					auto& transformSmoke = m_SmokeEntity.GetComponent<Teddy::TransformComponent>();
-					transformSmoke.Translation = glm::vec3(-3.0f, 1.1f, 2.013f);
-					transformSmoke.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
-
-					firstFire = true; 
-					m_ResetFireLoop = false;
+					Smoke(ts);
 				}
 				else
 				{
-					static bool firstFireLoop = false;
-					static bool secondFire = false;
-					static float timer = 0.0f;
-					timer += ts;
-					if (firstFire)
-					{
-						if (!firstFireLoop)
-						{
-							auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-							if (aA.Index >= 27)
-							{
-								auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-								spriteSmoke.Loop = true;
-								spriteSmoke.PlayableIndicies = { 27, 28, 29, 30, 31, 32 };
-								timer = 0.0f;
-								firstFireLoop = true;
-							}
-						}
-						else
-						{
-							if (timer >= 1.0f) // end loop
-							{
-								auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-								spriteSmoke.Loop = false;
-								spriteSmoke.PlayableIndicies = { 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 };
-								firstFire = false;
-								firstFireLoop = false;
-								secondFire = true;
-								timer = 0.0f;
-							}
-						}
-					}
-					else if (secondFire) // another fire
-					{
-						auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-						if (aA.Index >= 39)
-						{
-							auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-							spriteSmoke.Loop = false;
-							spriteSmoke.PlayableIndicies.clear();
-							for (int i = 21; i < 40; i++)
-								spriteSmoke.PlayableIndicies.push_back(i);
-							aA.Index = 21;
-
-							secondFire = false;
-						}
-					}
-					else // smoke
-					{
-						static bool smokeLoop = false;
-						auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-						if (aA.Index >= 39)
-						{
-							auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-							spriteSmoke.Loop = false;
-							spriteSmoke.PlayableIndicies.clear();
-							for (int i = 0; i < 14; i++)
-								spriteSmoke.PlayableIndicies.push_back(i);
-							aA.Index = 0;
-							smokeLoop = false;
-						}
-						else if (aA.Index <= 20) // smoke playing
-						{
-							if (!smokeLoop) // smoke loop
-							{
-								if (aA.Index >= 5)
-								{
-									auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-									spriteSmoke.Loop = true;
-									spriteSmoke.PlayableIndicies = { 5, 6, 7, 8, 9, 10, 11, 12, 13 };
-									timer = 0.0f;
-									smokeLoop = true;
-								}
-							}
-							else
-							{
-								if (aA.Index >= 20)
-								{
-									firstFire = false;
-									firstFireLoop = false;
-									secondFire = false;
-									m_ResetFireLoop = true;
-									smokeLoop = false;
-									timer = 0.0f;
-								}
-								else if (timer >= 1.0f) // end smoke loop
-								{
-									auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-									spriteSmoke.Loop = false;
-									spriteSmoke.PlayableIndicies.clear();
-									for (int i = 0; i < 21; i++)
-										spriteSmoke.PlayableIndicies.push_back(i);
-									timer = 0.0f;
-								}
-							}
-							
-						}
-					}
+					m_Phase = 3;
+					m_PhaseStart = true;
 				}
 			}
 			
+		}
+	}
+
+	void Dragon::Phase1Part1(Teddy::Timestep ts)
+	{
+		m_PeashotTimer += ts;
+		if (m_PeashotTimer >= 2.5f && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+		{
+			m_PeashotTimer = 0.0f;
+			StartPeashot();
+		}
+	}
+
+	void Dragon::Phase1Part2(Teddy::Timestep ts)
+	{
+		static bool choosed = false;
+		static bool meteorAttack = true;
+		m_PeashotTimer += ts;
+		if (m_PeashotTimer >= 2.5f)
+		{
+			if (!choosed)
+			{
+				if (m_MeteorStart)
+				{
+					m_MeteorStart = false;
+					meteorAttack = true;
+					choosed = true;
+					m_LaunchThreeMeteors = false;
+				}
+				else
+				{
+					meteorAttack = Randomizer::Get().RandomBool(0.6f);
+					choosed = true;
+					m_LaunchThreeMeteors = true;
+				}
+			}
+
+			if (meteorAttack && m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 0)
+			{
+				m_PeashotTimer = 0.0f;
+				choosed = false;
+				m_MeteorsLaunched = 0;
+				StartMeteor();
+				StartTail();
+			}
+			else if (!meteorAttack && (m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 7 || m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == 8))
+			{
+				m_PeashotTimer = 0.0f;
+				choosed = false;
+				StartPeashot();
+				StartTail();
+			}
+		}
+	}
+
+	void Dragon::Phase1To2(Teddy::Timestep ts)
+	{
+		if (m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>().CategoryBits != 0)
+		{
+			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+			transform.Translation.x += 2.5f * ts;
+
+			if (transform.Translation.x > 8.0f)
+			{
+				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = 0;
+				filter.MaskBits = 0;
+				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
+				filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+			}
+
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetPosition(transform);
+		}
+		else
+		{
+			if (!m_Transitioning)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.Loop = true;
+				sprite.Textures = m_DashTextures;
+
+				auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+				atlas.SpriteWidth = 481;
+				atlas.SpriteHeight = 127;
+				sprite.PlayableIndicies.clear();
+
+				auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				atlasAnim.GenerateFrames(sprite, atlas);
+				atlasAnim.Index = 0;
+
+				auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+				transform.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+				transform.Translation.z = 0.9f;
+
+				m_Transitioning = true;
+			}
+
+			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+			transform.Translation.x -= 15.0f * ts;
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetPosition(transform);
+
+			if (transform.Translation.x <= -7.0f)
+			{
+				m_PhaseStart = false;
+				m_Transitioning = false;
+
+				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = LevelCategories::ENEMY;
+				filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
+				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.CategoryBits);
+				filter.SetFilterMask(m_Entity.GetComponent<Teddy::Sensor2DComponent>(), filter.MaskBits);
+
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.Textures = m_DragonTongueTextures;
+				sprite.PlayableIndicies.clear();
+				sprite.Loop = false;
+
+				auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+				atlas.SpriteWidth = 600;
+				atlas.SpriteHeight = 750;
+
+				auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				atlasAnim.GenerateFrames(sprite, atlas);
+				atlasAnim.Index = 0;
+
+				for (int i = 0; i < 20; i++)
+					sprite.PlayableIndicies.push_back(i);
+
+				transform.Translation = glm::vec3(-3.0f, 0.0f, 2.011f);
+				transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
+				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+				body.SetPosition(transform);
+
+				auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+				m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
+				m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
+				m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
+				sensor.Sensors["NeckHitBox"] = { { -1.0f, -2.25f }, { 1.25f, 0.5f }, 0.0f, true };
+				sensor.Sensors["HeadHitBox"] = { { 0.05f, -1.3f }, { 0.15f, 0.75f }, 0.0f, true };
+				sensor.Sensors["BellyHitBox"] = { { -1.75f, -0.25f }, { 0.5f,  1.5f}, 0.0f, true };
+				m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadHitBox"]);
+				m_Scene->RefreshSensor(m_Entity, sensor.Sensors["NeckHitBox"]);
+				m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
+
+				if (m_TailEntity)
+				{
+					m_Scene->DestroyEntity(m_TailEntity);
+					m_TailEntity = {};
+				}
+			}
+		}
+	}
+
+	void Dragon::Phase2Start(Teddy::Timestep ts)
+	{
+		if (m_TongueToLoop)
+		{
+			auto& aA = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (aA.Index >= 11)
+			{
+				auto& tongueSprite = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+				tongueSprite.Pause = false;
+				tongueSprite.Loop = true;
+				tongueSprite.FrameTime = 0.1f;
+				tongueSprite.FinalFrameTime = 0.1f;
+				tongueSprite.InitialFrameTime = 0.1f;
+
+				tongueSprite.PlayableIndicies = { 11, 12, 13 };
+				aA.Index = 11;
+
+				m_Phase2Start = true;
+				m_TongueToLoop = false;
+			}
+
+			return;
+		}
+		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		if (aA.Index >= 19)
+		{
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Loop = true;
+			sprite.PlayableIndicies.clear();
+			for (int i = 19; i < 33; i++)
+				sprite.PlayableIndicies.push_back(i);
+			aA.Index = 19;
+
+			class DragonOverlayTongue : public Teddy::ScriptableEntity
+			{
+			public:
+				void OnCreate() override
+				{
+					m_OverlayEntity = GetScene()->CreateEntity("Dragon Tongue Overlay");
+					auto& sprite = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+					sprite.Pause = false;
+					sprite.Loop = true;
+					sprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_0.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_1.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_2.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_3.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_4.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_5.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
+						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
+						});
+
+					auto& atlas = m_OverlayEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 600, 750);
+					auto& atlasAnim = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					sprite.PlayableIndicies.clear();
+					for (int i = 33; i < 47; i++)
+						sprite.PlayableIndicies.push_back(i);
+					atlasAnim.Index = 34;
+
+					auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
+					transform = GetComponent<Teddy::TransformComponent>();
+					transform.Translation.z += 0.002f;
+				}
+
+				void OnUpdate(Teddy::Timestep ts) override
+				{
+					auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					auto& overlayA = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					overlayA.Index = aA.Index + 14;
+
+					auto& spriteOverlay = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+					spriteOverlay.PlayableIndicies = { overlayA.Index };
+
+					auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+
+					spriteOverlay.Color = sprite.Color;
+
+					spriteOverlay.Pause = sprite.Pause;
+				}
+
+				Teddy::Entity m_OverlayEntity;
+			};
+
+			m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonOverlayTongue>();
+
+			m_DragonTongueEntity = m_Scene->CreateEntity("Dragon Tongue");
+			auto& tongueSprite = m_DragonTongueEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			tongueSprite.Pause = false;
+			tongueSprite.Loop = false;
+			tongueSprite.Textures = m_TongueTextures;
+
+			auto& atlas = m_DragonTongueEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1190, 160);
+
+			tongueSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+
+			auto& transform = m_DragonTongueEntity.GetComponent<Teddy::TransformComponent>();
+			transform.Translation = glm::vec3(0.9f, -2.25f, 2.012f);
+			transform.Scale = glm::vec3(1.25f, 1.25f, 1.0f);
+
+			m_SmokeEntity = m_Scene->CreateEntity("Dragon Smoke and Fire");
+			auto& spriteSmoke = m_SmokeEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			spriteSmoke.Textures = m_SmokeTextures;
+
+			m_SmokeEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 380, 533);
+
+			auto& body = m_SmokeEntity.AddComponent<Teddy::Rigidbody2DComponent>();
+			body.Type = Teddy::Rigidbody2DComponent::BodyType::Static;
+
+			auto& filter = m_SmokeEntity.AddComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::ENEMY;
+			filter.MaskBits = LevelCategories::PLAYER;
+
+			auto& sensor = m_SmokeEntity.AddComponent<Teddy::Sensor2DComponent>();
+			sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.25f, 1.25f }, 0.0f, true };
+
+			m_Scene->RefreshBody(m_SmokeEntity);
+
+			auto& transformSmoke = m_SmokeEntity.GetComponent<Teddy::TransformComponent>();
+			transformSmoke.Translation = glm::vec3(-3.0f, 1.1f, 2.013f);
+			transformSmoke.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
+			body.SetPosition(m_SmokeEntity.GetComponent<Teddy::TransformComponent>());
+
+			m_TongueToLoop = true;
+
+			m_ResetFireLoop = true;
+		}
+	}
+
+	void Dragon::Smoke(Teddy::Timestep ts)
+	{
+		static bool firstFire = true;
+		if (m_ResetFireLoop)
+		{
+			auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+			spriteSmoke.Pause = false;
+			spriteSmoke.Loop = false;
+			spriteSmoke.Textures = m_SmokeTextures;
+
+			auto& atlasAnim = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			spriteSmoke.PlayableIndicies.clear();
+			for (int i = 21; i < 34; i++)
+				spriteSmoke.PlayableIndicies.push_back(i);
+			atlasAnim.Index = 21;
+
+			firstFire = true;
+			m_ResetFireLoop = false;
+		}
+		else
+		{
+			static bool firstFireLoop = false;
+			static bool secondFire = false;
+			static float timer = 0.0f;
+			timer += ts;
+			if (firstFire)
+			{
+				if (!firstFireLoop)
+				{
+					auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aA.Index >= 27)
+					{
+						auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+						spriteSmoke.Loop = true;
+						spriteSmoke.PlayableIndicies = { 27, 28, 29, 30, 31, 32 };
+						timer = 0.0f;
+						firstFireLoop = true;
+					}
+				}
+				else
+				{
+					if (timer >= 1.0f) // end loop
+					{
+						auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+						spriteSmoke.Loop = false;
+						spriteSmoke.PlayableIndicies = { 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 };
+						firstFire = false;
+						firstFireLoop = false;
+						secondFire = true;
+						timer = 0.0f;
+					}
+				}
+			}
+			else if (secondFire) // another fire
+			{
+				auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index >= 39)
+				{
+					auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+					spriteSmoke.Loop = false;
+					spriteSmoke.PlayableIndicies.clear();
+					for (int i = 21; i < 40; i++)
+						spriteSmoke.PlayableIndicies.push_back(i);
+					aA.Index = 21;
+
+					secondFire = false;
+				}
+			}
+			else // smoke
+			{
+				static bool smokeLoop = false;
+				auto& aA = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index >= 39)
+				{
+					auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+					spriteSmoke.Loop = false;
+					spriteSmoke.PlayableIndicies.clear();
+					for (int i = 0; i < 14; i++)
+						spriteSmoke.PlayableIndicies.push_back(i);
+					aA.Index = 0;
+					smokeLoop = false;
+				}
+				else if (aA.Index <= 20) // smoke playing
+				{
+					if (!smokeLoop) // smoke loop
+					{
+						if (aA.Index >= 5)
+						{
+							auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteSmoke.Loop = true;
+							spriteSmoke.PlayableIndicies = { 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+							timer = 0.0f;
+							smokeLoop = true;
+						}
+					}
+					else
+					{
+						if (aA.Index >= 20)
+						{
+							firstFire = false;
+							firstFireLoop = false;
+							secondFire = false;
+							m_ResetFireLoop = true;
+							smokeLoop = false;
+							timer = 0.0f;
+						}
+						else if (timer >= 1.0f) // end smoke loop
+						{
+							auto& spriteSmoke = m_SmokeEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteSmoke.Loop = false;
+							spriteSmoke.PlayableIndicies.clear();
+							for (int i = 0; i < 21; i++)
+								spriteSmoke.PlayableIndicies.push_back(i);
+							timer = 0.0f;
+						}
+					}
+
+				}
+			}
 		}
 	}
 
@@ -756,6 +801,22 @@ namespace Cuphead
 		{
 			auto& tailSensor = m_TailEntity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
 			for (auto& [_, sensor] : tailSensor)
+			{
+				if (sensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+					if (B2_ID_EQUALS(shape, sensorShape))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		if (m_SmokeEntity)
+		{
+			auto& smokeSensor = m_SmokeEntity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+			for (auto& [_, sensor] : smokeSensor)
 			{
 				if (sensor.RuntimeFixture)
 				{

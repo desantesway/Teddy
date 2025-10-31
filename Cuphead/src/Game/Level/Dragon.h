@@ -44,6 +44,10 @@ namespace Cuphead
 
 		void StartIdle();
 		void Idle(Teddy::Timestep ts);
+		void Phase1Part1(Teddy::Timestep ts);
+		void Phase1Part2(Teddy::Timestep ts);
+		void Phase1To2(Teddy::Timestep ts);
+		void Phase2Start(Teddy::Timestep ts);
 
 		void Intro();
 
@@ -57,6 +61,8 @@ namespace Cuphead
 
 		void StartTail();
 		void Tail(Teddy::Timestep ts);
+
+		void Smoke(Teddy::Timestep ts);
 
 		void Hitting(Teddy::Timestep ts);
 
