@@ -435,19 +435,16 @@ namespace Teddy
 		
 		// Scripts
 		{
-			if (m_IsRuntime)
-			{
-				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					if (!nsc.Instance)
 					{
-						if (!nsc.Instance)
-						{
-							nsc.Instance = nsc.InstantiateScript();
-							nsc.Instance->m_Entity = Entity{ entity, this };
-							nsc.Instance->OnCreate();
-						}
-						nsc.Instance->OnUpdate(ts);
-					});
-			}
+						nsc.Instance = nsc.InstantiateScript();
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						nsc.Instance->OnCreate();
+					}
+					nsc.Instance->OnUpdate(ts);
+				});
 		}
 
 		// Render

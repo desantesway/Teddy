@@ -42,8 +42,8 @@ namespace Teddy
 		void UI_Toolbar();
 
 		void GenerateAtlas();
-		void GenerateAtlas(const int width, const int height, const int toleration, const std::string name);
-		void GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name);
+		void GenerateAtlas(const int width, const int height, const int toleration, const std::string name, const bool xmid, const bool ymid);
+		void GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name, const bool xmid, const bool ymid);
 
 		void NewScene();
 

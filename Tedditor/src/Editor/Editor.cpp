@@ -360,6 +360,8 @@ namespace Teddy
             static int atlasHeight = 2048;
             static int atlasTolerance = 10;
             static char atlasName[128] = "";
+			static bool xMid = true;
+			static bool yMid = true;
 
             if (m_AtlasPopup) {
                 ImGui::OpenPopup("Generate Atlas");
@@ -370,9 +372,11 @@ namespace Teddy
                 ImGui::InputInt("Height", &atlasHeight);
                 ImGui::InputInt("Tolerance", &atlasTolerance);
                 ImGui::InputText("Name", atlasName, IM_ARRAYSIZE(atlasName));
+				ImGui::Checkbox("Center X", &xMid);
+				ImGui::Checkbox("Center Y", &yMid);
 
                 if (ImGui::Button("Generate", ImVec2(120, 0))) {
-                    GenerateAtlas(atlasWidth, atlasHeight, atlasTolerance, atlasName);
+                    GenerateAtlas(atlasWidth, atlasHeight, atlasTolerance, atlasName, xMid, yMid);
                     ImGui::CloseCurrentPopup();
                     m_AtlasPopup = false;
                 }
@@ -596,12 +600,12 @@ namespace Teddy
         AssetManager::Get().BypassAll();
     }
 
-    void Editor::GenerateAtlas(const int width, const int height, const int toleration, const std::string name)
+    void Editor::GenerateAtlas(const int width, const int height, const int toleration, const std::string name, const bool xmid, const bool ymid)
     {
         std::vector<std::string> filepaths = FileDialogs::OpenFiles(
             "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
         );
-        GenerateAtlas(filepaths, width, height, toleration, "");
+        GenerateAtlas(filepaths, width, height, toleration, "", xmid, ymid);
     }
 
     void Editor::GenerateAtlas()
@@ -614,10 +618,10 @@ namespace Teddy
         std::vector<std::string> filepaths = FileDialogs::OpenFiles(
             "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
         );
-        GenerateAtlas(filepaths, width, height, tolerance, name);
+        GenerateAtlas(filepaths, width, height, tolerance, name, true, true);
     }
 
-    void Editor::GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name)
+    void Editor::GenerateAtlas(const std::vector<std::string>& filepaths, const int width, const int height, const int toleration, const std::string name, const bool xmid, const bool ymid)
     {
         for (std::string file : filepaths)
         {
@@ -629,7 +633,7 @@ namespace Teddy
         }
 
         if (filepaths.size() > 0)
-            Atlas::Generate(filepaths, width, height, toleration, name);
+            Atlas::Generate(filepaths, width, height, toleration, name, xmid, ymid);
     }
 
     void Editor::NewScene()

@@ -1287,7 +1287,7 @@ namespace Cuphead
 			initialDistance = m_Entity.GetComponent<Teddy::TransformComponent>().Translation.y;
 			timer = 0.0f;
 		}
-		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.y) > 0.5f)
+		else if (abs(initialDistance - m_Entity.GetComponent<Teddy::TransformComponent>().Translation.y) > 0.75f)
 		{
 			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PLAYER;
@@ -1295,7 +1295,7 @@ namespace Cuphead
 			filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
 			m_State = PlayerState::Falling;
 		}
-		else if (timer > 0.25f)
+		else if (timer > 0.5f)
 		{
 			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PLAYER;
