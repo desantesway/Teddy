@@ -67,6 +67,7 @@ namespace Cuphead
 		void SpawnFireMarcherA();
 		void SpawnFireMarcherB();
 		void SpawnFireMarcherC();
+		void Phase2Ending();
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -121,18 +122,31 @@ namespace Cuphead
 		bool m_LaunchThreeMeteors = false;
 
 		Teddy::Entity m_TailEntity;
-		Teddy::Entity m_DragonTongueEntity;
-		Teddy::Entity m_SmokeEntity;
+		
 		bool m_TailActive = false;
 		bool m_TailPick = false;
 		bool m_TailUp = false;
 
+		Teddy::Entity m_DragonTongueEntity;
+		Teddy::Entity m_SmokeEntity;
 		bool m_PhaseStart = false;
 		bool m_Transitioning = false;
+
 		bool m_Phase2Start = false;
 		bool m_TongueToLoop = false;
-
 		bool m_ResetFireLoop = false;
+
+		struct AttackerFireMarcher
+		{
+			Teddy::Entity Entity;
+			float XToAttack;
+			bool ToAttack = true;
+			bool Attacked = false;
+
+			AttackerFireMarcher(Teddy::Entity entity, float x)
+				: Entity(entity), XToAttack(x) {}
+		};
+		std::vector<AttackerFireMarcher> m_AttackableEntities;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

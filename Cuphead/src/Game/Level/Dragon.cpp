@@ -344,6 +344,8 @@ namespace Cuphead
 				}
 				else
 				{
+					Phase2Ending();
+					TED_CORE_INFO("death animation");
 					m_Phase = 3;
 					m_PhaseStart = true;
 				}
@@ -351,6 +353,8 @@ namespace Cuphead
 			
 		}
 	}
+
+	
 
 	void Dragon::Phase1Part1(Teddy::Timestep ts)
 	{
@@ -532,6 +536,38 @@ namespace Cuphead
 
 				m_Phase2Start = true;
 				m_TongueToLoop = false;
+
+				// first firemarcher
+				auto ent = m_Scene->CreateEntity("Dragon Fire Marcher");
+				auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				spriteFM.Textures = m_FireMarcherTextures;
+
+				ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
+				auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				spriteFM.PlayableIndicies.clear();
+				for (int i = 70; i < 85; i++)
+					spriteFM.PlayableIndicies.push_back(i);
+				aAFM.Index = 70;
+
+				auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+				bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+				bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+
+				auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+				filterFM.CategoryBits = LevelCategories::ENEMY;
+				filterFM.MaskBits = LevelCategories::PLAYER;
+
+				auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
+				sensorFM.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.5f, 0.75f }, 0.0f, true };
+
+				m_Scene->RefreshBody(ent);
+
+				auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
+				transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+				transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
+				bodyFM.SetPosition(transformFM);
+
+				m_ProjectileEntities.push_back(ent);
 			}
 			return;
 		}
@@ -575,7 +611,7 @@ namespace Cuphead
 
 					auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
 					transform = GetComponent<Teddy::TransformComponent>();
-					transform.Translation.z += 0.003f;
+					transform.Translation.z += 0.005f;
 				}
 
 				void OnUpdate(Teddy::Timestep ts) override
@@ -637,38 +673,6 @@ namespace Cuphead
 			transformSmoke.Translation = glm::vec3(-3.0f, 1.1f, 2.013f);
 			transformSmoke.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
 			body.SetPosition(m_SmokeEntity.GetComponent<Teddy::TransformComponent>());
-
-			// first firemarcher
-			auto ent = m_Scene->CreateEntity("Dragon Fire Marcher");
-			auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-			spriteFM.Textures = m_FireMarcherTextures;
-
-			ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
-			auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			spriteFM.PlayableIndicies.clear();
-			for (int i = 70; i < 85; i++)
-				spriteFM.PlayableIndicies.push_back(i);
-			aAFM.Index = 70;
-
-			auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
-			bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
-			bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
-
-			auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
-			filterFM.CategoryBits = LevelCategories::ENEMY;
-			filterFM.MaskBits = LevelCategories::PLAYER;
-			
-			auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
-			sensorFM.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.5f, 0.75f }, 0.0f, true };
-
-			m_Scene->RefreshBody(ent);
-
-			auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
-			transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
-			transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
-			bodyFM.SetPosition(transformFM);
-
-			m_ProjectileEntities.push_back(ent);
 
 			m_TongueToLoop = true;
 			m_ResetFireLoop = true;
@@ -804,8 +808,65 @@ namespace Cuphead
 
 		if (timer >= 0.5f)
 		{
-			SpawnFireMarcherC();
+			int choice = Randomizer::Get().RandomInt(0, 2);
+			if (choice == 0)
+				SpawnFireMarcherA();
+			else if (choice == 1)
+				SpawnFireMarcherB();
+			else
+				SpawnFireMarcherC();
 			timer = 0.0f;
+		}
+
+		for (auto& ent : m_AttackableEntities)
+		{
+			auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+			if (ent.ToAttack)
+			{
+				if (transform.Translation.x > ent.XToAttack)
+				{
+					auto& body = ent.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetVelocity(0.0f, 0.0f);
+
+					auto& sprite = ent.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.Loop = false;
+
+					auto& atlasAnim = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+					sprite.PlayableIndicies.clear();
+					for (int i = 36; i < 50; i++)
+						sprite.PlayableIndicies.push_back(i);
+					atlasAnim.Index = 36;
+
+					auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+					transform.Scale.x = m_PlayerPosition.x < transform.Translation.x ? -transform.Scale.x : transform.Scale.x;
+
+					ent.ToAttack = false;
+				}
+			}
+			else
+			{
+				auto& atlasAnim = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (!ent.Attacked && atlasAnim.Index >= 49)
+				{
+					auto& body = ent.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+					auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+					static constexpr float multiplier = 2.5f;
+					body.SetVelocity((m_PlayerPosition.x - transform.Translation.x) * multiplier, (m_PlayerPosition.y - transform.Translation.y) * multiplier);
+					body.GravityScale = 1.0f;
+					body.SetGravityScale(1.0f);
+
+					auto& sprite = ent.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.Loop = true;
+					
+					sprite.PlayableIndicies.clear();
+					for (int i = 50; i < 58; i++)
+						sprite.PlayableIndicies.push_back(i);
+					atlasAnim.Index = 50;
+
+					ent.Attacked = true;
+				}
+			}
 		}
 	}
 
@@ -836,7 +897,7 @@ namespace Cuphead
 		m_Scene->RefreshBody(ent);
 
 		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
-		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Translation = glm::vec3(-2.75f, -1.5f, 2.013f);
 		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
 		bodyFM.SetPosition(transformFM);
 
@@ -857,8 +918,9 @@ namespace Cuphead
 		aAFM.Index = 20;
 
 		auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
-		bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
 		bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+		bodyFM.GravityScale = 0.0f;
 
 		auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 		filterFM.CategoryBits = LevelCategories::ENEMY;
@@ -870,11 +932,12 @@ namespace Cuphead
 		m_Scene->RefreshBody(ent);
 
 		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
-		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Translation = glm::vec3(-2.75f, -1.5f, 2.014f);
 		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
 		bodyFM.SetPosition(transformFM);
 
 		m_ProjectileEntities.push_back(ent);
+		m_AttackableEntities.push_back({ ent, Randomizer::Get().RandomFloat(-2.0f, 3.0f)});
 	}
 
 	void Dragon::SpawnFireMarcherC()
@@ -904,11 +967,28 @@ namespace Cuphead
 		m_Scene->RefreshBody(ent);
 
 		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
-		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Translation = glm::vec3(-2.75f, -1.5f, 2.013f);
 		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
 		bodyFM.SetPosition(transformFM);
 
 		m_ProjectileEntities.push_back(ent);
+	}
+
+	void Dragon::Phase2Ending()
+	{
+		///if (m_DragonTongueEntity) TODO
+		///{
+		///	m_Scene->DestroyEntity(m_DragonTongueEntity);
+		///	m_DragonTongueEntity = {};
+		///}
+
+		if (m_SmokeEntity)
+		{
+			m_Scene->DestroyEntity(m_SmokeEntity);
+			m_SmokeEntity = {};
+		}
+
+		m_AttackableEntities.clear();
 	}
 
 	bool Dragon::IsParry(b2ShapeId shape)
