@@ -229,6 +229,10 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/SmokeFire/Dragon_Smoke_Fire_380x533_2048x2048_1.png",
 			"assets/Textures/Dragon/Entity/SmokeFire/Dragon_Smoke_Fire_380x533_2048x2048_2.png"
 			});
+
+		m_FireMarcherTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Dragon_Firemarcher_173x202_2048x2048_0.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -336,6 +340,7 @@ namespace Cuphead
 				if (m_Health > 561)
 				{
 					Smoke(ts);
+					FireMarchers(ts);
 				}
 				else
 				{
@@ -495,6 +500,15 @@ namespace Cuphead
 					m_Scene->DestroyEntity(m_TailEntity);
 					m_TailEntity = {};
 				}
+
+				if (m_ProjectileEntities.size() > 0)
+				{
+					for (auto entts : m_ProjectileEntities)
+					{
+						m_Scene->DestroyEntity(entts);
+					}
+					m_ProjectileEntities.clear();
+				}
 			}
 		}
 	}
@@ -519,9 +533,9 @@ namespace Cuphead
 				m_Phase2Start = true;
 				m_TongueToLoop = false;
 			}
-
 			return;
 		}
+
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		if (aA.Index >= 19)
 		{
@@ -561,7 +575,7 @@ namespace Cuphead
 
 					auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
 					transform = GetComponent<Teddy::TransformComponent>();
-					transform.Translation.z += 0.002f;
+					transform.Translation.z += 0.003f;
 				}
 
 				void OnUpdate(Teddy::Timestep ts) override
@@ -585,6 +599,7 @@ namespace Cuphead
 
 			m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonOverlayTongue>();
 
+			// tongue entity
 			m_DragonTongueEntity = m_Scene->CreateEntity("Dragon Tongue");
 			auto& tongueSprite = m_DragonTongueEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 			tongueSprite.Pause = false;
@@ -596,9 +611,10 @@ namespace Cuphead
 			tongueSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
 
 			auto& transform = m_DragonTongueEntity.GetComponent<Teddy::TransformComponent>();
-			transform.Translation = glm::vec3(0.9f, -2.25f, 2.012f);
+			transform.Translation = glm::vec3(0.9f, -2.15f, 2.012f);
 			transform.Scale = glm::vec3(1.25f, 1.25f, 1.0f);
 
+			// smoke and fire entity
 			m_SmokeEntity = m_Scene->CreateEntity("Dragon Smoke and Fire");
 			auto& spriteSmoke = m_SmokeEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 			spriteSmoke.Textures = m_SmokeTextures;
@@ -622,8 +638,39 @@ namespace Cuphead
 			transformSmoke.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
 			body.SetPosition(m_SmokeEntity.GetComponent<Teddy::TransformComponent>());
 
-			m_TongueToLoop = true;
+			// first firemarcher
+			auto ent = m_Scene->CreateEntity("Dragon Fire Marcher");
+			auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			spriteFM.Textures = m_FireMarcherTextures;
 
+			ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
+			auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			spriteFM.PlayableIndicies.clear();
+			for (int i = 70; i < 85; i++)
+				spriteFM.PlayableIndicies.push_back(i);
+			aAFM.Index = 70;
+
+			auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+			bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+			bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+
+			auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+			filterFM.CategoryBits = LevelCategories::ENEMY;
+			filterFM.MaskBits = LevelCategories::PLAYER;
+			
+			auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
+			sensorFM.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.5f, 0.75f }, 0.0f, true };
+
+			m_Scene->RefreshBody(ent);
+
+			auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
+			transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+			transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
+			bodyFM.SetPosition(transformFM);
+
+			m_ProjectileEntities.push_back(ent);
+
+			m_TongueToLoop = true;
 			m_ResetFireLoop = true;
 		}
 	}
@@ -748,6 +795,120 @@ namespace Cuphead
 				}
 			}
 		}
+	}
+
+	void Dragon::FireMarchers(Teddy::Timestep ts)
+	{
+		static float timer = 0.0f;
+		timer += ts;
+
+		if (timer >= 0.5f)
+		{
+			SpawnFireMarcherC();
+			timer = 0.0f;
+		}
+	}
+
+	void Dragon::SpawnFireMarcherA()
+	{
+		auto ent = m_Scene->CreateEntity("Dragon Fire Marcher A");
+		auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		spriteFM.Textures = m_FireMarcherTextures;
+
+		ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
+		auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		spriteFM.PlayableIndicies.clear();
+		for (int i = 0; i < 20; i++)
+			spriteFM.PlayableIndicies.push_back(i);
+		aAFM.Index = 0;
+
+		auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+		bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+
+		auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filterFM.CategoryBits = LevelCategories::ENEMY;
+		filterFM.MaskBits = LevelCategories::PLAYER;
+
+		auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
+		sensorFM.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.35f, 0.4f }, 0.0f, true };
+
+		m_Scene->RefreshBody(ent);
+
+		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
+		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
+		bodyFM.SetPosition(transformFM);
+
+		m_ProjectileEntities.push_back(ent);
+	}
+
+	void Dragon::SpawnFireMarcherB()
+	{
+		auto ent = m_Scene->CreateEntity("Dragon Fire Marcher B");
+		auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		spriteFM.Textures = m_FireMarcherTextures;
+
+		ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
+		auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		spriteFM.PlayableIndicies.clear();
+		for (int i = 20; i < 36; i++)
+			spriteFM.PlayableIndicies.push_back(i);
+		aAFM.Index = 20;
+
+		auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+		bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+
+		auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filterFM.CategoryBits = LevelCategories::ENEMY;
+		filterFM.MaskBits = LevelCategories::PLAYER;
+
+		auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
+		sensorFM.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.35f, 0.4f }, 0.0f, true };
+
+		m_Scene->RefreshBody(ent);
+
+		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
+		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
+		bodyFM.SetPosition(transformFM);
+
+		m_ProjectileEntities.push_back(ent);
+	}
+
+	void Dragon::SpawnFireMarcherC()
+	{
+		auto ent = m_Scene->CreateEntity("Dragon Fire Marcher C");
+		auto& spriteFM = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		spriteFM.Textures = m_FireMarcherTextures;
+
+		ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 202);
+		auto& aAFM = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		spriteFM.PlayableIndicies.clear();
+		for (int i = 58; i < 70; i++)
+			spriteFM.PlayableIndicies.push_back(i);
+		aAFM.Index = 58;
+
+		auto& bodyFM = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+		bodyFM.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		bodyFM.Velocity = glm::vec2(2.5f, 0.0f);
+
+		auto& filterFM = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filterFM.CategoryBits = LevelCategories::ENEMY;
+		filterFM.MaskBits = LevelCategories::PLAYER;
+
+		auto& sensorFM = ent.AddComponent<Teddy::Sensor2DComponent>();
+		sensorFM.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.35f, 0.4f }, 0.0f, true };
+
+		m_Scene->RefreshBody(ent);
+
+		auto& transformFM = ent.GetComponent<Teddy::TransformComponent>();
+		transformFM.Translation = glm::vec3(-2.5f, -1.5f, 2.013f);
+		transformFM.Scale = glm::vec3(2.0f, 2.0f, 1.0f);
+		bodyFM.SetPosition(transformFM);
+
+		m_ProjectileEntities.push_back(ent);
 	}
 
 	bool Dragon::IsParry(b2ShapeId shape)

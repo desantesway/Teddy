@@ -261,34 +261,6 @@ namespace Cuphead
 
 	void CloudPlatform::UpdatePostions() // TODO: fix cloud disappearing after lag spike
 	{
-		std::vector<Cloud> newClouds;
-		float prevDistance = 0.0f;
-
-		for (auto& plats : m_Clouds)
-		{
-			if (plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x < -6.5)
-			{
-				m_Scene->DestroyEntity(plats.Entity);
-				if (plats.Overlay)
-					m_Scene->DestroyEntity(plats.Overlay);
-				continue;
-			}
-
-			auto& cloud = plats.Entity;
-			auto& body = cloud.GetComponent<Teddy::Rigidbody2DComponent>();
-			body.SetVelocityX(-m_MovementSpeed*200);
-
-			if (plats.Overlay)
-			{
-				auto& transform = plats.Overlay.GetComponent<Teddy::TransformComponent>();
-				transform.Translation.x = plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x;
-			}
-
-			newClouds.push_back(plats);
-		}
-
-		m_Clouds = newClouds;
-
 		std::vector<CloudToSpawn> newCloudsToSpawn;
 		if (m_CurrentCloudsSpawning.size() <= 0)
 		{
@@ -296,6 +268,7 @@ namespace Cuphead
 			for (const auto& cloud : m_CloudsToSpawn)
 				m_CurrentCloudsSpawning.emplace_back(cloud.X + 1.0f, cloud.Y, cloud.Type);
 		}
+
 		for (auto& toSpawn : m_CurrentCloudsSpawning)
 		{
 			toSpawn.X -= m_MovementSpeed * 1;
@@ -318,6 +291,34 @@ namespace Cuphead
 		}
 
 		m_CurrentCloudsSpawning = newCloudsToSpawn;
+
+		std::vector<Cloud> newClouds;
+		float prevDistance = 0.0f;
+
+		for (auto& plats : m_Clouds)
+		{
+			if (plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x < -6.5)
+			{
+				m_Scene->DestroyEntity(plats.Entity);
+				if (plats.Overlay)
+					m_Scene->DestroyEntity(plats.Overlay);
+				continue;
+			}
+
+			auto& cloud = plats.Entity;
+			auto& body = cloud.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocityX(-m_MovementSpeed * 200);
+
+			if (plats.Overlay)
+			{
+				auto& transform = plats.Overlay.GetComponent<Teddy::TransformComponent>();
+				transform.Translation.x = plats.Entity.GetComponent<Teddy::TransformComponent>().Translation.x;
+			}
+
+			newClouds.push_back(plats);
+		}
+
+		m_Clouds = newClouds;
 	}
 
 	void CloudPlatform::UpdateCollisionFilters(Teddy::Timestep ts)

@@ -63,6 +63,10 @@ namespace Cuphead
 		void Tail(Teddy::Timestep ts);
 
 		void Smoke(Teddy::Timestep ts);
+		void FireMarchers(Teddy::Timestep ts);
+		void SpawnFireMarcherA();
+		void SpawnFireMarcherB();
+		void SpawnFireMarcherC();
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -82,6 +86,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DragonTongueTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TongueTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SmokeTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_FireMarcherTextures;
 
 		enum class DragonState
 		{
