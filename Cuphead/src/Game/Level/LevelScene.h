@@ -102,6 +102,7 @@ namespace Cuphead
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundNightCloudTexture;
 
 		int m_State = 0;
 		int m_Phase = 1;
