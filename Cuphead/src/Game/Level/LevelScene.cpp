@@ -116,6 +116,8 @@ namespace Cuphead
 	void LevelScene::InitPhase3Foreground()
 	{
 		auto& assets = Teddy::AssetManager::Get();
+
+		m_Phase3ForegroundNightCloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Foreground/Night_Clouds_971x124_1024x1024_0.png", Teddy::Boolean::True);
 	}
 
 	void LevelScene::InitPhase1Background()
@@ -253,7 +255,6 @@ namespace Cuphead
 
 	void LevelScene::InitPhase1Foreground()
 	{
-		// one bellow dragon, 2 above dragon
 		auto& assets = Teddy::AssetManager::Get();
 
 		// Foreground cloud 1
@@ -330,7 +331,17 @@ namespace Cuphead
 				m_Player.Unpause();
 				m_Dragon.Unpause();
 				m_Clouds.Unpause();
-				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				switch (m_Phase)
+				{
+				case 1:
+					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				case 3:
+					m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				default:
+					break;
+				}
 				firstTime = true;
 			}
 			else
@@ -340,7 +351,17 @@ namespace Cuphead
 					m_Player.Pause();
 					m_Dragon.Pause();
 					m_Clouds.Pause();
-					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+					switch (m_Phase)
+					{
+					case 1:
+						m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						break;
+					case 3:
+						m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						break;
+					default:
+						break;
+					}
 					m_Scene->OnRuntimeStop();
 					firstTime = false;
 				}
@@ -656,6 +677,82 @@ namespace Cuphead
 			cloud1LeftTransform.Scale *= 7.0f;
 		}
 
+		// Background cloud 2
+		{
+			m_BackgroundPhase3.Cloud2Right = m_Scene->CreateEntity("Phase 3 Cloud 2 Right");
+			auto& cloud2Sprite = m_BackgroundPhase3.Cloud2Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud2Sprite.Texture = m_Phase3BackgroundNightCloudTexture;
+			m_BackgroundPhase3.Cloud2Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1916, 452);
+			auto& cloud2Transform = m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::TransformComponent>();
+			cloud2Transform.Translation = glm::vec3(-2.5f, -1.5f, 0.601f);
+			cloud2Transform.Scale *= 4.0f;
+
+			m_BackgroundPhase3.Cloud2Left = m_Scene->CreateEntity("Phase 3 Cloud 2 Left");
+			auto& cloud2LeftSprite = m_BackgroundPhase3.Cloud2Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud2LeftSprite.Texture = m_Phase3BackgroundNightCloudTexture;
+			m_BackgroundPhase3.Cloud2Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1916, 452);
+			auto& cloud2LeftTransform = m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::TransformComponent>();
+			cloud2LeftTransform.Translation = glm::vec3(-20.0f, -1.5f, 0.601f);
+			cloud2LeftTransform.Scale *= 4.0f;
+		}
+
+		// Foreground cloud 1
+		{
+			m_ForegroundPhase3.Cloud1Right = m_Scene->CreateEntity("Phase 3 Foreground Cloud 1 Right");
+			auto& cloud1Sprite = m_ForegroundPhase3.Cloud1Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud1Sprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud1Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 971, 124);
+			auto& cloud1Transform = m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::TransformComponent>();
+			cloud1Transform.Translation = glm::vec3(13.75f, -2.75f, 1.101f);
+			cloud1Transform.Scale *= 1.75f;
+
+			m_ForegroundPhase3.Cloud1Left = m_Scene->CreateEntity("Phase 3 Foreground Cloud 1 Left");
+			auto& cloud1LeftSprite = m_ForegroundPhase3.Cloud1Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud1LeftSprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud1Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 971, 124);
+			auto& cloud1LeftTransform = m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::TransformComponent>();
+			cloud1LeftTransform.Translation = glm::vec3(0.0f, -2.75f, 1.101f);
+			cloud1LeftTransform.Scale *= 1.75f;
+		}
+
+		// Foreground cloud 2
+		{
+			m_ForegroundPhase3.Cloud2Right = m_Scene->CreateEntity("Phase 3 Foreground Cloud 2 Right");
+			auto& cloud2Sprite = m_ForegroundPhase3.Cloud2Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud2Sprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud2Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 971, 124);
+			auto& cloud2Transform = m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::TransformComponent>();
+			cloud2Transform.Translation = glm::vec3(11.25f, -2.375f, 2.101f);
+			cloud2Transform.Scale *= 1.5f;
+
+			m_ForegroundPhase3.Cloud2Left = m_Scene->CreateEntity("Phase 3 Foreground Cloud 2 Left");
+			auto& cloud2LeftSprite = m_ForegroundPhase3.Cloud2Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud2LeftSprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud2Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 971, 124);
+			auto& cloud2LeftTransform = m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::TransformComponent>();
+			cloud2LeftTransform.Translation = glm::vec3(0.0f, -2.375f, 2.101f);
+			cloud2LeftTransform.Scale *= 1.5f;
+		}
+
+		// Foreground cloud 3
+		{
+			m_ForegroundPhase3.Cloud3Right = m_Scene->CreateEntity("Phase 3 Foreground Cloud 3 Right");
+			auto& cloud3Sprite = m_ForegroundPhase3.Cloud3Right.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud3Sprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud3Right.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 971, 124);
+			auto& cloud3Transform = m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::TransformComponent>();
+			cloud3Transform.Translation = glm::vec3(8.75f, -2.3f, 3.101f);
+			cloud3Transform.Scale *= 1.25f;
+
+			m_ForegroundPhase3.Cloud3Left = m_Scene->CreateEntity("Phase 3 Foreground Cloud 3 Left");
+			auto& cloud3LeftSprite = m_ForegroundPhase3.Cloud3Left.AddComponent<Teddy::SpriteRendererComponent>();
+			cloud3LeftSprite.Texture = m_Phase3ForegroundNightCloudTexture;
+			m_ForegroundPhase3.Cloud3Left.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 971, 124);
+			auto& cloud3LeftTransform = m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::TransformComponent>();
+			cloud3LeftTransform.Translation = glm::vec3(0.0f, -2.3f, 3.101f);
+			cloud3LeftTransform.Scale *= 1.25f;
+		}
+
 		m_TransitioningPhase = true;
 	}
 
@@ -663,55 +760,7 @@ namespace Cuphead
 	{
 		if (m_TransitioningPhase)
 		{
-			OnUpdatePhase1();
-
-			glm::vec4 color = m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color;
-			color += ts / 2.0f ;
-
-			m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
-			m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
-			m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
-			m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
-			m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
-
-			m_Background.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud4Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud4Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud5Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Background.Cloud5Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-
-			m_Foreground.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Foreground.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Foreground.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Foreground.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Foreground.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-			m_Foreground.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
-
-			if (color.a > 1.0f)
-			{
-				m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
-				m_Scene->DestroyEntity(m_Background.Spire);
-				m_Background.Spire = {};
-				m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
-				m_Scene->DestroyEntity(m_Background.LeftBackground);
-				m_Background.LeftBackground = {};
-				m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
-				m_Scene->DestroyEntity(m_Background.RightBackground);
-				m_Background.RightBackground = {};
-				m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
-				m_Scene->DestroyEntity(m_Background.Cloud1Left);
-				m_Background.Cloud1Left = {};
-				m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
-				m_Scene->DestroyEntity(m_Background.Cloud1Right);
-				m_Background.Cloud1Right = {};
-
-				m_TransitioningPhase = false;
-			}
+			OnUpdatePhase3Start(ts);
 		}
 
 		// Move Background
@@ -742,6 +791,165 @@ namespace Cuphead
 				cloud1Transform.Translation.x = -10.0f;
 				cloud1LeftTransform.Translation.x = -40.0f;
 			}
+		}
+
+		// Background Cloud 3
+		{
+			auto& cloud2Transform = m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::TransformComponent>();
+			cloud2Transform.Translation.x += m_MovementSpeed * 0.75f;
+
+			auto& cloud2LeftTransform = m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::TransformComponent>();
+			cloud2LeftTransform.Translation.x += m_MovementSpeed * 0.75f;
+
+			if (cloud2Transform.Translation.x >= 15.0f)
+			{
+				cloud2Transform.Translation.x = -2.5f;
+				cloud2LeftTransform.Translation.x = -20.0f;
+			}
+		}
+
+		// Foreground Cloud 1
+		{
+			auto& cloud1Transform = m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::TransformComponent>();
+			cloud1Transform.Translation.x -= m_MovementSpeed * 0.6f;
+
+			auto& cloud1LeftTransform = m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::TransformComponent>();
+			cloud1LeftTransform.Translation.x -= m_MovementSpeed * 0.6f;
+
+			if (cloud1LeftTransform.Translation.x <= -13.75f)
+			{
+				cloud1Transform.Translation.x = 13.75f;
+				cloud1LeftTransform.Translation.x = 0.0f;
+			}
+		}
+
+		// Foreground Cloud 2
+		{
+			auto& cloud2Transform = m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::TransformComponent>();
+			cloud2Transform.Translation.x -= m_MovementSpeed * 1.5f;
+
+			auto& cloud2LeftTransform = m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::TransformComponent>();
+			cloud2LeftTransform.Translation.x -= m_MovementSpeed * 1.5f;
+
+			if (cloud2LeftTransform.Translation.x <= -11.25f)
+			{
+				cloud2Transform.Translation.x = 11.25f;
+				cloud2LeftTransform.Translation.x = 0.0f;
+			}
+		}
+
+		// Foreground Cloud 3
+		{
+			auto& cloud3Transform = m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::TransformComponent>();
+			cloud3Transform.Translation.x -= m_MovementSpeed * 2.0f;
+
+			auto& cloud3LeftTransform = m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::TransformComponent>();
+			cloud3LeftTransform.Translation.x -= m_MovementSpeed * 2.0f;
+
+			if (cloud3LeftTransform.Translation.x <= -8.75f)
+			{
+				cloud3Transform.Translation.x = 8.75f;
+				cloud3LeftTransform.Translation.x = 0.0f;
+			}
+		}
+	}
+
+	void LevelScene::OnUpdatePhase3Start(Teddy::Timestep ts)
+	{
+		OnUpdatePhase1();
+
+		glm::vec4 color = m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+		color += ts / 2.0f;
+
+		m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+
+		m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+		m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+
+		m_Background.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud4Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud4Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud5Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Background.Cloud5Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+
+		m_Foreground.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Foreground.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Foreground.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Foreground.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Foreground.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+		m_Foreground.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
+
+		if (color.a > 1.0f)
+		{
+			m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.Spire);
+			m_Background.Spire = {};
+			m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.LeftBackground);
+			m_Background.LeftBackground = {};
+			m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.RightBackground);
+			m_Background.RightBackground = {};
+			m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.Cloud1Left);
+			m_Background.Cloud1Left = {};
+			m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.Cloud1Right);
+			m_Background.Cloud1Right = {};
+			m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.Cloud2Left);
+			m_Background.Cloud2Left = {};
+			m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Background.Cloud2Right);
+			m_Background.Cloud2Right = {};
+			m_Scene->DestroyEntity(m_Background.Cloud3Left);
+			m_Background.Cloud3Left = {};
+			m_Scene->DestroyEntity(m_Background.Cloud3Right);
+			m_Background.Cloud3Right = {};
+			m_Scene->DestroyEntity(m_Background.Cloud4Left);
+			m_Background.Cloud4Left = {};
+			m_Scene->DestroyEntity(m_Background.Cloud4Right);
+			m_Background.Cloud4Right = {};
+			m_Scene->DestroyEntity(m_Background.Cloud5Left);
+			m_Background.Cloud5Left = {};
+			m_Scene->DestroyEntity(m_Background.Cloud5Right);
+			m_Background.Cloud5Right = {};
+
+			m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud1Left);
+			m_Foreground.Cloud1Left = {};
+			m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud1Right);
+			m_Foreground.Cloud1Right = {};
+			m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud2Left);
+			m_Foreground.Cloud2Left = {};
+			m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud2Right);
+			m_Foreground.Cloud2Right = {};
+			m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud3Left);
+			m_Foreground.Cloud3Left = {};
+			m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+			m_Scene->DestroyEntity(m_Foreground.Cloud3Right);
+			m_Foreground.Cloud3Right = {};
+
+			m_TransitioningPhase = false;
 		}
 	}
 
@@ -1033,7 +1241,18 @@ namespace Cuphead
 		m_Paused = true;
 		m_Player.Pause();
 		m_Clouds.Pause();
-		m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+
+		switch (m_Phase)
+		{
+		case 1:
+			m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+			break;
+		case 3:
+			m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+			break;
+		default:
+			break;
+		}			
 	}
 
 	bool LevelScene::Pause(Teddy::Timestep ts)
@@ -1050,7 +1269,17 @@ namespace Cuphead
 				m_Paused = false;
 				m_Player.Unpause();
 				m_Clouds.Unpause();
-				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				switch (m_Phase) // TODO: function
+				{
+				case 1:
+					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				case 3:
+					m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				default:
+					break;
+				}
 				// TODO: bug when pausing while falling and after leaving pause menu where player has weird animations
 			}
 			else if(m_PauseMenu.WantsToRetry())

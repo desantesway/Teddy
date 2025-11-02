@@ -44,6 +44,7 @@ namespace Cuphead
 		void InitPhase3Foreground();
 		void OnUpdatePhase3(Teddy::Timestep ts);
 		void OnPhase3Start();
+		void OnUpdatePhase3Start(Teddy::Timestep ts);
 
 		void CameraShake(Teddy::Timestep ts);
 
@@ -103,6 +104,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundTexture;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundNightCloudTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundNightCloudTexture;
 
 		int m_State = 0;
 		int m_Phase = 1;
