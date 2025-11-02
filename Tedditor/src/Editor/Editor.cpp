@@ -605,6 +605,7 @@ namespace Teddy
         std::vector<std::string> filepaths = FileDialogs::OpenFiles(
             "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp)\0*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif;*.tga;*.dds;*.webp\0All Files (*.*)\0*.*\0"
         );
+		TED_CORE_INFO("Generating atlas with {0} images", filepaths.size());
         GenerateAtlas(filepaths, width, height, toleration, "", xmid, ymid);
     }
 

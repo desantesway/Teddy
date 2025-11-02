@@ -828,6 +828,61 @@ namespace Cuphead
 
 	void Dragon::FireMarchers(Teddy::Timestep ts)
 	{
+		if (m_Phase != 2)
+		{
+			for (auto& ent : m_AttackableEntities) // TODO: it's own function
+			{
+				auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+				if (ent.ToAttack)
+				{
+					if (transform.Translation.x > ent.XToAttack)
+					{
+						auto& body = ent.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+						body.SetVelocity(0.0f, 0.0f);
+
+						auto& sprite = ent.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						sprite.Loop = false;
+
+						auto& atlasAnim = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+						sprite.PlayableIndicies.clear();
+						for (int i = 36; i < 50; i++)
+							sprite.PlayableIndicies.push_back(i);
+						atlasAnim.Index = 36;
+
+						auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+						transform.Scale.x = m_PlayerPosition.x < transform.Translation.x ? -transform.Scale.x : transform.Scale.x;
+
+						ent.ToAttack = false;
+					}
+				}
+				else
+				{
+					auto& atlasAnim = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (!ent.Attacked && atlasAnim.Index >= 49)
+					{
+						auto& body = ent.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+						auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+						static constexpr float multiplier = 2.5f;
+						body.SetVelocity((m_PlayerPosition.x - transform.Translation.x) * multiplier, (m_PlayerPosition.y - transform.Translation.y) * multiplier);
+						body.GravityScale = 1.0f;
+						body.SetGravityScale(1.0f);
+
+						auto& sprite = ent.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						sprite.Loop = true;
+
+						sprite.PlayableIndicies.clear();
+						for (int i = 50; i < 58; i++)
+							sprite.PlayableIndicies.push_back(i);
+						atlasAnim.Index = 50;
+
+						ent.Attacked = true;
+					}
+				}
+			}
+			return;
+		}
+
 		static float timer = 0.0f;
 		timer += ts;
 
@@ -1105,6 +1160,10 @@ namespace Cuphead
 				m_PhaseStart = false;
 				m_Phase3Start = true;
 			}
+		}
+		else
+		{
+			FireMarchers(ts);
 		}
 	}
 

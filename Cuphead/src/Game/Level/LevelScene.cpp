@@ -64,6 +64,7 @@ namespace Cuphead
 		m_Clouds.Init(m_Scene);
 
 		InitPhase1();
+		InitPhase3();
 
 		if (isCuphead)
 		{
@@ -92,6 +93,29 @@ namespace Cuphead
 		m_Clouds.InitPhase1();
 	}
 
+	void LevelScene::InitPhase3()
+	{
+		InitPhase3Background();
+		InitPhase3Foreground();
+	}
+
+	void LevelScene::InitPhase3Background()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+		std::vector<std::string> paths;
+		for (int i = 0; i <= 18; i++)
+			paths.push_back("assets/Textures/Dragon/DarkSpire/Dragon_DarkSpire_400x1024_2048x2048_" + std::to_string(i) + ".png");
+
+		m_Phase3SpireTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
+
+		m_Phase3BackgroundTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Dragon_Background_ph3_2048x543_2048x2048_0.png", Teddy::Boolean::True);
+	}
+
+	void LevelScene::InitPhase3Foreground()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+	}
+
 	void LevelScene::InitPhase1Background()
 	{
 		auto& assets = Teddy::AssetManager::Get();
@@ -101,21 +125,21 @@ namespace Cuphead
 			m_Background.LeftBackground = m_Scene->CreateEntity("Main Menu Background");
 			auto& sprite = m_Background.LeftBackground.AddComponent<Teddy::SpriteRendererComponent>();
 			sprite.IsBackground = true;
-			sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Dragon_Background-2048x2048-fmt12 #0710017.png", Teddy::Boolean::True);
-			m_Background.LeftBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1520, 780);
+			sprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Dragon_Background_1523x780_1523x780_0.png", Teddy::Boolean::True);
+			m_Background.LeftBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1523, 780);
 			m_Background.LeftBackground.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(-14.5f, 0.0f, 0.01f);
 
 			m_Background.RightBackground = m_Scene->CreateEntity("Main Menu Background");
 			auto& rsprite = m_Background.RightBackground.AddComponent<Teddy::SpriteRendererComponent>();
 			rsprite.IsBackground = true;
-			rsprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/SpriteAtlasTexture-Dragon_Background-2048x2048-fmt12 #0710017.png", Teddy::Boolean::True);
-			m_Background.RightBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1520, 780);
+			rsprite.Texture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Dragon_Background_1523x780_1523x780_0.png", Teddy::Boolean::True);
+			m_Background.RightBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1523, 780);
 			m_Background.RightBackground.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 0.001f);
 		}
 
 		// Spire
 		{
-			m_Background.Spire = m_Scene->CreateEntity("Phase 1 Spire");
+			m_Background.Spire = m_Scene->CreateEntity("Spire");
 			auto& spireSprite = m_Background.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
 			spireSprite.Pause = true;
 			std::vector<std::string> paths;
@@ -418,21 +442,22 @@ namespace Cuphead
 		m_Dragon.OnUpdate(ts);
 
 		CameraShake(ts);
-		//if (m_FloorHitContact)
-		//{
-		//	m_Player.FloorHit();
-		//}
-		//if (m_HitContact)
-		//{
-		//	m_Player.NormalHit();
-		//}
 
 		m_Clouds.SetPlayerPosition(m_Player.GetPosition());
 
 		switch (m_Phase)
 		{
 		case 1:
+			if (m_Dragon.IsLastPhase())
+			{
+				m_Phase = 3;
+				OnPhase3Start();
+				return;
+			}
 			OnUpdatePhase1();
+			break;
+		case 3:
+			OnUpdatePhase3(ts);
 			break;
 		default:
 			break;
@@ -568,6 +593,94 @@ namespace Cuphead
 		}
 
 		//m_Clouds.OnUpdatePhase1(ts);
+	}
+
+	void LevelScene::OnPhase3Start()
+	{
+		auto& assets = Teddy::AssetManager::Get();
+
+		// Background Carousel
+		{
+			m_BackgroundPhase3.LeftBackground = m_Scene->CreateEntity("Phase 3 Main Menu Background");
+			auto& sprite = m_BackgroundPhase3.LeftBackground.AddComponent<Teddy::SpriteRendererComponent>();
+			sprite.IsBackground = true;
+			sprite.Texture = m_Phase3BackgroundTexture;
+			m_BackgroundPhase3.LeftBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 2048, 543);
+			m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(-28.0f, 0.0f, 0.021f);
+
+			m_BackgroundPhase3.RightBackground = m_Scene->CreateEntity("Phase 3 Main Menu Background");
+			auto& rsprite = m_BackgroundPhase3.RightBackground.AddComponent<Teddy::SpriteRendererComponent>();
+			rsprite.IsBackground = true;
+			rsprite.Texture = m_Phase3BackgroundTexture;
+			m_BackgroundPhase3.RightBackground.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 2048, 543);
+			m_BackgroundPhase3.RightBackground.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 0.02f);
+		}
+
+		// Spire
+		{
+			m_BackgroundPhase3.Spire = m_Scene->CreateEntity("Phase 3 Spire");
+			auto& spireSprite = m_BackgroundPhase3.Spire.AddComponent<Teddy::SpriteAnimationComponent>(0.125f, 0.125f, 0.125f);
+			spireSprite.Pause = false;
+			spireSprite.Loop = true;
+			spireSprite.Reverse = true;
+			spireSprite.Textures = m_Phase3SpireTextures;
+			spireSprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+			m_BackgroundPhase3.Spire.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 400, 1024);
+
+			auto& aA = m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			aA.Index = aA.AnimationSprites.size() - m_Background.Spire.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index;
+
+			auto& spireTransform = m_BackgroundPhase3.Spire.GetComponent<Teddy::TransformComponent>();
+			spireTransform.Translation = glm::vec3(0.0f, -0.5f, 1.001f);
+			spireTransform.Scale *= 9.5f;
+		}
+
+		m_TransitioningPhase = true;
+	}
+
+	void LevelScene::OnUpdatePhase3(Teddy::Timestep ts)
+	{
+		if (m_TransitioningPhase)
+		{
+			OnUpdatePhase1();
+
+			glm::vec4 color = m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+			color += ts / 2.0f ;
+
+			m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+			m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+			m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
+
+			if (color.a > 1.0f)
+			{
+				m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
+				m_Scene->DestroyEntity(m_Background.Spire);
+				m_Background.Spire = {};
+				m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+				m_Scene->DestroyEntity(m_Background.LeftBackground);
+				m_Background.LeftBackground = {};
+				m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
+				m_Scene->DestroyEntity(m_Background.RightBackground);
+				m_Background.RightBackground = {};
+
+				m_TransitioningPhase = false;
+			}
+		}
+
+		// Move Background
+		{
+			auto& leftTransform = m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::TransformComponent>();
+			leftTransform.Translation.x += m_MovementSpeed;
+			
+			auto& rightTransform = m_BackgroundPhase3.RightBackground.GetComponent<Teddy::TransformComponent>();
+			rightTransform.Translation.x += m_MovementSpeed;
+			
+			if (leftTransform.Translation.x >= 0.0f || rightTransform.Translation.x >= 28.0f)
+			{
+				leftTransform.Translation.x = -28.0f;
+				rightTransform.Translation.x = 0.0f;
+			}
+		}
 	}
 
 	void LevelScene::CameraShake(Teddy::Timestep ts)

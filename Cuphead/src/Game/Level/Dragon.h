@@ -38,6 +38,7 @@ namespace Cuphead
 		bool IsShooting() const { return m_Shooting; }
 
 		void SetPlayerPosition(const glm::vec2& pos) { m_PlayerPosition = pos; }
+		bool IsLastPhase() const { return m_Phase3Start; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);

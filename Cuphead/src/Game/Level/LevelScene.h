@@ -39,6 +39,12 @@ namespace Cuphead
 		void InitPhase1Foreground();
 		void OnUpdatePhase1();
 		
+		void InitPhase3();
+		void InitPhase3Background();
+		void InitPhase3Foreground();
+		void OnUpdatePhase3(Teddy::Timestep ts);
+		void OnPhase3Start();
+
 		void CameraShake(Teddy::Timestep ts);
 
 		void StartPauseMenu();
@@ -91,6 +97,12 @@ namespace Cuphead
 		Background m_Background;
 		Foreground m_Foreground;
 
+		Background m_BackgroundPhase3;
+		Foreground m_ForegroundPhase3;
+
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundTexture;
+
 		int m_State = 0;
 		int m_Phase = 1;
 
@@ -113,6 +125,8 @@ namespace Cuphead
 		bool m_IncreasingSpeed = false;
 
 		bool m_Freeze = false;
+
+		bool m_TransitioningPhase = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
