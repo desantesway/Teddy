@@ -116,6 +116,19 @@ namespace Teddy
 		return entity;
 	}
 
+	void Scene::DestroyScript(Entity entity)
+	{
+		if (entity.HasComponent<NativeScriptComponent>())
+		{
+			auto& nsc = entity.GetComponent<NativeScriptComponent>();
+			if (nsc.Instance)
+			{
+				nsc.Instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			}
+		}
+	}
+
 	void Scene::DestroyEntity(Entity entity)
 	{
 		if (entity.HasComponent<NativeScriptComponent>())

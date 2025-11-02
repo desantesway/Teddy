@@ -233,6 +233,11 @@ namespace Cuphead
 		m_FireMarcherTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Dragon/Projectiles/Dragon_Firemarcher_173x202_2048x2048_0.png"
 			});
+
+		m_Phase2DeathTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph2_Death/Dragon_Death_510x750_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Ph2_Death/Dragon_Death_510x750_2048x2048_1.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -345,16 +350,27 @@ namespace Cuphead
 				else
 				{
 					Phase2Ending();
-					TED_CORE_INFO("death animation");
 					m_Phase = 3;
 					m_PhaseStart = true;
 				}
 			}
-			
+		}
+		else if (m_Phase == 3)
+		{
+			if (m_PhaseStart)
+			{
+				Phase2To3(ts);
+			}
+			//else if (!m_Phase3Start)
+			//{
+			//	//Phase3Start(ts);
+			//}
+			else
+			{
+
+			}
 		}
 	}
-
-	
 
 	void Dragon::Phase1Part1(Teddy::Timestep ts)
 	{
@@ -582,25 +598,21 @@ namespace Cuphead
 				sprite.PlayableIndicies.push_back(i);
 			aA.Index = 19;
 
-			class DragonOverlayTongue : public Teddy::ScriptableEntity
+			class DragonTongueOverlay : public Teddy::ScriptableEntity
 			{
 			public:
+				void OnDestroy() override
+				{
+					GetScene()->DestroyEntity(m_OverlayEntity);
+				}
+
 				void OnCreate() override
 				{
 					m_OverlayEntity = GetScene()->CreateEntity("Dragon Tongue Overlay");
 					auto& sprite = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 					sprite.Pause = false;
 					sprite.Loop = true;
-					sprite.Textures = Teddy::AssetManager::Get().LoadMultiple<Teddy::Texture2D>({
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_0.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_1.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_2.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_3.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_4.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_5.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_6.png",
-						"assets/Textures/Dragon/Entity/DragonTongue/Dragon_Tongu_600x750_2048x2048_7.png"
-						});
+					sprite.Textures = GetComponent<Teddy::SpriteAnimationComponent>().Textures;
 
 					auto& atlas = m_OverlayEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 600, 750);
 					auto& atlasAnim = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -633,7 +645,7 @@ namespace Cuphead
 				Teddy::Entity m_OverlayEntity;
 			};
 
-			m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonOverlayTongue>();
+			m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<DragonTongueOverlay>();
 
 			// tongue entity
 			m_DragonTongueEntity = m_Scene->CreateEntity("Dragon Tongue");
@@ -976,11 +988,76 @@ namespace Cuphead
 
 	void Dragon::Phase2Ending()
 	{
-		///if (m_DragonTongueEntity) TODO
-		///{
-		///	m_Scene->DestroyEntity(m_DragonTongueEntity);
-		///	m_DragonTongueEntity = {};
-		///}
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_Phase2DeathTextures;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 510;
+		atlas.SpriteHeight = 750;
+
+		auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		atlasAnim.GenerateFrames(sprite, atlas);
+		atlasAnim.Index = 0;
+
+		sprite.PlayableIndicies = { 0,1,2,3,4,5,6,7 };
+		sprite.Loop = true;
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = glm::vec3(-3.8f, -1.1f, 2.011f);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetPosition(transform);
+
+		m_Scene->DestroyScript(m_Entity);
+		auto& nsc = m_Entity.GetComponent<Teddy::NativeScriptComponent>();
+
+		class DragonDeathOverlay : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnDestroy() override
+			{
+				GetScene()->DestroyEntity(m_OverlayEntity);
+			}
+
+			void OnCreate() override
+			{
+				m_OverlayEntity = GetScene()->CreateEntity("Dragon Death Overlay");
+				auto& sprite = m_OverlayEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				sprite.Pause = false;
+				sprite.Loop = true;
+				sprite.Textures = GetComponent<Teddy::SpriteAnimationComponent>().Textures;
+
+				auto& atlas = m_OverlayEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 510, 750);
+				auto& atlasAnim = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				sprite.PlayableIndicies = { 8, 9, 10, 11, 12, 13, 14, 15 };
+				atlasAnim.Index = 0;
+
+				auto& transform = m_OverlayEntity.GetComponent<Teddy::TransformComponent>();
+				transform = GetComponent<Teddy::TransformComponent>();
+				transform.Translation.z += 0.005f;
+				transform.Translation.x -= 0.085f;
+			}
+
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& overlayA = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				overlayA.Index = aA.Index + 8;
+
+				auto& spriteOverlay = m_OverlayEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+				spriteOverlay.PlayableIndicies = { overlayA.Index };
+
+				auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+
+				spriteOverlay.Color = sprite.Color;
+
+				spriteOverlay.Pause = sprite.Pause;
+			}
+
+			Teddy::Entity m_OverlayEntity;
+		};
+
+		nsc.Bind<DragonDeathOverlay>();
 
 		if (m_SmokeEntity)
 		{
@@ -989,6 +1066,32 @@ namespace Cuphead
 		}
 
 		m_AttackableEntities.clear();
+	}
+
+	void Dragon::Phase2To3(Teddy::Timestep ts)
+	{
+		if (m_ProjectileEntities.size() == 0)
+		{
+			auto& sprite = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+			auto& atlasAnim = m_DragonTongueEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (sprite.PlayableIndicies.size() < 14)
+			{
+				sprite.Loop = false;
+				sprite.Reverse = true;
+
+				sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+
+				sprite.FrameTime = 0.05f;
+				sprite.FinalFrameTime = 0.05f;
+				sprite.InitialFrameTime = 0.05f;
+			}
+			else if (atlasAnim.Index == 0)
+			{
+				m_Scene->DestroyEntity(m_DragonTongueEntity);
+				m_DragonTongueEntity = {};
+				m_PhaseStart = false;
+			}
+		}
 	}
 
 	bool Dragon::IsParry(b2ShapeId shape)

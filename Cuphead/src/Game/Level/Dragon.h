@@ -69,6 +69,8 @@ namespace Cuphead
 		void SpawnFireMarcherC();
 		void Phase2Ending();
 
+		void Phase2To3(Teddy::Timestep ts);
+
 		void Hitting(Teddy::Timestep ts);
 
 		void LoadTextures();
@@ -88,6 +90,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TongueTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SmokeTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_FireMarcherTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase2DeathTextures;
 
 		enum class DragonState
 		{
@@ -107,7 +110,7 @@ namespace Cuphead
 		bool m_Shooting = false;
 		bool m_MeteorStart = true;
 
-		int m_Health = 1072; // 629, 510, 561 /// 1700, 1535, 1071, 561
+		int m_Health = 565; // 629, 510, 561 /// 1700, 1535, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
 
