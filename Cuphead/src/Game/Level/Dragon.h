@@ -70,6 +70,7 @@ namespace Cuphead
 		void Phase2Ending();
 
 		void Phase2To3(Teddy::Timestep ts);
+		void Phase3Start(Teddy::Timestep ts);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -85,12 +86,16 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MeteorProjectileTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TailTextures;
+
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DashTextures;
+
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_DragonTongueTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_TongueTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SmokeTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_FireMarcherTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase2DeathTextures;
+
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3IntroTextures;
 
 		enum class DragonState
 		{
@@ -150,6 +155,8 @@ namespace Cuphead
 				: Entity(entity), XToAttack(x) {}
 		};
 		std::vector<AttackerFireMarcher> m_AttackableEntities;
+
+		bool m_Phase3Start = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

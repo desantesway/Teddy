@@ -176,6 +176,13 @@ namespace Teddy
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
+
+		void Unbind()
+		{
+			Instance = nullptr;
+			InstantiateScript = nullptr;
+			DestroyScript = nullptr;
+		}
 	
 	};
 

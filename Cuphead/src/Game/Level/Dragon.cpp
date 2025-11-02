@@ -238,6 +238,19 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Ph2_Death/Dragon_Death_510x750_2048x2048_0.png",
 			"assets/Textures/Dragon/Entity/Ph2_Death/Dragon_Death_510x750_2048x2048_1.png"
 			});
+
+		m_Phase3IntroTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_6.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_7.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_8.png",
+			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_9.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -361,10 +374,10 @@ namespace Cuphead
 			{
 				Phase2To3(ts);
 			}
-			//else if (!m_Phase3Start)
-			//{
-			//	//Phase3Start(ts);
-			//}
+			else if (m_Phase3Start)
+			{
+				Phase3Start(ts);
+			}
 			else
 			{
 
@@ -1090,8 +1103,40 @@ namespace Cuphead
 				m_Scene->DestroyEntity(m_DragonTongueEntity);
 				m_DragonTongueEntity = {};
 				m_PhaseStart = false;
+				m_Phase3Start = true;
 			}
 		}
+	}
+
+	void Dragon::Phase3Start(Teddy::Timestep ts)
+	{
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_Phase3IntroTextures;
+		sprite.Loop = false;
+		sprite.Pause = false;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 1000;
+		atlas.SpriteHeight = 1000;
+
+		auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		sprite.PlayableIndicies.clear();
+		atlasAnim.GenerateFrames(sprite, atlas);
+		sprite.PlayableIndicies.pop_back();
+		sprite.PlayableIndicies.pop_back();
+		atlasAnim.Index = 0;
+
+		m_Scene->DestroyScript(m_Entity);
+		m_Entity.RemoveComponent<Teddy::NativeScriptComponent>();
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = glm::vec3(-1.8f, -0.25f, 2.011f);
+		transform.Scale = glm::vec3(8.5f, 8.5f, 1.0f);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetPosition(transform);
+
+		m_Phase3Start = false;
 	}
 
 	bool Dragon::IsParry(b2ShapeId shape)
