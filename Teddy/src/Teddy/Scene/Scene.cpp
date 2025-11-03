@@ -337,7 +337,7 @@ namespace Teddy
 								}
 							}
 							else
-								animation.TextureIndex = 0;
+								animation.TextureIndex = animation.PlayableIndicies.size() > 0 ? animation.PlayableIndicies[0] : 0;
 						}
 						changed = true;
 						animation.Timer -= animation.FinalFrameTime;

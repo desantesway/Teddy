@@ -118,6 +118,12 @@ namespace Cuphead
 		auto& assets = Teddy::AssetManager::Get();
 
 		m_Phase3ForegroundNightCloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Foreground/Night_Clouds_971x124_1024x1024_0.png", Teddy::Boolean::True);
+
+		std::vector<std::string> paths;
+		for (int i = 0; i <= 35; i++)
+			paths.push_back("assets/Textures/Dragon/Rain/Dragon_Rain_ph3_1475x1115_1475x1115_" + std::to_string(i) + ".png");
+
+		m_RainTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
 	}
 
 	void LevelScene::InitPhase1Background()
@@ -753,6 +759,53 @@ namespace Cuphead
 			cloud3LeftTransform.Scale *= 1.25f;
 		}
 
+		// Rain1
+		{
+			m_Rain.Rain1 = m_Scene->CreateEntity("Rain Layer 1"); // TODO: lightning
+			auto& rain1Sprite = m_Rain.Rain1.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			rain1Sprite.Textures = m_RainTextures;
+			rain1Sprite.PlayableIndicies.clear();
+			rain1Sprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+			rain1Sprite.PlayableIndicies.clear();
+			int rainNum = 1;
+			for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+				rain1Sprite.PlayableIndicies.push_back(i);
+			rain1Sprite.IsBackground = true;
+
+			auto& rain1Transform = m_Rain.Rain1.GetComponent<Teddy::TransformComponent>();
+			rain1Transform.Translation = glm::vec3(0.0f, 0.0f, 3.2f);
+		}
+
+		// Rain2
+		{
+			m_Rain.Rain2 = m_Scene->CreateEntity("Rain Layer 2"); 
+			auto& rain2Sprite = m_Rain.Rain2.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			rain2Sprite.Textures = m_RainTextures;
+			rain2Sprite.PlayableIndicies.clear();
+			int rainNum = 2;
+			for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+				rain2Sprite.PlayableIndicies.push_back(i);
+			rain2Sprite.IsBackground = true;
+
+			auto& rain2Transform = m_Rain.Rain2.GetComponent<Teddy::TransformComponent>();
+			rain2Transform.Translation = glm::vec3(0.0f, 0.0f, 3.201f);
+		}
+
+		// Rain3
+		{
+			m_Rain.Rain3 = m_Scene->CreateEntity("Rain Layer 3"); // TODO: lightning
+			auto& rain3Sprite = m_Rain.Rain3.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			rain3Sprite.Textures = m_RainTextures;
+			rain3Sprite.PlayableIndicies.clear();
+			int rainNum = 4;
+			for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+				rain3Sprite.PlayableIndicies.push_back(i);
+			rain3Sprite.IsBackground = true;
+
+			auto& rain3Transform = m_Rain.Rain3.GetComponent<Teddy::TransformComponent>();
+			rain3Transform.Translation = glm::vec3(0.0f, 0.0f, 3.202f);
+		}
+
 		m_TransitioningPhase = true;
 	}
 
@@ -876,6 +929,10 @@ namespace Cuphead
 		m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
 		m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
 
+		m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+
 		static constexpr float clarity = 0.25f;
 		glm::vec4 cloudColor = 1.0f - glm::vec4(color.r * clarity, color.g * clarity, color.b * clarity, 0.0f);
 		m_Clouds.SetColor(cloudColor);
@@ -955,6 +1012,10 @@ namespace Cuphead
 
 			glm::vec4 cloudColor = 1.0f - glm::vec4(1.0f * clarity, 1.0f * clarity, 1.0f * clarity, 0.0f);
 			m_Clouds.SetColor(cloudColor);
+
+			m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
+			m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
+			m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f);
 
 			m_TransitioningPhase = false;
 		}

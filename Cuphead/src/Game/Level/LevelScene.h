@@ -66,21 +66,6 @@ namespace Cuphead
 		float m_MovementVelocity = 0.0f;
 		float m_MovementSpeed = 0.0f;
 
-		struct Ph3Background
-		{
-			Teddy::Entity LeftBackground;
-			Teddy::Entity RightBackground;
-
-			Teddy::Entity Spire;
-
-			Teddy::Entity Cloud1Left;
-			Teddy::Entity Cloud1Right;
-			Teddy::Entity Cloud2Left;
-			Teddy::Entity Cloud2Right;
-			Teddy::Entity Cloud3Left;
-			Teddy::Entity Cloud3Right;
-		};
-
 		struct Background
 		{
 			Teddy::Entity LeftBackground;
@@ -113,13 +98,37 @@ namespace Cuphead
 		Background m_Background;
 		Foreground m_Foreground;
 
+		struct Ph3Background
+		{
+			Teddy::Entity LeftBackground;
+			Teddy::Entity RightBackground;
+
+			Teddy::Entity Spire;
+
+			Teddy::Entity Cloud1Left;
+			Teddy::Entity Cloud1Right;
+			Teddy::Entity Cloud2Left;
+			Teddy::Entity Cloud2Right;
+			Teddy::Entity Cloud3Left;
+			Teddy::Entity Cloud3Right;
+		};
+
+		struct Rain
+		{
+			Teddy::Entity Rain1;
+			Teddy::Entity Rain2;
+			Teddy::Entity Rain3;
+		};
+
 		Ph3Background m_BackgroundPhase3;
 		Foreground m_ForegroundPhase3;
+		Rain m_Rain;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundTexture;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundNightCloudTexture;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundNightCloudTexture;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RainTextures;
 
 		int m_State = 0;
 		int m_Phase = 1;
