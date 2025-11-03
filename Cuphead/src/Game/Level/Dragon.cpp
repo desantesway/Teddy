@@ -251,6 +251,22 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_8.png",
 			"assets/Textures/Dragon/Entity/Ph3_Intro/Dragon_Intro_ph3_1000x1000_2048x2048_9.png"
 			});
+
+		m_Phase3IdleBodyTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Body/Dragon_Idle_Body_ph3_500x500_2048x2048_0.png"
+			});
+
+		m_Phase3IdleHeadTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_6.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_7.png",
+			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_8.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -376,7 +392,10 @@ namespace Cuphead
 			}
 			else if (m_Phase3Start)
 			{
-				Phase3Start(ts);
+				if(!m_Phase3StartLoop)
+					Phase3Start(ts);
+				else
+					Phase3StartLoop(ts);
 			}
 			else
 			{
@@ -1195,7 +1214,90 @@ namespace Cuphead
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 		body.SetPosition(transform);
 
-		m_Phase3Start = false;
+		m_Phase3StartLoop = true;
+	}
+
+	void Dragon::Phase3StartLoop(Teddy::Timestep ts)
+	{
+		static bool started = false;
+		static int count = 0;
+
+		if (!started)
+		{
+			auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			if (atlasAnim.Index >= 19)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies = { 19, 20, 21, 22, 23, 24, 25, 26, 27 };
+				sprite.Loop = true;
+
+				started = true;
+				count = 0;
+			}
+		}
+		else
+		{
+			auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			static int lastIndex = atlasAnim.Index;
+			
+			auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+
+			if (atlasAnim.Index == 37)
+			{
+				// body
+				{
+					sprite.Textures = m_Phase3IdleBodyTextures;
+					sprite.PlayableIndicies = { 0,1,2,3,4,5,6,7,8 };
+					sprite.Loop = true;
+					sprite.InitialFrameTime = 0.15f;
+					sprite.FrameTime = 0.1f;
+					sprite.FinalFrameTime = 0.15f;
+
+					auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+					atlas.SpriteWidth = 500;
+					atlas.SpriteHeight = 500;
+
+					atlasAnim.GenerateFrames(sprite, atlas);
+					atlasAnim.Index = 0;
+
+					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+					transform.Scale = glm::vec3(4.5f, 4.5f, 1.0f);
+					transform.Translation = glm::vec3(-3.8f, -3.25f, 2.011f);
+
+					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+					body.SetPosition(transform);
+				}
+				
+				// right head
+				{
+					m_Phase3Heads.RightHead = m_Scene->CreateEntity("Dragon Phase 3 Right Head");
+					auto& spriteRH = m_Phase3Heads.RightHead.AddComponent<Teddy::SpriteAnimationComponent>(0.04f);
+					spriteRH.Textures = m_Phase3IdleHeadTextures;
+					auto& atlasRH = m_Phase3Heads.RightHead.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 900, 900);
+
+					for (int i = 0; i < 4*9; i++)
+						spriteRH.PlayableIndicies.push_back(i);
+
+					auto& transform = m_Phase3Heads.RightHead.GetComponent<Teddy::TransformComponent>();
+					transform.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
+					transform.Translation = glm::vec3(-4.15f, -0.55f, 2.012f);
+				}
+
+				m_Phase3Start = false;
+			}
+			else if (sprite.PlayableIndicies.size() < 15 && count >= 4)
+			{
+				sprite.Loop = false;
+				sprite.PlayableIndicies = { 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37 };
+				count = 0;
+			}
+			else if (lastIndex != atlasAnim.Index && atlasAnim.Index == 27)
+			{
+				count++;
+			}
+
+			lastIndex = atlasAnim.Index;
+		}
 	}
 
 	bool Dragon::IsParry(b2ShapeId shape)

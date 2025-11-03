@@ -773,7 +773,7 @@ namespace Cuphead
 			rain1Sprite.IsBackground = true;
 
 			auto& rain1Transform = m_Rain.Rain1.GetComponent<Teddy::TransformComponent>();
-			rain1Transform.Translation = glm::vec3(0.0f, 0.0f, 3.2f);
+			rain1Transform.Translation = glm::vec3(0.0f, 0.0f, 3.111f);
 		}
 
 		// Rain2
@@ -788,7 +788,7 @@ namespace Cuphead
 			rain2Sprite.IsBackground = true;
 
 			auto& rain2Transform = m_Rain.Rain2.GetComponent<Teddy::TransformComponent>();
-			rain2Transform.Translation = glm::vec3(0.0f, 0.0f, 3.201f);
+			rain2Transform.Translation = glm::vec3(0.0f, 0.0f, 3.112f);
 		}
 
 		// Rain3
@@ -803,7 +803,7 @@ namespace Cuphead
 			rain3Sprite.IsBackground = true;
 
 			auto& rain3Transform = m_Rain.Rain3.GetComponent<Teddy::TransformComponent>();
-			rain3Transform.Translation = glm::vec3(0.0f, 0.0f, 3.202f);
+			rain3Transform.Translation = glm::vec3(0.0f, 0.0f, 3.113f);
 		}
 
 		m_TransitioningPhase = true;
