@@ -66,6 +66,21 @@ namespace Cuphead
 		float m_MovementVelocity = 0.0f;
 		float m_MovementSpeed = 0.0f;
 
+		struct Ph3Background
+		{
+			Teddy::Entity LeftBackground;
+			Teddy::Entity RightBackground;
+
+			Teddy::Entity Spire;
+
+			Teddy::Entity Cloud1Left;
+			Teddy::Entity Cloud1Right;
+			Teddy::Entity Cloud2Left;
+			Teddy::Entity Cloud2Right;
+			Teddy::Entity Cloud3Left;
+			Teddy::Entity Cloud3Right;
+		};
+
 		struct Background
 		{
 			Teddy::Entity LeftBackground;
@@ -98,7 +113,7 @@ namespace Cuphead
 		Background m_Background;
 		Foreground m_Foreground;
 
-		Background m_BackgroundPhase3;
+		Ph3Background m_BackgroundPhase3;
 		Foreground m_ForegroundPhase3;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;

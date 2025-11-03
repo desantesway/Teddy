@@ -876,6 +876,10 @@ namespace Cuphead
 		m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
 		m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = color;
 
+		static constexpr float clarity = 0.25f;
+		glm::vec4 cloudColor = 1.0f - glm::vec4(color.r * clarity, color.g * clarity, color.b * clarity, 0.0f);
+		m_Clouds.SetColor(cloudColor);
+
 		m_Background.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
 		m_Background.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
 		m_Background.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Color = 1.0f - color;
@@ -948,6 +952,9 @@ namespace Cuphead
 			m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(1.0f);
 			m_Scene->DestroyEntity(m_Foreground.Cloud3Right);
 			m_Foreground.Cloud3Right = {};
+
+			glm::vec4 cloudColor = 1.0f - glm::vec4(1.0f * clarity, 1.0f * clarity, 1.0f * clarity, 0.0f);
+			m_Clouds.SetColor(cloudColor);
 
 			m_TransitioningPhase = false;
 		}

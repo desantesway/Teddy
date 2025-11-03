@@ -29,6 +29,8 @@ namespace Cuphead
 		void Unpause();
 
 		bool IsSensor(const b2ShapeId& shape);
+
+		void SetColor(glm::vec4& color);
 	private:
 		struct Cloud
 		{
@@ -73,6 +75,8 @@ namespace Cuphead
 		float m_MovementSpeed = 0.0f;
 
 		glm::vec2 m_LastSpawn = {0.0f, 0.0f};
+
+		glm::vec4 m_CloudColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

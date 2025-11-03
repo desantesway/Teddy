@@ -144,6 +144,7 @@ namespace Cuphead
 				spriteOverlay.Loop = false;
 				spriteOverlay.PingPong = false;
 				spriteOverlay.Reverse = false;
+				spriteOverlay.Color = m_CloudColor;
 				auto& aAOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 				aAOverlay.Index = aA.Index + 10;
 				auto& transform = cloud.Overlay.GetComponent<Teddy::TransformComponent>();
@@ -180,6 +181,7 @@ namespace Cuphead
 		sprite.PlayableIndicies = { 0, 1, 2 };
 		sprite.Loop = true;
 		sprite.PingPong = false;
+		sprite.Color = m_CloudColor;
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(x, y, 1.999f);
 		transform.Scale *= 0.75f;
@@ -208,6 +210,7 @@ namespace Cuphead
 		sprite.PlayableIndicies = { 23, 24, 25 };
 		sprite.Loop = true;
 		sprite.PingPong = false;
+		sprite.Color = m_CloudColor;
 		auto& aA = cloud.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		aA.Index = 23;
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
@@ -238,6 +241,7 @@ namespace Cuphead
 		sprite.PlayableIndicies = { 46, 47, 48 };
 		sprite.Loop = true;
 		sprite.PingPong = false;
+		sprite.Color = m_CloudColor;
 		auto& aA = cloud.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		aA.Index = 46;
 		auto& transform = cloud.GetComponent<Teddy::TransformComponent>();
@@ -607,5 +611,22 @@ namespace Cuphead
 		}
 
 		return false;
+	}
+
+	void CloudPlatform::SetColor(glm::vec4& color)
+	{
+		for (auto& cloud : m_Clouds)
+		{
+			auto& col = cloud.Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+			col = color;
+
+			if (cloud.Overlay)
+			{
+				auto& colOverlay = cloud.Overlay.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				colOverlay = color;
+			}
+		}
+
+		m_CloudColor = color;
 	}
 }
