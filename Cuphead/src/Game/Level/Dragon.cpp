@@ -256,17 +256,12 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Ph3_Idle/Body/Dragon_Idle_Body_ph3_500x500_2048x2048_0.png"
 			});
 
-		m_Phase3IdleHeadTextures = assets.LoadMultiple<Teddy::Texture2D>({
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_0.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_1.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_2.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_3.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_4.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_5.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_6.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_7.png",
-			"assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_8.png"
-			});
+		std::vector<std::string> paths;
+		for (int i = 0; i < 18; i++)
+		{
+			paths.push_back("assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_" + std::to_string(i) + ".png");
+		}
+		m_Phase3IdleHeadTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
 	}
 
 	void Dragon::StartIntro()
@@ -1262,7 +1257,7 @@ namespace Cuphead
 
 					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 					transform.Scale = glm::vec3(4.5f, 4.5f, 1.0f);
-					transform.Translation = glm::vec3(-3.8f, -3.25f, 2.011f);
+					transform.Translation = glm::vec3(-3.5f, -3.25f, 2.011f);
 
 					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 					body.SetPosition(transform);
@@ -1275,12 +1270,51 @@ namespace Cuphead
 					spriteRH.Textures = m_Phase3IdleHeadTextures;
 					auto& atlasRH = m_Phase3Heads.RightHead.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 900, 900);
 
-					for (int i = 0; i < 4*9; i++)
+					spriteRH.PlayableIndicies.clear();
+					for (int i = 0; i < (4*9); i++)
 						spriteRH.PlayableIndicies.push_back(i);
 
 					auto& transform = m_Phase3Heads.RightHead.GetComponent<Teddy::TransformComponent>();
 					transform.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
-					transform.Translation = glm::vec3(-4.15f, -0.55f, 2.012f);
+					transform.Translation = glm::vec3(-3.85f, -0.55f, 2.014f);
+				}
+
+				// mid head
+				{
+					m_Phase3Heads.MidHead = m_Scene->CreateEntity("Dragon Phase 3 Middle Head");
+					auto& spriteMH = m_Phase3Heads.MidHead.AddComponent<Teddy::SpriteAnimationComponent>(0.04f);
+					spriteMH.Textures = m_Phase3IdleHeadTextures;
+					auto& atlasMH = m_Phase3Heads.MidHead.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 900, 900);
+
+					spriteMH.PlayableIndicies.clear();
+					for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+						spriteMH.PlayableIndicies.push_back(i);
+
+					auto& aAMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					aAMH.Index = (4 * 9) + 11;
+
+					auto& transformMH = m_Phase3Heads.MidHead.GetComponent<Teddy::TransformComponent>();
+					transformMH.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
+					transformMH.Translation = glm::vec3(-3.8f, -0.6f, 2.013f);
+				}
+
+				// left head
+				{
+					m_Phase3Heads.LeftHead = m_Scene->CreateEntity("Dragon Phase 3 Left Head");
+					auto& spriteMH = m_Phase3Heads.LeftHead.AddComponent<Teddy::SpriteAnimationComponent>(0.04f);
+					spriteMH.Textures = m_Phase3IdleHeadTextures;
+					auto& atlasMH = m_Phase3Heads.LeftHead.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 900, 900);
+
+					spriteMH.PlayableIndicies.clear();
+					for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+						spriteMH.PlayableIndicies.push_back(i);
+
+					auto& aAMH = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					aAMH.Index = (4 * 9) + 23;
+
+					auto& transformMH = m_Phase3Heads.LeftHead.GetComponent<Teddy::TransformComponent>();
+					transformMH.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
+					transformMH.Translation = glm::vec3(-3.75f, -0.5f, 2.012f);
 				}
 
 				m_Phase3Start = false;
