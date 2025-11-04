@@ -1,8 +1,8 @@
 # Current Progress:
 
-<img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/04f94fe5-313e-463e-8372-360b721bd288" />
+<img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/ce2dc28b-9d62-4846-b360-7443c651f589" />
 
-At this moment, I've done only the title screen, it has chromatic aberration, the old burn screen effect and the cuphead and mugman animation.
+At this moment, I've done almost everything! Phase 1 and 2 are mostly done, with some minor tweaks left to do. And I'm in the finish line of phase 3, all is there left to do is it's attacks and death animation. The player still needs the ability to charge and launch EX shots.
 
 # 🧸 Teddy – Game Engine (C++, OpenGL, SDL3 & ImGui)
 
