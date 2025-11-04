@@ -87,7 +87,7 @@ namespace Teddy
 		int TextureIndex = 0;
 		std::vector<int> PlayableIndicies; // for putting multiple animations in one component (up, left, right, etc)
 		float Timer = 0.0f;
-		float FrameTime = 0.1f;
+		float FrameTime = 0.05f;
 		float InitialFrameTime = FrameTime;
 		float FinalFrameTime = FrameTime;
 		bool Loop = true;
@@ -103,6 +103,9 @@ namespace Teddy
 		SpriteAnimationComponent(const SpriteAnimationComponent&) = default;
 		SpriteAnimationComponent(float initFrame, float frame, float finalFrame)
 			: InitialFrameTime(initFrame), FrameTime(frame), FinalFrameTime(finalFrame)
+		{}
+		SpriteAnimationComponent(float frame)
+			: InitialFrameTime(frame), FrameTime(frame), FinalFrameTime(frame)
 		{
 		}
 	};
@@ -173,6 +176,13 @@ namespace Teddy
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
+
+		void Unbind()
+		{
+			Instance = nullptr;
+			InstantiateScript = nullptr;
+			DestroyScript = nullptr;
+		}
 	
 	};
 
@@ -186,6 +196,8 @@ namespace Teddy
 		bool FixedRotation = false;
 
 		void* RuntimeBody = nullptr;
+
+		glm::vec2 Velocity = { 0.0f, 0.0f };
 
 		void ApplyForce(float forceX, float forceY, bool wake);
 
@@ -256,6 +268,8 @@ namespace Teddy
 			SensorData(const SensorData&) = default;
 			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox)
 				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox) {}
+			SensorData(const glm::vec2& offset, const glm::vec2& size, float rotation, bool isBox, void* fixture)
+				: Offset(offset), Size(size), Rotation(rotation), IsBox(isBox), RuntimeFixture(fixture) {}
 		};
 		
 		std::unordered_map<std::string, SensorData> Sensors;
@@ -276,6 +290,9 @@ namespace Teddy
 		void SetFilterCategory(BoxCollider2DComponent& collider, uint64_t filter);
 		void SetFilterMask(BoxCollider2DComponent& collider, uint64_t filter);
 		void SetFilterGroupIndex(BoxCollider2DComponent& collider, uint64_t filter);
+		void SetFilterCategory(Sensor2DComponent& collider, uint64_t filter);
+		void SetFilterMask(Sensor2DComponent& collider, uint64_t filter);
+		void SetFilterGroupIndex(Sensor2DComponent& collider, uint64_t filter);
 
 		CollisionFilter2DComponent() = default;
 		CollisionFilter2DComponent(const CollisionFilter2DComponent&) = default;

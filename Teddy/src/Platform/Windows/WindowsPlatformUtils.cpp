@@ -35,7 +35,7 @@ namespace Teddy
 		TED_PROFILE_CAT(InstrumentorCategory::IO);
 
 		OPENFILENAMEA ofn;
-		CHAR szFile[4096] = { 0 }; // Large buffer for multiple files
+		CHAR szFile[32768] = { 0 }; // Large buffer for multiple files
 		CHAR currentDir[256] = { 0 };
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);

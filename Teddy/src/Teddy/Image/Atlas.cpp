@@ -11,7 +11,8 @@ namespace Teddy::Atlas
 {
     void Generate(const std::vector<std::string>& filepaths,
         int maxWidth, int maxHeight, int toleration,
-        const std::string& outputPrefix)
+        const std::string& outputPrefix,
+        bool xMiddle, bool yMiddle)
     {
         if (filepaths.empty())
             TED_CORE_ERROR("No files provided");
@@ -141,8 +142,18 @@ namespace Teddy::Atlas
                     drawH = static_cast<int>(h * scale);
                 }
 
-                int offsetX = entryX + (spriteW - drawW) / 2;
-                int offsetY = entryY;// + (spriteH - drawH) / 2;
+                int offsetX;
+                int offsetY;
+
+                if(xMiddle)
+                    offsetX = entryX + (spriteW - drawW) / 2;
+                else
+					offsetX = entryX;
+
+                if(yMiddle)
+                    offsetY = entryY + (spriteH - drawH) / 2;
+				else
+					offsetY = entryY;
 
                 if (drawW == w && drawH == h) {
                     for (int y = 0; y < h; y++) {

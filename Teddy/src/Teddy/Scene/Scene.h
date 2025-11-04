@@ -24,11 +24,14 @@ namespace Teddy
 
 		Entity GetPrimaryCameraEntity();
 
+		bool IsRuntime();
+
 		static Ref<Scene> Copy(Ref<Scene> other);
 
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
+		void DestroyScript(Entity entity);
 
 		void OnRuntimeStart();
 		void OnRuntimeStop();
@@ -46,7 +49,7 @@ namespace Teddy
 		void DuplicateEntity(Entity entity);
 
 		void RefreshBody(Entity& ent);
-		void RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor);
+		static void RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor);
 		void DeleteSensor(Sensor2DComponent::SensorData& sensor);
 		b2WorldId GetPhysicsWorld() const { return m_PhysicsWorld; }
 		void SetPhysicsWorld(b2WorldId world) { m_PhysicsWorld = world; }
@@ -61,6 +64,7 @@ namespace Teddy
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 	private:
+		bool m_IsRuntime = false;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2WorldId m_PhysicsWorld = {0,0};

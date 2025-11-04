@@ -14,6 +14,20 @@ namespace Teddy {
 			return m_Entity.GetComponent<T>();
 		}
 
+		template<typename T>
+		bool HasComponent()
+		{
+			return m_Entity.HasComponent<T>();
+		}
+
+		template<typename T>
+		void RemoveComponent()
+		{
+			m_Entity.RemoveComponent<T>();
+		}
+
+		Entity GetEntity() { return m_Entity; }
+		Scene* GetScene() { return GetEntity().GetScene(); }
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}

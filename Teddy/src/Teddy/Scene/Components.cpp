@@ -61,6 +61,45 @@ namespace Teddy
         }
     }
 
+    void CollisionFilter2DComponent::SetFilterCategory(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.categoryBits = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
+    void CollisionFilter2DComponent::SetFilterMask(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.maskBits = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
+    void CollisionFilter2DComponent::SetFilterGroupIndex(Sensor2DComponent& sensor, uint64_t filter)
+    {
+        for (auto& sens : sensor.Sensors)
+        {
+            if (sens.second.RuntimeFixture)
+            {
+                b2Filter f = b2Shape_GetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture));
+                f.groupIndex = filter;
+                b2Shape_SetFilter(*static_cast<b2ShapeId*>(sens.second.RuntimeFixture), f);
+            }
+        }
+    }
+
     float Rigidbody2DComponent::GetGravityScale()
     {
         return b2Body_GetGravityScale(*static_cast<b2BodyId*>(RuntimeBody));
@@ -80,6 +119,7 @@ namespace Teddy
 
     void Rigidbody2DComponent::SetVelocity(float velX, float velY)
     {
+		Velocity = { velX, velY };
         b2Body_SetLinearVelocity(*static_cast<b2BodyId*>(RuntimeBody), { velX, velY });
     }
 
@@ -105,6 +145,7 @@ namespace Teddy
     {
 		int index = 0;
 		bool add = animation.PlayableIndicies.size() == 0;
+		AnimationSprites.clear();
         for (int i = 0; i < animation.Textures.size(); i++)
         {
             int maxX = atlas.SpriteWidth == 0 ? 1 : (animation.Textures[i]->GetWidth() / atlas.SpriteWidth);

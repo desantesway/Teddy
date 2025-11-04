@@ -676,7 +676,6 @@ namespace Teddy
 		const SpriteAtlasComponent& atlas, int entityID)
 	{
 		if (sprite.Color.a == 0.0f) return;
-
 		TED_PROFILE_CAT(InstrumentorCategory::Rendering);
 
 		if (sprite.Texture)

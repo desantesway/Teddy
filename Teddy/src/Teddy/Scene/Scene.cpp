@@ -116,8 +116,31 @@ namespace Teddy
 		return entity;
 	}
 
+	void Scene::DestroyScript(Entity entity)
+	{
+		if (entity.HasComponent<NativeScriptComponent>())
+		{
+			auto& nsc = entity.GetComponent<NativeScriptComponent>();
+			if (nsc.Instance)
+			{
+				nsc.Instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			}
+		}
+	}
+
 	void Scene::DestroyEntity(Entity entity)
 	{
+		if (entity.HasComponent<NativeScriptComponent>())
+		{
+			auto& nsc = entity.GetComponent<NativeScriptComponent>();
+			if (nsc.Instance)
+			{
+				nsc.Instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			}
+		}
+
 		m_Registry.destroy(entity);
 	}
 
@@ -314,7 +337,7 @@ namespace Teddy
 								}
 							}
 							else
-								animation.TextureIndex = 0;
+								animation.TextureIndex = animation.PlayableIndicies.size() > 0 ? animation.PlayableIndicies[0] : 0;
 						}
 						changed = true;
 						animation.Timer -= animation.FinalFrameTime;
@@ -643,14 +666,14 @@ namespace Teddy
 
 	void Scene::RefreshSensor(Entity& ent, Sensor2DComponent::SensorData& sensor)
 	{
-		if (!ent.HasComponent<Rigidbody2DComponent>() && !ent.HasComponent<TransformComponent>()) return;
+		if (!ent.HasComponent<Rigidbody2DComponent>() || !ent.HasComponent<TransformComponent>()) return;
 
 		Rigidbody2DComponent& rigidBody = ent.GetComponent<Rigidbody2DComponent>();
 		TransformComponent& transform = ent.GetComponent<TransformComponent>();
 
 		if (sensor.RuntimeFixture)
 		{
-			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), true);
+			b2DestroyShape(*static_cast<b2ShapeId*>(sensor.RuntimeFixture), false);
 			delete static_cast<b2ShapeId*>(sensor.RuntimeFixture);
 			sensor.RuntimeFixture = nullptr;
 		}
@@ -658,7 +681,7 @@ namespace Teddy
 		b2ShapeDef sensorDef = b2DefaultShapeDef();
 		sensorDef.isSensor = true;
 		sensorDef.enableSensorEvents = true;
-
+		
 		if (ent.HasComponent<CollisionFilter2DComponent>())
 		{
 			auto& filter = ent.GetComponent<CollisionFilter2DComponent>();
@@ -666,7 +689,7 @@ namespace Teddy
 			sensorDef.filter.maskBits = filter.MaskBits;
 			//shapeDef.filter.groupIndex = filter.GroupIndex;
 		}
-
+		
 		b2ShapeId sensorShape;
 		if (sensor.IsBox)
 		{
@@ -683,7 +706,7 @@ namespace Teddy
 			circle.radius = glm::max(sx, sy);
 			sensorShape = b2CreateCircleShape(*static_cast<b2BodyId*>(rigidBody.RuntimeBody), &sensorDef, &circle);
 		}
-
+		
 		sensor.RuntimeFixture = new b2ShapeId(sensorShape);
 	}
 
@@ -707,6 +730,7 @@ namespace Teddy
 		bodyDef.rotation = b2MakeRot(transform.Rotation.z);
 		bodyDef.motionLocks.angularZ = rigidBody.FixedRotation;
 		bodyDef.gravityScale = rigidBody.GravityScale;
+		bodyDef.linearVelocity = b2Vec2(rigidBody.Velocity.x, rigidBody.Velocity.y);
 
 		b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 		rigidBody.RuntimeBody = new b2BodyId(bodyId);
@@ -975,6 +999,7 @@ namespace Teddy
 			bodyDef.motionLocks.angularZ = rb2d.FixedRotation;
 			bodyDef.position = b2Vec2(transform.Translation.x, transform.Translation.y);
 			bodyDef.gravityScale = rb2d.GravityScale;
+			bodyDef.linearVelocity = b2Vec2(rb2d.Velocity.x, rb2d.Velocity.y);
 
 			b2BodyId bodyId = b2CreateBody(m_PhysicsWorld, &bodyDef);
 			rb2d.RuntimeBody = new b2BodyId(bodyId);
@@ -1088,6 +1113,8 @@ namespace Teddy
 				bc2d.RuntimeFixture = new b2ShapeId(myShapeId);
 			}
 		}
+
+		m_IsRuntime = true;
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -1106,8 +1133,21 @@ namespace Teddy
 
 	void Scene::OnRuntimeStop()
 	{
+		for (auto entity : m_Registry.view<Rigidbody2DComponent>())
+		{
+			Teddy::Entity ent{ entity, this };
+			auto& rb2d = ent.GetComponent<Rigidbody2DComponent>();
+			rb2d.Velocity = rb2d.GetVelocity();
+		}
+
 		b2DestroyWorld(m_PhysicsWorld);
 		m_PhysicsWorld = b2_nullWorldId;
+		m_IsRuntime = false;
+	}
+
+	bool Scene::IsRuntime()
+	{
+		return m_IsRuntime;
 	}
 
 	void Scene::DuplicateEntity(Entity entity)
