@@ -1261,6 +1261,15 @@ namespace Cuphead
 
 					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 					body.SetPosition(transform);
+
+					auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+					m_Scene->DeleteSensor(sensor.Sensors["BellyHitBox"]);
+					m_Scene->DeleteSensor(sensor.Sensors["NeckHitBox"]);
+					m_Scene->DeleteSensor(sensor.Sensors["HeadHitBox"]);
+					sensor.Sensors["BellyHitBox"] = { { 0.0f, 0.0f }, { 1.0f, 1.0f }, 0.0f, false };
+					sensor.Sensors["HeadsHitBox"] = { { -0.5f, 3.0f }, { 1.0f, 2.0f }, 0.0f, true };
+					m_Scene->RefreshSensor(m_Entity, sensor.Sensors["BellyHitBox"]);
+					m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HeadsHitBox"]);
 				}
 				
 				// right head

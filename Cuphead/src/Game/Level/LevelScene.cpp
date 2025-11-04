@@ -842,7 +842,6 @@ namespace Cuphead
 						m_Lightning = false;
 						canEnd = false;
 					}
-					
 				}
 				else
 				{
