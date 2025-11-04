@@ -123,12 +123,19 @@ namespace Cuphead
 		Ph3Background m_BackgroundPhase3;
 		Foreground m_ForegroundPhase3;
 		Rain m_Rain;
+		Teddy::Entity m_LightningFlash;
+		bool m_Lightning = false;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3SpireTextures;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundTexture;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundNightCloudTexture;
 		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundNightCloudTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundFlash1CloudTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundFlash1CloudTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3BackgroundFlash2CloudTexture;
+		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundFlash2CloudTexture;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RainTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LightningTextures;
 
 		int m_State = 0;
 		int m_Phase = 1;

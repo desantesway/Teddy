@@ -3,6 +3,7 @@
 #include <Teddy.h>
 
 #include "LevelCategories.h"
+#include "Randomizer.h"
 
 namespace Cuphead
 {
@@ -108,9 +109,11 @@ namespace Cuphead
 
 		m_Phase3SpireTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
 
-		m_Phase3BackgroundTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Dragon_Background_ph3_2048x543_2048x2048_0.png", Teddy::Boolean::True);
+		m_Phase3BackgroundTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Dragon_Night_Background_ph3_2048x543_2048x2048_0.png", Teddy::Boolean::True);
 
 		m_Phase3BackgroundNightCloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Night_Clouds_1916x452_2048x2048_0.png", Teddy::Boolean::True);
+		m_Phase3BackgroundFlash1CloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Flash1_Clouds_1916x452_2048x2048_0.png", Teddy::Boolean::True);
+		m_Phase3BackgroundFlash2CloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Background/Flash2_Clouds_1916x452_2048x2048_0.png", Teddy::Boolean::True);
 	}
 
 	void LevelScene::InitPhase3Foreground()
@@ -118,12 +121,21 @@ namespace Cuphead
 		auto& assets = Teddy::AssetManager::Get();
 
 		m_Phase3ForegroundNightCloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Foreground/Night_Clouds_971x124_1024x1024_0.png", Teddy::Boolean::True);
+		m_Phase3ForegroundFlash1CloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Foreground/Flash1_Clouds_971x124_1024x1024_0.png", Teddy::Boolean::True);
+		m_Phase3ForegroundFlash2CloudTexture = assets.Load<Teddy::Texture2D>("assets/Textures/Dragon/Foreground/Flash2_Clouds_971x124_1024x1024_0.png", Teddy::Boolean::True);
 
 		std::vector<std::string> paths;
 		for (int i = 0; i <= 35; i++)
 			paths.push_back("assets/Textures/Dragon/Rain/Dragon_Rain_ph3_1475x1115_1475x1115_" + std::to_string(i) + ".png");
 
 		m_RainTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
+
+		m_LightningTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Lightning/Dragon_Ph3_Lightning_500x950_2048x2048_0.png",
+			"assets/Textures/Dragon/Lightning/Dragon_Ph3_Lightning_500x950_2048x2048_1.png",
+			"assets/Textures/Dragon/Lightning/Dragon_Ph3_Lightning_500x950_2048x2048_2.png",
+			"assets/Textures/Dragon/Lightning/Dragon_Ph3_Lightning_500x950_2048x2048_3.png"
+			});
 	}
 
 	void LevelScene::InitPhase1Background()
@@ -764,7 +776,6 @@ namespace Cuphead
 			m_Rain.Rain1 = m_Scene->CreateEntity("Rain Layer 1"); // TODO: lightning
 			auto& rain1Sprite = m_Rain.Rain1.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 			rain1Sprite.Textures = m_RainTextures;
-			rain1Sprite.PlayableIndicies.clear();
 			rain1Sprite.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			rain1Sprite.PlayableIndicies.clear();
 			int rainNum = 1;
@@ -793,7 +804,7 @@ namespace Cuphead
 
 		// Rain3
 		{
-			m_Rain.Rain3 = m_Scene->CreateEntity("Rain Layer 3"); // TODO: lightning
+			m_Rain.Rain3 = m_Scene->CreateEntity("Rain Layer 3");
 			auto& rain3Sprite = m_Rain.Rain3.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 			rain3Sprite.Textures = m_RainTextures;
 			rain3Sprite.PlayableIndicies.clear();
@@ -814,6 +825,184 @@ namespace Cuphead
 		if (m_TransitioningPhase)
 		{
 			OnUpdatePhase3Start(ts);
+		}
+
+		if (m_Lightning)
+		{
+			if (m_LightningFlash)
+			{
+				static bool canEnd = false;
+				auto& aA = m_LightningFlash.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (canEnd)
+				{
+					if (aA.Index == 10 || aA.Index == 12 || aA.Index == 16 || aA.Index == 18 || aA.Index == 20 || aA.Index == 23)
+					{
+						m_Scene->DestroyEntity(m_LightningFlash);
+						m_LightningFlash = {};
+						m_Lightning = false;
+						canEnd = false;
+					}
+					
+				}
+				else
+				{
+					static float timer = 0.0f;
+					timer += ts;
+					static bool flashed = false;
+					if (timer > 0.1f)
+					{
+						if (!flashed)
+						{
+							m_Clouds.SetColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+							m_Player.SetColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+							m_Dragon.SetColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+							m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+							m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 2;
+							m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 2;
+							m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash2CloudTexture;
+							m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash2CloudTexture;
+							m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash2CloudTexture;
+							m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash2CloudTexture;
+							m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+
+							canEnd = false;
+							flashed = true;
+							timer = 0.0f;
+						}
+						else
+						{
+							m_Clouds.SetColor(glm::vec4(0.75f, 0.75f, 0.75f, 1.0f));
+							m_Player.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+							m_Dragon.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+							m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+							m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 0;
+							m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 0;
+							m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundNightCloudTexture;
+							m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundNightCloudTexture;
+							m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundNightCloudTexture;
+							m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundNightCloudTexture;
+							auto& rain1Sprite = m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>();
+							rain1Sprite.PlayableIndicies.clear();
+							int rainNum = 1;
+							for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+								rain1Sprite.PlayableIndicies.push_back(i);
+							m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+							auto& rain2Sprite = m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>();
+							rain2Sprite.PlayableIndicies.clear();
+							rainNum = 4;
+							for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+								rain2Sprite.PlayableIndicies.push_back(i);
+							timer = 0.0f;
+							canEnd = true;
+							flashed = false;
+						}
+					}
+				}
+			}
+			else
+			{
+				m_LightningFlash = m_Scene->CreateEntity("Lightning Flash");
+
+				auto& sprite = m_LightningFlash.AddComponent<Teddy::SpriteAnimationComponent>();
+				sprite.Textures = m_LightningTextures;
+				sprite.Loop = false;
+
+				auto& atlas = m_LightningFlash.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 500, 950);
+
+				auto& transform = m_LightningFlash.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = glm::vec3(2.0f, 0.5f, 0.03f);
+				transform.Scale = glm::vec3(7.5f, 7.5f, 1.0f);
+
+				switch (Randomizer::Get().RandomInt(0, 5))
+				{
+				case 0:
+					sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+					break;
+				case 1:
+					sprite.PlayableIndicies = { 11, 12 };
+					break;
+				case 2:
+					sprite.PlayableIndicies = { 13, 14, 15, 16 };
+					transform.Scale = glm::vec3(15.0f, 15.0f, 1.0f);
+					transform.Translation = glm::vec3(2.0f, 0.0f, 0.03f);
+					break;
+				case 3:
+					sprite.PlayableIndicies = { 17, 18 };
+					transform.Scale = glm::vec3(15.0f, 15.0f, 1.0f);
+					transform.Translation = glm::vec3(2.0f, 0.0f, 0.03f);
+					break;
+				case 4:
+					sprite.PlayableIndicies = { 19, 20 };
+					break;
+				case 5:
+					sprite.PlayableIndicies = { 21, 22, 23 };
+					transform.Scale = glm::vec3(15.0f, 15.0f, 1.0f);
+					transform.Translation = glm::vec3(2.0f, 0.0f, 0.03f);
+					break;
+				default:
+					break;
+				}
+
+				auto& aA = m_LightningFlash.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				aA.Index = *sprite.PlayableIndicies.begin();
+
+				m_Clouds.SetColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+				m_Player.SetColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+				m_Dragon.SetColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+				m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+				m_BackgroundPhase3.RightBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 1;
+				m_BackgroundPhase3.LeftBackground.GetComponent<Teddy::SpriteAtlasComponent>().Y = 1;
+				m_BackgroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash1CloudTexture;
+				m_BackgroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash1CloudTexture;
+				m_BackgroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash1CloudTexture;
+				m_BackgroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3BackgroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud1Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud1Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud2Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud2Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud3Right.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				m_ForegroundPhase3.Cloud3Left.GetComponent<Teddy::SpriteRendererComponent>().Texture = m_Phase3ForegroundFlash1CloudTexture;
+				auto& rain1Sprite = m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>();
+				rain1Sprite.PlayableIndicies.clear();
+				int rainNum = 0;
+				for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+					rain1Sprite.PlayableIndicies.push_back(i);
+				m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+				auto& rain2Sprite = m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>();
+				rain2Sprite.PlayableIndicies.clear();
+				rainNum = 3;
+				for (int i = 0 + 7 * rainNum; i < 7 + 7 * rainNum; i++)
+					rain2Sprite.PlayableIndicies.push_back(i);
+			}
+		}
+		else
+		{
+			static float timer = 0.0f;
+			if (m_Dragon.IsIdle())
+			{
+				timer += ts;
+				if (timer >= 5.0f)
+				{
+					m_Lightning = true;
+					timer = 0.0f;
+				}
+			}
+			else
+			{
+				timer = 0.0f;
+			}
 		}
 
 		// Move Background

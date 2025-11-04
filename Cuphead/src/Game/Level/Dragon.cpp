@@ -1203,7 +1203,7 @@ namespace Cuphead
 		m_Entity.RemoveComponent<Teddy::NativeScriptComponent>();
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = glm::vec3(-1.8f, -0.25f, 2.011f);
+		transform.Translation = glm::vec3(-1.5f, -0.0f, 2.011f);
 		transform.Scale = glm::vec3(8.5f, 8.5f, 1.0f);
 
 		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
@@ -1257,7 +1257,7 @@ namespace Cuphead
 
 					auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 					transform.Scale = glm::vec3(4.5f, 4.5f, 1.0f);
-					transform.Translation = glm::vec3(-3.5f, -3.25f, 2.011f);
+					transform.Translation = glm::vec3(-3.5f, -3.0f, 2.011f);
 
 					auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 					body.SetPosition(transform);
@@ -1276,7 +1276,7 @@ namespace Cuphead
 
 					auto& transform = m_Phase3Heads.RightHead.GetComponent<Teddy::TransformComponent>();
 					transform.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
-					transform.Translation = glm::vec3(-3.85f, -0.55f, 2.014f);
+					transform.Translation = glm::vec3(-3.85f, -0.3f, 2.014f);
 				}
 
 				// mid head
@@ -1295,7 +1295,7 @@ namespace Cuphead
 
 					auto& transformMH = m_Phase3Heads.MidHead.GetComponent<Teddy::TransformComponent>();
 					transformMH.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
-					transformMH.Translation = glm::vec3(-3.8f, -0.6f, 2.013f);
+					transformMH.Translation = glm::vec3(-3.8f, -0.35f, 2.013f);
 				}
 
 				// left head
@@ -1314,7 +1314,7 @@ namespace Cuphead
 
 					auto& transformMH = m_Phase3Heads.LeftHead.GetComponent<Teddy::TransformComponent>();
 					transformMH.Scale = glm::vec3(8.0f, 8.0f, 1.0f);
-					transformMH.Translation = glm::vec3(-3.75f, -0.5f, 2.012f);
+					transformMH.Translation = glm::vec3(-3.75f, -0.25f, 2.012f);
 				}
 
 				m_Phase3Start = false;
@@ -2176,4 +2176,26 @@ namespace Cuphead
 			}
 		}
 	}
+
+	void Dragon::SetColor(glm::vec4 color)
+	{ 
+		m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color = color; 
+		if (m_Phase3Heads.LeftHead)
+		{
+			m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		}
+		if (m_Phase3Heads.RightHead)
+		{
+			m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		}
+		if (m_Phase3Heads.MidHead)
+		{
+			m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		}
+		if (m_TailEntity)
+		{
+			m_TailEntity.GetComponent<Teddy::SpriteAnimationComponent>().Color = color;
+		}
+	}
+
 }

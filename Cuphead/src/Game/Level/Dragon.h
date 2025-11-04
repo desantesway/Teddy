@@ -19,6 +19,7 @@ namespace Cuphead
 		Teddy::Entity GetEntity() { return m_Entity; }
 
 		bool IsIntroDone() { return m_State != DragonState::Intro; }
+		bool IsIdle() { return m_State == DragonState::Idle; }
 
 		void StartIntro();
 		void LoadIntro();
@@ -39,6 +40,8 @@ namespace Cuphead
 
 		void SetPlayerPosition(const glm::vec2& pos) { m_PlayerPosition = pos; }
 		bool IsLastPhase() const { return m_Phase3Start; }
+
+		void SetColor(glm::vec4 color);
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);

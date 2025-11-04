@@ -30,7 +30,7 @@ namespace Cuphead
 
 		bool IsSensor(const b2ShapeId& shape);
 
-		void SetColor(glm::vec4& color);
+		void SetColor(glm::vec4 color);
 	private:
 		struct Cloud
 		{

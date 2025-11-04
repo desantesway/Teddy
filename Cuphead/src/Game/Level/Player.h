@@ -51,6 +51,8 @@ namespace Cuphead
 
 		float GetProjectileDamage() { return m_Damage; }
 		float GetEXDamage() { return m_EXDamage; }
+
+		void SetColor(glm::vec4 color) { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color = color; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);

@@ -613,7 +613,7 @@ namespace Cuphead
 		return false;
 	}
 
-	void CloudPlatform::SetColor(glm::vec4& color)
+	void CloudPlatform::SetColor(glm::vec4 color)
 	{
 		for (auto& cloud : m_Clouds)
 		{
