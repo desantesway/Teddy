@@ -68,6 +68,22 @@ namespace Cuphead
 				auto& tailColor = m_TailEntity.GetComponent<Teddy::SpriteAnimationComponent>().Color;
 				tailColor = color;
 			}
+
+			if (m_Phase3Heads.LeftHead)
+			{
+				auto& leftHeadColor = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				leftHeadColor = color;
+			}
+			if (m_Phase3Heads.RightHead)
+			{
+				auto& rightHeadColor = m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				rightHeadColor = color;
+			}
+			if (m_Phase3Heads.MidHead)
+			{
+				auto& midHeadColor = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>().Color;
+				midHeadColor = color;
+			}
 		}
 	}
 
