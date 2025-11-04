@@ -6,7 +6,9 @@ Moving beyond the initial tutorial structure, Teddy has been extensively extende
 
 ---
 
-# If you want to see how it is in real use check the Cuphead branch [here](https://github.com/desantesway/Teddy/tree/cuphead), where I am remaking a Cuphead level and menus.
+# If you want to see how it is in real use check the Cuphead branch [here](https://github.com/desantesway/Teddy/tree/cuphead), where I am remaking a Cuphead level and menus. Here's a sneak peek:
+
+<img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/ce2dc28b-9d62-4846-b360-7443c651f589" />
 
 ## 🧪 Usage (Windows)
 
