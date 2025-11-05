@@ -28,6 +28,9 @@ namespace Cuphead
 		case DragonState::Intro:
 			Intro();
 			break;
+		case DragonState::Firebubble:
+			Firebubble();
+			break;
 		default:
 			break;
 		}
@@ -278,6 +281,13 @@ namespace Cuphead
 			paths.push_back("assets/Textures/Dragon/Entity/Ph3_Idle/Heads/Dragon_Idle_Head_ph3_900x900_2048x2048_" + std::to_string(i) + ".png");
 		}
 		m_Phase3IdleHeadTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
+
+		paths.clear();
+		for (int i = 0; i < 14; i++)
+		{
+			paths.push_back("assets/Textures/Dragon/Entity/Ph3_Attack/Dragon_Attack_ph3_900x900_2048x2048_" + std::to_string(i) + ".png");
+		}
+		m_Phase3AttackHeadTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
 	}
 
 	void Dragon::StartIntro()
@@ -410,7 +420,36 @@ namespace Cuphead
 			}
 			else
 			{
-
+				static float timer = 0.0f;
+				timer += ts;
+				if (timer >= 1.25f) // RANDOMIZE 0,1,2
+				{
+					static int headToAttack = Randomizer::Get().RandomInt(0,2);
+					auto& aALeftHead = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					auto& aARightHead = m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					auto& aAMidHead = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (headToAttack == 0 && (aARightHead.Index == 7 || aARightHead.Index == 19))
+					{
+						timer = 0.0f;
+						m_Phase3Heads.SelectedHead = headToAttack;
+						StartPhase3Attack();
+						headToAttack = Randomizer::Get().RandomInt(0, 2);
+					}
+					else if (headToAttack == 1 && (aAMidHead.Index == (4 * 9) + 7 || aAMidHead.Index == (4 * 9) + 19))
+					{
+						timer = 0.0f;
+						m_Phase3Heads.SelectedHead = headToAttack;
+						StartPhase3Attack();
+						headToAttack = Randomizer::Get().RandomInt(0, 2);
+					}
+					else if (headToAttack == 2 && (aALeftHead.Index == (4 * 9) + 7 || aALeftHead.Index == (4 * 9) + 19))
+					{
+						timer = 0.0f;
+						m_Phase3Heads.SelectedHead = headToAttack;
+						StartPhase3Attack();
+						headToAttack = Randomizer::Get().RandomInt(0, 2);
+					}
+				}
 			}
 		}
 	}
@@ -1356,6 +1395,182 @@ namespace Cuphead
 			}
 
 			lastIndex = atlasAnim.Index;
+		}
+	}
+
+	void Dragon::StartPhase3Attack()
+	{
+		Teddy::SpriteAnimationComponent* sprite = nullptr;
+		Teddy::SpriteAnimationAtlasComponent* animAtlas = nullptr;
+		Teddy::SpriteAtlasComponent* atlas = nullptr;
+
+		switch (m_Phase3Heads.SelectedHead)
+		{
+		case 0:
+			sprite = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == 7)
+			{
+				animAtlas->Index = 0;
+				sprite->PlayableIndicies.clear();
+				for (int i = 0; i< 14; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			else if (animAtlas->Index == 19)
+			{
+				animAtlas->Index = 14;
+				sprite->PlayableIndicies.clear();
+				for (int i = 14; i < 28; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			break;
+		case 1:
+			sprite = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == (4 * 9) + 7)
+			{
+				animAtlas->Index = 28;
+				sprite->PlayableIndicies.clear();
+				for (int i = 28; i < 42; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			else if (animAtlas->Index == (4 * 9) + 19)
+			{
+				animAtlas->Index = 42;
+				sprite->PlayableIndicies.clear();
+				for (int i = 42; i < 56; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			break;
+		default:
+			sprite = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == (4 * 9) + 7)
+			{
+				animAtlas->Index = 28;
+				sprite->PlayableIndicies.clear();
+				for (int i = 28; i < 42; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			else if (animAtlas->Index == (4 * 9) + 19)
+			{
+				animAtlas->Index = 42;
+				sprite->PlayableIndicies.clear();
+				for (int i = 42; i < 56; i++)
+					sprite->PlayableIndicies.push_back(i);
+			}
+			break;
+		}
+
+		sprite->Textures = m_Phase3AttackHeadTextures;
+		sprite->Loop = false;
+
+		animAtlas->GenerateFrames(*sprite, *atlas);
+
+		sprite = nullptr;
+		animAtlas = nullptr;
+
+		m_State = DragonState::Firebubble;
+	}
+
+	void Dragon::Firebubble()
+	{
+		Teddy::SpriteAnimationComponent* sprite = nullptr;
+		Teddy::SpriteAnimationAtlasComponent* animAtlas = nullptr;
+		Teddy::SpriteAtlasComponent* atlas = nullptr;
+
+		switch (m_Phase3Heads.SelectedHead)
+		{
+		case 0:
+			sprite = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == 13)
+			{
+				animAtlas->Index = 20;
+				sprite->PlayableIndicies.clear();
+				for (int i = 0; i < (4 * 9); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			else if (animAtlas->Index == 27)
+			{
+				animAtlas->Index = 32;
+				sprite->PlayableIndicies.clear();
+				for (int i = 0; i < (4 * 9); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			break;
+		case 1:
+			sprite = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == 41)
+			{
+				animAtlas->Index = (4 * 9) + 20;
+				sprite->PlayableIndicies.clear();
+				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			else if (animAtlas->Index == 55)
+			{
+				animAtlas->Index = (4 * 9) + 32;
+				sprite->PlayableIndicies.clear();
+				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			break;
+		default:
+			sprite = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			animAtlas = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			atlas = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			if (animAtlas->Index == 41)
+			{
+				animAtlas->Index = (4 * 9) + 20;
+				sprite->PlayableIndicies.clear();
+				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			else if (animAtlas->Index == 55)
+			{
+				animAtlas->Index = (4 * 9) + 32;
+				sprite->PlayableIndicies.clear();
+				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+					sprite->PlayableIndicies.push_back(i);
+				sprite->Loop = true;
+				sprite->Textures = m_Phase3IdleHeadTextures;
+				animAtlas->GenerateFrames(*sprite, *atlas);
+
+				m_State = DragonState::Idle;
+			}
+			break;
 		}
 	}
 
