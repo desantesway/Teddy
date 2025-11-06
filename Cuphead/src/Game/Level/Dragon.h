@@ -79,6 +79,7 @@ namespace Cuphead
 		void StartPhase3Attack();
 
 		void Firebubble();
+		void CreateFirebubbleSpit(float x, float y);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -107,6 +108,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3IdleBodyTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3IdleHeadTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3AttackHeadTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FirebubbleTextures;
 
 		enum class DragonState
 		{
@@ -178,9 +180,11 @@ namespace Cuphead
 			Teddy::Entity LeftHead; // 2
 
 			int SelectedHead = 0;
+			bool Shot = false;
 		};
 
 		Phase3Heads m_Phase3Heads;
+		Teddy::Entity m_FirebubbleSpitEntity;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

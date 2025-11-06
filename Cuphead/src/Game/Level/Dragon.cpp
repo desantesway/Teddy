@@ -288,6 +288,14 @@ namespace Cuphead
 			paths.push_back("assets/Textures/Dragon/Entity/Ph3_Attack/Dragon_Attack_ph3_900x900_2048x2048_" + std::to_string(i) + ".png");
 		}
 		m_Phase3AttackHeadTextures = assets.LoadMultiple<Teddy::Texture2D>(paths);
+
+		m_Phase3FirebubbleTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_0.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_1.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_2.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_3.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_4.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -420,11 +428,20 @@ namespace Cuphead
 			}
 			else
 			{
+				if (m_FirebubbleSpitEntity)
+				{
+					auto& aA = m_FirebubbleSpitEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aA.Index == 56)
+					{
+						m_Scene->DestroyEntity(m_FirebubbleSpitEntity);
+						m_FirebubbleSpitEntity = Teddy::Entity();
+					}
+				}
 				static float timer = 0.0f;
 				timer += ts;
-				if (timer >= 1.25f) // RANDOMIZE 0,1,2
+				if (timer >= 1.25f)
 				{
-					static int headToAttack = Randomizer::Get().RandomInt(0,2);
+					static int headToAttack = Randomizer::Get().RandomInt(0, 2);
 					auto& aALeftHead = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 					auto& aARightHead = m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 					auto& aAMidHead = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -1476,6 +1493,27 @@ namespace Cuphead
 		m_State = DragonState::Firebubble;
 	}
 
+	void Dragon::CreateFirebubbleSpit(float x, float y)
+	{
+		m_FirebubbleSpitEntity = m_Scene->CreateEntity("Dragon Firebubble Spit");
+
+		auto& spriteFBS = m_FirebubbleSpitEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		spriteFBS.Textures = m_Phase3FirebubbleTextures;
+		spriteFBS.Loop = false;
+		spriteFBS.PlayableIndicies.clear();
+		for (int i = 40; i < 57; i++)
+			spriteFBS.PlayableIndicies.push_back(i);
+
+		auto& atlasFBS = m_FirebubbleSpitEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 550, 500);
+
+		auto& animAtlasFBS = m_FirebubbleSpitEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		animAtlasFBS.Index = 40;
+
+		auto& transformFBS = m_FirebubbleSpitEntity.GetComponent<Teddy::TransformComponent>();
+		transformFBS.Scale = glm::vec3(5.0f, 5.0f, 1.0f);
+		transformFBS.Translation = glm::vec3(x, y, 2.02f);
+	}
+
 	void Dragon::Firebubble()
 	{
 		Teddy::SpriteAnimationComponent* sprite = nullptr;
@@ -1490,6 +1528,7 @@ namespace Cuphead
 			atlas = &m_Phase3Heads.RightHead.GetComponent<Teddy::SpriteAtlasComponent>();
 			if (animAtlas->Index == 13)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = 20;
 				sprite->PlayableIndicies.clear();
 				for (int i = 0; i < (4 * 9); i++)
@@ -1502,6 +1541,7 @@ namespace Cuphead
 			}
 			else if (animAtlas->Index == 27)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = 32;
 				sprite->PlayableIndicies.clear();
 				for (int i = 0; i < (4 * 9); i++)
@@ -1512,6 +1552,16 @@ namespace Cuphead
 
 				m_State = DragonState::Idle;
 			}
+			else if (animAtlas->Index == 6 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(0.0f, 1.25f);
+				m_Phase3Heads.Shot = true;
+			}
+			else if (animAtlas->Index == 20 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(-0.5f, -1.0f);
+				m_Phase3Heads.Shot = true;
+			}
 			break;
 		case 1:
 			sprite = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -1519,6 +1569,7 @@ namespace Cuphead
 			atlas = &m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAtlasComponent>();
 			if (animAtlas->Index == 41)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = (4 * 9) + 20;
 				sprite->PlayableIndicies.clear();
 				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
@@ -1531,6 +1582,7 @@ namespace Cuphead
 			}
 			else if (animAtlas->Index == 55)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = (4 * 9) + 32;
 				sprite->PlayableIndicies.clear();
 				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
@@ -1540,6 +1592,16 @@ namespace Cuphead
 				animAtlas->GenerateFrames(*sprite, *atlas);
 
 				m_State = DragonState::Idle;
+			}
+			else if (animAtlas->Index == 34 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(0.75f, 1.25f);
+				m_Phase3Heads.Shot = true;
+			}
+			else if (animAtlas->Index == 48 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(0.25f, -1.0f);
+				m_Phase3Heads.Shot = true;
 			}
 			break;
 		default:
@@ -1548,6 +1610,7 @@ namespace Cuphead
 			atlas = &m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAtlasComponent>();
 			if (animAtlas->Index == 41)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = (4 * 9) + 20;
 				sprite->PlayableIndicies.clear();
 				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
@@ -1560,6 +1623,7 @@ namespace Cuphead
 			}
 			else if (animAtlas->Index == 55)
 			{
+				m_Phase3Heads.Shot = false;
 				animAtlas->Index = (4 * 9) + 32;
 				sprite->PlayableIndicies.clear();
 				for (int i = (4 * 9); i < (4 * 9 * 2); i++)
@@ -1569,6 +1633,16 @@ namespace Cuphead
 				animAtlas->GenerateFrames(*sprite, *atlas);
 
 				m_State = DragonState::Idle;
+			}
+			else if (animAtlas->Index == 34 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(0.75f, 1.5f);
+				m_Phase3Heads.Shot = true;
+			}
+			else if (animAtlas->Index == 48 && !m_Phase3Heads.Shot)
+			{
+				CreateFirebubbleSpit(0.25f, -1.0f);
+				m_Phase3Heads.Shot = true;
 			}
 			break;
 		}
