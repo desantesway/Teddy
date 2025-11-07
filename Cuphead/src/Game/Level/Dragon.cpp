@@ -437,6 +437,37 @@ namespace Cuphead
 						m_FirebubbleSpitEntity = Teddy::Entity();
 					}
 				}
+				std::vector<FirebubbleProjectile> firebubblesToRemove;
+				std::vector<FirebubbleProjectile> newFirebubbles;
+				for (auto& bubble : m_Firebubbles)
+				{
+					auto& aA = bubble.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (bubble.Health <= 0)
+					{
+						if (aA.Index == 7)
+						{
+							firebubblesToRemove.push_back(bubble);
+							continue;
+						}
+					}
+					else
+					{
+						if (aA.Index == 15)
+						{
+							auto& spriteFB = bubble.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+							spriteFB.Loop = true;
+							spriteFB.PlayableIndicies.clear();
+							for (int i = 16; i < 40; i++)
+								spriteFB.PlayableIndicies.push_back(i);
+						}
+					}
+					newFirebubbles.push_back(bubble);
+				}
+				m_Firebubbles = newFirebubbles;
+				for (auto& bubble : firebubblesToRemove)
+				{
+					m_Scene->DestroyEntity(bubble.Entity);
+				}
 				static float timer = 0.0f;
 				timer += ts;
 				if (timer >= 1.25f)
@@ -1514,6 +1545,89 @@ namespace Cuphead
 		transformFBS.Translation = glm::vec3(x, y, 2.02f);
 	}
 
+	void Dragon::CreateFirebubble(float x, float y)
+	{
+		auto ent = m_Scene->CreateEntity("Dragon Firebubble");
+
+		auto& spriteFB = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		spriteFB.Textures = m_Phase3FirebubbleTextures;
+		spriteFB.Loop = false;
+		spriteFB.PlayableIndicies.clear();
+		for (int i = 8; i < 16; i++)
+			spriteFB.PlayableIndicies.push_back(i);
+
+		auto& atlasFB = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 550, 500);
+
+		auto& animAtlasFB = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		animAtlasFB.Index = 8;
+
+		auto& transformFB = ent.GetComponent<Teddy::TransformComponent>();
+		transformFB.Scale = glm::vec3(2.5f, 2.5f, 1.0f);
+		transformFB.Translation = glm::vec3(x, y, 2.021f);
+
+		auto& bodyFB = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+		bodyFB.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+		glm::vec2 tailPos = glm::vec2(transformFB.Translation.x, transformFB.Translation.y); // TODO: do the same for the phase 2
+		glm::vec2 direction = glm::normalize(m_PlayerPosition - tailPos);
+		float speed = 2.0f;
+		bodyFB.Velocity = direction * speed;
+
+		auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::ENEMY;
+		filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
+
+		auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.25f, 0.25f }, 0.0f, true };
+
+		m_Scene->RefreshBody(ent);
+
+		bodyFB.SetPosition(transformFB);
+
+		m_Firebubbles.push_back(ent);
+	}
+
+	bool Dragon::IsFirebubble(b2ShapeId shape)
+	{
+		for (auto& ent : m_Firebubbles)
+		{
+			auto sensor = ent.Entity.GetComponent<Teddy::Sensor2DComponent>();
+			if (sensor.Sensors["HitBox"].RuntimeFixture)
+			{
+				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.Sensors["HitBox"].RuntimeFixture);
+				if (B2_ID_EQUALS(shape, sensorShape))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	void Dragon::HitFirebubble(b2ShapeId shape, float damage)
+	{
+		for (auto& bubble : m_Firebubbles)
+		{
+			auto& sensor = bubble.Entity.GetComponent<Teddy::Sensor2DComponent>();
+			if (sensor.Sensors["HitBox"].RuntimeFixture)
+			{
+				b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.Sensors["HitBox"].RuntimeFixture);
+				if (B2_ID_EQUALS(shape, sensorShape))
+				{
+					bubble.Health -= damage;
+					if (bubble.Health <= 0.0f) // TODO 4 projectiles
+					{
+						auto& spriteFB = bubble.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+						spriteFB.Loop = false;
+						spriteFB.PlayableIndicies.clear();
+						for (int i = 0; i < 8; i++)
+							spriteFB.PlayableIndicies.push_back(i);
+						auto& body = bubble.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+						body.SetVelocity(0.0f, 0.0f);
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	void Dragon::Firebubble()
 	{
 		Teddy::SpriteAnimationComponent* sprite = nullptr;
@@ -1555,11 +1669,13 @@ namespace Cuphead
 			else if (animAtlas->Index == 6 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(0.0f, 1.25f);
+				CreateFirebubble(0.0f, 1.25f);
 				m_Phase3Heads.Shot = true;
 			}
 			else if (animAtlas->Index == 20 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(-0.5f, -1.0f);
+				CreateFirebubble(-0.5f, -1.0f);
 				m_Phase3Heads.Shot = true;
 			}
 			break;
@@ -1596,11 +1712,13 @@ namespace Cuphead
 			else if (animAtlas->Index == 34 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(0.75f, 1.25f);
+				CreateFirebubble(0.75f, 1.5f);
 				m_Phase3Heads.Shot = true;
 			}
 			else if (animAtlas->Index == 48 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(0.25f, -1.0f);
+				CreateFirebubble(0.25f, -1.0f);
 				m_Phase3Heads.Shot = true;
 			}
 			break;
@@ -1637,11 +1755,13 @@ namespace Cuphead
 			else if (animAtlas->Index == 34 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(0.75f, 1.5f);
+				CreateFirebubble(0.75f, 1.5f);
 				m_Phase3Heads.Shot = true;
 			}
 			else if (animAtlas->Index == 48 && !m_Phase3Heads.Shot)
 			{
 				CreateFirebubbleSpit(0.25f, -1.0f);
+				CreateFirebubble(0.25f, -1.0f);
 				m_Phase3Heads.Shot = true;
 			}
 			break;
@@ -2058,6 +2178,21 @@ namespace Cuphead
 			}
 		}
 		m_ProjectileEntities = newPeashots;
+		std::vector<FirebubbleProjectile> newFirebubbles;
+		for (auto& ent : m_Firebubbles)
+		{
+			auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+			if (transform.Translation.x >= 10.0f || transform.Translation.x <= -10.0f ||
+				transform.Translation.y <= -3.5f || transform.Translation.y >= 3.5f)
+			{
+				m_Scene->DestroyEntity(ent.Entity);
+			}
+			else
+			{
+				newFirebubbles.push_back(ent);
+			}
+		}
+		m_Firebubbles = newFirebubbles;
 	}
 
 	void Dragon::Pause()

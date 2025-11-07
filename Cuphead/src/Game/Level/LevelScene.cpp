@@ -989,7 +989,7 @@ namespace Cuphead
 		else
 		{
 			static float timer = 0.0f;
-			if (m_Dragon.IsIdle())
+			if (m_Dragon.IsLastPhase())
 			{
 				timer += ts;
 				if (timer >= 5.0f)
@@ -1390,6 +1390,37 @@ namespace Cuphead
 				m_Player.ParryHit();
 				m_Freeze = true;
 				m_Dragon.DestroyParry(e.GetVisitorShape());
+				return true;
+			}
+		}
+
+		if (m_Dragon.IsFirebubble(e.GetSensorShape()))
+		{
+			if (m_Player.IsProjectile(e.GetVisitorShape()))
+			{
+				m_Player.ProjectileImpact(e.GetVisitorShape());
+				m_Dragon.HitFirebubble(e.GetSensorShape(), m_Player.GetProjectileDamage());
+				return true;
+			}
+			else if (m_Player.IsHitBox(e.GetVisitorShape()))
+			{
+				m_Player.NormalHit();
+				m_CameraShake = true;
+				return true;
+			}
+		}
+		else if (m_Dragon.IsFirebubble(e.GetVisitorShape()))
+		{
+			if (m_Player.IsProjectile(e.GetSensorShape()))
+			{
+				m_Player.ProjectileImpact(e.GetSensorShape());
+				m_Dragon.HitFirebubble(e.GetVisitorShape(), m_Player.GetProjectileDamage());
+				return true;
+			}
+			else if (m_Player.IsHitBox(e.GetSensorShape()))
+			{
+				m_Player.NormalHit();
+				m_CameraShake = true;
 				return true;
 			}
 		}

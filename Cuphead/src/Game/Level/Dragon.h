@@ -31,6 +31,8 @@ namespace Cuphead
 
 		bool IsSensor(b2ShapeId shape);
 		bool IsParry(b2ShapeId shape);
+		bool IsFirebubble(b2ShapeId shape);
+		void HitFirebubble(b2ShapeId shape, float damage);
 		void DestroyParry(b2ShapeId shape);
 
 		void ClearProjectiles();
@@ -80,6 +82,7 @@ namespace Cuphead
 
 		void Firebubble();
 		void CreateFirebubbleSpit(float x, float y);
+		void CreateFirebubble(float x, float y);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -183,8 +186,21 @@ namespace Cuphead
 			bool Shot = false;
 		};
 
+		struct FirebubbleProjectile
+		{
+			Teddy::Entity Entity;
+			float Health;
+
+			FirebubbleProjectile(Teddy::Entity entity, float health)
+				: Entity(entity), Health(health) {}
+			FirebubbleProjectile(Teddy::Entity entity)
+				: Entity(entity), Health(5.0f) {
+			}
+		};
+
 		Phase3Heads m_Phase3Heads;
 		Teddy::Entity m_FirebubbleSpitEntity;
+		std::vector<FirebubbleProjectile> m_Firebubbles;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
