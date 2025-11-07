@@ -989,7 +989,7 @@ namespace Cuphead
 		else
 		{
 			static float timer = 0.0f;
-			if (m_Dragon.IsLastPhase())
+			if (m_Phase == 3)
 			{
 				timer += ts;
 				if (timer >= 5.0f)

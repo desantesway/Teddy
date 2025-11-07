@@ -296,6 +296,10 @@ namespace Cuphead
 			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_3.png",
 			"assets/Textures/Dragon/Projectiles/Ph3_Firebubble/Dragon_Firebubble_550x500_2048x2048_4.png"
 			});
+
+		m_Phase3MiniFirebubbleTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Dragon_Minifire_78x78_512x512_0.png",
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -1577,7 +1581,7 @@ namespace Cuphead
 		filter.MaskBits = LevelCategories::PLAYER | LevelCategories::PROJECTILE;
 
 		auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
-		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.25f, 0.25f }, 0.0f, true };
+		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, false };
 
 		m_Scene->RefreshBody(ent);
 
@@ -1601,6 +1605,46 @@ namespace Cuphead
 		return false;
 	}
 
+	void Dragon::CreateMiniFirebubbles(glm::vec3& pos)
+	{
+		constexpr std::array<std::pair<int, int>, 4> directions = { std::make_pair(0, 1), std::make_pair(1, 0), std::make_pair(-1, 0), std::make_pair(0, -1) };
+		for (auto& direction : directions)
+		{
+			auto ent = m_Scene->CreateEntity("Dragon Mini Firebubble");
+
+			auto& spriteFB = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			spriteFB.Textures = m_Phase3MiniFirebubbleTextures;
+			spriteFB.Loop = true;
+			spriteFB.PlayableIndicies.clear();
+			for (int i = 0; i < 20; i++)
+				spriteFB.PlayableIndicies.push_back(i);
+
+			auto& atlasFB = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 78, 78);
+
+			auto& body = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+			body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+			float speed = 3.0f;
+			body.Velocity = glm::vec2(direction.first * speed, direction.second * speed);
+
+			auto& transformFB = ent.GetComponent<Teddy::TransformComponent>();
+			transformFB.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+			transformFB.Translation = glm::vec3(pos.x + 0.05f * direction.first, pos.y + 0.05f * direction.second, 2.022f);
+
+			body.SetPosition(transformFB);
+
+			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::ENEMY;
+			filter.MaskBits = LevelCategories::PLAYER;
+
+			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+			sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.1f, 0.1f }, 0.0f, false };
+
+			m_Scene->RefreshBody(ent);
+
+			m_ProjectileEntities.push_back(ent);
+		}
+	}
+
 	void Dragon::HitFirebubble(b2ShapeId shape, float damage)
 	{
 		for (auto& bubble : m_Firebubbles)
@@ -1612,7 +1656,7 @@ namespace Cuphead
 				if (B2_ID_EQUALS(shape, sensorShape))
 				{
 					bubble.Health -= damage;
-					if (bubble.Health <= 0.0f) // TODO 4 projectiles
+					if (bubble.Health <= 0.0f)
 					{
 						auto& spriteFB = bubble.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 						spriteFB.Loop = false;
@@ -1621,6 +1665,8 @@ namespace Cuphead
 							spriteFB.PlayableIndicies.push_back(i);
 						auto& body = bubble.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 						body.SetVelocity(0.0f, 0.0f);
+						CreateMiniFirebubbles(bubble.Entity.GetComponent<Teddy::TransformComponent>().Translation);
+						m_Scene->DeleteSensor(sensor.Sensors["HitBox"]);
 					}
 					break;
 				}

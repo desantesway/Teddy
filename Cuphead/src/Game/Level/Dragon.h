@@ -83,6 +83,7 @@ namespace Cuphead
 		void Firebubble();
 		void CreateFirebubbleSpit(float x, float y);
 		void CreateFirebubble(float x, float y);
+		void CreateMiniFirebubbles(glm::vec3& pos);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -112,6 +113,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3IdleHeadTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3AttackHeadTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FirebubbleTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3MiniFirebubbleTextures;
 
 		enum class DragonState
 		{
