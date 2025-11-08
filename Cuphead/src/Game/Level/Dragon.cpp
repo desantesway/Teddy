@@ -31,6 +31,9 @@ namespace Cuphead
 		case DragonState::Firebubble:
 			Firebubble();
 			break;
+		case DragonState::Firetorch:
+			FireTorch(ts);
+			break;
 		default:
 			break;
 		}
@@ -300,6 +303,22 @@ namespace Cuphead
 		m_Phase3MiniFirebubbleTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Dragon/Projectiles/Dragon_Minifire_78x78_512x512_0.png",
 			});
+
+		m_Phase3FiretorchTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_1.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_2.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_3.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_4.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_5.png",
+			"assets/Textures/Dragon/Entity/Ph3_Firetorch/Dragon_FireTorch_900x900_2048x2048_6.png"
+			});
+
+		m_Phase3FiretorchProjectileTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Projectiles/Ph3_Firetorch/Dragon_Firetorch_Projectile_1000x500_2048x2048_0.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firetorch/Dragon_Firetorch_Projectile_1000x500_2048x2048_1.png",
+			"assets/Textures/Dragon/Projectiles/Ph3_Firetorch/Dragon_Firetorch_Projectile_1000x500_2048x2048_2.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -473,8 +492,19 @@ namespace Cuphead
 					m_Scene->DestroyEntity(bubble.Entity);
 				}
 				static float timer = 0.0f;
+				static float firetorchTimer = 0.0f;
 				timer += ts;
-				if (timer >= 1.25f)
+				firetorchTimer += ts;
+				if (firetorchTimer >= 10.0f)
+				{
+					auto& aAMidHead = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aAMidHead.Index == 71)
+					{
+						StartFireTorch();
+						firetorchTimer = 0.0f;
+					}
+				}
+				else if (timer >= 1.25f)
 				{
 					static int headToAttack = Randomizer::Get().RandomInt(0, 2);
 					auto& aALeftHead = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -503,6 +533,121 @@ namespace Cuphead
 					}
 				}
 			}
+		}
+	}
+
+	void Dragon::StartFireTorch()
+	{
+		auto& sprite = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_Phase3FiretorchTextures;
+		sprite.FrameTime = 0.05f;
+		sprite.FinalFrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+		sprite.PlayableIndicies = {0, 1, 2, 3, 4};
+		sprite.Loop = false;
+
+		auto& atlas = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 900;
+		atlas.SpriteHeight = 900;
+
+		auto& atlasAnim = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		atlasAnim.GenerateFrames(sprite, atlas);
+
+		m_State = DragonState::Firetorch;
+	}
+
+	void Dragon::FireTorch(Teddy::Timestep ts)
+	{
+		static float timer = 0.0f;
+		timer += ts;
+		auto& aA = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		auto& sprite = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
+		static bool stop = false;
+		if (sprite.PlayableIndicies.size() == 6 && aA.Index == 23)
+		{
+			auto& spriteMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
+			spriteMH.Textures = m_Phase3IdleHeadTextures;
+			spriteMH.Loop = true;
+			sprite.FrameTime = 0.04f;
+			sprite.FinalFrameTime = 0.04f;
+			sprite.InitialFrameTime = 0.04f;
+
+			spriteMH.PlayableIndicies.clear();
+			for (int i = (4 * 9); i < (4 * 9 * 2); i++)
+				spriteMH.PlayableIndicies.push_back(i);
+
+			auto& atlasMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAtlasComponent>();
+			atlasMH.SpriteHeight = 900;
+			atlasMH.SpriteWidth = 900;
+
+			auto& aAMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			aAMH.GenerateFrames(spriteMH, atlasMH);
+			aAMH.Index = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>() .Index - 12;
+
+			timer = 0.0f;
+
+			m_State = DragonState::Idle;
+		}
+		else if (sprite.PlayableIndicies.size() == 6 && aA.Index == 12)  // loop the fire torch
+		{
+			sprite.Loop = true;
+			sprite.Reverse = false;
+			sprite.PlayableIndicies = { 12, 13 };
+			timer = 0.0f;
+			stop = true;
+		}
+		else if (timer >= 1.0f && sprite.PlayableIndicies.size() == 2 && aA.Index == 17) // progress to fire from breath in // breath out
+		{
+			sprite.Loop = false;
+			sprite.Reverse = true;
+			sprite.PlayableIndicies = { 12, 13, 14, 15, 16, 17 };
+			timer = 0.0f;
+			stop = false;
+		}
+		else if (sprite.PlayableIndicies.size() == 4 && aA.Index == 17) // breath in loop
+		{
+			sprite.Loop = true;
+			sprite.PlayableIndicies = { 16, 17 };
+			timer = 0.0f;
+			stop = false;
+		}
+		else if (timer >= 2.0f && sprite.PlayableIndicies.size() == 2 && aA.Index == 13) // breath in / get to normal
+		{
+			if (stop)
+			{
+				sprite.Loop = false;
+				sprite.PlayableIndicies = { 18, 19, 20, 21, 22, 23 };
+				timer = 0.0f;
+				stop = false;
+			}
+			else
+			{
+				sprite.Loop = false;
+				sprite.PlayableIndicies = { 14, 15, 16, 17 };
+				timer = 0.0f;
+			}
+		}
+		else if (sprite.PlayableIndicies.size() == 7 && aA.Index == 12) // loop the fire torch
+		{
+			sprite.Loop = true;
+			sprite.PlayableIndicies = { 12, 13 };
+			timer = 0.0f;
+			stop = false;
+			
+		}
+		else if (timer >= 1.0f && aA.Index == 6) // progress to fire
+		{
+			sprite.Loop = false;
+			sprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11, 12 };
+			timer = 0.0f;
+			stop = false;
+		}
+		else if (aA.Index == 4 && sprite.PlayableIndicies.size() > 3) // start first loop
+		{
+			sprite.Loop = true;
+			sprite.PlayableIndicies = { 4, 5, 6 };
+			timer = 0.0f;
+			stop = false;
 		}
 	}
 

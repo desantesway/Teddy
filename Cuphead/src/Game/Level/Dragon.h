@@ -84,6 +84,8 @@ namespace Cuphead
 		void CreateFirebubbleSpit(float x, float y);
 		void CreateFirebubble(float x, float y);
 		void CreateMiniFirebubbles(glm::vec3& pos);
+		void StartFireTorch();
+		void FireTorch(Teddy::Timestep ts);
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -114,6 +116,8 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3AttackHeadTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FirebubbleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3MiniFirebubbleTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchProjectileTextures;
 
 		enum class DragonState
 		{
@@ -121,7 +125,8 @@ namespace Cuphead
 			Intro,
 			Peashot,
 			Meteor,
-			Firebubble
+			Firebubble,
+			Firetorch
 		};
 
 		DragonState m_State = DragonState::Intro;
@@ -203,6 +208,8 @@ namespace Cuphead
 		Phase3Heads m_Phase3Heads;
 		Teddy::Entity m_FirebubbleSpitEntity;
 		std::vector<FirebubbleProjectile> m_Firebubbles;
+
+		bool m_FireTorchStart = true;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
