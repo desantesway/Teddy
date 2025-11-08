@@ -460,6 +460,15 @@ namespace Cuphead
 						m_FirebubbleSpitEntity = Teddy::Entity();
 					}
 				}
+				if (m_FiretorchProjectileEntity)
+				{
+					auto& aA = m_FiretorchProjectileEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (aA.Index == 17)
+					{
+						m_Scene->DestroyEntity(m_FiretorchProjectileEntity);
+						m_FiretorchProjectileEntity = Teddy::Entity();
+					}
+				}
 				std::vector<FirebubbleProjectile> firebubblesToRemove;
 				std::vector<FirebubbleProjectile> newFirebubbles;
 				for (auto& bubble : m_Firebubbles)
@@ -495,7 +504,7 @@ namespace Cuphead
 				static float firetorchTimer = 0.0f;
 				timer += ts;
 				firetorchTimer += ts;
-				if (firetorchTimer >= 10.0f)
+				if (firetorchTimer >= 1.0f)
 				{
 					auto& aAMidHead = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 					if (aAMidHead.Index == 71)
@@ -558,11 +567,28 @@ namespace Cuphead
 
 	void Dragon::FireTorch(Teddy::Timestep ts)
 	{
+		if (m_FiretorchProjectileEntity)
+		{
+			auto& aA = m_FiretorchProjectileEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& sprite = m_FiretorchProjectileEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+			if (aA.Index >= 3 && aA.Index <= 8 && sprite.PlayableIndicies.size() == 9)
+			{
+				sprite.PlayableIndicies = { 3, 4, 5, 6, 7, 8 };
+				sprite.Loop = true;
+			}
+			else if (aA.Index == 17)
+			{
+				m_Scene->DestroyEntity(m_FiretorchProjectileEntity);
+				m_FiretorchProjectileEntity = Teddy::Entity();
+			}
+		}
+
 		static float timer = 0.0f;
 		timer += ts;
 		auto& aA = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		auto& sprite = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
 		static bool stop = false;
+
 		if (sprite.PlayableIndicies.size() == 6 && aA.Index == 23)
 		{
 			auto& spriteMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationComponent>();
@@ -582,7 +608,7 @@ namespace Cuphead
 
 			auto& aAMH = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			aAMH.GenerateFrames(spriteMH, atlasMH);
-			aAMH.Index = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>() .Index - 12;
+			aAMH.Index = m_Phase3Heads.LeftHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index - 12;
 
 			timer = 0.0f;
 
@@ -595,6 +621,7 @@ namespace Cuphead
 			sprite.PlayableIndicies = { 12, 13 };
 			timer = 0.0f;
 			stop = true;
+			CreateFiretorchProjectile();
 		}
 		else if (timer >= 1.0f && sprite.PlayableIndicies.size() == 2 && aA.Index == 17) // progress to fire from breath in // breath out
 		{
@@ -626,6 +653,16 @@ namespace Cuphead
 				sprite.PlayableIndicies = { 14, 15, 16, 17 };
 				timer = 0.0f;
 			}
+
+			if (m_FiretorchProjectileEntity)
+			{
+				auto& sprite = m_FiretorchProjectileEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+				sprite.Loop = false;
+				auto& sensor = m_FiretorchProjectileEntity.GetComponent<Teddy::Sensor2DComponent>();
+				m_Scene->DeleteSensor(sensor.Sensors["HitBox"]);
+				sensor.Sensors.clear();
+			}
 		}
 		else if (sprite.PlayableIndicies.size() == 7 && aA.Index == 12) // loop the fire torch
 		{
@@ -633,7 +670,7 @@ namespace Cuphead
 			sprite.PlayableIndicies = { 12, 13 };
 			timer = 0.0f;
 			stop = false;
-			
+			CreateFiretorchProjectile();
 		}
 		else if (timer >= 1.0f && aA.Index == 6) // progress to fire
 		{
@@ -649,6 +686,37 @@ namespace Cuphead
 			timer = 0.0f;
 			stop = false;
 		}
+	}
+
+	void Dragon::CreateFiretorchProjectile()
+	{
+		if(m_FiretorchProjectileEntity)
+			m_Scene->DestroyEntity(m_FiretorchProjectileEntity);
+		m_FiretorchProjectileEntity = m_Scene->CreateEntity("Dragon Firetorch Projectile");
+		auto& sprite = m_FiretorchProjectileEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		sprite.Textures = m_Phase3FiretorchProjectileTextures;
+		sprite.Loop = false;
+
+		auto& atlas = m_FiretorchProjectileEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1000, 500);
+
+		sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+
+		auto& transform = m_FiretorchProjectileEntity.GetComponent<Teddy::TransformComponent>();
+		transform.Scale = glm::vec3(3.5f, 3.5f, 1.0f);
+		transform.Translation = glm::vec3(3.0f, 0.65f, 2.02f);
+
+		auto& body = m_FiretorchProjectileEntity.AddComponent<Teddy::Rigidbody2DComponent>();
+		body.Type = Teddy::Rigidbody2DComponent::BodyType::Static;
+
+		auto& filter = m_FiretorchProjectileEntity.AddComponent<Teddy::CollisionFilter2DComponent>();
+		filter.CategoryBits = LevelCategories::ENEMY;
+		filter.MaskBits = LevelCategories::PLAYER;
+
+		auto& sensor = m_FiretorchProjectileEntity.AddComponent<Teddy::Sensor2DComponent>();
+
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.2f }, { 4.0f, 0.4f }, 0.0f, true };
+
+		m_Scene->RefreshBody(m_FiretorchProjectileEntity);
 	}
 
 	void Dragon::Phase1Part1(Teddy::Timestep ts)
@@ -2010,6 +2078,22 @@ namespace Cuphead
 		{
 			auto& tailSensor = m_TailEntity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
 			for (auto& [_, sensor] : tailSensor)
+			{
+				if (sensor.RuntimeFixture)
+				{
+					b2ShapeId sensorShape = *static_cast<b2ShapeId*>(sensor.RuntimeFixture);
+					if (B2_ID_EQUALS(shape, sensorShape))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		if (m_FiretorchProjectileEntity)
+		{
+			auto& tongueSensor = m_FiretorchProjectileEntity.GetComponent<Teddy::Sensor2DComponent>().Sensors;
+			for (auto& [_, sensor] : tongueSensor)
 			{
 				if (sensor.RuntimeFixture)
 				{

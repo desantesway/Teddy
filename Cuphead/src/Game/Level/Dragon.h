@@ -86,6 +86,7 @@ namespace Cuphead
 		void CreateMiniFirebubbles(glm::vec3& pos);
 		void StartFireTorch();
 		void FireTorch(Teddy::Timestep ts);
+		void CreateFiretorchProjectile();
 
 		void Hitting(Teddy::Timestep ts);
 
@@ -210,6 +211,7 @@ namespace Cuphead
 		std::vector<FirebubbleProjectile> m_Firebubbles;
 
 		bool m_FireTorchStart = true;
+		Teddy::Entity m_FiretorchProjectileEntity;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
