@@ -79,6 +79,7 @@ namespace Cuphead
 		void Phase3Start(Teddy::Timestep ts);
 		void Phase3StartLoop(Teddy::Timestep ts);
 		void StartPhase3Attack();
+		void StartPhase3Death();
 
 		void Firebubble();
 		void CreateFirebubbleSpit(float x, float y);
@@ -119,6 +120,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3MiniFirebubbleTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchProjectileTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3DeathTextures;
 
 		enum class DragonState
 		{
@@ -127,7 +129,8 @@ namespace Cuphead
 			Peashot,
 			Meteor,
 			Firebubble,
-			Firetorch
+			Firetorch,
+			Death
 		};
 
 		DragonState m_State = DragonState::Intro;
@@ -140,7 +143,7 @@ namespace Cuphead
 		bool m_Shooting = false;
 		bool m_MeteorStart = true;
 
-		int m_Health = 565; // 629, 510, 561 /// 1700, 1535, 1071, 561
+		int m_Health = 20; // 629, 510, 561 /// 1700, 1535, 1071, 561
 		// grim firebubble has 5 health
 		bool m_Hit = false;
 
@@ -210,7 +213,6 @@ namespace Cuphead
 		Teddy::Entity m_FirebubbleSpitEntity;
 		std::vector<FirebubbleProjectile> m_Firebubbles;
 
-		bool m_FireTorchStart = true;
 		Teddy::Entity m_FiretorchProjectileEntity;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;

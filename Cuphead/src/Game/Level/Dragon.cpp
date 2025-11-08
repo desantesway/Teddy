@@ -319,6 +319,11 @@ namespace Cuphead
 			"assets/Textures/Dragon/Projectiles/Ph3_Firetorch/Dragon_Firetorch_Projectile_1000x500_2048x2048_1.png",
 			"assets/Textures/Dragon/Projectiles/Ph3_Firetorch/Dragon_Firetorch_Projectile_1000x500_2048x2048_2.png"
 			});
+
+		m_Phase3DeathTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Dragon/Entity/Ph3_Death/Dragon_Ph3_Death_637x872_2048x2048_0.png",
+			"assets/Textures/Dragon/Entity/Ph3_Death/Dragon_Ph3_Death_637x872_2048x2048_1.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -451,6 +456,19 @@ namespace Cuphead
 			}
 			else
 			{
+				if (m_Health < 0)
+				{
+					if (m_Phase3Heads.LeftHead)
+					{
+						StartPhase3Death();
+					}
+					else
+					{
+
+					}
+
+					return;
+				}
 				if (m_FirebubbleSpitEntity)
 				{
 					auto& aA = m_FirebubbleSpitEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -504,7 +522,7 @@ namespace Cuphead
 				static float firetorchTimer = 0.0f;
 				timer += ts;
 				firetorchTimer += ts;
-				if (firetorchTimer >= 1.0f)
+				if (firetorchTimer >= 10.0f)
 				{
 					auto& aAMidHead = m_Phase3Heads.MidHead.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 					if (aAMidHead.Index == 71)
@@ -543,6 +561,41 @@ namespace Cuphead
 				}
 			}
 		}
+	}
+
+	void Dragon::StartPhase3Death()
+	{
+		m_Scene->DestroyEntity(m_Phase3Heads.LeftHead);
+		m_Phase3Heads.LeftHead = Teddy::Entity();
+		m_Scene->DestroyEntity(m_Phase3Heads.RightHead);
+		m_Phase3Heads.RightHead = Teddy::Entity();
+		m_Scene->DestroyEntity(m_Phase3Heads.MidHead);
+		m_Phase3Heads.MidHead = Teddy::Entity();
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_Phase3DeathTextures;
+		sprite.FrameTime = 0.05f;
+		sprite.FinalFrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+		sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5 , 6, 7 };
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 637;
+		atlas.SpriteHeight = 872;
+
+		auto& atlasAnim = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		atlasAnim.GenerateFrames(sprite, atlas);
+		atlasAnim.Index = 0;
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Scale = glm::vec3(6.25f, 6.25f, 1.0f);
+		transform.Translation = glm::vec3(-3.5f, -0.5f, 2.011f);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+
+		body.SetPosition(transform);
+
+		m_State = DragonState::Death;
 	}
 
 	void Dragon::StartFireTorch()
