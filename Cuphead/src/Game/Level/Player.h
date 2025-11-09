@@ -39,7 +39,7 @@ namespace Cuphead
 		bool CanHit() { return !m_HitTolerance && !m_Hitting; }
 
 		void Pause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true; }
-		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; }
+		void Unpause() { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false; } // TODO: set gravity
 
 		void ParryHit();
 

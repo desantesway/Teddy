@@ -11,20 +11,20 @@ namespace Cuphead
 		InitCircleScene();
 	}
 
-    void TransitionScenes::OnUpdate(Teddy::Timestep ts)
+    void TransitionScenes::OnUpdate(Teddy::Timestep ts) // TODO: see this
     {
         TED_PROFILE_FUNCTION();
         
         if (m_FadeIn && !m_Faded)
         {
-            if(FadeIn(2.5f, ts))
+            if(FadeIn(1.0f, ts))
             {
                 m_Faded = true;
 			}
         }
         else if (m_FadeOut && m_Faded)
         {
-            if (FadeOut(2.5f, ts))
+            if (FadeOut(1.0f, ts))
             {
                 m_Faded = false;
             }

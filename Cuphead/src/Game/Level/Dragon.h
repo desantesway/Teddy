@@ -24,7 +24,7 @@ namespace Cuphead
 		void StartIntro();
 		void LoadIntro();
 
-		bool IsDead() { return m_Health <= 0; }
+		bool IsDead() { return m_State == DragonState::Death; }
 
 		void Pause();
 		void Unpause();

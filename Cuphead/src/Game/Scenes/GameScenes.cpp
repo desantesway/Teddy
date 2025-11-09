@@ -46,8 +46,10 @@ namespace Cuphead
                     {
                         m_LevelScene->StartIntro();
                     }
-                    if(m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit())
+                    if(m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit() || m_LevelScene->WantsToResult())
                     {
+                        m_TransitionScenes.SetFadeAlpha(1.0f);
+                        m_TransitionScenes.SetCircleAlpha(1.0f);
                         m_TransitionScenes.FadeIn();
                         m_TransitionScenes.CircleIn();
                         return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
@@ -98,6 +100,19 @@ namespace Cuphead
         return m_ActiveScene;
     }
 
+    Teddy::Ref<Teddy::Scene> GameScenes::InitResults()
+    {
+        m_ActiveScene = Teddy::CreateRef<Teddy::Scene>(true); // TODO: game info
+
+        m_TransitionScenes.SetFadeAlpha(0.0f);
+        m_TransitionScenes.FadeOut();
+        m_TransitionScenes.SetCircleAlpha(1.0f);
+
+        m_LevelScene = nullptr;
+
+        return m_ActiveScene;
+    }
+
     void GameScenes::FreeScenes()
     {
         if (m_CurrentScene != 1)
@@ -126,6 +141,10 @@ namespace Cuphead
                 {
 					m_CurrentScene = 3;
                     return InitLevel();
+                }
+                else if (m_LevelScene->WantsToResult())
+                {
+                    return InitResults();
                 }
                 else
                 {

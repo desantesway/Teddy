@@ -98,6 +98,10 @@ namespace Cuphead
 	{
 		InitPhase3Background();
 		InitPhase3Foreground();
+
+		auto& assets = Teddy::AssetManager::Get();
+
+		m_KnockoutTextures = assets.LoadMultiple<Teddy::Texture2D>({ "assets/Textures/UI/KO/FightText_KO_512x288_2048x2048_0.png" });
 	}
 
 	void LevelScene::InitPhase3Background()
@@ -335,57 +339,58 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
-		if (m_Freeze)
+		if (m_Dragon.IsDead())
 		{
-			static float timer = 0.0f;
-			static bool firstTime = true;
-			timer += ts;
-
-			if (timer >= 0.15f)
+			if (m_FirstDeath)
 			{
-				m_Freeze = false;
-				timer = 0.0f;
-				m_Scene->OnRuntimeStart();
-				m_Player.Unpause();
-				m_Dragon.Unpause();
-				m_Clouds.Unpause();
-				switch (m_Phase)
+				m_Freeze = true;
+				m_FirstDeath = false;
+				m_FreezeTimer = 100.0f;
+
+				if(m_FightText)
+					m_Scene->DestroyEntity(m_FightText);
+				m_FightText = m_Scene->CreateEntity("A Knockout!");
+				auto& sprite = m_FightText.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				sprite.Textures = m_KnockoutTextures;
+				sprite.IsBackground = true;
+				sprite.Loop = false;
+				m_FightText.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
+
+				auto& transform = m_FightText.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
+				transform.Scale *= 0.7f;
+
+				Freeze(ts);
+			}
+			else if (m_FightText)
+			{
+				auto& aA = m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& sprite = m_FightText.GetComponent<Teddy::SpriteAnimationComponent>();
+				if (aA.Index == sprite.PlayableIndicies.back())
 				{
-				case 1:
-					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
-					break;
-				case 3:
-					m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
-					break;
-				default:
-					break;
+					m_Scene->DestroyEntity(m_FightText);
+					m_FightText = {};
+					m_FreezeTimer = 0.15f;
 				}
-				firstTime = true;
+
+				Freeze(ts);
 			}
 			else
 			{
-				if (firstTime)
-				{
-					m_Player.Pause();
-					m_Dragon.Pause();
-					m_Clouds.Pause();
-					switch (m_Phase)
-					{
-					case 1:
-						m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
-						break;
-					case 3:
-						m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
-						break;
-					default:
-						break;
-					}
-					m_Scene->OnRuntimeStop();
-					firstTime = false;
-				}
-				return;
+				m_CameraShake = true;
+				CameraShake(ts);
+
+				m_Player.OnUpdate(ts);
+				m_Clouds.SetPlayerPosition(m_Player.GetPosition());
+				m_Clouds.OnUpdate(ts);
+
+				m_State = 3;
 			}
+
+			return;
 		}
+
+		if (Freeze(ts)) return;
 
 		if (m_State != 0) return;
 
@@ -395,10 +400,10 @@ namespace Cuphead
 
 		if (!m_IntroDone && m_StartIntro)
 		{
-			if (m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back())
+			if (m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index == m_FightText.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back())
 			{
-				m_Scene->DestroyEntity(m_GetReady);
-				m_GetReady = {};
+				m_Scene->DestroyEntity(m_FightText);
+				m_FightText = {};
 				m_IntroDone = true;
 			}
 		}
@@ -505,6 +510,68 @@ namespace Cuphead
 		}
 
 		m_Clouds.OnUpdate(ts);
+	}
+
+	bool LevelScene::Freeze(Teddy::Timestep ts)
+	{
+		if (m_Freeze)
+		{
+			static float timer = 0.0f;
+			static bool firstTime = true;
+			timer += ts;
+
+			if (timer >= m_FreezeTimer)
+			{
+				m_Freeze = false;
+				timer = 0.0f;
+				m_Scene->OnRuntimeStart();
+				m_Player.Unpause();
+				m_Dragon.Unpause();
+				m_Clouds.Unpause();
+				switch (m_Phase)
+				{
+				case 1:
+					m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				case 3:
+					m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+					break;
+				default:
+					break;
+				}
+				firstTime = true;
+			}
+			else
+			{
+				if (firstTime)
+				{
+					m_Player.Pause();
+					m_Dragon.Pause();
+					m_Clouds.Pause();
+					switch (m_Phase)
+					{
+					case 1:
+						m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						break;
+					case 3:
+						m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+						break;
+					default:
+						break;
+					}
+					m_Scene->OnRuntimeStop();
+					firstTime = false;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void LevelScene::OnUpdatePhase1()
@@ -1261,8 +1328,8 @@ namespace Cuphead
 	{
 		m_StartIntro = true;
 
-		m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
-		m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+		m_FightText.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+		m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
 
 		m_Player.StartIntro();
 		m_Dragon.StartIntro();
@@ -1270,10 +1337,10 @@ namespace Cuphead
 
 	void LevelScene::LoadIntro()
 	{
-		if (m_GetReady)
-			m_Scene->DestroyEntity(m_GetReady);
-		m_GetReady = m_Scene->CreateEntity("Get Ready!");
-		auto& sprite = m_GetReady.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+		if (m_FightText)
+			m_Scene->DestroyEntity(m_FightText);
+		m_FightText = m_Scene->CreateEntity("Get Ready!");
+		auto& sprite = m_FightText.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 		sprite.Loop = false;
 		sprite.Pause = true;
 		sprite.IsBackground = true;
@@ -1282,11 +1349,11 @@ namespace Cuphead
 			"assets/Textures/UI/Intro/GetReady_512x288_2048x2048_1.png"
 			});
 
-		m_GetReady.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
+		m_FightText.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
 
-		m_GetReady.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = m_GetReady.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back();
+		m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = m_FightText.GetComponent<Teddy::SpriteAnimationComponent>().PlayableIndicies.back();
 
-		auto& transform = m_GetReady.GetComponent<Teddy::TransformComponent>();
+		auto& transform = m_FightText.GetComponent<Teddy::TransformComponent>();
 		transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
 		transform.Scale *= 0.7f;
 

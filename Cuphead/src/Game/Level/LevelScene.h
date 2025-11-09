@@ -33,7 +33,10 @@ namespace Cuphead
 
 		bool WantsToRetry() { return m_State == 1; }
 		bool WantsToExit() { return m_State == 2; }
+		bool WantsToResult() { return m_State == 3; }
 	private:
+		bool Freeze(Teddy::Timestep ts);
+
 		void InitPhase1();
 		void InitPhase1Background();
 		void InitPhase1Foreground();
@@ -136,6 +139,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Texture2D> m_Phase3ForegroundFlash2CloudTexture;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RainTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LightningTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_KnockoutTextures;
 
 		int m_State = 0;
 		int m_Phase = 1;
@@ -145,7 +149,7 @@ namespace Cuphead
 
 		bool m_IntroDone = false;
 		bool m_StartIntro = false;
-		Teddy::Entity m_GetReady;
+		Teddy::Entity m_FightText;
 
 		bool m_FloorHitContact = false;
 		bool m_HitContact = false;
@@ -159,6 +163,7 @@ namespace Cuphead
 		bool m_IncreasingSpeed = false;
 
 		bool m_Freeze = false;
+		float m_FreezeTimer = 0.15f;
 
 		bool m_TransitioningPhase = false;
 
