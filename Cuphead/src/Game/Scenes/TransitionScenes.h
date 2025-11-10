@@ -34,6 +34,8 @@ namespace Cuphead
 		bool CircleOut(const float& velocity, const Teddy::Timestep& ts);
 		bool IsCircleOut();
 		void SetCircleAlpha(const float& alpha);
+
+		void SetFadeTime(const float& vel) { m_FadeVelocity = vel; }
 	private:
 		void CheckAndCreateScene();
 	private:
@@ -45,6 +47,8 @@ namespace Cuphead
 		bool m_CircleClosed = false;
 		bool m_CircleIn = false;
 		bool m_CircleOut = false;
+
+		float m_FadeVelocity = 2.5f;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 

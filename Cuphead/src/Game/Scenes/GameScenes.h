@@ -22,6 +22,7 @@ namespace Cuphead
 
 		void Init();
 		bool OnUpdate(Teddy::Timestep& ts);
+		void OnRender(Teddy::Timestep& ts);
 
 		void OnEvent(Teddy::Event& event);
 
@@ -35,7 +36,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Scene> InitLevel();
 		Teddy::Ref<Teddy::Scene> InitResults();
 	private:
-		int m_CurrentScene = 2;
+		int m_CurrentScene = 0;
 
 		TransitionScenes m_TransitionScenes;  // TODO: make this on another layer
 		MainTitleScene m_MainTitleScene;

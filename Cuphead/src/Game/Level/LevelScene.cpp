@@ -339,55 +339,61 @@ namespace Cuphead
 
 	void LevelScene::OnUpdate(Teddy::Timestep ts)
 	{
-		if (m_Dragon.IsDead())
+		TED_PROFILE_FUNCTION();
+
 		{
-			if (m_FirstDeath)
+			TED_PROFILE_SCOPE("Dragon Death OnUpdate");
+			
+			if (m_Dragon.IsDead())
 			{
-				m_Freeze = true;
-				m_FirstDeath = false;
-				m_FreezeTimer = 100.0f;
-
-				if(m_FightText)
-					m_Scene->DestroyEntity(m_FightText);
-				m_FightText = m_Scene->CreateEntity("A Knockout!");
-				auto& sprite = m_FightText.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-				sprite.Textures = m_KnockoutTextures;
-				sprite.IsBackground = true;
-				sprite.Loop = false;
-				m_FightText.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
-
-				auto& transform = m_FightText.GetComponent<Teddy::TransformComponent>();
-				transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
-				transform.Scale *= 0.7f;
-
-				Freeze(ts);
-			}
-			else if (m_FightText)
-			{
-				auto& aA = m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-				auto& sprite = m_FightText.GetComponent<Teddy::SpriteAnimationComponent>();
-				if (aA.Index == sprite.PlayableIndicies.back())
+				if (m_FirstDeath)
 				{
-					m_Scene->DestroyEntity(m_FightText);
-					m_FightText = {};
-					m_FreezeTimer = 0.15f;
+					m_Freeze = true;
+					m_FirstDeath = false;
+					m_FreezeTimer = 100.0f;
+
+					if (m_FightText)
+						m_Scene->DestroyEntity(m_FightText);
+					m_FightText = m_Scene->CreateEntity("A Knockout!");
+					auto& sprite = m_FightText.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+					sprite.Textures = m_KnockoutTextures;
+					sprite.IsBackground = true;
+					sprite.Loop = false;
+					m_FightText.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 512, 288);
+
+					auto& transform = m_FightText.GetComponent<Teddy::TransformComponent>();
+					transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
+					transform.Scale *= 0.7f;
+
+					Freeze(ts);
+				}
+				else if (m_FightText)
+				{
+					auto& aA = m_FightText.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					auto& sprite = m_FightText.GetComponent<Teddy::SpriteAnimationComponent>();
+					if (aA.Index == sprite.PlayableIndicies.back())
+					{
+						m_Scene->DestroyEntity(m_FightText);
+						m_FightText = {};
+						m_FreezeTimer = 0.15f;
+					}
+
+					Freeze(ts);
+				}
+				else
+				{
+					m_CameraShake = true;
+					CameraShake(ts);
+
+					m_Player.OnUpdate(ts);
+					m_Clouds.SetPlayerPosition(m_Player.GetPosition());
+					m_Clouds.OnUpdate(ts);
+
+					m_State = 3;
 				}
 
-				Freeze(ts);
+				return;
 			}
-			else
-			{
-				m_CameraShake = true;
-				CameraShake(ts);
-
-				m_Player.OnUpdate(ts);
-				m_Clouds.SetPlayerPosition(m_Player.GetPosition());
-				m_Clouds.OnUpdate(ts);
-
-				m_State = 3;
-			}
-
-			return;
 		}
 
 		if (Freeze(ts)) return;
@@ -487,8 +493,6 @@ namespace Cuphead
 		m_Dragon.SetPlayerPosition(m_Player.GetPosition());
 		m_Dragon.OnUpdate(ts);
 
-		CameraShake(ts);
-
 		m_Clouds.SetPlayerPosition(m_Player.GetPosition());
 
 		switch (m_Phase)
@@ -514,6 +518,8 @@ namespace Cuphead
 
 	bool LevelScene::Freeze(Teddy::Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (m_Freeze)
 		{
 			static float timer = 0.0f;
@@ -576,6 +582,8 @@ namespace Cuphead
 
 	void LevelScene::OnUpdatePhase1()
 	{
+		TED_PROFILE_FUNCTION();
+
 		// Move Background
 		{
 			auto& leftTransform = m_Background.LeftBackground.GetComponent<Teddy::TransformComponent>();
@@ -705,6 +713,8 @@ namespace Cuphead
 
 	void LevelScene::OnPhase3Start()
 	{
+		TED_PROFILE_FUNCTION();
+
 		auto& assets = Teddy::AssetManager::Get();
 
 		// Background Carousel
@@ -889,6 +899,8 @@ namespace Cuphead
 
 	void LevelScene::OnUpdatePhase3(Teddy::Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (m_TransitioningPhase)
 		{
 			OnUpdatePhase3Start(ts);
@@ -1164,6 +1176,8 @@ namespace Cuphead
 
 	void LevelScene::OnUpdatePhase3Start(Teddy::Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		OnUpdatePhase1();
 
 		glm::vec4 color = m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Color;
@@ -1278,6 +1292,8 @@ namespace Cuphead
 
 	void LevelScene::CameraShake(Teddy::Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (!m_CameraShake || !m_Camera)
 			return;
 
@@ -1326,6 +1342,8 @@ namespace Cuphead
 
 	void LevelScene::StartIntro()
 	{
+		TED_PROFILE_FUNCTION();
+
 		m_StartIntro = true;
 
 		m_FightText.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
@@ -1337,6 +1355,8 @@ namespace Cuphead
 
 	void LevelScene::LoadIntro()
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (m_FightText)
 			m_Scene->DestroyEntity(m_FightText);
 		m_FightText = m_Scene->CreateEntity("Get Ready!");
@@ -1363,6 +1383,8 @@ namespace Cuphead
 	
 	bool LevelScene::OnContactBegin(Teddy::ContactBeginEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		b2ShapeId playerCollider = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 		if (B2_ID_EQUALS(e.GetShapeA(), playerCollider))
 		{
@@ -1394,6 +1416,8 @@ namespace Cuphead
 
 	bool LevelScene::OnContactEnd(Teddy::ContactEndEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		b2ShapeId playerCollider = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::BoxCollider2DComponent>().RuntimeFixture);
 		if (B2_ID_EQUALS(e.GetShapeA(), playerCollider))
 		{
@@ -1421,6 +1445,8 @@ namespace Cuphead
 
 	bool LevelScene::OnSensorBegin(Teddy::SensorBeginEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		b2ShapeId playerSensor = *static_cast<b2ShapeId*>(m_Player.GetEntity().GetComponent<Teddy::Sensor2DComponent>().Sensors["GroundSensor"].RuntimeFixture);
 
 		if (m_Player.IsGroundSensor(e.GetSensorShape()))
@@ -1528,6 +1554,8 @@ namespace Cuphead
 
 	bool LevelScene::OnSensorEnd(Teddy::SensorEndEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (m_Player.IsGroundSensor(e.GetSensorShape()))
 		{
 			if (m_Clouds.IsSensor(e.GetVisitorShape()))
@@ -1550,6 +1578,8 @@ namespace Cuphead
 
 	bool LevelScene::OnKeyPressed(Teddy::KeyPressedEvent& e)
 	{
+		TED_PROFILE_FUNCTION();
+
 		switch (e.GetKeyCode())
 		{
 		case Teddy::Key::Escape:
@@ -1564,6 +1594,8 @@ namespace Cuphead
 
 	void LevelScene::OnEvent(Teddy::Event& event)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (m_Player.IsDead())
 		{
 			m_DeathMenu.OnEvent(event);
@@ -1588,6 +1620,8 @@ namespace Cuphead
 
 	void LevelScene::StartPauseMenu()
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (!m_Player.IsIntroDone()) return;
 
 		m_Scene->OnRuntimeStop();
@@ -1611,6 +1645,8 @@ namespace Cuphead
 
 	bool LevelScene::Pause(Teddy::Timestep ts)
 	{
+		TED_PROFILE_FUNCTION();
+
 		if (!m_Player.IsIntroDone()) return false;
 
 		m_PauseMenu.OnUpdate(ts);

@@ -16,8 +16,6 @@ namespace Cuphead
         {
             TED_PROFILE_SCOPE("Game Scene Preparation");
 
-            m_TransitionScenes.OnUpdate(ts);
-
             switch (m_CurrentScene)
             {
                 case 1:
@@ -37,25 +35,32 @@ namespace Cuphead
                 case 3:
                     if (!m_LevelScene) return false;
 
-                    if (!m_TransitionScenes.IsCircleOut())
+                    if (m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit() || m_LevelScene->WantsToResult())
+                    {
+                        m_LevelScene->OnUpdate(ts);
+
+                        m_TransitionScenes.SetCircleAlpha(0.0f);
+                        m_TransitionScenes.SetFadeTime(0.5f);
+                        m_TransitionScenes.FadeIn();
+                        m_TransitionScenes.CircleIn();
+
+                        return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
+                    }
+                    else if (!m_TransitionScenes.IsCircleOut() || !m_TransitionScenes.IsFadedOut())
                     {
                         m_TransitionScenes.CircleOut();
+                        m_TransitionScenes.FadeOut();
                         m_LevelScene->LoadIntro();
                     }
                     else if (!m_LevelScene->HasIntroStarted())
                     {
                         m_LevelScene->StartIntro();
                     }
-                    if(m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit() || m_LevelScene->WantsToResult())
-                    {
-                        m_TransitionScenes.SetFadeAlpha(1.0f);
-                        m_TransitionScenes.SetCircleAlpha(1.0f);
-                        m_TransitionScenes.FadeIn();
-                        m_TransitionScenes.CircleIn();
-                        return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
-					}
 
                     m_LevelScene->OnUpdate(ts);
+
+                    return false;
+                case 4:
                     return false;
                 default:
                     TED_CORE_INFO("No scene loaded for index {0}", m_CurrentScene);
@@ -66,9 +71,16 @@ namespace Cuphead
         return false;
     }
 
+    void GameScenes::OnRender(Teddy::Timestep& ts)
+    {
+        m_TransitionScenes.OnUpdate(ts);
+    }
+
     Teddy::Ref<Teddy::Scene> GameScenes::InitTitle()
     {
 		m_MainTitleScene = MainTitleScene();
+
+        m_TransitionScenes.SetFadeTime(2.5f);
 
         m_ActiveScene = m_MainTitleScene.Init();
         m_LevelScene = nullptr;
@@ -81,6 +93,7 @@ namespace Cuphead
         m_MainMenuScene = Teddy::CreateRef<MainMenuScene>();
 
         m_TransitionScenes.FadeOut();
+        m_TransitionScenes.SetFadeTime(2.5f);
         m_TransitionScenes.SetCircleAlpha(0.0f); 
         m_TransitionScenes.CircleOut();
         m_ActiveScene = m_MainMenuScene->Init();
@@ -93,6 +106,7 @@ namespace Cuphead
         m_LevelScene = Teddy::CreateRef<LevelScene>();
 
         m_TransitionScenes.SetFadeAlpha(0.0f);
+        m_TransitionScenes.SetFadeTime(2.5f);
         m_TransitionScenes.FadeOut();
         m_TransitionScenes.SetCircleAlpha(1.0f);
         m_ActiveScene = m_LevelScene->Init(m_IsCuphead);
@@ -102,11 +116,12 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitResults()
     {
-        m_ActiveScene = Teddy::CreateRef<Teddy::Scene>(true); // TODO: game info
-
+        m_ActiveScene = Teddy::CreateRef<Teddy::Scene>(); // TODO: game info
         m_TransitionScenes.SetFadeAlpha(0.0f);
+        m_TransitionScenes.SetFadeTime(2.5f);
         m_TransitionScenes.FadeOut();
         m_TransitionScenes.SetCircleAlpha(1.0f);
+        m_TransitionScenes.CircleOut();
 
         m_LevelScene = nullptr;
 

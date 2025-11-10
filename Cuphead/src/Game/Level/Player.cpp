@@ -1373,7 +1373,7 @@ namespace Cuphead
 
 	void Player::OnEvent(Teddy::Event& event)
 	{
-		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0 && m_Health > 0)
+		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0 && m_Health > 0 && !m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause)
 		{
 			Teddy::EventDispatcher dispatcher(event);
 			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));

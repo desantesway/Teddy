@@ -11,20 +11,20 @@ namespace Cuphead
 		InitCircleScene();
 	}
 
-    void TransitionScenes::OnUpdate(Teddy::Timestep ts) // TODO: see this
+    void TransitionScenes::OnUpdate(Teddy::Timestep ts)
     {
         TED_PROFILE_FUNCTION();
         
         if (m_FadeIn && !m_Faded)
         {
-            if(FadeIn(1.0f, ts))
+            if(FadeIn(m_FadeVelocity, ts))
             {
                 m_Faded = true;
 			}
         }
         else if (m_FadeOut && m_Faded)
         {
-            if (FadeOut(1.0f, ts))
+            if (FadeOut(m_FadeVelocity, ts))
             {
                 m_Faded = false;
             }
@@ -102,6 +102,7 @@ namespace Cuphead
 
         auto& transitionQuad = m_TransitionQuad.GetComponent<Teddy::SpriteRendererComponent>();
         transitionQuad.Color.a += velocity * ts;
+
         if (transitionQuad.Color.a > 1.0f)
         {
             transitionQuad.Color.a = 1.0f;
@@ -186,6 +187,11 @@ namespace Cuphead
     bool TransitionScenes::IsCircleOut()
     {
         return !m_CircleClosed && m_CircleOut;
+    }
+
+    bool TransitionScenes::IsFadedOut()
+    {
+        return !m_Faded && m_FadeOut;
     }
 
     bool TransitionScenes::CircleOut()

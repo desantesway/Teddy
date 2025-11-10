@@ -47,6 +47,7 @@ namespace Cuphead
             m_ActiveScene->AlwaysOnUpdate();
             m_ActiveScene->OnUpdateRuntime(ts);
             //m_ActiveScene->ShowPhysicsColliders();
+            GameScenes::Get().OnRender(ts);
         }
    
         if (nextScene)
