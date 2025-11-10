@@ -36,7 +36,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Scene> InitLevel();
 		Teddy::Ref<Teddy::Scene> InitResults();
 	private:
-		int m_CurrentScene = 0;
+		int m_CurrentScene = 2;
 
 		TransitionScenes m_TransitionScenes;  // TODO: make this on another layer
 		MainTitleScene m_MainTitleScene;

@@ -133,7 +133,7 @@ namespace Cuphead
 
 			static int lobberCount = 0;
 
-			auto ent = m_Scene->CreateEntity("Lobber #" + std::to_string(lobberCount));
+			auto ent = m_Scene->CreateEntity("Lobber");
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 			sprite.Loop = false;
 			sprite.Textures = m_LobberTextures;
@@ -141,7 +141,7 @@ namespace Cuphead
 			
 			sprite.PlayableIndicies = { 12, 13, 14 };
 			
-			auto& aA = ent.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			aA.Index = 12;
 			
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
@@ -155,7 +155,7 @@ namespace Cuphead
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
 			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.5f };
-
+			
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, false);
 			
@@ -174,7 +174,7 @@ namespace Cuphead
 			auto& expAtlas = exp.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 223, 189);
 			
 			expSprite.PlayableIndicies = { 23, 24, 25, 26, 27 };
-			auto& expAA = exp.AddComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& expAA = exp.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			expAA.Index = 23;
 			
 			auto& expTransform = exp.GetComponent<Teddy::TransformComponent>();
@@ -554,7 +554,7 @@ namespace Cuphead
 	void Player::Idle()
 	{
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
-		if (m_Shooting && *sprite.PlayableIndicies.begin() == 84) // TODO: fix atlas x difference
+		if (m_Shooting && *sprite.PlayableIndicies.begin() == 84)
 		{
 			sprite.FinalFrameTime = m_ShootingRestTime;
 			sprite.FrameTime = m_ShootingActiveTime;

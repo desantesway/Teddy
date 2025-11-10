@@ -35,7 +35,18 @@ namespace Cuphead
                 case 3:
                     if (!m_LevelScene) return false;
 
-                    if (m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit() || m_LevelScene->WantsToResult())
+                    if (m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit())
+                    {
+                        m_LevelScene->OnUpdate(ts);
+
+                        m_TransitionScenes.SetCircleAlpha(0.0f);
+                        m_TransitionScenes.SetFadeTime(2.5f);
+                        m_TransitionScenes.FadeIn();
+                        m_TransitionScenes.CircleIn();
+
+                        return m_TransitionScenes.IsFadedIn() && m_TransitionScenes.IsCircleIn();
+                    }
+                    else if (m_LevelScene->WantsToResult())
                     {
                         m_LevelScene->OnUpdate(ts);
 

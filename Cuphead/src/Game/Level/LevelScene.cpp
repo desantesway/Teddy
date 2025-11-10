@@ -363,7 +363,7 @@ namespace Cuphead
 
 					auto& transform = m_FightText.GetComponent<Teddy::TransformComponent>();
 					transform.Translation = glm::vec3(0.0f, 0.0f, 3.0f);
-					transform.Scale *= 0.7f;
+					transform.Scale *= 0.675f;
 
 					Freeze(ts);
 				}
