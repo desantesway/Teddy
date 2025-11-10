@@ -54,6 +54,8 @@ namespace Cuphead
 		void StartPauseMenu();
 		bool Pause(Teddy::Timestep ts);
 
+		void BossExplosion(Teddy::Timestep ts);
+
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnSensorBegin(Teddy::SensorBeginEvent& e);
 		bool OnSensorEnd(Teddy::SensorEndEvent& e);
@@ -140,6 +142,8 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RainTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LightningTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_KnockoutTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_BossExplosionTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PLayerExplosionTextures;
 
 		int m_State = 0;
 		int m_Phase = 1;
@@ -166,6 +170,9 @@ namespace Cuphead
 		float m_FreezeTimer = 0.15f;
 
 		bool m_TransitioningPhase = false;
+
+		Teddy::Entity m_BossExplosionEntity;
+		bool m_BossExplosion = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

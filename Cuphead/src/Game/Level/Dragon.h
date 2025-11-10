@@ -42,6 +42,8 @@ namespace Cuphead
 
 		void SetPlayerPosition(const glm::vec2& pos) { m_PlayerPosition = pos; }
 		bool IsLastPhase() const { return m_Phase3Start; }
+		bool IsPhase3() const { return m_Phase == 3; }
+		bool IsPhaseStart() const { return m_PhaseStart; }
 
 		void SetColor(glm::vec4 color);
 	private:
@@ -144,7 +146,6 @@ namespace Cuphead
 		bool m_MeteorStart = true;
 
 		int m_Health = 20; // 629, 510, 561 /// 1700, 1535, 1071, 561
-		// grim firebubble has 5 health
 		bool m_Hit = false;
 
 		float m_PeashotTimer = 0.0f;

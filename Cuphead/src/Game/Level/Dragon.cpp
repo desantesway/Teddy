@@ -462,10 +462,6 @@ namespace Cuphead
 					{
 						StartPhase3Death();
 					}
-					else
-					{
-
-					}
 
 					return;
 				}
