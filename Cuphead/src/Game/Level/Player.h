@@ -100,6 +100,8 @@ namespace Cuphead
 		void FlashPlayer(Teddy::Timestep ts);
 		void Hitting(Teddy::Timestep ts);
 		bool Hit(float velocity);
+		void CreateHitFx();
+
 		void StartDeath();
 		void Dying(Teddy::Timestep ts);
 		void UpdateHUD();

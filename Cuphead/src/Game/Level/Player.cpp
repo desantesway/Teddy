@@ -381,7 +381,7 @@ namespace Cuphead
 		m_Grounded = grounded; 
 		StartFall(); 
 		if(m_Grounded)
-			CreateJumpDust();
+			CreateLandingDust();
 	}
 
 	void Player::LoadCupheadTextures()
@@ -1730,10 +1730,51 @@ namespace Cuphead
 				m_Health--;
 				UpdateHUD();
 				StartHit();
+				CreateHitFx();
 				return true;
 			}
 		}
 		return false;
+	}
+
+	void Player::CreateHitFx()
+	{
+		auto ent = m_Scene->CreateEntity("Hit fx");
+
+		auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		sprite.Textures = m_EffectsTextures;
+		sprite.Loop = false;
+		sprite.PlayableIndicies = { 29, 30, 31, 32, 33, 34, 35, 36, 37 };
+
+		auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 462, 526);
+
+		auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		aA.Index = 29;
+
+		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+		auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, 0.1f);
+		if (Randomizer::Get().RandomInt(0, 1))
+			transform.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
+		else
+			transform.Scale = glm::vec3(4.0f, -4.0f, 1.0f);
+
+		class DustDestroyer : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == 37)
+				{
+					RemoveComponent<Teddy::NativeScriptComponent>();
+
+					GetScene()->DestroyEntity(GetEntity());
+				}
+			}
+		};
+
+		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<DustDestroyer>();
 	}
 
 	void Player::FlashPlayer(Teddy::Timestep ts)
