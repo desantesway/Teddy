@@ -67,45 +67,55 @@ namespace Cuphead
 				Intro2();
 				break;
 			case PlayerState::Running:
+				m_Timer += ts;
 				Move(ts);
 				Running();
 				BlockMove();
 				break;
 			case PlayerState::Crouching:
+				m_Timer += ts;
 				Crouching();
 				break;
 			case PlayerState::Jumping:
+				m_Timer += ts;
 				Move(ts);
 				Jumping(ts);
 				BlockMove();
 				break;
 			case PlayerState::Dashing:
+				m_Timer += ts;
 				Dashing(ts);
 				break;
 			case PlayerState::Falling:
+				m_Timer += ts;
 				Move(ts);
 				Falling();
 				BlockMove();
 				break;
 			case PlayerState::Dropping:
+				m_Timer += ts;
 				Dropping(ts);
 				break;
 			case PlayerState::Parrying:
+				m_Timer += ts;
 				Move(ts);
 				Parrying();
 				BlockMove();
 				break;
 			case PlayerState::Hit:
+				m_Timer += ts;
 				Move(ts);
 				Hitting(ts);
 				BlockMove();
 				break;
 			case PlayerState::ParryHit:
+				m_Timer += ts;
 				Move(ts);
 				ParryHitting(ts);
 				BlockMove();
 				break;
 			case PlayerState::Idle:
+				m_Timer += ts;
 				Idle();
 				BlockMove();
 				break;
@@ -370,6 +380,8 @@ namespace Cuphead
 	{
 		m_Grounded = grounded; 
 		StartFall(); 
+		if(m_Grounded)
+			CreateJumpDust();
 	}
 
 	void Player::LoadCupheadTextures()
@@ -397,6 +409,13 @@ namespace Cuphead
 
 		m_HealthHudTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Hud/Hud_Health_78x32_256x256_0.png"
+			});
+
+		m_EffectsTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Player/Player_Effects_462x526_2048x2048_0.png",
+			"assets/Textures/Player/Player_Effects_462x526_2048x2048_1.png",
+			"assets/Textures/Player/Player_Effects_462x526_2048x2048_2.png",
+			"assets/Textures/Player/Player_Effects_462x526_2048x2048_3.png"
 			});
 	}
 
@@ -924,6 +943,45 @@ namespace Cuphead
 		m_ZHeld = true;
 		m_StartJump = true;
 		m_State = PlayerState::Jumping;
+	}
+
+	void Player::CreateLandingDust()
+	{
+		static float lastTimer = m_Timer;
+		if ((m_Timer - lastTimer) < 0.25f) return;
+
+		auto ent = m_Scene->CreateEntity("Landing dust");
+
+		auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		sprite.Textures = m_EffectsTextures;
+		sprite.Loop = false;
+		sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+
+		auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 462, 526);
+
+		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+		auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
+		transform.Translation = playerTransform.Translation + glm::vec3(0.0f, -0.75f, 0.1f);
+		transform.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
+
+		class DustDestroyer : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == 13)
+				{
+					RemoveComponent<Teddy::NativeScriptComponent>();
+
+					GetScene()->DestroyEntity(GetEntity());
+				}
+			}
+		};
+
+		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<DustDestroyer>();
+
+		lastTimer = m_Timer;
 	}
 
 	void Player::Jumping(Teddy::Timestep ts)

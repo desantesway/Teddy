@@ -82,6 +82,7 @@ namespace Cuphead
 
 		void StartJump();
 		void Jumping(Teddy::Timestep ts);
+		void CreateLandingDust();
 
 		void StartDash();
 		void Dashing(Teddy::Timestep ts);
@@ -122,6 +123,8 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_JumpTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthHudTextures;
+
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_EffectsTextures;
 
 		enum class PlayerState
 		{
@@ -197,6 +200,8 @@ namespace Cuphead
 		bool m_Shot = false;
 
 		int m_StartIndex = 0;
+
+		float m_Timer = 0.0f;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
