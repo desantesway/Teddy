@@ -93,6 +93,8 @@ namespace Cuphead
 
 		void Hitting(Teddy::Timestep ts);
 
+		void Explosion(Teddy::Timestep ts);
+
 		void LoadTextures();
 	private:
 		
@@ -123,6 +125,8 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3FiretorchProjectileTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_Phase3DeathTextures;
+
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_ExplosionTextures;
 
 		enum class DragonState
 		{
@@ -215,6 +219,9 @@ namespace Cuphead
 		std::vector<FirebubbleProjectile> m_Firebubbles;
 
 		Teddy::Entity m_FiretorchProjectileEntity;
+
+		Teddy::Entity m_ExplosionEntity;
+		bool m_Explosion = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

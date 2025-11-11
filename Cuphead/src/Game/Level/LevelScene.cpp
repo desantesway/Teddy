@@ -62,13 +62,6 @@ namespace Cuphead
 		rWallfilter.CategoryBits = LevelCategories::INVISIBLEWALLS;
 		rWallfilter.MaskBits = LevelCategories::PLAYER | LevelCategories::PLAYERGHOST;
 
-		auto& assets = Teddy::AssetManager::Get();
-
-		m_BossExplosionTextures = assets.LoadMultiple<Teddy::Texture2D>({
-			"assets/Textures/Explosion/Boss_Explosion_680x728_2048x2048_0.png",
-			"assets/Textures/Explosion/Boss_Explosion_680x728_2048x2048_1.png"
-			});
-
 		m_Clouds.Init(m_Scene);
 
 		InitPhase1();
@@ -392,10 +385,8 @@ namespace Cuphead
 					m_CameraShake = true;
 					CameraShake(ts);
 
-					m_BossExplosion = true;
-					BossExplosion(ts);
-
 					m_Player.OnUpdate(ts);
+					m_Dragon.OnUpdate(ts);
 					m_Clouds.SetPlayerPosition(m_Player.GetPosition());
 					m_Clouds.OnUpdate(ts);
 
@@ -425,8 +416,6 @@ namespace Cuphead
 		}
 
 		CameraShake(ts);
-
-		BossExplosion(ts);
 
 		if (m_Player.IsDead())
 		{
@@ -512,11 +501,7 @@ namespace Cuphead
 		case 1:
 			if (m_Dragon.IsPhaseStart() && m_Dragon.IsPhase3())
 			{
-				m_BossExplosion = true;
-			}
-			else
-			{
-				m_BossExplosion = false;
+				m_CameraShake = true;
 			}
 
 			if (m_Dragon.IsLastPhase())
@@ -535,47 +520,6 @@ namespace Cuphead
 		}
 
 		m_Clouds.OnUpdate(ts);
-	}
-
-	void LevelScene::BossExplosion(Teddy::Timestep ts)
-	{
-		if (m_BossExplosion)
-		{
-			if (!m_BossExplosionEntity)
-			{
-				m_BossExplosionEntity = m_Scene->CreateEntity("Boss Explosion");
-				auto& sprite = m_BossExplosionEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
-				sprite.Textures = m_BossExplosionTextures;
-				sprite.Loop = false;
-
-				m_BossExplosionEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 680, 728);
-				auto& transform = m_BossExplosionEntity.GetComponent<Teddy::TransformComponent>();
-				transform.Translation = glm::vec3(Randomizer::Get().RandomFloat(-3.5f, -1.5f), Randomizer::Get().RandomFloat(-2.0f, 1.0f), 3.0f);
-				transform.Scale *= 4.0f;
-			}
-			else
-			{
-				auto& aA = m_BossExplosionEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-				if (aA.Index >= 10)
-				{
-					aA.Index = 0;
-
-					auto& transform = m_BossExplosionEntity.GetComponent<Teddy::TransformComponent>();
-					transform.Translation = glm::vec3(Randomizer::Get().RandomFloat(-3.5f, -1.5f), Randomizer::Get().RandomFloat(-2.0f, 1.0f), 3.0f);
-				}
-			}
-		}
-		else if(m_BossExplosionEntity)
-		{
-			auto& aA = m_BossExplosionEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			auto& sprite = m_BossExplosionEntity.GetComponent<Teddy::SpriteAnimationComponent>();
-			if (aA.Index == sprite.PlayableIndicies.back())
-			{
-				m_Scene->DestroyEntity(m_BossExplosionEntity);
-				m_BossExplosionEntity = {};
-				m_BossExplosion = false;
-			}
-		}
 	}
 
 	bool LevelScene::Freeze(Teddy::Timestep ts)

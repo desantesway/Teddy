@@ -324,6 +324,11 @@ namespace Cuphead
 			"assets/Textures/Dragon/Entity/Ph3_Death/Dragon_Ph3_Death_637x872_2048x2048_0.png",
 			"assets/Textures/Dragon/Entity/Ph3_Death/Dragon_Ph3_Death_637x872_2048x2048_1.png"
 			});
+
+		m_ExplosionTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Explosion/Boss_Explosion_680x728_2048x2048_0.png",
+			"assets/Textures/Explosion/Boss_Explosion_680x728_2048x2048_1.png"
+			});
 	}
 
 	void Dragon::StartIntro()
@@ -445,10 +450,13 @@ namespace Cuphead
 		{
 			if (m_PhaseStart)
 			{
+				m_Explosion = true;
+				Explosion(ts);
 				Phase2To3(ts);
 			}
 			else if (m_Phase3Start)
 			{
+				m_Explosion = false;
 				if(!m_Phase3StartLoop)
 					Phase3Start(ts);
 				else
@@ -458,6 +466,8 @@ namespace Cuphead
 			{
 				if (m_Health < 0)
 				{
+					m_Explosion = true;
+					Explosion(ts);
 					if (m_Phase3Heads.LeftHead)
 					{
 						StartPhase3Death();
@@ -2971,4 +2981,44 @@ namespace Cuphead
 		}
 	}
 
+	void Dragon::Explosion(Teddy::Timestep ts)
+	{
+		if (m_Explosion)
+		{
+			if (!m_ExplosionEntity)
+			{
+				m_ExplosionEntity = m_Scene->CreateEntity("Boss Explosion");
+				auto& sprite = m_ExplosionEntity.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				sprite.Textures = m_ExplosionTextures;
+				sprite.Loop = false;
+
+				m_ExplosionEntity.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 680, 728);
+				auto& transform = m_ExplosionEntity.GetComponent<Teddy::TransformComponent>();
+				transform.Translation = glm::vec3(Randomizer::Get().RandomFloat(-3.5f, -1.5f), Randomizer::Get().RandomFloat(-2.0f, 1.0f), 3.0f);
+				transform.Scale *= 4.0f;
+			}
+			else
+			{
+				auto& aA = m_ExplosionEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index >= 10)
+				{
+					aA.Index = 0;
+
+					auto& transform = m_ExplosionEntity.GetComponent<Teddy::TransformComponent>();
+					transform.Translation = glm::vec3(Randomizer::Get().RandomFloat(-3.5f, -1.5f), Randomizer::Get().RandomFloat(-2.0f, 1.0f), 3.0f);
+				}
+			}
+		}
+		else if (m_ExplosionEntity)
+		{
+			auto& aA = m_ExplosionEntity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& sprite = m_ExplosionEntity.GetComponent<Teddy::SpriteAnimationComponent>();
+			if (aA.Index == sprite.PlayableIndicies.back())
+			{
+				m_Scene->DestroyEntity(m_ExplosionEntity);
+				m_ExplosionEntity = {};
+				m_Explosion = false;
+			}
+		}
+	}
 }
