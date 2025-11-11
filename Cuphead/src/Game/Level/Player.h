@@ -86,6 +86,7 @@ namespace Cuphead
 
 		void StartDash();
 		void Dashing(Teddy::Timestep ts);
+		void CreateDashDust();
 
 		void StartDrop();
 		void Dropping(Teddy::Timestep ts);
