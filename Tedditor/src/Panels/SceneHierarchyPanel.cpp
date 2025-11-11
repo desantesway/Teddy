@@ -519,8 +519,8 @@ namespace Teddy
 							int h = secndComponent.Texture->GetHeight();
 						}
 						
-						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)  ) - 1);
-						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
+						ImGui::DragFloat("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)  ) - 1);
+						ImGui::DragFloat("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 					});
@@ -670,8 +670,8 @@ namespace Teddy
 							h = std::max(h, static_cast<int>(secndComponent.Textures[i]->GetHeight()));
 						}
 
-						ImGui::DragInt("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)) - 1);
-						ImGui::DragInt("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
+						ImGui::DragFloat("X position", &component.X, 0.05f, 0.0f, (w / (component.SpriteWidth == 0 ? 1 : component.SpriteWidth)) - 1);
+						ImGui::DragFloat("Y position", &component.Y, 0.05f, 0.0f, (h / (component.SpriteHeight == 0 ? 1 : component.SpriteHeight)) - 1);
 						ImGui::DragInt("Sprite Width", &component.SpriteWidth, 1.0f, 0.0f, w);
 						ImGui::DragInt("Sprite Height", &component.SpriteHeight, 1.0f, 0.0f, h);
 

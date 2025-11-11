@@ -37,8 +37,6 @@ namespace Cuphead
 
                     if (m_LevelScene->WantsToRetry() || m_LevelScene->WantsToExit())
                     {
-                        m_LevelScene->OnUpdate(ts);
-
                         m_TransitionScenes.SetCircleAlpha(0.0f);
                         m_TransitionScenes.SetFadeTime(2.5f);
                         m_TransitionScenes.FadeIn();
@@ -48,8 +46,6 @@ namespace Cuphead
                     }
                     else if (m_LevelScene->WantsToResult())
                     {
-                        m_LevelScene->OnUpdate(ts);
-
                         m_TransitionScenes.SetCircleAlpha(0.0f);
                         m_TransitionScenes.SetFadeTime(0.25f);
                         m_TransitionScenes.FadeIn();

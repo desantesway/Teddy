@@ -140,6 +140,7 @@ namespace Cuphead
 		{
 			m_Damage = 11.6f;
 			m_EXDamage = 28.0f;
+			m_ExChargeRate = 8.0f;
 
 			static int lobberCount = 0;
 
@@ -199,6 +200,7 @@ namespace Cuphead
 		{
 			m_Damage = 8.5f;
 			m_EXDamage = 5.5f;
+			m_ExChargeRate = 6.0f;
 		}
 	}
 
@@ -470,6 +472,7 @@ namespace Cuphead
 		m_State = PlayerState::Intro1;
 
 		InitPlayerHUD();
+		InitExHUD();
 		InitProjectiles();
 	}
 
@@ -483,6 +486,23 @@ namespace Cuphead
 			});
 
 		// load EX and others
+	}
+
+	void Player::InitExHUD()
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			m_ExHUD[i] = m_Scene->CreateEntity("Ex HUD");
+
+			auto& sprite = m_ExHUD[i].AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+			sprite.Textures = m_HealthHudTextures;
+			sprite.Pause = true;
+			m_ExHUD[i].AddComponent<Teddy::SpriteAtlasComponent>(2, 8, 78, 32);
+			auto& transform = m_ExHUD[i].GetComponent<Teddy::TransformComponent>();
+			transform.Translation = glm::vec3(-3.45f + 0.125f * i, -2.15f, 3.199f - 0.001f * i);
+			transform.Scale = glm::vec3(0.225f, 0.225f, 1.0f);
+		}
+		
 	}
 
 	void Player::InitPlayerHUD()
@@ -961,7 +981,7 @@ namespace Cuphead
 
 		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 		auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		transform.Translation = playerTransform.Translation + glm::vec3(0.0f, -0.75f, 0.1f);
+		transform.Translation = playerTransform.Translation + glm::vec3(0.0f, -0.5f, 0.1f);
 		transform.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
 
 		class DustDestroyer : public Teddy::ScriptableEntity
@@ -1470,10 +1490,12 @@ namespace Cuphead
 
 	void Player::OnEvent(Teddy::Event& event)
 	{
-		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0 && m_Health > 0 && !m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause)
+		if (m_State != PlayerState::Intro1 && m_State != PlayerState::Intro2 && m_State != PlayerState::Intro0 && m_Health > 0)
 		{
 			Teddy::EventDispatcher dispatcher(event);
-			dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
+
+			if(!m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Pause)
+				dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Player::OnKeyPressed));
 			dispatcher.Dispatch<Teddy::KeyReleasedEvent>(TED_BIND_EVENT_FN(Player::OnKeyReleased));
 		}
 	}
@@ -1881,6 +1903,10 @@ namespace Cuphead
 
 	void Player::ProjectileImpact(b2ShapeId shape)
 	{
+		static float lastImpactTime = m_Timer;
+		if (m_Timer - lastImpactTime < 0.1f)
+			return;
+
 		for (auto& proj : m_ActiveProjectiles)
 		{
 			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
@@ -1904,6 +1930,44 @@ namespace Cuphead
 				}
 			}
 		}
+
+		m_ExCharge += m_ExChargeRate;
+		if (m_ExCharge > 200)
+			m_ExCharge = 200;
+
+		lastImpactTime = m_Timer;
+
+		UpdateEx();
+	}
+
+	void Player::DrawCard(int i)
+	{
+		if (i < 0 || i > 5) return;
+		auto& sprite = m_ExHUD[i].GetComponent<Teddy::SpriteAnimationComponent>();
+		if (sprite.PlayableIndicies.size() != 6)
+		{
+			auto& sprite = m_ExHUD[i].GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.PlayableIndicies = { 18, 19, 20, 21, 22, 23 };  // TODO: depends on cuphead/mugman
+			sprite.Reverse = true;
+			sprite.Loop = false;
+			sprite.Pause = false;
+
+			auto& aA = m_ExHUD[i].GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			aA.Index = 23;
+		}
+	}
+
+	void Player::UpdateEx()
+	{
+		int stage = m_ExCharge / 40;
+
+		DrawCard(stage - 1);
+
+		if (stage >= m_ExHUD.size())
+			return;
+
+		auto& atlas = m_ExHUD[stage].GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.Y = 8 - ((m_ExCharge - (40 * stage)) / 40);
 	}
 
 	bool Player::IsHitBox(b2ShapeId shape)

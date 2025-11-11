@@ -59,7 +59,11 @@ namespace Cuphead
 
 		void InitPlayer();
 		void InitPlayerHUD();
+		void InitExHUD();
 		void InitProjectiles();
+
+		void UpdateEx();
+		void DrawCard(int i);
 
 		void Intro0();
 		void Intro1();
@@ -120,6 +124,7 @@ namespace Cuphead
 		Teddy::Entity m_Entity;
 		Teddy::Entity m_Cookie;
 		Teddy::Entity m_HealthHUD;
+		std::array<Teddy::Entity, 5> m_ExHUD;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_MovementTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_IntroTextures;
@@ -205,6 +210,9 @@ namespace Cuphead
 		int m_StartIndex = 0;
 
 		float m_Timer = 0.0f;
+
+		float m_ExCharge = 0.0f;
+		float m_ExChargeRate = 0.0f;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

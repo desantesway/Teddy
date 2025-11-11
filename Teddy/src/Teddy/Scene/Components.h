@@ -54,8 +54,8 @@ namespace Teddy
 
 	struct SpriteAtlasComponent 
 	{
-		int X = 0;
-		int Y = 0;
+		float X = 0;
+		float Y = 0;
 		int SpriteWidth = 0;
 		int SpriteHeight = 0;
 
