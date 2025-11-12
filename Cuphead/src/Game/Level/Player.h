@@ -64,6 +64,9 @@ namespace Cuphead
 
 		void UpdateEx();
 		void DrawCard(int i);
+		void StartEx();
+		void ClearCards();
+		void RemoveCard();
 
 		void Intro0();
 		void Intro1();
@@ -151,7 +154,8 @@ namespace Cuphead
 			Intro1,
 			Intro2,
 			AnimationDone,
-			Dead
+			Dead,
+			Ex
 		};
 
 		PlayerState m_State = PlayerState::Idle;

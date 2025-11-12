@@ -502,7 +502,6 @@ namespace Cuphead
 			transform.Translation = glm::vec3(-3.45f + 0.125f * i, -2.15f, 3.199f - 0.001f * i);
 			transform.Scale = glm::vec3(0.225f, 0.225f, 1.0f);
 		}
-		
 	}
 
 	void Player::InitPlayerHUD()
@@ -1455,6 +1454,9 @@ namespace Cuphead
 		case Teddy::Key::X:
 			m_Shooting = true;
 			return true;
+		case Teddy::Key::V:
+			StartEx();
+			return true;
 		default:
 			break;
 		}
@@ -1968,6 +1970,72 @@ namespace Cuphead
 
 		auto& atlas = m_ExHUD[stage].GetComponent<Teddy::SpriteAtlasComponent>();
 		atlas.Y = 8 - ((m_ExCharge - (40 * stage)) / 40);
+	}
+
+	void Player::StartEx()
+	{
+		if (m_ExCharge >= 200)
+		{
+			ClearCards();
+		}
+		else if(m_ExCharge >= 40)
+		{
+			RemoveCard();
+		}
+	}
+
+	void Player::ClearCards()
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			auto& sprite = m_ExHUD[i].GetComponent<Teddy::SpriteAnimationComponent>();
+			sprite.Pause = true;
+			if (sprite.PlayableIndicies.size() == 6)
+			{
+				sprite.PlayableIndicies.clear();
+				auto& aA = m_ExHUD[i].GetComponent<Teddy::SpriteAnimationAtlasComponent>().Index = 0;
+			}
+
+			auto& atlas = m_ExHUD[i].GetComponent<Teddy::SpriteAtlasComponent>();
+			atlas.Y = 8;
+			atlas.X = 2;
+		}
+
+		m_ExCharge = 0;
+	}
+
+	void Player::RemoveCard()
+	{
+		int prevStage = m_ExCharge / 40;
+		int currStage = (m_ExCharge - 40) / 40;
+
+		if (currStage >= 0)
+		{
+			auto& currSprite = m_ExHUD[currStage].GetComponent<Teddy::SpriteAnimationComponent>();
+			auto& prevSprite =	m_ExHUD[prevStage].GetComponent<Teddy::SpriteAnimationComponent>();
+
+			currSprite.Pause = prevSprite.Pause;
+			currSprite.PlayableIndicies = prevSprite.PlayableIndicies;
+
+			auto& currAtlas = m_ExHUD[currStage].GetComponent<Teddy::SpriteAtlasComponent>();
+			auto& prevAtlas = m_ExHUD[prevStage].GetComponent<Teddy::SpriteAtlasComponent>();
+
+			currAtlas.Y = prevAtlas.Y;
+			currAtlas.X = prevAtlas.X;
+
+			auto& currAA = m_ExHUD[currStage].GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& prevAA = m_ExHUD[prevStage].GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+			currAA.Index = prevAA.Index;
+
+			prevSprite.PlayableIndicies.clear();
+			prevSprite.Pause = true;
+			prevAA.Index = 0;
+			prevAtlas.Y = 8;
+			prevAtlas.X = 2;
+
+			m_ExCharge -= 40;
+		}
 	}
 
 	bool Player::IsHitBox(b2ShapeId shape)
