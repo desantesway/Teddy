@@ -2,7 +2,7 @@
 
 <img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/ce2dc28b-9d62-4846-b360-7443c651f589" />
 
-At this moment, I've done almost everything! Phase 1 and 2 are mostly done, with some minor tweaks left to do. And I'm in the finish line of phase 3, all is there left to do is it's attacks and death animation. The player still needs the ability to charge and launch EX shots.
+At this moment, I've done almost everything! There's no sound yet, but phase 1, 2 and 3 are mostly done, with some minor tweaks left to do. The player still needs the ability to launch EX and Super shots.
 
 # 🧸 Teddy – Game Engine (C++, OpenGL, SDL3 & ImGui)
 
