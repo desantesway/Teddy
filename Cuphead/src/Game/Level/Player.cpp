@@ -419,6 +419,16 @@ namespace Cuphead
 			"assets/Textures/Player/Player_Effects_462x526_2048x2048_2.png",
 			"assets/Textures/Player/Player_Effects_462x526_2048x2048_3.png"
 			});
+
+		m_ExTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_0.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_1.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_2.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_3.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_4.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_5.png",
+			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_6.png"
+			});
 	}
 
 	void Player::InitCuphead(Teddy::Ref<Teddy::Scene> scene)
@@ -850,7 +860,7 @@ namespace Cuphead
 	void Player::StartFall()
 	{			
 		if (m_Health < 0 || m_State == PlayerState::Dead || m_State == PlayerState::Hit || m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
-			m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
+			m_State == PlayerState::Super || m_State == PlayerState::Ex || m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -1457,6 +1467,9 @@ namespace Cuphead
 		case Teddy::Key::V:
 			StartEx();
 			return true;
+		case Teddy::Key::Up:
+			m_UpPressed = true;
+			return true;
 		default:
 			break;
 		}
@@ -1482,7 +1495,10 @@ namespace Cuphead
 			return true;
 		case Teddy::Key::X:
 			m_Shooting = false;
-			break;
+			return true;
+		case Teddy::Key::Up:
+			m_UpPressed = false;
+			return true;
 		default:
 			break;
 		}
@@ -1974,14 +1990,138 @@ namespace Cuphead
 
 	void Player::StartEx()
 	{
+		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead) return;
+
 		if (m_ExCharge >= 200)
 		{
+			if (m_State == PlayerState::Ex) return;
+
+			//ShootSuper();
 			ClearCards();
 		}
 		else if(m_ExCharge >= 40)
 		{
+			if(m_State == PlayerState::Super) return;
+
+			ShootEx();
+			switch (m_Projectile)
+			{
+			case ProjectileType::Lobber:
+				break;
+			case ProjectileType::Roundabout:
+				break;
+			default:
+				break;
+			}
 			RemoveCard();
 		}
+	}
+
+	// TODO: cancel jumps, etc mid ex
+	void Player::ShootEx() // TODO: parry ex inscrease
+	{
+		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Super) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_ExTextures;
+		sprite.PingPong = false;
+		sprite.Loop = false;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 429;
+		atlas.SpriteHeight = 415;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		sprite.PlayableIndicies.clear();
+		indicies.GenerateFrames(sprite, atlas);
+
+		if (m_Grounded)
+		{
+			if (m_DownPressed && !m_UpPressed)
+			{
+				if ((m_RightPressed && !m_LeftPressed) || (!m_RightPressed && m_LeftPressed)) // diagonal down
+				{
+					for (int i = 0; i < 15; i++)
+						sprite.PlayableIndicies.push_back(i);
+					indicies.Index = 0;
+				}
+				else // down
+				{
+					for (int i = 42; i < 57; i++)
+						sprite.PlayableIndicies.push_back(i);
+					indicies.Index = 42;
+				}
+			}
+			else if (!m_DownPressed && m_UpPressed)
+			{
+				if ((m_RightPressed && !m_LeftPressed) || (!m_RightPressed && m_LeftPressed)) // diagonal up
+				{
+					for (int i = 21; i < 36; i++)
+						sprite.PlayableIndicies.push_back(i);
+					indicies.Index = 21;
+				}
+				else // up
+				{
+					for (int i = 84; i < 99; i++)
+						sprite.PlayableIndicies.push_back(i);
+					indicies.Index = 84;
+				}
+			}
+			else // straight
+			{
+				for (int i = 63; i < 78; i++)
+					sprite.PlayableIndicies.push_back(i);
+				indicies.Index = 63;
+			}
+		}
+		else
+		{
+			if (m_DownPressed && !m_UpPressed)
+			{
+				for (int i = 15; i < 21; i++)
+					sprite.PlayableIndicies.push_back(i);
+				
+				indicies.Index = 15;
+
+				class ExDiagonalDownAir : public Teddy::ScriptableEntity
+				{
+				public:
+					void OnUpdate(Teddy::Timestep ts) override
+					{
+						auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						if (aA.Index == 20)
+						{
+							auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+							sprite.PlayableIndicies.clear();
+							for (int i = 6; i < 15; i++)
+								sprite.PlayableIndicies.push_back(i);
+
+							aA.Index = 6;
+						}
+					}
+				};
+
+				m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExDiagonalDownAir>();
+			}
+		}
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+
+		if (m_DirectionRight)
+			transform.Scale = glm::vec3(4.0f);
+		else
+			transform.Scale = glm::vec3(-4.0f, 4.0f, 1.0f);
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		m_State = PlayerState::Ex;
 	}
 
 	void Player::ClearCards()

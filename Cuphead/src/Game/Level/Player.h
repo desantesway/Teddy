@@ -67,6 +67,7 @@ namespace Cuphead
 		void StartEx();
 		void ClearCards();
 		void RemoveCard();
+		void ShootEx();
 
 		void Intro0();
 		void Intro1();
@@ -134,6 +135,8 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_JumpTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_HealthHudTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_ExTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SuperTextures;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_EffectsTextures;
 
@@ -155,7 +158,8 @@ namespace Cuphead
 			Intro2,
 			AnimationDone,
 			Dead,
-			Ex
+			Ex,
+			Super
 		};
 
 		PlayerState m_State = PlayerState::Idle;
@@ -187,6 +191,7 @@ namespace Cuphead
 		bool m_CookieDeleted = false;
 		bool m_CookieCreated = false;
 
+		bool m_UpPressed = false;
 		bool m_DownPressed = false;
 		bool m_RightPressed = false;
 		bool m_LeftPressed = false;
