@@ -119,6 +119,9 @@ namespace Cuphead
 				Idle();
 				BlockMove();
 				break;
+			case PlayerState::Ex:
+				Ex();
+				break;
 			default:
 				break;
 			}
@@ -2018,6 +2021,7 @@ namespace Cuphead
 	}
 
 	// TODO: cancel jumps, etc mid ex
+	// TODO: set gravity scale to 0 on ex start and back to normal on ex end
 	void Player::ShootEx() // TODO: parry ex inscrease
 	{
 		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Super) return;
@@ -2083,30 +2087,55 @@ namespace Cuphead
 		{
 			if (m_DownPressed && !m_UpPressed)
 			{
-				for (int i = 15; i < 21; i++)
-					sprite.PlayableIndicies.push_back(i);
-				
-				indicies.Index = 15;
-
-				class ExDiagonalDownAir : public Teddy::ScriptableEntity
+				if ((m_RightPressed && !m_LeftPressed) || (!m_RightPressed && m_LeftPressed)) // diagonal down
 				{
-				public:
-					void OnUpdate(Teddy::Timestep ts) override
-					{
-						auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-						if (aA.Index == 20)
-						{
-							auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
-							sprite.PlayableIndicies.clear();
-							for (int i = 6; i < 15; i++)
-								sprite.PlayableIndicies.push_back(i);
+					for (int i = 15; i < 21; i++)
+						sprite.PlayableIndicies.push_back(i);
 
-							aA.Index = 6;
-						}
-					}
-				};
+					indicies.Index = 15;
 
-				m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExDiagonalDownAir>();
+					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<6, 15, 20>>();
+				}
+				else // down
+				{
+					for (int i = 57; i < 63; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					indicies.Index = 57;
+
+					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<48, 57, 62>>();
+				}
+			}
+			else if (!m_DownPressed && m_UpPressed)
+			{
+				if ((m_RightPressed && !m_LeftPressed) || (!m_RightPressed && m_LeftPressed)) // diagonal up
+				{
+					for (int i = 37; i < 43; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					indicies.Index = 37;
+
+					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<27, 37, 42>>();
+
+				}
+				else // up
+				{
+					for (int i = 99; i < 105; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					indicies.Index = 99;
+
+					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<90, 99, 104>>();
+				}
+			}
+			else // straight
+			{
+				for (int i = 78; i < 84; i++)
+					sprite.PlayableIndicies.push_back(i);
+
+				indicies.Index = 78;
+
+				m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<69, 78, 83>>();
 			}
 		}
 
@@ -2122,6 +2151,11 @@ namespace Cuphead
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
 		m_State = PlayerState::Ex;
+	}
+
+	void Player::Ex()
+	{
+
 	}
 
 	void Player::ClearCards()

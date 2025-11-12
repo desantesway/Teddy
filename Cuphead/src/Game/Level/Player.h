@@ -4,7 +4,7 @@
 #include "Teddy/Core/Timestep.h"
 #include "Teddy/Scene/Entity.h"
 #include "Teddy/Events/KeyEvent.h"
-#include "Teddy/Physics/ContactEvent.h"
+#include "Teddy/Scene/ScriptableEntity.h"
 
 namespace Cuphead
 {
@@ -68,6 +68,9 @@ namespace Cuphead
 		void ClearCards();
 		void RemoveCard();
 		void ShootEx();
+		void Ex();
+		void ShootSuper();
+		void Super();
 
 		void Intro0();
 		void Intro1();
@@ -123,6 +126,25 @@ namespace Cuphead
 		void BreakCookie();
 		void DeleteCookie(Teddy::Timestep ts);
 	private:
+		template<int Init, int End, int Start>
+		class ExAirAnimation : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == Start)
+				{
+					auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+					sprite.PlayableIndicies.clear();
+					for (int i = Init; i < End; i++)
+						sprite.PlayableIndicies.push_back(i);
+
+					aA.Index = Init;
+				}
+			}
+		};
+
 		bool m_IntroLoaded = false;
 
 		Teddy::Entity m_Entity;
