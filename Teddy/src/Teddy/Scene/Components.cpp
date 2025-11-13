@@ -107,6 +107,7 @@ namespace Teddy
 
     void Rigidbody2DComponent::SetGravityScale(float scale)
     {
+		GravityScale = scale;
         b2Body_SetGravityScale(*static_cast<b2BodyId*>(RuntimeBody), scale);
     }
 

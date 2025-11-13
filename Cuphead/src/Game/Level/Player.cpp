@@ -10,17 +10,6 @@ namespace Cuphead
 
 	Player::~Player()
 	{
-		for (auto& it : m_ActiveProjectiles)
-		{
-			m_Scene->DestroyEntity(it);
-		}
-		m_ActiveProjectiles.clear();
-
-		for (auto& it : m_ProjectileExplosion)
-		{
-			m_Scene->DestroyEntity(it);
-		}	
-		m_ProjectileExplosion.clear();
 	}
 
 	void Player::OnUpdate(Teddy::Timestep ts)
@@ -141,12 +130,6 @@ namespace Cuphead
 	{
 		if (m_Projectile == ProjectileType::Lobber)
 		{
-			m_Damage = 11.6f;
-			m_EXDamage = 28.0f;
-			m_ExChargeRate = 8.0f;
-
-			static int lobberCount = 0;
-
 			auto ent = m_Scene->CreateEntity("Lobber");
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 			sprite.Loop = false;
@@ -179,7 +162,7 @@ namespace Cuphead
 			
 			m_Scene->RefreshBody(ent);
 			
-			m_ActiveProjectiles.push_back(ent);
+			m_ActiveProjectiles.push_back({ ent, 11.6f, 8.0f });
 
 			auto exp = m_Scene->CreateEntity("Lobber Explosion");
 			auto& expSprite = exp.AddComponent<Teddy::SpriteAnimationComponent>(0.025f, 0.025f, 0.025f);
@@ -196,33 +179,31 @@ namespace Cuphead
 			expTransform.Translation = transform.Translation - glm::vec3(0.2f, 0.175f, 0.5f); // TODO: see this, it has a weird offset depending on player location
 			
 			m_ProjectileExplosion.push_back(exp);
-			
-			lobberCount++;
 		}
 		else if (m_Projectile == ProjectileType::Roundabout)
 		{
-			m_Damage = 8.5f;
-			m_EXDamage = 5.5f;
-			m_ExChargeRate = 6.0f;
+			//m_Damage = 8.5f;
+			//m_EXDamage = 5.5f;
+			//m_ExChargeRate = 6.0f;
 		}
 	}
 
 	void Player::Shoot(Teddy::Timestep ts)
 	{
-		std::vector<Teddy::Entity> newActive;
+		std::vector<ProjectileInfo> newActive;
 		for (auto& ent : m_ActiveProjectiles)
 		{
-			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
-			auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+			auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
 				transform.Translation.y <= -3.0f || aA.Index == 11)
 			{
-				m_Scene->DestroyEntity(ent);
+				m_Scene->DestroyEntity(ent.Entity);
 			}
 			else
 			{
-				auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-				auto& sprite = ent.GetComponent<Teddy::SpriteAnimationComponent>();
+				auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& sprite = ent.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 				if (sprite.PlayableIndicies.size() < 4 && aA.Index >= 14)
 				{
 					sprite.PlayableIndicies = { 15, 16, 17, 18, 19, 20, 21 };
@@ -231,7 +212,7 @@ namespace Cuphead
 					sprite.Loop = true;
 				}
 		
-				if (ent && ent.HasComponent<Teddy::Rigidbody2DComponent>())
+				if (ent.Entity && ent.Entity.HasComponent<Teddy::Rigidbody2DComponent>())
 					newActive.push_back(ent);
 			}
 		}
@@ -498,6 +479,10 @@ namespace Cuphead
 			"assets/Textures/Weapons/Lobber/Lobber_223x189_1024x1024_1.png",
 			});
 
+		m_LobberExTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Weapons/Lobber/Lobber_EX_403x394_2048x2048_0.png"
+			});
+
 		// load EX and others
 	}
 
@@ -598,6 +583,9 @@ namespace Cuphead
 		m_Scene->DeleteSensor(sensor.Sensors["HitBox"]);
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
 
 		m_State = PlayerState::Idle;
 	}
@@ -829,6 +817,9 @@ namespace Cuphead
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
+
 		m_Moving = true;
 		m_State = PlayerState::Running;
 	}
@@ -883,7 +874,7 @@ namespace Cuphead
 		indicies.GenerateFrames(sprite, atlas);
 
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
-		if (transform.Scale.x >= 0)
+		if (m_DirectionRight)
 			transform.Scale = glm::vec3(1.35f);
 		else
 			transform.Scale = glm::vec3(-1.35f, 1.35f, 1.0f);
@@ -896,6 +887,9 @@ namespace Cuphead
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
 
 		if(m_State != PlayerState::Dropping)
 			m_State = PlayerState::Falling;
@@ -971,6 +965,9 @@ namespace Cuphead
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
 
 		m_ZHeld = true;
 		m_StartJump = true;
@@ -1090,6 +1087,9 @@ namespace Cuphead
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.5f }, { 0.4f, 0.25f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
 
 		m_State = PlayerState::Crouching;
 	}
@@ -1379,6 +1379,9 @@ namespace Cuphead
 		sensor.Sensors["ParryHitBox"] = { { 0.0f, 0.0f }, { 0.5f, 0.5f }, 0.0f, true };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["ParryHitBox"]);
 
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
+
 		m_State = PlayerState::Parrying;
 		m_ParryReset = false;
 	}
@@ -1561,6 +1564,9 @@ namespace Cuphead
 		}
 		indicies.Index = *sprite.PlayableIndicies.begin();
 
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
+
 		m_State = PlayerState::Hit;
 		m_Hitting = true;
 	}
@@ -1693,6 +1699,9 @@ namespace Cuphead
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(7.5f);
 
 		m_State = PlayerState::ParryHit;
 	}
@@ -1910,7 +1919,7 @@ namespace Cuphead
 	{
 		for (auto& proj : m_ActiveProjectiles)
 		{
-			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
+			auto& sensor = proj.Entity.GetComponent<Teddy::Sensor2DComponent>();
 			for (auto& [name, sensorShape] : sensor.Sensors)
 			{
 				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
@@ -1922,43 +1931,60 @@ namespace Cuphead
 		return false;
 	}
 
-	void Player::ProjectileImpact(b2ShapeId shape)
+	float Player::ProjectileImpact(b2ShapeId shape)
 	{
+		float ret = 0.0f;
+		float chargeRate = 0.0f;
+
 		static float lastImpactTime = m_Timer;
 		if (m_Timer - lastImpactTime < 0.1f)
-			return;
+			return 0.0f;
 
 		for (auto& proj : m_ActiveProjectiles)
 		{
-			auto& sensor = proj.GetComponent<Teddy::Sensor2DComponent>();
+			auto& sensor = proj.Entity.GetComponent<Teddy::Sensor2DComponent>();
 			for (auto& [_, sensorShape] : sensor.Sensors)
 			{
 				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
 				if (B2_ID_EQUALS(senShape, shape))
 				{
-					auto& sprite = proj.GetComponent<Teddy::SpriteAnimationComponent>();
-					sprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11 };
+					auto& sprite = proj.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+					
 					sprite.Loop = false;
 					sprite.PingPong = false;
 					sprite.Reverse = false;
 		
-					auto& aA = proj.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-					aA.Index = 6;
+					auto& aA = proj.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+					if (proj.IsEx)
+					{
+						sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+						aA.Index = 0;
+					}
+					else
+					{
+						sprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11 };
+						aA.Index = 6;
+					}
 		
-					auto& body = proj.GetComponent<Teddy::Rigidbody2DComponent>();
+					auto& body = proj.Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 					body.SetVelocity(0.0f, 0.0f);
 					body.SetGravityScale(0.0f);
+
+					ret = proj.Damage;
+					chargeRate = proj.ChargeRate;
 				}
 			}
 		}
 
-		m_ExCharge += m_ExChargeRate;
+		m_ExCharge += chargeRate;
 		if (m_ExCharge > 200)
 			m_ExCharge = 200;
 
 		lastImpactTime = m_Timer;
 
 		UpdateEx();
+
+		return ret;
 	}
 
 	void Player::DrawCard(int i)
@@ -2007,15 +2033,6 @@ namespace Cuphead
 			if(m_State == PlayerState::Super) return;
 
 			ShootEx();
-			switch (m_Projectile)
-			{
-			case ProjectileType::Lobber:
-				break;
-			case ProjectileType::Roundabout:
-				break;
-			default:
-				break;
-			}
 			RemoveCard();
 		}
 	}
@@ -2150,12 +2167,100 @@ namespace Cuphead
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
 		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
 
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(0.0f);
+		body.SetVelocity(0.0f, 0.0f);
+
+		m_ExShot = false;
+
 		m_State = PlayerState::Ex;
 	}
 
 	void Player::Ex()
 	{
+		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		if (!m_ExShot && (aA.Index == 7 || aA.Index == 28 || aA.Index == 49 || aA.Index == 91 || aA.Index == 70))
+		{
+			auto ent = m_Scene->CreateEntity("Ex Shot");
 
+			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
+			sprite.Loop = true;
+			sprite.Textures = m_LobberExTextures;
+			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 403, 394);
+
+			sprite.PlayableIndicies = { 14, 15, 16, 17, 18, 19, 20, 21 };
+
+			auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			aA.Index = 14;
+
+			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+			transform.Scale *= 3.0f;
+			if (m_DirectionRight)
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(1.0f, 0.0f, 0.102f);
+			else
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-1.0f, 0.0f, 0.102f);
+
+			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+			rb.FixedRotation = true;
+			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
+			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.5f }; // TODO: depending on direction
+
+			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, false);
+
+			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PROJECTILE;
+			filter.MaskBits = LevelCategories::ENEMY;
+
+			m_Scene->RefreshBody(ent);
+
+			m_ActiveProjectiles.push_back({ ent, 28.0f, 0.0f, true });
+
+			switch (m_Projectile)
+			{
+			case ProjectileType::Lobber:
+				break;
+			case ProjectileType::Roundabout:
+				break;
+			default:
+				break;
+			}
+
+			m_ExShot = true;
+
+			// TODO Create dust
+		}
+		else if (aA.Index == 14 || aA.Index == 56 || aA.Index == 35 || aA.Index == 98 || aA.Index == 77)
+		{
+			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+			body.SetVelocity(0.01f, 0.01f);
+
+			if (m_Grounded)
+			{
+				if (m_DownPressed)
+				{
+					m_State = PlayerState::DoneJumping;
+					StartCrouch();
+				}
+				else if (m_RightPressed && !m_LeftPressed)
+				{
+					m_State = PlayerState::AnimationDone;
+					StartRun(true);
+				}
+				else if (m_LeftPressed && !m_RightPressed)
+				{
+					m_State = PlayerState::AnimationDone;
+					StartRun(false);
+				}
+				else
+					StartIdle();
+			}
+			else
+			{
+				m_State = PlayerState::AnimationDone;
+				StartFall();
+			}
+		}
 	}
 
 	void Player::ClearCards()

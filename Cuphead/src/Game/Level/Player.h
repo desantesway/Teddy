@@ -46,11 +46,8 @@ namespace Cuphead
 		bool IsParry(b2ShapeId shape);
 		bool IsGroundSensor(b2ShapeId shape);
 		bool IsProjectile(b2ShapeId shape);
-		void ProjectileImpact(b2ShapeId shape);
+		float ProjectileImpact(b2ShapeId shape);
 		bool IsHitBox(b2ShapeId shape);
-
-		float GetProjectileDamage() { return m_Damage; }
-		float GetEXDamage() { return m_EXDamage; }
 
 		void SetColor(glm::vec4 color) { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color = color; }
 	private:
@@ -229,12 +226,26 @@ namespace Cuphead
 			Lobber // 11.6 // EX: 28
 		};
 
-		std::vector<Teddy::Entity> m_ActiveProjectiles;
+		struct ProjectileInfo
+		{
+			bool IsEx = false;
+			Teddy::Entity Entity;
+			float Damage;
+			float ChargeRate = 0.0f;
+
+			ProjectileInfo(Teddy::Entity entity, float damage)
+				: Entity(entity), Damage(damage) {}
+			ProjectileInfo(Teddy::Entity entity, float damage, float chargeRate)
+				: Entity(entity), Damage(damage), ChargeRate(chargeRate) {}
+			ProjectileInfo(Teddy::Entity entity, float damage, float chargeRate, bool isEx)
+				: Entity(entity), Damage(damage), ChargeRate(chargeRate), IsEx(isEx) {}
+		};
+
+		std::vector<ProjectileInfo> m_ActiveProjectiles;
 		std::vector<Teddy::Entity> m_ProjectileExplosion;
 		ProjectileType m_Projectile = ProjectileType::Lobber;
-		int m_Damage = 0.0f;
-		int m_EXDamage = 0.0f;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberExTextures;
 		float m_ShootTimer = 0.0f;
 		bool m_Shot = false;
 
@@ -243,7 +254,7 @@ namespace Cuphead
 		float m_Timer = 0.0f;
 
 		float m_ExCharge = 0.0f;
-		float m_ExChargeRate = 0.0f;
+		bool m_ExShot = true;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

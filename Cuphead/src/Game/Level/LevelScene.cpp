@@ -1497,8 +1497,8 @@ namespace Cuphead
 		{
 			if (m_Player.IsProjectile(e.GetVisitorShape()))
 			{
-				m_Player.ProjectileImpact(e.GetVisitorShape());
-				m_Dragon.HitFirebubble(e.GetSensorShape(), m_Player.GetProjectileDamage());
+				float damage = m_Player.ProjectileImpact(e.GetVisitorShape());
+				m_Dragon.HitFirebubble(e.GetSensorShape(), damage);
 				return true;
 			}
 			else if (m_Player.IsHitBox(e.GetVisitorShape()))
@@ -1512,8 +1512,8 @@ namespace Cuphead
 		{
 			if (m_Player.IsProjectile(e.GetSensorShape()))
 			{
-				m_Player.ProjectileImpact(e.GetSensorShape());
-				m_Dragon.HitFirebubble(e.GetVisitorShape(), m_Player.GetProjectileDamage());
+				float damage = m_Player.ProjectileImpact(e.GetSensorShape());
+				m_Dragon.HitFirebubble(e.GetVisitorShape(), damage);
 				return true;
 			}
 			else if (m_Player.IsHitBox(e.GetSensorShape()))
@@ -1528,8 +1528,8 @@ namespace Cuphead
 		{
 			if (m_Player.IsProjectile(e.GetVisitorShape()))
 			{
-				m_Player.ProjectileImpact(e.GetVisitorShape());
-				m_Dragon.Hit(m_Player.GetProjectileDamage());
+				float damage = m_Player.ProjectileImpact(e.GetVisitorShape());
+				m_Dragon.Hit(damage);
 				return true;
 			}
 			else if (m_Player.IsHitBox(e.GetVisitorShape()))
@@ -1543,8 +1543,8 @@ namespace Cuphead
 		{
 			if (m_Player.IsProjectile(e.GetSensorShape()))
 			{
-				m_Player.ProjectileImpact(e.GetSensorShape());
-				m_Dragon.Hit(m_Player.GetProjectileDamage());
+				float damage = m_Player.ProjectileImpact(e.GetSensorShape());
+				m_Dragon.Hit(damage);
 				return true;
 			}
 			else if (m_Player.IsHitBox(e.GetSensorShape()))
