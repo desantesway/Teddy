@@ -397,6 +397,12 @@ namespace Cuphead
 			"assets/Textures/Hud/Hud_Health_78x32_256x256_0.png"
 			});
 
+		m_ExEffectsTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_0.png",
+			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_1.png",
+			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_2.png"
+			});
+
 		m_EffectsTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Player/Player_Effects_462x526_2048x2048_0.png",
 			"assets/Textures/Player/Player_Effects_462x526_2048x2048_1.png",
@@ -2180,9 +2186,15 @@ namespace Cuphead
 		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 
 		if (m_DirectionRight)
+		{
+			m_ExDirection.Right = true;
 			transform.Scale = glm::vec3(4.0f);
+		}
 		else
+		{
+			m_ExDirection.Right = false;
 			transform.Scale = glm::vec3(-4.0f, 4.0f, 1.0f);
+		}
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
 		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
@@ -2251,14 +2263,14 @@ namespace Cuphead
 				}
 			}
 
-			if (m_DirectionRight)
+			if (m_ExDirection.Right)
 				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + transform.Translation;
 			else
 				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-transform.Translation.x, transform.Translation.y, 0.103f);
 
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
-			rb.Velocity = { m_DirectionRight ? rb.Velocity.x : -rb.Velocity.x, rb.Velocity.y };
+			rb.Velocity = { m_ExDirection.Right ? rb.Velocity.x : -rb.Velocity.x, rb.Velocity.y };
 
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, false);
@@ -2271,7 +2283,7 @@ namespace Cuphead
 
 			m_ActiveProjectiles.push_back({ ent, 28.0f, 0.0f, true });
 
-			switch (m_Projectile)
+			switch (m_Projectile) // TODO
 			{
 			case ProjectileType::Lobber:
 				break;
@@ -2283,7 +2295,7 @@ namespace Cuphead
 
 			m_ExShot = true;
 
-			// TODO Create dust
+			CreateExShotDust(m_ExDirection.Right);
 		}
 		else if (aA.Index == 14 || aA.Index == 56 || aA.Index == 35 || aA.Index == 98 || aA.Index == 77)
 		{
@@ -2316,6 +2328,52 @@ namespace Cuphead
 				StartFall();
 			}
 		}
+	}
+
+	void Player::CreateExShotDust(bool isRight)
+	{
+		auto ent = m_Scene->CreateEntity("Ex shot dust");
+
+		auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		sprite.Textures = m_ExEffectsTextures;
+		sprite.Loop = false;
+		sprite.PlayableIndicies.clear();
+		for (int i = 0; i < 18; i++)
+			sprite.PlayableIndicies.push_back(i);
+		
+		auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 700, 610);
+		
+		auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		aA.Index = 0;
+		
+		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+		auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
+
+		if(isRight)
+			transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, -0.01f);
+		else
+			transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, -0.01f);
+		transform.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
+
+		if(!isRight)
+			transform.Scale.x = -transform.Scale.x;
+		
+		class DustDestroyer : public Teddy::ScriptableEntity
+		{
+		public:
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index == 17)
+				{
+					RemoveComponent<Teddy::NativeScriptComponent>();
+		
+					GetScene()->DestroyEntity(GetEntity());
+				}
+			}
+		};
+		
+		ent.AddComponent<Teddy::NativeScriptComponent>().Bind<DustDestroyer>();
 	}
 
 	void Player::ClearCards()

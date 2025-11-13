@@ -66,6 +66,7 @@ namespace Cuphead
 		void RemoveCard();
 		void ShootEx();
 		void Ex();
+		void CreateExShotDust(bool isRight);
 		void ShootSuper();
 		void Super();
 
@@ -158,6 +159,7 @@ namespace Cuphead
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SuperTextures;
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_EffectsTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_ExEffectsTextures;
 
 		enum class PlayerState
 		{
@@ -258,6 +260,7 @@ namespace Cuphead
 			bool Side = false;
 			bool Up = false;
 			bool Down = false;
+			bool Right = true;
 
 			ExDirection() = default;
 			ExDirection(bool side, bool up,  bool down)
