@@ -1614,6 +1614,8 @@ namespace Cuphead
 			body.SetVelocityY(25.0f);
 			return ret;
 		}
+
+		return false;
 	}
 
 	bool Player::NormalHit()
@@ -2070,12 +2072,16 @@ namespace Cuphead
 					for (int i = 0; i < 15; i++)
 						sprite.PlayableIndicies.push_back(i);
 					indicies.Index = 0;
+
+					m_ExDirection = ExDirection(true, false, true);
 				}
 				else // down
 				{
 					for (int i = 42; i < 57; i++)
 						sprite.PlayableIndicies.push_back(i);
 					indicies.Index = 42;
+
+					m_ExDirection = ExDirection(false, false, true);
 				}
 			}
 			else if (!m_DownPressed && m_UpPressed)
@@ -2085,12 +2091,16 @@ namespace Cuphead
 					for (int i = 21; i < 36; i++)
 						sprite.PlayableIndicies.push_back(i);
 					indicies.Index = 21;
+
+					m_ExDirection = ExDirection(true, true, false);
 				}
 				else // up
 				{
 					for (int i = 84; i < 99; i++)
 						sprite.PlayableIndicies.push_back(i);
 					indicies.Index = 84;
+
+					m_ExDirection = ExDirection(false, true, false);
 				}
 			}
 			else // straight
@@ -2098,6 +2108,8 @@ namespace Cuphead
 				for (int i = 63; i < 78; i++)
 					sprite.PlayableIndicies.push_back(i);
 				indicies.Index = 63;
+
+				m_ExDirection = ExDirection(true, false, false);
 			}
 		}
 		else
@@ -2112,6 +2124,8 @@ namespace Cuphead
 					indicies.Index = 15;
 
 					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<6, 15, 20>>();
+
+					m_ExDirection = ExDirection(true, false, true);
 				}
 				else // down
 				{
@@ -2121,6 +2135,8 @@ namespace Cuphead
 					indicies.Index = 57;
 
 					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<48, 57, 62>>();
+
+					m_ExDirection = ExDirection(false, false, true);
 				}
 			}
 			else if (!m_DownPressed && m_UpPressed)
@@ -2134,6 +2150,7 @@ namespace Cuphead
 
 					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<27, 37, 42>>();
 
+					m_ExDirection = ExDirection(true, true, false);
 				}
 				else // up
 				{
@@ -2143,6 +2160,8 @@ namespace Cuphead
 					indicies.Index = 99;
 
 					m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<90, 99, 104>>();
+
+					m_ExDirection = ExDirection(false, true, false);
 				}
 			}
 			else // straight
@@ -2153,6 +2172,8 @@ namespace Cuphead
 				indicies.Index = 78;
 
 				m_Entity.AddComponent<Teddy::NativeScriptComponent>().Bind<ExAirAnimation<69, 78, 83>>();
+
+				m_ExDirection = ExDirection(true, false, false);
 			}
 		}
 
@@ -2186,7 +2207,7 @@ namespace Cuphead
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 			sprite.Loop = true;
 			sprite.Textures = m_LobberExTextures;
-			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 403, 394);
+			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(4, 2, 403, 394);
 
 			sprite.PlayableIndicies = { 14, 15, 16, 17, 18, 19, 20, 21 };
 
@@ -2195,15 +2216,49 @@ namespace Cuphead
 
 			auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 			transform.Scale *= 3.0f;
-			if (m_DirectionRight)
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(1.0f, 0.0f, 0.102f);
-			else
-				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-1.0f, 0.0f, 0.102f);
 
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+
+			if(m_ExDirection.Side)
+			{
+				if (m_ExDirection.Up)
+				{
+					rb.Velocity = { 2.5f, 2.5f };
+					transform.Translation = glm::vec3(1.0f, 1.0f, 0.103f);
+				}
+				else if (m_ExDirection.Down)
+				{
+					rb.Velocity = { 2.5f, -2.5f };
+					transform.Translation = glm::vec3(1.0f, -1.0f, 0.103f);
+				}
+				else
+				{
+					rb.Velocity = { 5.0f, 0.5f };
+					transform.Translation = glm::vec3(1.0f, 0.0f, 0.103f);
+				}
+			}
+			else
+			{
+				if (m_ExDirection.Up)
+				{
+					rb.Velocity = { 0.0f, 5.0f };
+					transform.Translation = glm::vec3(0.0f, 1.0f, 0.103f);
+				}
+				else if (m_ExDirection.Down)
+				{
+					rb.Velocity = { 0.0f, -5.0f };
+					transform.Translation = glm::vec3(0.0f, -1.0f, 0.103f);
+				}
+			}
+
+			if (m_DirectionRight)
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + transform.Translation;
+			else
+				transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-transform.Translation.x, transform.Translation.y, 0.103f);
+
 			rb.FixedRotation = true;
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Dynamic;
-			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.5f }; // TODO: depending on direction
+			rb.Velocity = { m_DirectionRight ? rb.Velocity.x : -rb.Velocity.x, rb.Velocity.y };
 
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
 			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.3f, 0.3f }, 0.0f, false);

@@ -253,6 +253,18 @@ namespace Cuphead
 
 		float m_Timer = 0.0f;
 
+		struct ExDirection
+		{
+			bool Side = false;
+			bool Up = false;
+			bool Down = false;
+
+			ExDirection() = default;
+			ExDirection(bool side, bool up,  bool down)
+				: Side(side), Up(up), Down(down) {}
+		};
+
+		ExDirection m_ExDirection;
 		float m_ExCharge = 0.0f;
 		bool m_ExShot = true;
 
