@@ -523,7 +523,7 @@ namespace Cuphead
 
 	void Player::StartIdle()
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Idle) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Idle || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		if (!m_Entity.HasComponent<Teddy::SpriteAnimationAtlasComponent>())
 			return;
@@ -773,7 +773,7 @@ namespace Cuphead
 
 	void Player::StartRun(bool isRight)
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		if ((isRight && m_LeftPressed) || (!isRight && m_RightPressed)) return;
 
@@ -860,7 +860,8 @@ namespace Cuphead
 	void Player::StartFall()
 	{			
 		if (m_Health < 0 || m_State == PlayerState::Dead || m_State == PlayerState::Hit || m_State == PlayerState::Falling || m_State == PlayerState::Jumping || m_Grounded ||
-			m_State == PlayerState::Super || m_State == PlayerState::Ex || m_State == PlayerState::Dashing || m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
+			m_State == PlayerState::Super || m_State == PlayerState::Ex || m_State == PlayerState::Dashing
+			|| m_State == PlayerState::Intro0 || m_State == PlayerState::Intro1 || m_State == PlayerState::Intro2) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -936,7 +937,7 @@ namespace Cuphead
 	void Player::StartJump()
 	{
 		if (m_State == PlayerState::Hit || m_State == PlayerState::Jumping || m_State == PlayerState::Dead ||
-			m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing) return;
+			m_State == PlayerState::Falling || !m_Grounded || m_State == PlayerState::Dashing || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		if (m_ZHeld) return;
 
@@ -1058,7 +1059,7 @@ namespace Cuphead
 
 	void Player::StartCrouch()
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Crouching || !m_Grounded || m_State == PlayerState::Jumping || m_State == PlayerState::Dashing) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Crouching || !m_Grounded || m_State == PlayerState::Jumping || m_State == PlayerState::Dashing || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -1172,7 +1173,7 @@ namespace Cuphead
 
 	void Player::StartDash()
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -1350,7 +1351,7 @@ namespace Cuphead
 
 	void Player::StartParry()
 	{
-		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded || m_State == PlayerState::Hit) return;
+		if (m_ZHeld || !m_ParryReset || m_State == PlayerState::Parrying || m_Grounded || m_State == PlayerState::Hit || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_JumpTextures;
@@ -2045,9 +2046,7 @@ namespace Cuphead
 		}
 	}
 
-	// TODO: cancel jumps, etc mid ex
-	// TODO: set gravity scale to 0 on ex start and back to normal on ex end
-	void Player::ShootEx() // TODO: parry ex inscrease
+	void Player::ShootEx()
 	{
 		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Super) return;
 
@@ -2302,6 +2301,7 @@ namespace Cuphead
 			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 			body.SetVelocity(0.01f, 0.01f);
 
+			m_State = PlayerState::AnimationDone;
 			if (m_Grounded)
 			{
 				if (m_DownPressed)
@@ -2311,12 +2311,10 @@ namespace Cuphead
 				}
 				else if (m_RightPressed && !m_LeftPressed)
 				{
-					m_State = PlayerState::AnimationDone;
 					StartRun(true);
 				}
 				else if (m_LeftPressed && !m_RightPressed)
 				{
-					m_State = PlayerState::AnimationDone;
 					StartRun(false);
 				}
 				else
@@ -2324,7 +2322,6 @@ namespace Cuphead
 			}
 			else
 			{
-				m_State = PlayerState::AnimationDone;
 				StartFall();
 			}
 		}
@@ -2349,10 +2346,7 @@ namespace Cuphead
 		auto& transform = ent.GetComponent<Teddy::TransformComponent>();
 		auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
 
-		if(isRight)
-			transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, -0.01f);
-		else
-			transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, -0.01f);
+		transform.Translation = playerTransform.Translation + glm::vec3(0.0f, 0.0f, -0.01f);
 		transform.Scale = glm::vec3(4.0f, 4.0f, 1.0f);
 
 		if(!isRight)
@@ -2466,6 +2460,9 @@ namespace Cuphead
 			}
 
 			StartParryHit();
+
+			m_ExCharge += 20; // TODO: adjust value and per projectile
+			UpdateEx();
 		}
 	}
 }
