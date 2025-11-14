@@ -68,7 +68,7 @@ namespace Cuphead
 		void Ex();
 		void CreateExShotDust(bool isRight);
 		void ShootSuper();
-		void Super();
+		void Super(Teddy::Timestep ts);
 
 		void Intro0();
 		void Intro1();
@@ -160,6 +160,8 @@ namespace Cuphead
 
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_EffectsTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_ExEffectsTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SuperIntroTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_SuperBeamTextures;
 
 		enum class PlayerState
 		{
@@ -270,6 +272,9 @@ namespace Cuphead
 		ExDirection m_ExDirection;
 		float m_ExCharge = 0.0f;
 		bool m_ExShot = true;
+
+		bool m_SuperShot = true;
+		bool m_SuperIntro = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

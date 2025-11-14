@@ -1503,8 +1503,8 @@ namespace Cuphead
 			}
 			else if (m_Player.IsHitBox(e.GetVisitorShape()))
 			{
-				m_Player.NormalHit();
-				m_CameraShake = true;
+				
+				m_CameraShake = m_Player.NormalHit();
 				return true;
 			}
 		}
@@ -1518,8 +1518,7 @@ namespace Cuphead
 			}
 			else if (m_Player.IsHitBox(e.GetSensorShape()))
 			{
-				m_Player.NormalHit();
-				m_CameraShake = true;
+				m_CameraShake = m_Player.NormalHit();
 				return true;
 			}
 		}
@@ -1534,8 +1533,7 @@ namespace Cuphead
 			}
 			else if (m_Player.IsHitBox(e.GetVisitorShape()))
 			{
-				m_Player.NormalHit();
-				m_CameraShake = true;
+				m_CameraShake = m_Player.NormalHit();
 				return true;
 			}
 		}
@@ -1549,8 +1547,7 @@ namespace Cuphead
 			}
 			else if (m_Player.IsHitBox(e.GetSensorShape()))
 			{
-				m_Player.NormalHit();
-				m_CameraShake = true;
+				m_CameraShake = m_Player.NormalHit();
 				return true;
 			}
 		}

@@ -111,6 +111,9 @@ namespace Cuphead
 			case PlayerState::Ex:
 				Ex();
 				break;
+			case PlayerState::Super:
+				Super(ts);
+				break;
 			default:
 				break;
 			}
@@ -398,16 +401,16 @@ namespace Cuphead
 			});
 
 		m_ExEffectsTextures = assets.LoadMultiple<Teddy::Texture2D>({
-			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_0.png",
-			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_1.png",
-			"assets/Textures/Player/Player_Ex_Effects_700x610_2048x2048_2.png"
+			"assets/Textures/Player/Ex/Player_Ex_Effects_700x610_2048x2048_0.png",
+			"assets/Textures/Player/Ex/Player_Ex_Effects_700x610_2048x2048_1.png",
+			"assets/Textures/Player/Ex/Player_Ex_Effects_700x610_2048x2048_2.png"
 			});
 
 		m_EffectsTextures = assets.LoadMultiple<Teddy::Texture2D>({
-			"assets/Textures/Player/Player_Effects_462x526_2048x2048_0.png",
-			"assets/Textures/Player/Player_Effects_462x526_2048x2048_1.png",
-			"assets/Textures/Player/Player_Effects_462x526_2048x2048_2.png",
-			"assets/Textures/Player/Player_Effects_462x526_2048x2048_3.png"
+			"assets/Textures/Player/Effects/Player_Effects_462x526_2048x2048_0.png",
+			"assets/Textures/Player/Effects/Player_Effects_462x526_2048x2048_1.png",
+			"assets/Textures/Player/Effects/Player_Effects_462x526_2048x2048_2.png",
+			"assets/Textures/Player/Effects/Player_Effects_462x526_2048x2048_3.png"
 			});
 
 		m_ExTextures = assets.LoadMultiple<Teddy::Texture2D>({
@@ -418,6 +421,25 @@ namespace Cuphead
 			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_4.png",
 			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_5.png",
 			"assets/Textures/Cuphead/EX/Cuphead_Ex_429x415_2048x2048_6.png"
+			});
+
+		m_SuperTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Cuphead/Super/Cuphead_Super_250x400_2048x2048_0.png",
+			"assets/Textures/Cuphead/Super/Cuphead_Super_250x400_2048x2048_1.png"
+			});
+
+		m_SuperIntroTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Player/Super/Player_Super_Beam_1012x400_2048x2048_0.png",
+			"assets/Textures/Player/Super/Player_Super_Beam_1012x400_2048x2048_1.png"
+			});
+
+		m_SuperBeamTextures = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_0.png",
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_1.png",
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_2.png",
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_3.png",
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_4.png",
+			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_1050x700_5.png",
 			});
 	}
 
@@ -983,8 +1005,11 @@ namespace Cuphead
 
 	void Player::CreateLandingDust()
 	{
+		if (m_State == PlayerState::Ex || m_State == PlayerState::Super || m_State == PlayerState::Dead) return;
+
 		static float lastTimer = m_Timer;
 		if ((m_Timer - lastTimer) < 0.25f) return;
+
 
 		auto ent = m_Scene->CreateEntity("Landing dust");
 
@@ -1818,6 +1843,8 @@ namespace Cuphead
 
 	bool Player::Hit(float velocity)
 	{
+		if (m_State == PlayerState::Ex || m_State == PlayerState::Super || m_State == PlayerState::Dead) return false;
+
 		if (!m_Hitting)
 		{
 			if (!m_HitTolerance)
@@ -2034,7 +2061,7 @@ namespace Cuphead
 		{
 			if (m_State == PlayerState::Ex) return;
 
-			//ShootSuper();
+			ShootSuper();
 			ClearCards();
 		}
 		else if(m_ExCharge >= 40)
@@ -2043,6 +2070,154 @@ namespace Cuphead
 
 			ShootEx();
 			RemoveCard();
+		}
+	}
+
+	void Player::ShootSuper()
+	{
+		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Ex) return;
+
+		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+		sprite.Textures = m_SuperTextures;
+		sprite.PingPong = false;
+		sprite.Loop = false;
+		sprite.Reverse = false;
+
+		sprite.FinalFrameTime = 0.05f;
+		sprite.FrameTime = 0.05f;
+		sprite.InitialFrameTime = 0.05f;
+
+		auto& atlas = m_Entity.GetComponent<Teddy::SpriteAtlasComponent>();
+		atlas.SpriteWidth = 250;
+		atlas.SpriteHeight = 400;
+
+		auto& indicies = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+		sprite.PlayableIndicies.clear();
+		indicies.GenerateFrames(sprite, atlas);
+
+		if (m_Grounded)
+		{
+			for (int i = 6; i < 19; i++)
+				sprite.PlayableIndicies.push_back(i);
+			indicies.Index = 6;
+		}
+		else
+		{
+			sprite.PlayableIndicies = {0, 1, 2, 3, 4, 5};
+			for (int i = 11; i < 19; i++)
+				sprite.PlayableIndicies.push_back(i);
+			indicies.Index = 0;
+		}
+
+		auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+
+		if (m_DirectionRight)
+		{
+			m_ExDirection.Right = true;
+			transform.Scale = glm::vec3(4.0f);
+		}
+		else
+		{
+			m_ExDirection.Right = false;
+			transform.Scale = glm::vec3(-4.0f, 4.0f, 1.0f);
+		}
+
+		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
+		sensor.Sensors["HitBox"] = { { 0.0f, -0.25f }, { 0.25f, 0.45f }, 0.0f, true, sensor.Sensors["HitBox"].RuntimeFixture };
+		m_Scene->RefreshSensor(m_Entity, sensor.Sensors["HitBox"]);
+
+		auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
+		body.SetGravityScale(0.0f);
+		body.SetVelocity(0.0f, 0.0f);
+
+		m_SuperIntro = true;
+		m_SuperShot = false;
+
+		m_State = PlayerState::Super;
+	}
+
+	void Player::Super(Teddy::Timestep ts)
+	{
+		if (!m_SuperShot)
+		{
+			static float timer = 0.0f;
+			timer += ts;
+
+			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			TED_CORE_INFO("Index: {0}", aA.Index);
+
+			if (timer >= 1.0f && aA.Index == 18)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies = {19, 20, 21, 22, 23, 24};
+				sprite.Loop = false;
+
+				aA.Index = 19;
+
+				timer = 0.0f;
+
+				m_SuperIntro = false;
+			}
+			else if (aA.Index == 24)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies = { 25, 26, 27, 28, 29 };
+				sprite.Loop = true;
+
+				aA.Index = 25;
+
+				timer = 0.0f;
+				m_SuperShot = true;
+			}
+		}
+		else
+		{
+			static float timer = 0.0f;
+			timer += ts;
+
+			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+			if (timer > 2.0f)
+			{
+				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
+				sprite.PlayableIndicies.clear();
+				for (int i = 30; i <= 47; i++)
+					sprite.PlayableIndicies.push_back(i);
+				sprite.Loop = false;
+
+				aA.Index = 30;
+
+				timer = 0.0f;
+			}
+			else if (aA.Index == 46)
+			{
+				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>(); // TODO make this a function
+				body.SetVelocity(0.01f, 0.01f);
+
+				m_State = PlayerState::AnimationDone;
+				if (m_Grounded)
+				{
+					if (m_DownPressed)
+					{
+						m_State = PlayerState::DoneJumping;
+						StartCrouch();
+					}
+					else if (m_RightPressed && !m_LeftPressed)
+					{
+						StartRun(true);
+					}
+					else if (m_LeftPressed && !m_RightPressed)
+					{
+						StartRun(false);
+					}
+					else
+						StartIdle();
+				}
+				else
+				{
+					StartFall();
+				}
+			}
 		}
 	}
 
@@ -2445,7 +2620,7 @@ namespace Cuphead
 		return false;
 	}
 
-	void Player::ParryHit()
+	void Player::ParryHit() // TODO: parry explosion effect
 	{
 		if (m_State == PlayerState::Parrying)
 		{
