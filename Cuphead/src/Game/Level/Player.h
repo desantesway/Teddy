@@ -275,6 +275,7 @@ namespace Cuphead
 
 		bool m_SuperShot = true;
 		bool m_SuperIntro = false;
+		Teddy::Entity m_SuperIntroEnt;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

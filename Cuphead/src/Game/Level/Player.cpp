@@ -428,12 +428,12 @@ namespace Cuphead
 			"assets/Textures/Cuphead/Super/Cuphead_Super_250x400_2048x2048_1.png"
 			});
 
-		m_SuperIntroTextures = assets.LoadMultiple<Teddy::Texture2D>({
+		m_SuperBeamTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Player/Super/Player_Super_Beam_1012x400_2048x2048_0.png",
 			"assets/Textures/Player/Super/Player_Super_Beam_1012x400_2048x2048_1.png"
 			});
 
-		m_SuperBeamTextures = assets.LoadMultiple<Teddy::Texture2D>({
+		m_SuperIntroTextures = assets.LoadMultiple<Teddy::Texture2D>({
 			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_0.png",
 			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_1.png",
 			"assets/Textures/Player/Super/Player_Super_Intro_1050x700_2048x2048_2.png",
@@ -2073,7 +2073,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::ShootSuper()
+	void Player::ShootSuper() // TODO: make player ghost
 	{
 		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Ex) return;
 
@@ -2114,12 +2114,12 @@ namespace Cuphead
 		if (m_DirectionRight)
 		{
 			m_ExDirection.Right = true;
-			transform.Scale = glm::vec3(4.0f);
+			transform.Scale = glm::vec3(3.75f);
 		}
 		else
 		{
 			m_ExDirection.Right = false;
-			transform.Scale = glm::vec3(-4.0f, 4.0f, 1.0f);
+			transform.Scale = glm::vec3(-3.75f, 3.75f, 1.0f);
 		}
 
 		auto& sensor = m_Entity.GetComponent<Teddy::Sensor2DComponent>();
@@ -2130,6 +2130,19 @@ namespace Cuphead
 		body.SetGravityScale(0.0f);
 		body.SetVelocity(0.0f, 0.0f);
 
+		m_SuperIntroEnt = m_Scene->CreateEntity("Super Charge Intro");
+		auto& introSprite = m_SuperIntroEnt.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		introSprite.Textures = m_SuperIntroTextures;
+		introSprite.Loop = false;
+		introSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+		auto& introAtlas = m_SuperIntroEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1050, 700);
+
+		auto& introTransform = m_SuperIntroEnt.GetComponent<Teddy::TransformComponent>();
+
+		introTransform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.25f, -0.75f, 0.2f);
+		introTransform.Scale = glm::vec3(15.0f);
+
 		m_SuperIntro = true;
 		m_SuperShot = false;
 
@@ -2138,13 +2151,25 @@ namespace Cuphead
 
 	void Player::Super(Teddy::Timestep ts)
 	{
+		if (m_SuperIntro)
+		{
+			if (m_SuperIntroEnt)
+			{
+				auto& aA = m_SuperIntroEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+
+				if (aA.Index == 10)
+				{
+					m_Scene->DestroyEntity(m_SuperIntroEnt);
+					m_SuperIntroEnt = Teddy::Entity();
+				}
+			}
+		}
 		if (!m_SuperShot)
 		{
 			static float timer = 0.0f;
 			timer += ts;
 
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			TED_CORE_INFO("Index: {0}", aA.Index);
 
 			if (timer >= 1.0f && aA.Index == 18)
 			{
@@ -2154,9 +2179,9 @@ namespace Cuphead
 
 				aA.Index = 19;
 
-				timer = 0.0f;
-
 				m_SuperIntro = false;
+
+				timer = 0.0f;
 			}
 			else if (aA.Index == 24)
 			{
