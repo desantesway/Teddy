@@ -2424,6 +2424,10 @@ namespace Cuphead
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		if (!m_ExShot && (aA.Index == 7 || aA.Index == 28 || aA.Index == 49 || aA.Index == 91 || aA.Index == 70))
 		{
+			auto& filterPlayer = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			filterPlayer.CategoryBits = LevelCategories::PLAYERGHOST;
+			filterPlayer.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filterPlayer.CategoryBits);
+
 			auto ent = m_Scene->CreateEntity("Ex Shot");
 
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
@@ -2511,6 +2515,10 @@ namespace Cuphead
 		{
 			auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>();
 			body.SetVelocity(0.01f, 0.01f);
+
+			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PLAYER;
+			filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
 
 			m_State = PlayerState::AnimationDone;
 			if (m_Grounded)
