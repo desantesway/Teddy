@@ -2164,6 +2164,13 @@ namespace Cuphead
 				}
 			}
 		}
+		else
+		{
+			auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+			filter.CategoryBits = LevelCategories::PLAYERGHOST;
+			filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+		}
+
 		if (!m_SuperShot)
 		{
 			static float timer = 0.0f;
@@ -2218,6 +2225,10 @@ namespace Cuphead
 			{
 				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>(); // TODO make this a function
 				body.SetVelocity(0.01f, 0.01f);
+
+				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = LevelCategories::PLAYER;
+				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
 
 				m_State = PlayerState::AnimationDone;
 				if (m_Grounded)

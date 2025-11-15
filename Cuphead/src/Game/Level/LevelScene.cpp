@@ -491,6 +491,39 @@ namespace Cuphead
 
 		m_Player.OnUpdate(ts);
 
+		if (m_Player.IsInSuperIntro())
+		{
+			FreezeWithoutPlayer(ts);
+
+			m_Unfreeze = true;
+
+			return;
+		}
+		else if (m_Unfreeze)
+		{
+			m_Player.SetSize(glm::vec3(1.75f)); // To fix body size
+			m_Scene->OnRuntimeStart();
+			m_Player.SetSize(glm::vec3(3.75f));
+			m_Dragon.Unpause();
+			m_Clouds.Unpause();
+			switch (m_Phase)
+			{
+			case 1:
+				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				break;
+			case 3:
+				m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Pause = false;
+				break;
+			default:
+				break;
+			}
+
+			m_Unfreeze = false;
+		}
+
 		m_Dragon.SetPlayerPosition(m_Player.GetPosition());
 		m_Dragon.OnUpdate(ts);
 
@@ -584,6 +617,32 @@ namespace Cuphead
 			}
 		}
 		return false;
+	}
+
+	void LevelScene::FreezeWithoutPlayer(Teddy::Timestep ts)
+	{
+		TED_PROFILE_FUNCTION();
+
+		if (!m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause)
+		{
+			m_Dragon.Pause();
+			m_Clouds.Pause();
+			switch (m_Phase)
+			{
+			case 1:
+				m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+				break;
+			case 3:
+				m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+				m_Rain.Rain1.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+				m_Rain.Rain2.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+				m_Rain.Rain3.GetComponent<Teddy::SpriteAnimationComponent>().Pause = true;
+				break;
+			default:
+				break;
+			}
+			m_Scene->OnRuntimeStop();
+		}
 	}
 
 	void LevelScene::OnUpdatePhase1()

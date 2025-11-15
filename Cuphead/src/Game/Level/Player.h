@@ -50,6 +50,17 @@ namespace Cuphead
 		bool IsHitBox(b2ShapeId shape);
 
 		void SetColor(glm::vec4 color) { m_Entity.GetComponent<Teddy::SpriteAnimationComponent>().Color = color; }
+
+		bool IsInSuperIntro() { return m_SuperIntro; }
+
+		void SetSize(glm::vec3 size)
+		{
+			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+			transform.Scale = size;
+
+			if (!m_DirectionRight)
+				transform.Scale = glm::vec3(-transform.Scale.x, transform.Scale.y, transform.Scale.z);
+		}
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);

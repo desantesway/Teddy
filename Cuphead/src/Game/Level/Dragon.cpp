@@ -2744,6 +2744,8 @@ namespace Cuphead
 
 			void OnUpdate(Teddy::Timestep ts) override
 			{
+				if (!GetScene()->IsRuntime()) return;
+
 				auto& transform = GetComponent<Teddy::TransformComponent>();
 
 				const float edge = 2.0f;

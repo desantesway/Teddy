@@ -36,6 +36,7 @@ namespace Cuphead
 		bool WantsToResult() { return m_State == 3; }
 	private:
 		bool Freeze(Teddy::Timestep ts);
+		void FreezeWithoutPlayer(Teddy::Timestep ts);
 
 		void InitPhase1();
 		void InitPhase1Background();
@@ -166,6 +167,8 @@ namespace Cuphead
 		float m_FreezeTimer = 0.15f;
 
 		bool m_TransitioningPhase = false;
+
+		bool m_Unfreeze = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
