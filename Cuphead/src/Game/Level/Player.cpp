@@ -2130,15 +2130,15 @@ namespace Cuphead
 		body.SetGravityScale(0.0f);
 		body.SetVelocity(0.0f, 0.0f);
 
-		m_SuperIntroEnt = m_Scene->CreateEntity("Super Charge Intro");
-		auto& introSprite = m_SuperIntroEnt.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+		m_SuperEnt = m_Scene->CreateEntity("Super Charge Intro");
+		auto& introSprite = m_SuperEnt.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 		introSprite.Textures = m_SuperIntroTextures;
 		introSprite.Loop = false;
 		introSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-		auto& introAtlas = m_SuperIntroEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1050, 700);
+		auto& introAtlas = m_SuperEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1050, 700);
 
-		auto& introTransform = m_SuperIntroEnt.GetComponent<Teddy::TransformComponent>();
+		auto& introTransform = m_SuperEnt.GetComponent<Teddy::TransformComponent>();
 
 		introTransform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.25f, -0.75f, 0.2f);
 		introTransform.Scale = glm::vec3(15.0f);
@@ -2153,14 +2153,14 @@ namespace Cuphead
 	{
 		if (m_SuperIntro)
 		{
-			if (m_SuperIntroEnt)
+			if (m_SuperEnt)
 			{
-				auto& aA = m_SuperIntroEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				auto& aA = m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 
 				if (aA.Index == 10)
 				{
-					m_Scene->DestroyEntity(m_SuperIntroEnt);
-					m_SuperIntroEnt = Teddy::Entity();
+					m_Scene->DestroyEntity(m_SuperEnt);
+					m_SuperEnt = Teddy::Entity();
 				}
 			}
 		}
@@ -2189,6 +2189,35 @@ namespace Cuphead
 				m_SuperIntro = false;
 
 				timer = 0.0f;
+
+				if (m_SuperEnt)
+					m_Scene->DestroyEntity(m_SuperEnt);
+
+				m_SuperEnt = m_Scene->CreateEntity("Super Charge Shot");
+				auto& shotSprite = m_SuperEnt.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				shotSprite.Textures = m_SuperBeamTextures;
+				shotSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5 };
+				shotSprite.Loop = false;
+
+				auto& shotAtlas = m_SuperEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 1012, 400);
+
+				auto& shotAA = m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				shotAA.Index = 0;
+
+				auto& transform = m_SuperEnt.GetComponent<Teddy::TransformComponent>();
+				auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
+				playerTransform.Translation.z = 2.5f;
+				if (m_ExDirection.Right)
+				{
+					transform.Translation = playerTransform.Translation + glm::vec3(4.5f, 0.25f, -0.1f);
+					transform.Scale = glm::vec3(3.5f, 3.5f, 1.0f);
+				}
+				else
+				{
+					transform.Translation = playerTransform.Translation + glm::vec3(-4.5f, 0.25f, -0.1f);
+					transform.Scale = glm::vec3(-3.5f, 3.5f, 1.0f);
+				}
+
 			}
 			else if (aA.Index == 24)
 			{
@@ -2197,6 +2226,11 @@ namespace Cuphead
 				sprite.Loop = true;
 
 				aA.Index = 25;
+
+				auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
+				shotSprite.Textures = m_SuperBeamTextures;
+				shotSprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11, 12, 13 };
+				shotSprite.Loop = true;
 
 				timer = 0.0f;
 				m_SuperShot = true;
@@ -2208,8 +2242,18 @@ namespace Cuphead
 			timer += ts;
 
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& shotAA = m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 
 			if (timer > 2.0f)
+			{
+				auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
+				shotSprite.Textures = m_SuperBeamTextures;
+				shotSprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+				shotSprite.Loop = false;
+
+				timer = 0.0f;
+			}
+			else if (shotAA.Index >= 16 && aA.Index < 30)
 			{
 				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 				sprite.PlayableIndicies.clear();
@@ -2218,17 +2262,17 @@ namespace Cuphead
 				sprite.Loop = false;
 
 				aA.Index = 30;
-
 				timer = 0.0f;
 			}
 			else if (aA.Index == 46)
 			{
-				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>(); // TODO make this a function
-				body.SetVelocity(0.01f, 0.01f);
-
+				m_SuperEnt.GetComponent<Teddy::TransformComponent>().Translation.z = 2.0f;
 				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
 				filter.CategoryBits = LevelCategories::PLAYER;
 				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
+
+				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>(); // TODO make this a function
+				body.SetVelocity(0.01f, 0.01f);
 
 				m_State = PlayerState::AnimationDone;
 				if (m_Grounded)

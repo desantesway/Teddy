@@ -53,7 +53,7 @@ namespace Cuphead
 
 		bool IsInSuperIntro() { return m_SuperIntro; }
 
-		void SetSize(glm::vec3 size)
+		void SetSize(glm::vec3 size) // TODO
 		{
 			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 			transform.Scale = size;
@@ -286,7 +286,7 @@ namespace Cuphead
 
 		bool m_SuperShot = true;
 		bool m_SuperIntro = false;
-		Teddy::Entity m_SuperIntroEnt;
+		Teddy::Entity m_SuperEnt;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
