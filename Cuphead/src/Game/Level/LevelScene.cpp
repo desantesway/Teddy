@@ -503,7 +503,7 @@ namespace Cuphead
 		{
 			m_Player.SetSize(glm::vec3(1.75f)); // To fix body size
 			m_Scene->OnRuntimeStart();
-			m_Player.SetSize(glm::vec3(3.75f));
+			m_Player.SetSuperSize(glm::vec3(3.75f));
 			m_Dragon.Unpause();
 			m_Clouds.Unpause();
 			switch (m_Phase)

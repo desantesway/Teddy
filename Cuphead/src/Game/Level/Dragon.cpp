@@ -13,6 +13,8 @@ namespace Cuphead
 
 		ClearProjectiles();
 
+		//TED_CORE_INFO("Dragon {}", m_Health);
+
 		switch (m_State)
 		{
 		case DragonState::Peashot:
@@ -2230,7 +2232,7 @@ namespace Cuphead
 		m_ProjectileEntities = newShots;
 	}
 
-	void Dragon::Hit(int damage)
+	void Dragon::Hit(float damage)
 	{
 		if (!m_Hit)
 		{

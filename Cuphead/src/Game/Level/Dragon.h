@@ -37,7 +37,7 @@ namespace Cuphead
 
 		void ClearProjectiles();
 
-		void Hit(int damage);
+		void Hit(float damage);
 		bool IsShooting() const { return m_Shooting; }
 
 		void SetPlayerPosition(const glm::vec2& pos) { m_PlayerPosition = pos; }
@@ -47,8 +47,6 @@ namespace Cuphead
 
 		void SetColor(glm::vec4 color);
 	private:
-		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
-		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
 
 		void StartIdle();
 		void Idle(Teddy::Timestep ts);
@@ -149,7 +147,7 @@ namespace Cuphead
 		bool m_Shooting = false;
 		bool m_MeteorStart = true;
 
-		int m_Health = 1700; // 1700, 1535, 1071, 561
+		float m_Health = 1700; // 1700, 1535, 1071, 561
 		bool m_Hit = false;
 
 		float m_PeashotTimer = 0.0f;

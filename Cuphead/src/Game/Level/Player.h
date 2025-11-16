@@ -57,9 +57,14 @@ namespace Cuphead
 		{
 			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
 			transform.Scale = size;
+		}
+		void SetSuperSize(glm::vec3 size) // TODO
+		{
+			auto& transform = m_Entity.GetComponent<Teddy::TransformComponent>();
+			transform.Scale = size;
 
-			if (!m_DirectionRight)
-				transform.Scale = glm::vec3(-transform.Scale.x, transform.Scale.y, transform.Scale.z);
+			if (!m_ExDirection.Right)
+				transform.Scale.x = -transform.Scale.x;
 		}
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
@@ -243,6 +248,7 @@ namespace Cuphead
 
 		struct ProjectileInfo
 		{
+			bool IsSuper = false;
 			bool IsEx = false;
 			Teddy::Entity Entity;
 			float Damage;
@@ -287,6 +293,7 @@ namespace Cuphead
 		bool m_SuperShot = true;
 		bool m_SuperIntro = false;
 		Teddy::Entity m_SuperEnt;
+		int m_BeamCount = 0;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};

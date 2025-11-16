@@ -196,6 +196,22 @@ namespace Cuphead
 		std::vector<ProjectileInfo> newActive;
 		for (auto& ent : m_ActiveProjectiles)
 		{
+			if (ent.IsSuper)
+			{
+				auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
+				if (transform.Translation.x >= 7.5f || transform.Translation.x <= -7.5f ||
+					transform.Translation.y <= -3.0f)
+				{
+					m_Scene->DestroyEntity(ent.Entity);
+				}
+				else
+				{
+					newActive.push_back(ent);
+				}
+
+				continue;
+			}
+
 			auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
 			auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
@@ -1984,6 +2000,14 @@ namespace Cuphead
 				b2ShapeId senShape = *static_cast<b2ShapeId*>(sensorShape.RuntimeFixture);
 				if (B2_ID_EQUALS(senShape, shape))
 				{
+					if (proj.IsSuper)
+					{
+						m_Scene->DeleteSensor(sensorShape);
+						sensor.Sensors.erase(_);
+
+						return proj.Damage;
+					}
+
 					auto& sprite = proj.Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 					
 					sprite.Loop = false;
@@ -2232,6 +2256,8 @@ namespace Cuphead
 				shotSprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11, 12, 13 };
 				shotSprite.Loop = true;
 
+				m_BeamCount = 0;
+
 				timer = 0.0f;
 				m_SuperShot = true;
 			}
@@ -2243,8 +2269,42 @@ namespace Cuphead
 
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 			auto& shotAA = m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+			auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
 
-			if (timer > 2.0f)
+			if (m_BeamCount < 6)
+			{
+				if (timer > 0.25f)
+				{
+					auto ent = m_Scene->CreateEntity("Super Beam Hitbox");
+					
+					auto& body = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+					body.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+					
+					ent.GetComponent<Teddy::TransformComponent>().Translation = m_SuperEnt.GetComponent<Teddy::TransformComponent>().Translation;
+					
+					auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+					filter.CategoryBits = LevelCategories::PROJECTILE;
+					filter.MaskBits = LevelCategories::ENEMY;
+					
+					auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+					sensor.Sensors["Hitbox"] = { { m_ExDirection.Right ? -3.0f : 3.0f, -0.15f }, { 0.2f, 1.1f }, 0.0f, true };
+					m_Scene->RefreshBody(ent);
+					
+					body.SetGravityScale(0.0f);
+					if (m_ExDirection.Right)
+						body.SetVelocity(5.0f, 0.0f);
+					else
+						body.SetVelocity(-5.0f, 0.0f);
+					
+					ProjectileInfo projectileInfo = ProjectileInfo(ent, 14.5f, 0.0f, false);
+					projectileInfo.IsSuper = true;
+					m_ActiveProjectiles.push_back(projectileInfo);
+
+					timer = 0.0f;
+					m_BeamCount++;
+				}
+			}
+			else if (m_BeamCount >= 6 && shotSprite.PlayableIndicies.size() < 14)
 			{
 				auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
 				shotSprite.Textures = m_SuperBeamTextures;
@@ -2266,12 +2326,14 @@ namespace Cuphead
 			}
 			else if (aA.Index == 46)
 			{
-				m_SuperEnt.GetComponent<Teddy::TransformComponent>().Translation.z = 2.0f;
+				m_Entity.GetComponent<Teddy::TransformComponent>().Translation.z = 2.0f;
+
 				auto& filter = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
 				filter.CategoryBits = LevelCategories::PLAYER;
 				filter.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filter.CategoryBits);
 
 				auto& body = m_Entity.GetComponent<Teddy::Rigidbody2DComponent>(); // TODO make this a function
+				body.SetGravityScale(7.5f);
 				body.SetVelocity(0.01f, 0.01f);
 
 				m_State = PlayerState::AnimationDone;
@@ -2297,6 +2359,8 @@ namespace Cuphead
 				{
 					StartFall();
 				}
+
+				timer = 0.0f;
 			}
 		}
 	}
