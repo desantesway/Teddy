@@ -193,7 +193,7 @@ namespace Cuphead
 			auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
 			sprite.Loop = true;
 			sprite.Textures = m_RoundaboutTextures;
-			sprite.PlayableIndicies = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+			sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 			auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 173, 163);
 
 			auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
@@ -211,7 +211,7 @@ namespace Cuphead
 			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.25f };
 
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
-			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, true); // TODO
+			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.3f, 0.15f }, 0.0f, true);
 
 			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PROJECTILE;
@@ -317,7 +317,7 @@ namespace Cuphead
 				auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
 				auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 				if (transform.Translation.x >= 10.0f || transform.Translation.x <= -10.0f ||
-					transform.Translation.y <= -3.0f || transform.Translation.y >= 4.0f || aA.Index == 5)
+					transform.Translation.y <= -3.0f || transform.Translation.y >= 4.0f || aA.Index == 15)
 				{
 					m_Scene->DestroyEntity(ent.Entity);
 				}
@@ -2160,7 +2160,7 @@ namespace Cuphead
 						}
 						else
 						{
-							sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5 };
+							sprite.PlayableIndicies = { 10, 11, 12, 13, 14, 15 };
 							aA.Index = 0;
 						}
 					}
