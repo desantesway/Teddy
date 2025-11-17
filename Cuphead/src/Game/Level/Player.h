@@ -86,6 +86,8 @@ namespace Cuphead
 		void ShootSuper();
 		void Super(Teddy::Timestep ts);
 
+		void SwitchWeapon();
+
 		void Intro0();
 		void Intro1();
 		void Intro2();
@@ -253,7 +255,9 @@ namespace Cuphead
 			Teddy::Entity Entity;
 			float Damage;
 			float ChargeRate = 0.0f;
+			ProjectileType Type = ProjectileType::Lobber;
 
+			ProjectileInfo() = default;
 			ProjectileInfo(Teddy::Entity entity, float damage)
 				: Entity(entity), Damage(damage) {}
 			ProjectileInfo(Teddy::Entity entity, float damage, float chargeRate)
@@ -267,6 +271,8 @@ namespace Cuphead
 		ProjectileType m_Projectile = ProjectileType::Lobber;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberTextures;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_LobberExTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RoundaboutTextures;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_RoundaboutExTextures;
 		float m_ShootTimer = 0.0f;
 		bool m_Shot = false;
 

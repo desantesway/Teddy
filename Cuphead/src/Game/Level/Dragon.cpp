@@ -13,8 +13,6 @@ namespace Cuphead
 
 		ClearProjectiles();
 
-		//TED_CORE_INFO("Dragon {}", m_Health);
-
 		switch (m_State)
 		{
 		case DragonState::Peashot:
