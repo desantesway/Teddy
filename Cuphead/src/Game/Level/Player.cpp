@@ -5,6 +5,8 @@
 #include "LevelCategories.h"
 #include "Randomizer.h"
 
+// TODO: correct shooting tempos
+
 namespace Cuphead
 {
 
@@ -206,16 +208,40 @@ namespace Cuphead
 
 			auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
 			rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
-			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.1f };
+			rb.Velocity = { m_DirectionRight ? 5.0f : -5.0f, 0.25f };
 
 			auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
-			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, true);
+			sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.2f, 0.2f }, 0.0f, true); // TODO
 
 			auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
 			filter.CategoryBits = LevelCategories::PROJECTILE;
 			filter.MaskBits = LevelCategories::ENEMY;
 
 			m_Scene->RefreshBody(ent);
+
+			class RoundaboutEffect : public Teddy::ScriptableEntity
+			{
+			public:
+				void OnCreate() override
+				{
+					m_DirectionRight = (GetComponent<Teddy::Rigidbody2DComponent>().Velocity.x >= 0.0f);
+				}
+
+				void OnUpdate(Teddy::Timestep ts) override
+				{
+					if (!GetScene()->IsRuntime()) return;
+
+					auto& rb = GetComponent<Teddy::Rigidbody2DComponent>();
+					rb.Velocity.x += (m_DirectionRight ? -1.0f : 1.0f) * 5.0f * ts;
+
+					rb.SetVelocityX(rb.Velocity.x);
+				}
+
+			private:
+				bool m_DirectionRight = true;
+			};
+
+			ent.AddComponent<Teddy::NativeScriptComponent>().Bind<RoundaboutEffect>();
 
 			ProjectileInfo info = { ent, 8.5f, 6.0f };
 			info.Type = ProjectileType::Roundabout;
@@ -265,7 +291,7 @@ namespace Cuphead
 				auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
 				auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 				if (transform.Translation.x >= 5.5f || transform.Translation.x <= -5.5f ||
-					transform.Translation.y <= -3.0f || aA.Index == 11) // TODO: change this based on projectile type
+					transform.Translation.y <= -3.0f || aA.Index == 11)
 				{
 					m_Scene->DestroyEntity(ent.Entity);
 				}
@@ -307,7 +333,7 @@ namespace Cuphead
 		for (auto& exp : m_ProjectileExplosion)
 		{
 			auto& aA = exp.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			if (aA.Index == 27 || aA.Index == 32) // TODO : change this based on projectile type
+			if (aA.Index == 27 || aA.Index == 32) // 32 is for roundabout, 27 for lobber
 			{
 				m_Scene->DestroyEntity(exp);
 			}
