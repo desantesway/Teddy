@@ -155,6 +155,11 @@ namespace Teddy
 					nsc.Instance->m_Entity = Entity{ entity, this };
 					nsc.Instance->OnCreate();
 				}
+				else if (!nsc.Instance->m_Entity)
+				{
+					nsc.Instance->m_Entity = Entity{ entity, this };
+					nsc.Instance->OnCreate();
+				}
 				nsc.Instance->OnEvent(event);
 			});
 	}
@@ -453,6 +458,11 @@ namespace Teddy
 					if (!nsc.Instance)
 					{
 						nsc.Instance = nsc.InstantiateScript();
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						nsc.Instance->OnCreate();
+					}
+					else if (!nsc.Instance->m_Entity)
+					{
 						nsc.Instance->m_Entity = Entity{ entity, this };
 						nsc.Instance->OnCreate();
 					}

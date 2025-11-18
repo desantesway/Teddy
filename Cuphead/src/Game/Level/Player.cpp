@@ -111,7 +111,7 @@ namespace Cuphead
 				BlockMove();
 				break;
 			case PlayerState::Ex:
-				Ex();
+				Ex(ts);
 				break;
 			case PlayerState::Super:
 				Super(ts);
@@ -317,7 +317,7 @@ namespace Cuphead
 				auto& transform = ent.Entity.GetComponent<Teddy::TransformComponent>();
 				auto& aA = ent.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 				if (transform.Translation.x >= 10.0f || transform.Translation.x <= -10.0f ||
-					transform.Translation.y <= -3.0f || transform.Translation.y >= 4.0f || aA.Index == 15)
+					transform.Translation.y <= -7.0f || transform.Translation.y >= 7.0f || (aA.Index == 15 && !ent.IsEx) || (aA.Index == 7 && ent.IsEx))
 				{
 					m_Scene->DestroyEntity(ent.Entity);
 				}
@@ -2121,6 +2121,7 @@ namespace Cuphead
 						m_Scene->DeleteSensor(sensorShape);
 						sensor.Sensors.erase(_);
 
+						lastImpactTime = m_Timer;
 						return proj.Damage;
 					}
 
@@ -2155,8 +2156,9 @@ namespace Cuphead
 						auto& aA = proj.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 						if (proj.IsEx)
 						{
-							//sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
-							//aA.Index = 0;
+							lastImpactTime = m_Timer;
+
+							return proj.Damage;
 						}
 						else
 						{
@@ -2236,7 +2238,7 @@ namespace Cuphead
 		}
 	}
 
-	void Player::ShootSuper() // TODO: make player ghost
+	void Player::ShootSuper()
 	{
 		if (m_State == PlayerState::Dashing || m_State == PlayerState::Dropping || m_State == PlayerState::Dead || m_State == PlayerState::Ex) return;
 
@@ -2666,7 +2668,7 @@ namespace Cuphead
 		m_State = PlayerState::Ex;
 	}
 
-	void Player::Ex()
+	void Player::Ex(Teddy::Timestep ts)
 	{
 		auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 		if (!m_ExShot && (aA.Index == 7 || aA.Index == 28 || aA.Index == 49 || aA.Index == 91 || aA.Index == 70))
@@ -2677,7 +2679,7 @@ namespace Cuphead
 				filterPlayer.CategoryBits = LevelCategories::PLAYERGHOST;
 				filterPlayer.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filterPlayer.CategoryBits);
 
-				auto ent = m_Scene->CreateEntity("Ex Shot");
+				auto ent = m_Scene->CreateEntity("Ex Lobber Shot");
 
 				auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f, 0.05f, 0.05f);
 				sprite.Loop = true;
@@ -2748,7 +2750,163 @@ namespace Cuphead
 			}
 			else
 			{
+				auto& filterPlayer = m_Entity.GetComponent<Teddy::CollisionFilter2DComponent>();
+				filterPlayer.CategoryBits = LevelCategories::PLAYERGHOST;
+				filterPlayer.SetFilterCategory(m_Entity.GetComponent<Teddy::BoxCollider2DComponent>(), filterPlayer.CategoryBits);
 
+				auto ent = m_Scene->CreateEntity("Ex Roundabout Shot");
+
+				auto& sprite = ent.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+				sprite.Loop = true;
+				sprite.Textures = m_RoundaboutExTextures;
+				auto& atlas = ent.AddComponent<Teddy::SpriteAtlasComponent>(2, 2, 285, 289);
+
+				sprite.PlayableIndicies = { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
+
+				auto& aA = ent.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				aA.Index = 11;
+
+				auto& transform = ent.GetComponent<Teddy::TransformComponent>();
+				transform.Scale *= 3.0f;
+
+				auto& rb = ent.AddComponent<Teddy::Rigidbody2DComponent>();
+
+				if (m_ExDirection.Side)
+				{
+					if (m_ExDirection.Up)
+					{
+						rb.Velocity = { 2.5f, 2.5f };
+						transform.Translation = glm::vec3(1.0f, 1.0f, 0.103f);
+					}
+					else if (m_ExDirection.Down)
+					{
+						rb.Velocity = { 2.5f, -2.5f };
+						transform.Translation = glm::vec3(1.0f, -1.0f, 0.103f);
+					}
+					else
+					{
+						rb.Velocity = { 5.0f, 0.0f };
+						transform.Translation = glm::vec3(1.0f, 0.0f, 0.103f);
+					}
+				}
+				else
+				{
+					if (m_ExDirection.Up)
+					{
+						rb.Velocity = { 0.0f, 5.0f };
+						transform.Translation = glm::vec3(0.0f, 1.0f, 0.103f);
+					}
+					else if (m_ExDirection.Down)
+					{
+						rb.Velocity = { 0.0f, -5.0f };
+						transform.Translation = glm::vec3(0.0f, -1.0f, 0.103f);
+					}
+				}
+
+				if (m_ExDirection.Right)
+					transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + transform.Translation;
+				else
+					transform.Translation = m_Entity.GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-transform.Translation.x, transform.Translation.y, 0.103f);
+
+				rb.FixedRotation = true;
+				rb.Type = Teddy::Rigidbody2DComponent::BodyType::Kinematic;
+				rb.Velocity = { m_ExDirection.Right ? rb.Velocity.x : -rb.Velocity.x, rb.Velocity.y };
+
+				auto& sensor = ent.AddComponent<Teddy::Sensor2DComponent>();
+				sensor.Sensors["ProjectileSensor"] = Teddy::Sensor2DComponent::SensorData({ 0.0f, 0.0f }, { 0.7f, 0.7f }, 0.0f, false);
+
+				auto& filter = ent.AddComponent<Teddy::CollisionFilter2DComponent>();
+				filter.CategoryBits = LevelCategories::PROJECTILE;
+				filter.MaskBits = LevelCategories::ENEMY;
+
+				m_Scene->RefreshBody(ent);
+
+				class RoundaboutExEffect : public Teddy::ScriptableEntity
+				{
+				public:
+					void OnCreate() override
+					{
+						m_Timer = 0.0f;
+					}
+
+					void OnUpdate(Teddy::Timestep ts) override
+					{
+						if (!GetScene()->IsRuntime()) return;
+
+						m_Timer += ts;
+
+						if (m_Timer > 5.0f) // TODO
+						{
+							auto& sprite = GetComponent<Teddy::SpriteAnimationComponent>();
+							auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+							if (sprite.PlayableIndicies.size() == 12)
+							{
+								sprite.Loop = false;
+								sprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7 };
+								aA.Index = 0;
+							}
+							else if (aA.Index == 7)
+							{
+								RemoveComponent<Teddy::NativeScriptComponent>();
+								GetScene()->DestroyEntity(GetEntity());
+							}
+						}
+						else if(m_Entity)
+						{
+							auto& playerTransform = m_Entity.GetComponent<Teddy::TransformComponent>();
+							auto& pTransform = GetComponent<Teddy::TransformComponent>();
+
+							auto& rbc = GetComponent<Teddy::Rigidbody2DComponent>();
+
+							glm::vec2 toPlayer = glm::vec2(
+								playerTransform.Translation.x - pTransform.Translation.x,
+								playerTransform.Translation.y - pTransform.Translation.y
+							);
+
+							float dist = glm::length(toPlayer);
+							if (dist > 0.5f)
+							{
+								glm::vec2 dir = toPlayer / dist;
+
+								const float homingAcceleration = 20.0f;
+								const float maxHomingSpeed = 7.5f;
+
+								rbc.Velocity = (rbc.Velocity * 0.99f) + dir * (homingAcceleration * ts);
+
+								float speed = glm::length(rbc.Velocity);
+								if (speed > maxHomingSpeed)
+									rbc.Velocity = (rbc.Velocity / speed) * maxHomingSpeed;
+
+								rbc.SetVelocity(rbc.Velocity.x, rbc.Velocity.y);
+							}
+							else
+							{
+								m_Timer = 5.5f; // trigger destroy
+							}
+						}
+					}
+
+					void SetPlayerEntity(Teddy::Entity playerEntity)
+					{
+						m_Entity = playerEntity;
+					}
+
+				private:
+					float m_Timer = 0.0f;
+					Teddy::Entity m_Entity;
+				};
+
+				auto& nsc = ent.AddComponent<Teddy::NativeScriptComponent>();
+				nsc.Bind<RoundaboutExEffect>();
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InstantiateScript();
+				}
+				static_cast<RoundaboutExEffect*>(nsc.Instance)->SetPlayerEntity(m_Entity);
+
+				ProjectileInfo projInfo = ProjectileInfo(ent, 5.5f, 0.0f, true);
+				projInfo.Type = ProjectileType::Roundabout;
+				m_ActiveProjectiles.push_back(projInfo);
 			}
 
 			m_ExShot = true;

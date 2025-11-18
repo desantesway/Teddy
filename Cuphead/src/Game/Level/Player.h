@@ -81,7 +81,7 @@ namespace Cuphead
 		void ClearCards();
 		void RemoveCard();
 		void ShootEx();
-		void Ex();
+		void Ex(Teddy::Timestep ts);
 		void CreateExShotDust(bool isRight);
 		void ShootSuper();
 		void Super(Teddy::Timestep ts);
@@ -222,7 +222,7 @@ namespace Cuphead
 
 		bool m_ParryReset = true;
 
-		int m_Health = 4;
+		int m_Health = 67;
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
 		bool m_HitAnimation = false;
