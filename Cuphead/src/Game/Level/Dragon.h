@@ -46,6 +46,8 @@ namespace Cuphead
 		bool IsPhaseStart() const { return m_PhaseStart; }
 
 		void SetColor(glm::vec4 color);
+
+		float GetHealth() { return m_Health; }
 	private:
 
 		void StartIdle();

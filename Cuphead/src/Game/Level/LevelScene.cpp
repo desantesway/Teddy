@@ -429,7 +429,7 @@ namespace Cuphead
 				m_DeathMenu.Show();
 			}
 
-			m_DeathMenu.OnUpdate(ts, 50);
+			m_DeathMenu.OnUpdate(ts, m_Dragon.GetHealth());
 
 			if (m_DeathMenu.WantsToRetry())
 			{
@@ -623,7 +623,7 @@ namespace Cuphead
 	{
 		TED_PROFILE_FUNCTION();
 
-		if (!m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause)
+		if ((m_Phase == 1 && !m_Background.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause) || (m_Phase == 3 && !m_BackgroundPhase3.Spire.GetComponent<Teddy::SpriteAnimationComponent>().Pause))
 		{
 			m_Dragon.Pause();
 			m_Clouds.Pause();

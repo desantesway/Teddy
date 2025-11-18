@@ -1125,8 +1125,7 @@ namespace Cuphead
 		if (m_State == PlayerState::Ex || m_State == PlayerState::Super || m_State == PlayerState::Dead) return;
 
 		static float lastTimer = m_Timer;
-		if ((m_Timer - lastTimer) < 0.25f) return;
-
+		if ((m_Timer - lastTimer) < 0.25f && m_Timer > lastTimer) return;
 
 		auto ent = m_Scene->CreateEntity("Landing dust");
 
@@ -2104,8 +2103,7 @@ namespace Cuphead
 		float ret = 0.0f;
 		float chargeRate = 0.0f;
 
-		static float lastImpactTime = m_Timer;
-		if (m_Timer - lastImpactTime < 0.1f)
+		if (m_Timer - m_LastImpactTime < 0.1f)
 			return 0.0f;
 
 		for (auto& proj : m_ActiveProjectiles)
@@ -2121,7 +2119,7 @@ namespace Cuphead
 						m_Scene->DeleteSensor(sensorShape);
 						sensor.Sensors.erase(_);
 
-						lastImpactTime = m_Timer;
+						m_LastImpactTime = m_Timer;
 						return proj.Damage;
 					}
 
@@ -2156,7 +2154,7 @@ namespace Cuphead
 						auto& aA = proj.Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
 						if (proj.IsEx)
 						{
-							lastImpactTime = m_Timer;
+							m_LastImpactTime = m_Timer;
 
 							return proj.Damage;
 						}
@@ -2181,7 +2179,7 @@ namespace Cuphead
 		if (m_ExCharge > 200)
 			m_ExCharge = 200;
 
-		lastImpactTime = m_Timer;
+		m_LastImpactTime = m_Timer;
 
 		UpdateEx();
 
@@ -2383,6 +2381,21 @@ namespace Cuphead
 					transform.Scale = glm::vec3(-3.5f, 3.5f, 1.0f);
 				}
 
+				class SuperDestroyer : public Teddy::ScriptableEntity
+				{
+					public:
+					void OnUpdate(Teddy::Timestep ts) override
+					{
+						auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+						if (aA.Index == 19)
+						{
+							RemoveComponent<Teddy::NativeScriptComponent>();
+							GetScene()->DestroyEntity(GetEntity());
+						}
+					}
+				};
+
+				m_SuperEnt.AddComponent<Teddy::NativeScriptComponent>().Bind<SuperDestroyer>();
 			}
 			else if (aA.Index == 24)
 			{
@@ -2409,8 +2422,14 @@ namespace Cuphead
 			timer += ts;
 
 			auto& aA = m_Entity.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			auto& shotAA = m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
-			auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
+
+			Teddy::SpriteAnimationAtlasComponent* shotAA = nullptr;
+			Teddy::SpriteAnimationComponent* shotSprite = nullptr;
+			if (m_SuperEnt)
+			{
+				shotAA = &m_SuperEnt.GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				shotSprite = &m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
+			}
 
 			if (m_BeamCount < 6)
 			{
@@ -2445,7 +2464,7 @@ namespace Cuphead
 					m_BeamCount++;
 				}
 			}
-			else if (m_BeamCount >= 6 && shotSprite.PlayableIndicies.size() < 14)
+			else if (m_BeamCount >= 6 && m_SuperEnt.HasComponent<Teddy::SpriteAnimationComponent>() && shotSprite->PlayableIndicies.size() < 14)
 			{
 				auto& shotSprite = m_SuperEnt.GetComponent<Teddy::SpriteAnimationComponent>();
 				shotSprite.Textures = m_SuperBeamTextures;
@@ -2454,7 +2473,7 @@ namespace Cuphead
 
 				timer = 0.0f;
 			}
-			else if (shotAA.Index >= 16 && aA.Index < 30)
+			else if (aA.Index < 30)
 			{
 				auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 				sprite.PlayableIndicies.clear();

@@ -74,7 +74,31 @@ namespace Cuphead
 					auto& photoSprite = m_EnemyPhoto.AddComponent<Teddy::SpriteRendererComponent>();
 					photoSprite.Texture = m_EnemyTexture;
 					photoSprite.Color = glm::vec4(0.0f);
-					m_EnemyPhoto.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 298, 232); // TODO: change based on enemy progress
+					int x, y;
+					std::string quote1;
+					std::string quote2;
+					if (bossProgress > 1071)
+					{
+						x = 0;
+						y = 0;
+						quote1 = "\"Don't m-m-m-misunderstand my flames";
+						quote2 = "-- I just meant fun and games.\"";
+					}
+					else if (bossProgress > 561)
+					{
+						x = 1;
+						y = 0;
+						quote1 = "\"Sorry, I didn't mean to put you in the";
+						quote2 = " h-h-h-hot seat...\"";
+					}
+					else
+					{
+						x = 2;
+						y = 0;
+						quote1 = "\"One..two..three!";
+						quote2 = "You'd b-b-b-etter flee !\"";
+					}
+					m_EnemyPhoto.AddComponent<Teddy::SpriteAtlasComponent>(x, y, 298, 232);
 					SetRotationWithAnchor(m_EnemyPhoto.GetComponent<Teddy::TransformComponent>(), glm::vec3(0.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.8f, 5.1f));
 
 					if(m_EnemyQuote)
@@ -83,26 +107,26 @@ namespace Cuphead
 					auto& quoteText = m_EnemyQuote.AddComponent<Teddy::TextComponent>();
 					quoteText.FontAsset = m_QuoteFont;
 					// TODO: Set quote based on boss progress
-					quoteText.SetString("\"One..two..three!");
+					quoteText.SetString(quote1);
 					quoteText.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 					quoteText.Color = glm::vec4(0.0f);
 					auto& quoteTransform = m_EnemyQuote.GetComponent<Teddy::TransformComponent>();
 					SetRotationWithAnchor(m_EnemyQuote.GetComponent<Teddy::TransformComponent>(), 
 						glm::vec3(0.0f), glm::radians(30.0f), 
-						glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+						glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 
 					if(m_EnemyQuotePart2)
 						m_Scene->DestroyEntity(m_EnemyQuotePart2);
 					m_EnemyQuotePart2 = m_Scene->CreateEntity("Enemy Quote Part 2");
 					auto& quoteText2 = m_EnemyQuotePart2.AddComponent<Teddy::TextComponent>();
 					quoteText2.FontAsset = m_QuoteFont;
-					quoteText2.SetString("You'd b-b-b-etter flee !\"");
+					quoteText2.SetString(quote2);
 					quoteText2.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
 					quoteText2.Color = glm::vec4(0.0f);
 					auto& quoteTransform2 = m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>();
 					SetRotationWithAnchor(m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>(),
 						glm::vec3(0.0f), glm::radians(30.0f),
-						glm::vec3(0.0f, 0.6f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+						glm::vec3(0.0f, 0.6f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 
 					if(m_ProgressBar)
 						m_Scene->DestroyEntity(m_ProgressBar);
@@ -187,10 +211,10 @@ namespace Cuphead
 				glm::vec3(0.0f, -4.8f, 5.11f), glm::vec3(0.2f, 0.2f, 1.0f));
 			SetRotationWithAnchor(m_EnemyQuote.GetComponent<Teddy::TransformComponent>(),
 				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
-				glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+				glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 			SetRotationWithAnchor(m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>(),
 				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
-				glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+				glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 
 			if (t >= 1.0f)
 			{
@@ -210,10 +234,10 @@ namespace Cuphead
 					glm::vec3(0.0f, -4.8f, 5.11f), glm::vec3(0.2f, 0.2f, 1.0f));
 				SetRotationWithAnchor(m_EnemyQuote.GetComponent<Teddy::TransformComponent>(),
 					glm::vec3(0.0f), targetAngle,
-					glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+					glm::vec3(0.0f, 1.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 				SetRotationWithAnchor(m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>(),
 					glm::vec3(0.0f), targetAngle,
-					glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.15f, 0.15f, 1.0f));
+					glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
 				m_AnimationDone = true;
 				timer = 0.0f;
 				elapsed = 0.0f;

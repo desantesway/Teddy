@@ -222,7 +222,7 @@ namespace Cuphead
 
 		bool m_ParryReset = true;
 
-		int m_Health = 67;
+		int m_Health = 4;
 		bool m_Hitting = false;
 		bool m_HitTolerance = false;
 		bool m_HitAnimation = false;
@@ -279,6 +279,7 @@ namespace Cuphead
 		int m_StartIndex = 0;
 
 		float m_Timer = 0.0f;
+		float m_LastImpactTime = 0.0f;
 
 		struct ExDirection
 		{
