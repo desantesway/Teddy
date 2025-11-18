@@ -43,11 +43,22 @@ namespace Cuphead
 		Teddy::Entity m_ExitToMap;
 		Teddy::Entity m_Quit;
 
+		struct Checkpoints
+		{
+			Teddy::Entity First;
+			Teddy::Entity Second;
+			Teddy::Entity Third;
+		};
+
+		Checkpoints m_Checkpoints;
+		Teddy::Entity m_Player;
+
 		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
 		Teddy::Ref<Teddy::Texture2D> m_EnemyTexture;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_YouDiedTexture;
 		Teddy::Ref<Teddy::Font> m_OptionsFont;
 		Teddy::Ref<Teddy::Font> m_QuoteFont;
+		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PlayerTexture;
 
 		Teddy::Ref<Teddy::Scene> m_Scene;
 

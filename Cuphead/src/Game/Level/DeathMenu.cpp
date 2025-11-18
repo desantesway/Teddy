@@ -34,7 +34,7 @@ namespace Cuphead
 		if (!m_Started) return;
 
 		static float timer = 0.0f;
-		timer += ts.GetSeconds();
+		timer += ts;
 
 		if (!m_LoadedMenu)
 		{
@@ -140,8 +140,50 @@ namespace Cuphead
 					progressTransform.Translation = glm::vec3(0.0f, 0.0f, 5.09f);
 					progressTransform.Rotation.z = glm::radians(30.0f);
 
-					// checkpoints + cuphead
+					if (m_Checkpoints.First)
+						m_Scene->DestroyEntity(m_Checkpoints.First);
+					m_Checkpoints.First = m_Scene->CreateEntity("First Checkpoint Bar");
+					auto& checkFSprite = m_Checkpoints.First.AddComponent<Teddy::SpriteRendererComponent>();
+					checkFSprite.Texture = m_BackgroundTexture;
+					checkFSprite.Color = glm::vec4(0.0f);
+					m_Checkpoints.First.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 595, 668);
+					auto& checkFTransform = m_Checkpoints.First.GetComponent<Teddy::TransformComponent>();
+					checkFTransform.Translation = glm::vec3(0.0f, 0.0f, 5.091f);
+					SetRotationWithAnchor(checkFTransform, glm::vec3(0.0f), glm::radians(30.0f), glm::vec3(0.075f, 0.0f, 5.091f), glm::vec3(3.0f, 3.0f, 1.0f));
 
+					if (m_Checkpoints.Second)
+						m_Scene->DestroyEntity(m_Checkpoints.Second);
+					m_Checkpoints.Second = m_Scene->CreateEntity("Second Checkpoint Bar");
+					auto& checkSSprite = m_Checkpoints.Second.AddComponent<Teddy::SpriteRendererComponent>();
+					checkSSprite.Texture = m_BackgroundTexture;
+					checkSSprite.Color = glm::vec4(0.0f);
+					m_Checkpoints.Second.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 595, 668);
+					auto& checkSTransform = m_Checkpoints.Second.GetComponent<Teddy::TransformComponent>();
+					checkSTransform.Translation = glm::vec3(0.0f, 0.0f, 5.092f);
+					SetRotationWithAnchor(checkSTransform, glm::vec3(0.0f), glm::radians(30.0f), glm::vec3(0.24f, 0.0f, 5.092f), glm::vec3(3.0f, 3.0f, 1.0f));
+
+					if (m_Checkpoints.Third)
+						m_Scene->DestroyEntity(m_Checkpoints.Third);
+					m_Checkpoints.Third = m_Scene->CreateEntity("Third Checkpoint Bar");
+					auto& checkTSprite = m_Checkpoints.Third.AddComponent<Teddy::SpriteRendererComponent>();
+					checkTSprite.Texture = m_BackgroundTexture;
+					checkTSprite.Color = glm::vec4(0.0f);
+					m_Checkpoints.Third.AddComponent<Teddy::SpriteAtlasComponent>(0, 1, 595, 668);
+					auto& checkTTransform = m_Checkpoints.Third.GetComponent<Teddy::TransformComponent>();
+					checkTTransform.Translation = glm::vec3(0.0f, 0.0f, 5.093f);
+					SetRotationWithAnchor(checkTTransform, glm::vec3(0.0f), glm::radians(30.0f), glm::vec3(0.45f, 0.0f, 5.093f), glm::vec3(3.0f, 3.0f, 1.0f));
+
+					if (m_Player)
+						m_Scene->DestroyEntity(m_Player);
+					m_Player = m_Scene->CreateEntity("Player");
+					auto& playerSprite = m_Player.AddComponent<Teddy::SpriteAnimationComponent>(0.05f);
+					playerSprite.Textures = m_PlayerTexture;
+					playerSprite.Color = glm::vec4(0.0f);
+					playerSprite.PlayableIndicies = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+					m_Player.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 201, 201);
+					m_Player.GetComponent<Teddy::TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 5.19f);
+					SetRotationWithAnchor(m_Player.GetComponent<Teddy::TransformComponent>(), glm::vec3(0.0f), glm::radians(30.0f), glm::vec3(-1.0f, -0.15f, 5.19f));
+					
 					if(m_Retry)
 						m_Scene->DestroyEntity(m_Retry);
 					m_Retry = m_Scene->CreateEntity("Death Menu Retry Option");
@@ -186,11 +228,13 @@ namespace Cuphead
 		else if (!m_AnimationDone)
 		{
 			const float targetAngle = glm::radians(5.0f);
-			const float startAngle = glm::radians(30.0f);/* set this to your initial angle, e.g., glm::radians(90.0f) */
+			const float startAngle = glm::radians(30.0f);
 			static float elapsed = 0.0f;
 			const float duration = 2.0f;
 			elapsed += ts;
 			float t = glm::clamp(elapsed / duration, 0.0f, 1.0f);
+
+			const float targetPos = 1.0f - (bossProgress / 1700.0f);
 
 			float ease = 1.0f - std::pow(1.0f - t, 7);
 
@@ -215,6 +259,18 @@ namespace Cuphead
 			SetRotationWithAnchor(m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>(),
 				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
 				glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
+			SetRotationWithAnchor(m_Checkpoints.First.GetComponent<Teddy::TransformComponent>(), 
+				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
+				glm::vec3(0.075f, 0.0f, 5.091f), glm::vec3(3.0f, 3.0f, 1.0f));
+			SetRotationWithAnchor(m_Checkpoints.Second.GetComponent<Teddy::TransformComponent>(),
+				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
+				glm::vec3(0.24f, 0.0f, 5.092f), glm::vec3(3.0f, 3.0f, 1.0f));
+			SetRotationWithAnchor(m_Checkpoints.Third.GetComponent<Teddy::TransformComponent>(),
+				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease),
+				glm::vec3(0.45f, 0.0f, 5.093f), glm::vec3(3.0f, 3.0f, 1.0f));
+			SetRotationWithAnchor(m_Player.GetComponent<Teddy::TransformComponent>(), 
+				glm::vec3(0.0f), glm::mix(startAngle, targetAngle, ease), 
+				glm::vec3((targetPos * ease * 2.0f) - 1.0f, -0.15f, 5.19f));
 
 			if (t >= 1.0f)
 			{
@@ -238,6 +294,17 @@ namespace Cuphead
 				SetRotationWithAnchor(m_EnemyQuotePart2.GetComponent<Teddy::TransformComponent>(),
 					glm::vec3(0.0f), targetAngle,
 					glm::vec3(0.0f, 0.0f, 5.11f), glm::vec3(0.125f, 0.125f, 1.0f));
+				SetRotationWithAnchor(m_Checkpoints.First.GetComponent<Teddy::TransformComponent>(),
+					glm::vec3(0.0f), targetAngle,
+					glm::vec3(0.075f, 0.0f, 5.091f), glm::vec3(3.0f, 3.0f, 1.0f));
+				SetRotationWithAnchor(m_Checkpoints.Second.GetComponent<Teddy::TransformComponent>(),
+					glm::vec3(0.0f), targetAngle,
+					glm::vec3(0.24f, 0.0f, 5.092f), glm::vec3(3.0f, 3.0f, 1.0f));
+				SetRotationWithAnchor(m_Checkpoints.Third.GetComponent<Teddy::TransformComponent>(),
+					glm::vec3(0.0f), targetAngle,
+					glm::vec3(0.45f, 0.0f, 5.093f), glm::vec3(3.0f, 3.0f, 1.0f));
+				SetRotationWithAnchor(m_Player.GetComponent<Teddy::TransformComponent>(), 
+					glm::vec3(0.0f), targetAngle, glm::vec3((targetPos * 2.0f) - 1.0f, -0.15f, 5.19f));
 				m_AnimationDone = true;
 				timer = 0.0f;
 				elapsed = 0.0f;
@@ -248,6 +315,10 @@ namespace Cuphead
 			m_ProgressBar.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(ease, ease, ease, ease);
 			m_EnemyQuote.GetComponent<Teddy::TextComponent>().Color = m_BlackColor * glm::vec4(ease, ease, ease, ease);
 			m_EnemyQuotePart2.GetComponent<Teddy::TextComponent>().Color = m_BlackColor * glm::vec4(ease, ease, ease, ease);
+			m_Checkpoints.First.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(ease, ease, ease, ease);
+			m_Checkpoints.Second.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(ease, ease, ease, ease);
+			m_Checkpoints.Third.GetComponent<Teddy::SpriteRendererComponent>().Color = glm::vec4(ease, ease, ease, ease);
+			m_Player.GetComponent<Teddy::SpriteAnimationComponent>().Color = glm::vec4(ease, ease, ease, ease);
 			
 			UpdateColors(glm::vec4(ease, ease, ease, ease));
 
@@ -268,6 +339,19 @@ namespace Cuphead
 			"assets/Textures/UI/Death/You_Died_1076x232_2048x2048_0.png",
 			"assets/Textures/UI/Death/You_Died_1076x232_2048x2048_1.png",
 			"assets/Textures/UI/Death/You_Died_1076x232_2048x2048_2.png" });
+
+		if (isCuphead)
+		{
+			m_PlayerTexture = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Cuphead/Cuphead_DeathCard_201x201_1024x1024_0.png",
+				});
+		}
+		else
+		{
+			m_PlayerTexture = assets.LoadMultiple<Teddy::Texture2D>({
+			"assets/Textures/Mugman/Mugman_DeathCard_201x201_1024x1024_0.png",
+				});
+		}
 
 		m_OptionsFont = assets.Load<Teddy::Font>("assets/Fonts/CupheadVogue-ExtraBold.otf", Teddy::Boolean::True);
 
