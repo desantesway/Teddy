@@ -149,7 +149,7 @@ namespace Cuphead
 		bool m_Shooting = false;
 		bool m_MeteorStart = true;
 
-		float m_Health = 1535; // 1700, 1535, 1071, 561
+		float m_Health = 10; // 1700, 1535, 1071, 561
 		bool m_Hit = false;
 
 		float m_PeashotTimer = 0.0f;

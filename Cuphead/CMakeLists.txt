@@ -59,6 +59,8 @@ target_sources(Cuphead PRIVATE
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/PauseMenu.cpp
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/DeathMenu.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/DeathMenu.cpp
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Winscreen.h
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Winscreen.cpp
 
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Randomizer.h
                                     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game/Level/Randomizer.cpp

@@ -21,7 +21,6 @@ namespace Cuphead
 		void OnUpdate(Teddy::Timestep ts, int bossProgress);
 
 		void Show();
-		void Hide();
 
 		int GetState() { return m_State; }
 		bool WantsToRetry() { return m_State == 1; }
@@ -60,8 +59,6 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Font> m_QuoteFont;
 		std::vector<Teddy::Ref<Teddy::Texture2D>> m_PlayerTexture;
 
-		Teddy::Ref<Teddy::Scene> m_Scene;
-
 		glm::vec4 m_BlackColor = glm::vec4(70.0f / 255.0f, 70.0f / 255.0f, 70.0f / 255.0f, 1.0f);
 		glm::vec4 m_RedColor = glm::vec4(172.0f / 255.0f, 32.0f / 255.0f, 54.0f / 255.0f, 1.0f);
 
@@ -72,5 +69,7 @@ namespace Cuphead
 		bool m_YouDiedFadeOut = false;
 		bool m_LoadedMenu = false;
 		bool m_AnimationDone = false;
+
+		Teddy::Ref<Teddy::Scene> m_Scene;
 	};
 }

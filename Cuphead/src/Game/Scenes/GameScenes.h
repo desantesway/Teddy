@@ -5,6 +5,7 @@
 #include "TransitionScenes.h"
 #include "MainMenuScene.h"
 #include "../Level/LevelScene.h"
+#include "../Level/Winscreen.h"
 
 namespace Cuphead
 {
@@ -34,7 +35,7 @@ namespace Cuphead
 		Teddy::Ref<Teddy::Scene> InitTitle();
 		Teddy::Ref<Teddy::Scene> InitMainMenu();
 		Teddy::Ref<Teddy::Scene> InitLevel();
-		Teddy::Ref<Teddy::Scene> InitResults();
+		Teddy::Ref<Teddy::Scene> InitWinscreen();
 	private:
 		int m_CurrentScene = 2;
 
@@ -42,6 +43,7 @@ namespace Cuphead
 		MainTitleScene m_MainTitleScene;
 		Teddy::Ref<MainMenuScene> m_MainMenuScene = nullptr;
 		Teddy::Ref<LevelScene> m_LevelScene = nullptr;
+		Teddy::Ref<Winscreen> m_Winscreen = nullptr;
 
 		bool m_IsCuphead = false;
 
