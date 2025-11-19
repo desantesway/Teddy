@@ -20,6 +20,11 @@ namespace Cuphead
 		void OnEvent(Teddy::Event& event);
 
 		Teddy::Ref<Teddy::Scene> Init();
+
+	private:
+
+		void TimeInscrease();
+		void SlashIncrease(Teddy::TextComponent& textComp, int& toComp, bool& isDone);
 	private:
 
 		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
@@ -31,6 +36,13 @@ namespace Cuphead
 
 		Teddy::Ref<Teddy::Font> m_BoardFont;
 
+		bool m_SkipTime = false;
+		bool m_SkipHp = false;
+		bool m_SkipParry = false;
+		bool m_SkipSuper = false;
+		bool m_SkipSkill = false;
+
+		float m_Timer = 0.0f;
 		float m_Time = 0.0f;
 		int m_Hp = 0;
 		int m_Parry = 0;

@@ -127,7 +127,7 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitWinscreen()
     {
-        m_Winscreen = Teddy::CreateRef<Winscreen>(80.0f, 2, 2, 2, 1); // TODO: game info
+        m_Winscreen = Teddy::CreateRef<Winscreen>(80.0f, 2, 3, 2, 1); // TODO: game info
 
         m_TransitionScenes.SetFadeAlpha(0.0f);
         m_TransitionScenes.SetFadeTime(2.5f);

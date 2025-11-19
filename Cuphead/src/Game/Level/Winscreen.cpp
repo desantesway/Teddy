@@ -327,6 +327,50 @@ namespace Cuphead
 
 	void Winscreen::OnUpdate(Teddy::Timestep ts)
 	{
+		m_Timer += ts;
+		if (!m_SkipTime)
+		{
+			TimeInscrease();
+			m_Timer = 0.0f;
+			return;
+		}
+		else if (!m_SkipHp)
+		{
+			if (m_Timer > 0.1f)
+			{
+				m_Timer = 0.0f;
+				SlashIncrease(m_HpEntity.GetComponent<Teddy::TextComponent>(), m_Hp, m_SkipHp);
+			}
+			return;
+		}
+		else if (!m_SkipParry)
+		{
+			if (m_Timer > 0.1f)
+			{
+				m_Timer = 0.0f;
+				SlashIncrease(m_ParryEntity.GetComponent<Teddy::TextComponent>(), m_Parry, m_SkipParry);
+			}
+			return;
+		}
+		else if (!m_SkipSuper)
+		{
+			if (m_Timer > 0.1f)
+			{
+				m_Timer = 0.0f;
+				SlashIncrease(m_SuperEntity.GetComponent<Teddy::TextComponent>(), m_Super, m_SkipSuper);
+			}
+			return;
+		}
+		else if (!m_SkipSkill)
+		{
+			//// No skill increase animation, just skip
+			//m_SkipSkill = true;
+			return;
+		}
+	}
+
+	void Winscreen::TimeInscrease()
+	{
 		auto& textComp = m_TimeEntity.GetComponent<Teddy::TextComponent>();
 		auto& timeText = textComp.TextString;
 
@@ -366,7 +410,7 @@ namespace Cuphead
 		if (currentSeconds < m_Time)
 		{
 			float newTime = std::min(currentSeconds + 1.0f, m_Time);
-			int displaySeconds = static_cast<int>(std::floor(newTime + 0.0001f)); 
+			int displaySeconds = static_cast<int>(std::floor(newTime + 0.0001f));
 			int dispMin = displaySeconds / 60;
 			int dispSec = displaySeconds % 60;
 
@@ -374,6 +418,37 @@ namespace Cuphead
 			oss << std::setfill('0') << std::setw(2) << dispMin << ":" << std::setfill('0') << std::setw(2) << dispSec;
 
 			textComp.SetString(oss.str());
+		}
+		else
+		{
+			if(currentSeconds < 130.0f)
+				textComp.Color = m_YellowColor;
+			m_SkipTime = true;
+		}
+	}
+
+	void Winscreen::SlashIncrease(Teddy::TextComponent& textComp, int& toComp, bool &isDone)
+	{
+		auto& hpText = textComp.TextString;
+		int currentHp = 0;
+		try
+		{
+			currentHp = hpText.empty() ? 0 : std::stoi(std::string(1, hpText[0]));
+		}
+		catch (...)
+		{
+			currentHp = 0;
+		}
+		if (currentHp < toComp)
+		{
+			currentHp++;
+			textComp.SetString(std::to_string(currentHp) + " " + hpText[2]);
+		}
+		else
+		{
+			if(currentHp == 3)
+				textComp.Color = m_YellowColor;
+			isDone = true;
 		}
 	}
 } 
