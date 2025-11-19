@@ -98,13 +98,13 @@ namespace Cuphead
 			}
 
 			{
-				auto textEnt = m_Scene->CreateEntity("Time Scene");
-				auto& text = textEnt.AddComponent<Teddy::TextComponent>();
+				m_TimeEntity = m_Scene->CreateEntity("Time Scene");
+				auto& text = m_TimeEntity.AddComponent<Teddy::TextComponent>();
 				text.FontAsset = m_BoardFont;
-				text.SetString("02:32");
+				text.SetString("00:00");
 				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 				text.Color = glm::vec4(1.0f);
-				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+				auto& textTransform = m_TimeEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, 1.0f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
 			}
@@ -136,13 +136,13 @@ namespace Cuphead
 			}
 
 			{
-				auto textEnt = m_Scene->CreateEntity("Hp Bonus");
-				auto& text = textEnt.AddComponent<Teddy::TextComponent>();
+				m_HpEntity = m_Scene->CreateEntity("Hp Bonus");
+				auto& text = m_HpEntity.AddComponent<Teddy::TextComponent>();
 				text.FontAsset = m_BoardFont;
-				text.SetString("2 3");
+				text.SetString("0 3");
 				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 				text.Color = glm::vec4(1.0f);
-				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+				auto& textTransform = m_HpEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, 0.5f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
 			}
@@ -174,13 +174,13 @@ namespace Cuphead
 			}
 
 			{
-				auto textEnt = m_Scene->CreateEntity("Parry");
-				auto& text = textEnt.AddComponent<Teddy::TextComponent>();
+				m_ParryEntity = m_Scene->CreateEntity("Parry");
+				auto& text = m_ParryEntity.AddComponent<Teddy::TextComponent>();
 				text.FontAsset = m_BoardFont;
-				text.SetString("3 3");
+				text.SetString("0 3");
 				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 				text.Color = glm::vec4(1.0f);
-				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+				auto& textTransform = m_ParryEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, 0.0f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
 			}
@@ -212,13 +212,13 @@ namespace Cuphead
 			}
 
 			{
-				auto textEnt = m_Scene->CreateEntity("Super Meter");
-				auto& text = textEnt.AddComponent<Teddy::TextComponent>();
+				m_SuperEntity = m_Scene->CreateEntity("Super Meter");
+				auto& text = m_SuperEntity.AddComponent<Teddy::TextComponent>();
 				text.FontAsset = m_BoardFont;
-				text.SetString("1 3");
+				text.SetString("0 3");
 				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 				text.Color = glm::vec4(1.0f);
-				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+				auto& textTransform = m_SuperEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, -0.5f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
 			}
@@ -323,5 +323,57 @@ namespace Cuphead
 		gradeTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
 
 		return m_Scene;
+	}
+
+	void Winscreen::OnUpdate(Teddy::Timestep ts)
+	{
+		auto& textComp = m_TimeEntity.GetComponent<Teddy::TextComponent>();
+		auto& timeText = textComp.TextString;
+
+		int minutes = 0;
+		int seconds = 0;
+		bool parsed = false;
+		auto colonPos = timeText.find(':');
+		if (colonPos != std::string::npos)
+		{
+			try
+			{
+				minutes = std::stoi(timeText.substr(0, colonPos));
+				seconds = std::stoi(timeText.substr(colonPos + 1));
+				parsed = true;
+			}
+			catch (...)
+			{
+				parsed = false;
+			}
+		}
+		else
+		{
+			try
+			{
+				int total = std::stoi(timeText);
+				minutes = total / 60;
+				seconds = total % 60;
+				parsed = true;
+			}
+			catch (...)
+			{
+				parsed = false;
+			}
+		}
+
+		float currentSeconds = parsed ? static_cast<float>(minutes * 60 + seconds) : 0.0f;
+		if (currentSeconds < m_Time)
+		{
+			float newTime = std::min(currentSeconds + 1.0f, m_Time);
+			int displaySeconds = static_cast<int>(std::floor(newTime + 0.0001f)); 
+			int dispMin = displaySeconds / 60;
+			int dispSec = displaySeconds % 60;
+
+			std::ostringstream oss;
+			oss << std::setfill('0') << std::setw(2) << dispMin << ":" << std::setfill('0') << std::setw(2) << dispSec;
+
+			textComp.SetString(oss.str());
+		}
 	}
 } 
