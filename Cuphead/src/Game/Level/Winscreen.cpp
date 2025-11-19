@@ -72,6 +72,25 @@ namespace Cuphead
 		resultsTransform.Translation = glm::vec3(0.0f, 2.75f, 0.1f);
 		resultsTransform.Scale = glm::vec3(1.65f, 1.65f, 1.0f);
 
+		class Slash : public Teddy::ScriptableEntity
+		{
+		public:
+
+			void OnCreate() override
+			{
+				m_SlashEntity = GetScene()->CreateEntity("Slash");
+				auto& text = m_SlashEntity.AddComponent<Teddy::TextComponent>();
+				text.SetString("/");
+				text.TextAlignment = Teddy::TextComponent::AlignmentType::Center;
+				text.Color = glm::vec4(1.0f);
+				auto& textTransform = m_SlashEntity.GetComponent<Teddy::TransformComponent>();
+				textTransform.Translation = GetComponent<Teddy::TransformComponent>().Translation + glm::vec3(-0.26f, 0.025f, 0.01f);
+				textTransform.Scale = glm::vec3(0.45f, 0.45f, 1.0f);
+			}
+
+			Teddy::Entity m_SlashEntity;
+		};
+
 		{
 			{
 				auto textEnt = m_Scene->CreateEntity("Time Scene");
@@ -145,6 +164,8 @@ namespace Cuphead
 				auto& textTransform = m_HpEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, 0.5f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+
+				m_HpEntity.AddComponent<Teddy::NativeScriptComponent>().Bind<Slash>();
 			}
 		}
 
@@ -183,6 +204,8 @@ namespace Cuphead
 				auto& textTransform = m_ParryEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, 0.0f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+
+				m_ParryEntity.AddComponent<Teddy::NativeScriptComponent>().Bind<Slash>();
 			}
 		}
 
@@ -221,6 +244,8 @@ namespace Cuphead
 				auto& textTransform = m_SuperEntity.GetComponent<Teddy::TransformComponent>();
 				textTransform.Translation = glm::vec3(2.1f, -0.5f, 0.11f);
 				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+
+				m_SuperEntity.AddComponent<Teddy::NativeScriptComponent>().Bind<Slash>();
 			}
 		}
 
@@ -314,6 +339,7 @@ namespace Cuphead
 		auto gradeEnt = m_Scene->CreateEntity("Grade Image");
 		auto& gradeSprite = gradeEnt.AddComponent<Teddy::SpriteAnimationComponent>(0.1f);
 		gradeSprite.Textures = m_GradeTextures;
+		gradeSprite.Loop = false;
 		gradeSprite.PlayableIndicies = { 0,1,2,3,4,5,6,7,8,9,10,11 };
 
 		auto& atlas = gradeEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 0, 82, 73);
@@ -321,6 +347,23 @@ namespace Cuphead
 		auto& gradeTransform = gradeEnt.GetComponent<Teddy::TransformComponent>();
 		gradeTransform.Translation = glm::vec3(1.25f, -1.9f, 0.12f);
 		gradeTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
+
+		class GradeLoop : public Teddy::ScriptableEntity
+		{
+			public:
+			void OnUpdate(Teddy::Timestep ts) override
+			{
+				auto& anim = GetComponent<Teddy::SpriteAnimationComponent>();
+				auto& aA = GetComponent<Teddy::SpriteAnimationAtlasComponent>();
+				if (aA.Index >= 9 && !anim.Loop)
+				{
+					anim.PlayableIndicies = { 9, 10, 11 };
+					anim.Loop = true;
+				}
+			}
+		};
+
+		gradeEnt.AddComponent<Teddy::NativeScriptComponent>().Bind<GradeLoop>();
 
 		return m_Scene;
 	}
