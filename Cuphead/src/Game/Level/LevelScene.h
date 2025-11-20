@@ -34,6 +34,11 @@ namespace Cuphead
 		bool WantsToRetry() { return m_State == 1; }
 		bool WantsToExit() { return m_State == 2; }
 		bool WantsToResult() { return m_State == 3; }
+
+		float GetHealth() { return m_Player.GetHealth(); }
+		int GetParry() { return m_Player.GetParry(); }
+		int GetSuper() { return m_Player.GetSuper(); }
+		float GetTimer() { return m_Player.GetTimer(); }
 	private:
 		bool Freeze(Teddy::Timestep ts);
 		void FreezeWithoutPlayer(Teddy::Timestep ts);

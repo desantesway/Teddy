@@ -12,8 +12,18 @@ namespace Cuphead
 	{
 	public:
 		Winscreen() = default;
-		Winscreen(float time, int hp, int parry, int super, int skill)
-			: m_Hp(hp), m_Parry(parry), m_Super(super), m_Skill(skill), m_Time(time) {}
+		Winscreen(int time, int hp, int parry, int super, int skill)
+			: m_Hp(hp), m_Parry(parry), m_Super(super), m_Skill(skill), m_Time(time) 
+		{
+			if(hp > 3)
+				m_Hp = 3;
+			if(parry > 3)
+				m_Parry = 3;
+			if (super > 6)
+				m_Super = 6;
+			if (skill > 2)
+				m_Skill = 2;
+		}
 		~Winscreen() = default;
 
 		void OnUpdate(Teddy::Timestep ts);
@@ -21,10 +31,16 @@ namespace Cuphead
 
 		Teddy::Ref<Teddy::Scene> Init();
 
+		bool WantsToMenu() { return m_ProceedToMenu; }
+		void Start() { m_Start = true; }	
 	private:
+		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 
 		void TimeInscrease();
+		void TimeSkip();
 		void SlashIncrease(Teddy::TextComponent& textComp, int& toComp, bool& isDone);
+		void SlashSkip(Teddy::TextComponent& textComp, int& toComp, bool& isDone);
+		void Skill();
 	private:
 
 		Teddy::Ref<Teddy::Texture2D> m_BackgroundTexture;
@@ -43,7 +59,7 @@ namespace Cuphead
 		bool m_SkipSkill = false;
 
 		float m_Timer = 0.0f;
-		float m_Time = 0.0f;
+		int m_Time = 0.0f;
 		int m_Hp = 0;
 		int m_Parry = 0;
 		int m_Super = 0;
@@ -53,6 +69,9 @@ namespace Cuphead
 		Teddy::Entity m_HpEntity;
 		Teddy::Entity m_ParryEntity;
 		Teddy::Entity m_SuperEntity;
+
+		bool m_ProceedToMenu = false;
+		bool m_Start = false;
 
 		Teddy::Ref<Teddy::Scene> m_Scene;
 	};

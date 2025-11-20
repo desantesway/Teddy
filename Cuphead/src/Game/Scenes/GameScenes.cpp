@@ -70,9 +70,14 @@ namespace Cuphead
                 case 4:
                     if (!m_Winscreen) return false;
 
+                    if (m_TransitionScenes.IsCircleOut() && m_TransitionScenes.IsFadedOut())
+                    {
+						m_Winscreen->Start();
+                    }
+
 					m_Winscreen->OnUpdate(ts);
 
-                    return false;
+                    return m_Winscreen->WantsToMenu();
                 default:
                     TED_CORE_INFO("No scene loaded for index {0}", m_CurrentScene);
                     break;
@@ -127,7 +132,10 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitWinscreen()
     {
-        m_Winscreen = Teddy::CreateRef<Winscreen>(80.0f, 2, 3, 2, 1); // TODO: game info
+        if(m_LevelScene)
+            m_Winscreen = Teddy::CreateRef<Winscreen>(m_LevelScene->GetTimer(), m_LevelScene->GetHealth(), m_LevelScene->GetParry(), m_LevelScene->GetSuper(), 2);
+        else
+            m_Winscreen = Teddy::CreateRef<Winscreen>(90.0f, 2, 3, 2, 1);
 
         m_TransitionScenes.SetFadeAlpha(0.0f);
         m_TransitionScenes.SetFadeTime(2.5f);
@@ -152,7 +160,6 @@ namespace Cuphead
 
     Teddy::Ref<Teddy::Scene> GameScenes::InitNextScene()
     {
-        m_CurrentScene = 3;
         switch (++m_CurrentScene)
         {
             case 1:
@@ -182,6 +189,9 @@ namespace Cuphead
                     TED_CORE_INFO("No scene change requested after level");
                     return nullptr;
 				}
+            case 5:
+                m_CurrentScene = 2;
+				return InitMainMenu();
             default:
                 TED_CORE_INFO("No scene found for index {0}", m_CurrentScene);
                 return nullptr;
@@ -216,6 +226,10 @@ namespace Cuphead
 		case 3:
             if (m_LevelScene)
                 m_LevelScene->OnEvent(event);
+			break;
+        case 4:
+            if (m_Winscreen)
+                m_Winscreen->OnEvent(event);
 			break;
         default:
             break;

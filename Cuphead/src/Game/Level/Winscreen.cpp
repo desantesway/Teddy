@@ -238,7 +238,7 @@ namespace Cuphead
 				m_SuperEntity = m_Scene->CreateEntity("Super Meter");
 				auto& text = m_SuperEntity.AddComponent<Teddy::TextComponent>();
 				text.FontAsset = m_BoardFont;
-				text.SetString("0 3");
+				text.SetString("0 6");
 				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
 				text.Color = glm::vec4(1.0f);
 				auto& textTransform = m_SuperEntity.GetComponent<Teddy::TransformComponent>();
@@ -276,14 +276,22 @@ namespace Cuphead
 
 			{
 				auto textEnt = m_Scene->CreateEntity("Skill Level");
-				auto& text = textEnt.AddComponent<Teddy::TextComponent>();
-				text.FontAsset = m_BoardFont;
-				text.SetString("A ");
-				text.TextAlignment = Teddy::TextComponent::AlignmentType::LeftCenter;
-				text.Color = glm::vec4(1.0f);
+				auto& text = textEnt.AddComponent<Teddy::SpriteRendererComponent>();
+				text.Texture = m_GradeTextures[0];
+				auto& atlas = textEnt.AddComponent<Teddy::SpriteAtlasComponent>(0, 2, 82, 73);
 				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
-				textTransform.Translation = glm::vec3(2.1f, -1.0f, 0.11f);
-				textTransform.Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+				textTransform.Translation = glm::vec3(2.0f, -1.05f, 0.12f);
+				textTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
+			}
+
+			{
+				auto textEnt = m_Scene->CreateEntity("Skill Level");
+				auto& text = textEnt.AddComponent<Teddy::SpriteRendererComponent>();
+				text.Texture = m_GradeTextures[0];
+				auto& atlas = textEnt.AddComponent<Teddy::SpriteAtlasComponent>(2, 2, 82, 73);
+				auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+				textTransform.Translation = glm::vec3(1.65f, -1.05f, 0.12f);
+				textTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
 			}
 		}
 
@@ -370,6 +378,8 @@ namespace Cuphead
 
 	void Winscreen::OnUpdate(Teddy::Timestep ts)
 	{
+		if (!m_Start) return;
+
 		m_Timer += ts;
 		if (!m_SkipTime)
 		{
@@ -406,10 +416,37 @@ namespace Cuphead
 		}
 		else if (!m_SkipSkill)
 		{
-			//// No skill increase animation, just skip
-			//m_SkipSkill = true;
+			Skill();
+
 			return;
 		}
+	}
+
+	void Winscreen::Skill()
+	{
+		if (m_Skill > 1)
+		{
+			auto textEnt = m_Scene->CreateEntity("Skill Level");
+			auto& text = textEnt.AddComponent<Teddy::SpriteRendererComponent>();
+			text.Texture = m_GradeTextures[0];
+			auto& atlas = textEnt.AddComponent<Teddy::SpriteAtlasComponent>(4, 2, 82, 73);
+			auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+			textTransform.Translation = glm::vec3(2.0f, -1.05f, 0.12f);
+			textTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
+		}
+
+		if (m_Skill > 0)
+		{
+			auto textEnt = m_Scene->CreateEntity("Skill Level");
+			auto& text = textEnt.AddComponent<Teddy::SpriteRendererComponent>();
+			text.Texture = m_GradeTextures[0];
+			auto& atlas = textEnt.AddComponent<Teddy::SpriteAtlasComponent>(5, 2, 82, 73);
+			auto& textTransform = textEnt.GetComponent<Teddy::TransformComponent>();
+			textTransform.Translation = glm::vec3(1.65f, -1.05f, 0.12f);
+			textTransform.Scale = glm::vec3(0.8f, 0.8f, 1.0f);
+		}
+
+		m_SkipSkill = true;
 	}
 
 	void Winscreen::TimeInscrease()
@@ -452,7 +489,7 @@ namespace Cuphead
 		float currentSeconds = parsed ? static_cast<float>(minutes * 60 + seconds) : 0.0f;
 		if (currentSeconds < m_Time)
 		{
-			float newTime = std::min(currentSeconds + 1.0f, m_Time);
+			float newTime = (std::min)(currentSeconds + 1.0f, static_cast<float>(m_Time));
 			int displaySeconds = static_cast<int>(std::floor(newTime + 0.0001f));
 			int dispMin = displaySeconds / 60;
 			int dispSec = displaySeconds % 60;
@@ -464,34 +501,110 @@ namespace Cuphead
 		}
 		else
 		{
-			if(currentSeconds < 130.0f)
+			if(m_Time < 130.0f)
 				textComp.Color = m_YellowColor;
 			m_SkipTime = true;
 		}
 	}
 
+	void Winscreen::TimeSkip()
+	{
+		auto& textComp = m_TimeEntity.GetComponent<Teddy::TextComponent>();
+
+		int displaySeconds = static_cast<int>(std::floor(m_Time + 0.0001f));
+		int dispMin = displaySeconds / 60;
+		int dispSec = displaySeconds % 60;
+
+		std::ostringstream oss;
+		oss << std::setfill('0') << std::setw(2) << dispMin << ":" << std::setfill('0') << std::setw(2) << dispSec;
+
+		textComp.SetString(oss.str());
+
+		if (m_Time < 130.0f)
+			textComp.Color = m_YellowColor;
+		m_SkipTime = true;
+	}
+
 	void Winscreen::SlashIncrease(Teddy::TextComponent& textComp, int& toComp, bool &isDone)
 	{
-		auto& hpText = textComp.TextString;
-		int currentHp = 0;
+		auto& text = textComp.TextString;
+		int current = 0;
 		try
 		{
-			currentHp = hpText.empty() ? 0 : std::stoi(std::string(1, hpText[0]));
+			current = text.empty() ? 0 : std::stoi(std::string(1, text[0]));
 		}
 		catch (...)
 		{
-			currentHp = 0;
+			current = 0;
 		}
-		if (currentHp < toComp)
+		if (current < toComp)
 		{
-			currentHp++;
-			textComp.SetString(std::to_string(currentHp) + " " + hpText[2]);
+			current++;
+			textComp.SetString(std::to_string(current) + " " + text[2]);
 		}
 		else
 		{
-			if(currentHp == 3)
+			if(current == 3)
 				textComp.Color = m_YellowColor;
 			isDone = true;
+		}
+	}
+
+	void Winscreen::SlashSkip(Teddy::TextComponent& textComp, int& toComp, bool& isDone)
+	{
+		auto& hpText = textComp.TextString;
+
+		textComp.SetString(std::to_string(toComp) + " " + hpText[2]);
+		if (toComp == 3)
+			textComp.Color = m_YellowColor;
+		isDone = true;
+	}
+
+	void Winscreen::OnEvent(Teddy::Event& event)
+	{
+		TED_PROFILE_FUNCTION();
+
+		Teddy::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Teddy::KeyPressedEvent>(TED_BIND_EVENT_FN(Winscreen::OnKeyPressed));
+	}
+
+	bool Winscreen::OnKeyPressed(Teddy::KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case Teddy::Key::Return:
+			if (!m_SkipTime)
+			{
+				TimeSkip();
+				return true;
+			}
+			else if (!m_SkipHp)
+			{
+				SlashSkip(m_HpEntity.GetComponent<Teddy::TextComponent>(), m_Hp, m_SkipHp);
+				return true;
+			}
+			else if (!m_SkipParry)
+			{
+				SlashSkip(m_ParryEntity.GetComponent<Teddy::TextComponent>(), m_Parry, m_SkipParry);
+				return true;
+			}
+			else if (!m_SkipSuper)
+			{
+				SlashSkip(m_SuperEntity.GetComponent<Teddy::TextComponent>(), m_Super, m_SkipSuper);
+				return true;
+			}
+			else if (!m_SkipSkill)
+			{
+				Skill();
+				return true;
+			}
+			else
+			{
+				m_ProceedToMenu = true;
+				return true;
+			}
+		default:
+			break;
 		}
 	}
 } 

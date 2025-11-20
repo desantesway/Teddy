@@ -46,6 +46,8 @@ namespace Cuphead
 
 			FlashPlayer(ts);
 
+			m_Timer += ts;
+
 			switch (m_State)
 			{
 			case PlayerState::Intro0:
@@ -58,55 +60,45 @@ namespace Cuphead
 				Intro2();
 				break;
 			case PlayerState::Running:
-				m_Timer += ts;
 				Move(ts);
 				Running();
 				BlockMove();
 				break;
 			case PlayerState::Crouching:
-				m_Timer += ts;
 				Crouching();
 				break;
 			case PlayerState::Jumping:
-				m_Timer += ts;
 				Move(ts);
 				Jumping(ts);
 				BlockMove();
 				break;
 			case PlayerState::Dashing:
-				m_Timer += ts;
 				Dashing(ts);
 				break;
 			case PlayerState::Falling:
-				m_Timer += ts;
 				Move(ts);
 				Falling();
 				BlockMove();
 				break;
 			case PlayerState::Dropping:
-				m_Timer += ts;
 				Dropping(ts);
 				break;
 			case PlayerState::Parrying:
-				m_Timer += ts;
 				Move(ts);
 				Parrying();
 				BlockMove();
 				break;
 			case PlayerState::Hit:
-				m_Timer += ts;
 				Move(ts);
 				Hitting(ts);
 				BlockMove();
 				break;
 			case PlayerState::ParryHit:
-				m_Timer += ts;
 				Move(ts);
 				ParryHitting(ts);
 				BlockMove();
 				break;
 			case PlayerState::Idle:
-				m_Timer += ts;
 				Idle();
 				BlockMove();
 				break;
@@ -1869,6 +1861,8 @@ namespace Cuphead
 		body.SetGravityScale(7.5f);
 
 		m_State = PlayerState::ParryHit;
+
+		m_ParryQ++;
 	}
 
 	void Player::ParryHitting(Teddy::Timestep ts)
@@ -2224,6 +2218,7 @@ namespace Cuphead
 		{
 			if (m_State == PlayerState::Ex) return;
 
+			m_SuperQ += 5; // TODO: only if it hits
 			ShootSuper();
 			ClearCards();
 		}
@@ -2231,6 +2226,7 @@ namespace Cuphead
 		{
 			if(m_State == PlayerState::Super) return;
 
+			m_SuperQ++; // TODO: only if it hits
 			ShootEx();
 			RemoveCard();
 		}

@@ -66,6 +66,11 @@ namespace Cuphead
 			if (!m_ExDirection.Right)
 				transform.Scale.x = -transform.Scale.x;
 		}
+
+		float GetHealth() { return m_Health; }
+		int GetParry() { return m_ParryQ; }
+		int GetSuper() { return m_SuperQ; }
+		float GetTimer() { return m_Timer; }
 	private:
 		bool OnKeyPressed(Teddy::KeyPressedEvent& e);
 		bool OnKeyReleased(Teddy::KeyReleasedEvent& e);
@@ -221,6 +226,7 @@ namespace Cuphead
 		bool m_Moving = false;
 
 		bool m_ParryReset = true;
+		int m_ParryQ = 0;
 
 		int m_Health = 4;
 		bool m_Hitting = false;
@@ -301,6 +307,7 @@ namespace Cuphead
 		bool m_SuperIntro = false;
 		Teddy::Entity m_SuperEnt;
 		int m_BeamCount = 0;
+		int m_SuperQ = 0;
 
 		Teddy::Ref<Teddy::Scene> m_Scene = nullptr;
 	};
