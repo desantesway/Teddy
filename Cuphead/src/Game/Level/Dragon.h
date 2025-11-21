@@ -72,6 +72,7 @@ namespace Cuphead
 
 		void Smoke(Teddy::Timestep ts);
 		void FireMarchers(Teddy::Timestep ts);
+		void FireMarcherAttack();
 		void SpawnFireMarcherA();
 		void SpawnFireMarcherB();
 		void SpawnFireMarcherC();

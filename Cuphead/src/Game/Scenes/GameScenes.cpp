@@ -169,7 +169,6 @@ namespace Cuphead
             case 3:
                 return InitLevel();
             case 4:
-                return InitWinscreen();
                 if (m_LevelScene->WantsToExit())
                 {
 					m_CurrentScene = 2;

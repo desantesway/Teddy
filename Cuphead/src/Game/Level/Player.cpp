@@ -1306,7 +1306,8 @@ namespace Cuphead
 
 	void Player::StartDash()
 	{
-		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld || m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
+		if (m_State == PlayerState::Hit || m_State == PlayerState::Dashing || !m_DashReset || m_ShiftHeld || 
+			m_State == PlayerState::Ex || m_State == PlayerState::Super) return;
 
 		auto& sprite = m_Entity.GetComponent<Teddy::SpriteAnimationComponent>();
 		sprite.Textures = m_MovementTextures;
@@ -2097,7 +2098,7 @@ namespace Cuphead
 		float ret = 0.0f;
 		float chargeRate = 0.0f;
 
-		if (m_Timer - m_LastImpactTime < 0.1f)
+		if (m_Timer - m_LastImpactTime < 0.05f)
 			return 0.0f;
 
 		for (auto& proj : m_ActiveProjectiles)
@@ -2476,7 +2477,7 @@ namespace Cuphead
 				for (int i = 30; i <= 47; i++)
 					sprite.PlayableIndicies.push_back(i);
 				sprite.Loop = false;
-
+				m_SuperShot = true;
 				aA.Index = 30;
 				timer = 0.0f;
 			}
