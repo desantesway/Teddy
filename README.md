@@ -2,7 +2,7 @@
 
 <img width="1893" height="1069" alt="image" src="https://github.com/user-attachments/assets/ce2dc28b-9d62-4846-b360-7443c651f589" />
 
-At this moment, I've done almost everything! There's no sound yet, but phase 1, 2 and 3 are mostly done, with some minor tweaks left to do.
+You can play it by downloading the latest release and executing the .exe inside Cuphead folder.
 
 # 🧸 Teddy – Game Engine (C++, OpenGL, SDL3 & ImGui)
 
